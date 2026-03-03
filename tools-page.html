@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Toolbox &mdash; Mission Control</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=DM+Sans:wght@400;500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { margin:0; padding:0; box-sizing:border-box }
+  :root {
+    --bg:#ffffff; --bg-page:#f8f8f8; --surface:#f2f2f2; --surface2:#e8e8e8;
+    --text:#1a1a1a; --text2:#555; --text3:#999; --sep:#e5e5e5;
+    --green:#22c55e; --green-bg:rgba(34,197,94,0.08);
+    --blue:#3b82f6; --blue-bg:rgba(59,130,246,0.08);
+    --amber:#f59e0b; --amber-bg:rgba(245,158,11,0.08);
+    --purple:#8b5cf6; --purple-bg:rgba(139,92,246,0.08);
+    --rose:#ef4444; --rose-bg:rgba(239,68,68,0.06);
+    --gray:#9ca3af;
+  }
+  body { background:var(--bg-page); color:var(--text); font-family:'DM Sans',-apple-system,system-ui,sans-serif; min-height:100vh; -webkit-font-smoothing:antialiased }
+
+  /* Header */
+  header { display:flex; align-items:center; justify-content:space-between; padding:0 clamp(24px,4vw,48px); height:64px; background:var(--bg); border-bottom:1px solid var(--sep); position:sticky; top:0; z-index:10 }
+  .logo { display:flex; align-items:center; gap:12px }
+  .logo-dot { width:8px; height:8px; border-radius:50%; background:var(--purple) }
+  .logo-text { font-family:'Plus Jakarta Sans',sans-serif; font-size:15px; font-weight:600; letter-spacing:-0.02em }
+  .header-nav { display:flex; gap:4px; padding:3px; background:var(--surface); border-radius:8px; position:absolute; left:50%; transform:translateX(-50%) }
+  .nav-link { padding:5px 14px; border-radius:6px; font-family:'DM Sans',sans-serif; font-size:13px; font-weight:500; color:var(--text3); text-decoration:none; transition:all .15s }
+  .nav-link:hover { color:var(--text2) }
+  .nav-link.active { background:var(--bg); color:var(--text); box-shadow:0 1px 3px rgba(0,0,0,.06) }
+  .header-right { font-family:'DM Mono',monospace; font-size:11px; color:var(--text3) }
+
+  /* Shell */
+  .shell { max-width:960px; margin:0 auto; padding:clamp(24px,4vw,48px) }
+  .page-title { font-family:'Plus Jakarta Sans',sans-serif; font-size:clamp(28px,4vw,38px); font-weight:700; letter-spacing:-0.035em; margin-bottom:4px; line-height:1.1 }
+  .page-sub { font-size:15px; color:var(--text3); margin-bottom:28px }
+
+  /* Summary strip */
+  .summary-strip {
+    display:flex; gap:24px; padding:14px 20px;
+    background:var(--bg); border:1px solid var(--sep); border-radius:12px;
+    margin-bottom:40px; align-items:center;
+  }
+  .summary-stat {
+    display:flex; align-items:baseline; gap:6px;
+  }
+  .summary-num {
+    font-family:'Plus Jakarta Sans',sans-serif; font-size:20px; font-weight:700;
+    letter-spacing:-0.02em; color:var(--text);
+  }
+  .summary-label {
+    font-size:13px; color:var(--text3);
+  }
+  .summary-sep {
+    width:1px; height:20px; background:var(--sep);
+  }
+
+  /* Category nav pills */
+  .cat-nav {
+    display:flex; gap:8px; margin-bottom:32px; flex-wrap:wrap;
+  }
+  .cat-pill {
+    display:flex; align-items:center; gap:6px;
+    padding:6px 14px; border-radius:100px;
+    font-size:13px; font-weight:500;
+    background:var(--bg); border:1px solid var(--sep);
+    color:var(--text2); cursor:pointer;
+    transition:all .15s; user-select:none;
+  }
+  .cat-pill:hover { border-color:var(--text3) }
+  .cat-pill .cat-count {
+    font-family:'DM Mono',monospace; font-size:11px;
+    padding:1px 7px; border-radius:100px;
+    background:var(--surface); color:var(--text3);
+  }
+  .cat-pill.active { border-color:var(--purple); color:var(--purple); background:var(--purple-bg) }
+  .cat-pill.active .cat-count { background:rgba(139,92,246,0.15); color:#7c3aed }
+
+  /* Category sections */
+  .cat-section { margin-bottom:40px }
+  .cat-section.hidden { display:none }
+  .cat-header {
+    display:flex; align-items:center; gap:10px;
+    margin-bottom:16px; padding-bottom:12px;
+    border-bottom:1px solid var(--sep);
+  }
+  .cat-icon {
+    width:32px; height:32px; border-radius:9px;
+    display:flex; align-items:center; justify-content:center;
+    font-size:15px; flex-shrink:0;
+  }
+  .cat-title {
+    font-family:'Plus Jakarta Sans',sans-serif;
+    font-size:17px; font-weight:700; letter-spacing:-0.02em;
+    color:var(--text);
+  }
+  .cat-subtitle {
+    font-size:12px; color:var(--text3); margin-left:auto;
+    font-weight:500;
+  }
+
+  /* Compact agent cards */
+  .agent-list {
+    display:flex; flex-direction:column; gap:8px;
+  }
+  .agent-row {
+    background:var(--bg); border:1px solid var(--sep); border-radius:12px;
+    padding:16px 20px; position:relative;
+    transition:transform .15s ease, box-shadow .15s ease;
+    overflow:hidden;
+  }
+  .agent-row:hover {
+    transform:translateY(-1px);
+    box-shadow:0 4px 16px rgba(0,0,0,0.04);
+  }
+  .agent-row::before {
+    content:''; position:absolute; left:0; top:0; bottom:0; width:3px;
+    background:var(--row-accent, var(--gray)); border-radius:3px 0 0 3px; opacity:.6;
+  }
+  .agent-row:hover::before { opacity:1 }
+
+  .agent-top {
+    display:flex; align-items:center; gap:10px; margin-bottom:4px;
+  }
+  .agent-name {
+    font-family:'Plus Jakarta Sans',sans-serif;
+    font-size:15px; font-weight:700; letter-spacing:-0.01em; color:var(--text);
+  }
+  .model-badge {
+    font-family:'DM Mono',monospace; font-size:10px; font-weight:500;
+    padding:2px 8px; border-radius:100px;
+    background:var(--purple-bg); color:#6d28d9;
+    text-transform:uppercase; letter-spacing:0.03em;
+  }
+  .perm-badge {
+    font-size:10px; font-weight:600; padding:2px 8px; border-radius:100px;
+    text-transform:uppercase; letter-spacing:0.03em;
+  }
+  .perm-badge.rw { background:var(--green-bg); color:#166534 }
+  .perm-badge.ro { background:var(--surface); color:var(--text3) }
+
+  .agent-when {
+    font-size:13px; color:var(--text2); line-height:1.5;
+  }
+
+  /* Tools row — collapsed by default, shown on hover */
+  .agent-tools {
+    display:flex; flex-wrap:wrap; gap:4px;
+    margin-top:8px; max-height:0; overflow:hidden;
+    transition:max-height .2s ease, opacity .2s ease;
+    opacity:0;
+  }
+  .agent-row:hover .agent-tools {
+    max-height:60px; opacity:1;
+  }
+  .tool-pill {
+    font-family:'DM Mono',monospace; font-size:10px; font-weight:500;
+    padding:2px 8px; border-radius:100px;
+    background:var(--surface); color:var(--text3);
+  }
+  .tool-pill.t-edit { background:var(--green-bg); color:#166534 }
+  .tool-pill.t-bash { background:var(--amber-bg); color:#92400e }
+  .tool-pill.t-web { background:var(--blue-bg); color:#1d4ed8 }
+
+  /* Secondary sections (commands + builtins) */
+  .secondary-section { margin-top:48px }
+  .collapsible-header {
+    display:flex; align-items:center; gap:12px;
+    padding:14px 20px; cursor:pointer; user-select:none;
+    background:var(--bg); border:1px solid var(--sep); border-radius:12px;
+    transition:all .15s;
+  }
+  .collapsible-header:hover { background:#fcfcfc }
+  .collapsible-arrow {
+    font-size:10px; color:var(--text3);
+    transition:transform .2s; flex-shrink:0;
+  }
+  .collapsible-header.open .collapsible-arrow { transform:rotate(90deg) }
+  .collapsible-title {
+    font-family:'Plus Jakarta Sans',sans-serif;
+    font-size:15px; font-weight:700; letter-spacing:-0.02em;
+    flex:1;
+  }
+  .collapsible-count {
+    font-family:'DM Mono',monospace; font-size:11px;
+    padding:2px 10px; border-radius:100px;
+    background:var(--surface); color:var(--text3);
+  }
+  .collapsible-body {
+    display:none; margin-top:8px;
+  }
+  .collapsible-header.open + .collapsible-body { display:block }
+
+  /* Command items inside collapsible */
+  .cmd-list {
+    display:flex; flex-direction:column; gap:1px;
+    background:var(--sep); border-radius:12px; overflow:hidden;
+  }
+  .cmd-item {
+    display:flex; align-items:center; gap:16px;
+    padding:12px 20px; background:var(--bg);
+  }
+  .cmd-name {
+    font-family:'DM Mono',monospace; font-size:13px; font-weight:500;
+    color:var(--purple); white-space:nowrap; min-width:120px;
+  }
+  .cmd-desc { font-size:13px; color:var(--text2); line-height:1.4 }
+
+  /* Built-in items */
+  .builtin-list {
+    display:flex; flex-direction:column; gap:1px;
+    background:var(--sep); border-radius:12px; overflow:hidden;
+  }
+  .builtin-item {
+    display:flex; align-items:center; gap:16px;
+    padding:12px 20px; background:var(--bg);
+  }
+  .builtin-name {
+    font-family:'DM Mono',monospace; font-size:13px; font-weight:500;
+    color:var(--text); min-width:120px;
+  }
+  .builtin-desc { font-size:13px; color:var(--text2); flex:1 }
+  .builtin-model {
+    font-family:'DM Mono',monospace; font-size:10px;
+    padding:2px 8px; border-radius:100px;
+    background:var(--surface); color:var(--text3);
+  }
+
+  /* Responsive */
+  @media (max-width:800px) {
+    .shell { padding:20px 16px }
+    .page-title { font-size:24px }
+    .summary-strip { flex-wrap:wrap; gap:12px 20px }
+    .cat-nav { gap:6px }
+    .cat-pill { font-size:12px; padding:5px 12px }
+    .agent-row { padding:14px 16px }
+    .agent-tools { max-height:none; opacity:1 }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">
+    <div class="logo-dot"></div>
+    <div class="logo-text">Mission Control</div>
+  </div>
+  <nav class="header-nav">
+    <a href="/" class="nav-link">Dashboard</a>
+    <a href="/findings" class="nav-link">Findings</a>
+    <a href="/tools" class="nav-link active">Toolbox</a>
+    <a href="/logic" class="nav-link">Logic</a>
+  </nav>
+  <div class="header-right"></div>
+</header>
+
+<div class="shell">
+  <h1 class="page-title">Toolbox</h1>
+  <p class="page-sub">Your agent team, commands, and built-in tools</p>
+  <div id="main"><div style="padding:60px;text-align:center;color:#999">Loading...</div></div>
+</div>
+
+<script>
+// ── Agent category mapping ──────────────────────────────────────────────────
+const CATEGORIES = {
+  orchestration: {
+    label: 'Orchestration',
+    subtitle: 'Manage and coordinate agents',
+    icon: '\u25C9',
+    color: 'var(--purple)',
+    colorBg: 'var(--purple-bg)',
+    agents: ['orchestrator', 'agent-expert', 'configurator'],
+  },
+  quality: {
+    label: 'Code Quality',
+    subtitle: 'Review, audit, and test',
+    icon: '\u25A0',
+    color: 'var(--rose)',
+    colorBg: 'var(--rose-bg)',
+    agents: ['critic', 'guard', 'qa'],
+  },
+  development: {
+    label: 'Development',
+    subtitle: 'Build and design',
+    icon: '\u25B6',
+    color: 'var(--green)',
+    colorBg: 'var(--green-bg)',
+    agents: ['design', 'perf', 'a11y'],
+  },
+  research: {
+    label: 'Research',
+    subtitle: 'Find information fast',
+    icon: '\u25CB',
+    color: 'var(--blue)',
+    colorBg: 'var(--blue-bg)',
+    agents: ['scout', 'scientist', 'competitive-analyst'],
+  },
+};
+
+// Reverse lookup: agent name -> category key
+const AGENT_CAT = {};
+for (const [key, cat] of Object.entries(CATEGORIES)) {
+  cat.agents.forEach(a => AGENT_CAT[a] = key);
+}
+
+// Agent "when to use" — the single most useful line per agent
+const AGENT_WHEN = {
+  orchestrator: 'Break down complex multi-step tasks across several agents.',
+  'agent-expert': 'Build, improve, or debug agent configurations and prompts.',
+  configurator: 'Design the optimal agent team for a new task or workflow.',
+  critic: 'Get a brutally honest architecture and logic review.',
+  guard: 'Security audit before deploys or after API changes.',
+  qa: 'Verify code changes are live in the DOM after edits.',
+  design: 'UI components, styling, animations, and visual polish.',
+  perf: 'Profile performance, audit Core Web Vitals, find heavy bundles.',
+  a11y: 'Audit WCAG 2.1 AA compliance, keyboard nav, and focus management.',
+  scout: 'Explore the codebase, trace data flow, investigate bugs fast.',
+  scientist: 'Evidence-based research from academic and technical sources.',
+  'competitive-analyst': 'Market research, competitor analysis, and benchmarking.',
+};
+
+// Accent colors per agent (maps to left stripe)
+const AGENT_ACCENTS = {
+  orchestrator: 'var(--purple)',
+  'agent-expert': 'var(--purple)',
+  configurator: 'var(--purple)',
+  critic: 'var(--rose)',
+  guard: 'var(--rose)',
+  qa: 'var(--green)',
+  design: 'var(--green)',
+  perf: 'var(--amber)',
+  a11y: 'var(--green)',
+  scout: 'var(--blue)',
+  scientist: 'var(--blue)',
+  'competitive-analyst': 'var(--blue)',
+};
+
+function esc(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function toolPillClass(t) {
+  if (['Edit','Write'].includes(t)) return 'tool-pill t-edit';
+  if (t === 'Bash') return 'tool-pill t-bash';
+  if (['WebSearch','WebFetch'].includes(t)) return 'tool-pill t-web';
+  return 'tool-pill';
+}
+
+function renderAgentRow(a) {
+  const accent = AGENT_ACCENTS[a.name] || 'var(--gray)';
+  const when = AGENT_WHEN[a.name] || a.description || '';
+  const permClass = a.canEdit ? 'perm-badge rw' : 'perm-badge ro';
+  const permLabel = a.canEdit ? 'read/write' : 'read-only';
+
+  let toolsHtml = '';
+  a.tools.forEach(t => {
+    toolsHtml += '<span class="' + toolPillClass(t) + '">' + esc(t) + '</span>';
+  });
+
+  return '<div class="agent-row" style="--row-accent:' + accent + '">'
+    + '<div class="agent-top">'
+    + '<span class="agent-name">' + esc(a.name) + '</span>'
+    + '<span class="model-badge">' + esc(a.model) + '</span>'
+    + '<span class="' + permClass + '">' + permLabel + '</span>'
+    + '</div>'
+    + '<div class="agent-when">' + esc(when) + '</div>'
+    + '<div class="agent-tools">' + toolsHtml + '</div>'
+    + '</div>';
+}
+
+// ── Filter state ────────────────────────────────────────────────────────────
+let activeFilter = 'all';
+
+function setFilter(key) {
+  activeFilter = key;
+  // Update pills
+  document.querySelectorAll('.cat-pill').forEach(el => {
+    el.classList.toggle('active', el.dataset.cat === key);
+  });
+  // Show/hide sections
+  document.querySelectorAll('.cat-section').forEach(el => {
+    if (key === 'all') {
+      el.classList.remove('hidden');
+    } else {
+      el.classList.toggle('hidden', el.dataset.cat !== key);
+    }
+  });
+}
+
+function toggleCollapsible(el) {
+  el.classList.toggle('open');
+}
+
+async function load() {
+  try {
+    const data = await fetch('/api/tools').then(r => r.json());
+    const agents = data.agents || [];
+    const commands = data.commands || [];
+    const builtins = data.builtins || [];
+
+    // Group agents by category
+    const grouped = {};
+    for (const key of Object.keys(CATEGORIES)) grouped[key] = [];
+    const uncategorized = [];
+
+    agents.forEach(a => {
+      const cat = AGENT_CAT[a.name];
+      if (cat && grouped[cat]) grouped[cat].push(a);
+      else uncategorized.push(a);
+    });
+
+    let h = '';
+
+    // Summary strip
+    h += '<div class="summary-strip">';
+    h += '<div class="summary-stat"><span class="summary-num">' + agents.length + '</span><span class="summary-label">agents</span></div>';
+    h += '<div class="summary-sep"></div>';
+    h += '<div class="summary-stat"><span class="summary-num">' + commands.length + '</span><span class="summary-label">commands</span></div>';
+    h += '<div class="summary-sep"></div>';
+    h += '<div class="summary-stat"><span class="summary-num">' + builtins.length + '</span><span class="summary-label">built-in</span></div>';
+    h += '</div>';
+
+    // Category filter pills
+    h += '<div class="cat-nav">';
+    h += '<div class="cat-pill active" data-cat="all" onclick="setFilter(\'all\')">All<span class="cat-count">' + agents.length + '</span></div>';
+    for (const [key, cat] of Object.entries(CATEGORIES)) {
+      const count = grouped[key].length;
+      if (count === 0) continue;
+      h += '<div class="cat-pill" data-cat="' + key + '" onclick="setFilter(\'' + key + '\')">'
+        + esc(cat.label)
+        + '<span class="cat-count">' + count + '</span></div>';
+    }
+    h += '</div>';
+
+    // Category sections
+    for (const [key, cat] of Object.entries(CATEGORIES)) {
+      if (grouped[key].length === 0) continue;
+      h += '<div class="cat-section" data-cat="' + key + '">';
+      h += '<div class="cat-header">';
+      h += '<div class="cat-icon" style="background:' + cat.colorBg + ';color:' + cat.color + '">' + cat.icon + '</div>';
+      h += '<div class="cat-title">' + esc(cat.label) + '</div>';
+      h += '<div class="cat-subtitle">' + esc(cat.subtitle) + '</div>';
+      h += '</div>';
+      h += '<div class="agent-list">';
+      grouped[key].forEach(a => { h += renderAgentRow(a); });
+      h += '</div>';
+      h += '</div>';
+    }
+
+    // Uncategorized agents (fallback)
+    if (uncategorized.length > 0) {
+      h += '<div class="cat-section" data-cat="other">';
+      h += '<div class="cat-header">';
+      h += '<div class="cat-icon" style="background:var(--surface);color:var(--text3)">\u2026</div>';
+      h += '<div class="cat-title">Other</div>';
+      h += '<div class="cat-subtitle">Uncategorized agents</div>';
+      h += '</div>';
+      h += '<div class="agent-list">';
+      uncategorized.forEach(a => { h += renderAgentRow(a); });
+      h += '</div>';
+      h += '</div>';
+    }
+
+    // Commands — collapsible
+    if (commands.length > 0) {
+      h += '<div class="secondary-section">';
+      h += '<div class="collapsible-header" onclick="toggleCollapsible(this)">';
+      h += '<span class="collapsible-arrow">\u25B6</span>';
+      h += '<span class="collapsible-title">Slash Commands</span>';
+      h += '<span class="collapsible-count">' + commands.length + '</span>';
+      h += '</div>';
+      h += '<div class="collapsible-body">';
+      h += '<div class="cmd-list">';
+      commands.forEach(c => {
+        h += '<div class="cmd-item">';
+        h += '<div class="cmd-name">/' + esc(c.name) + '</div>';
+        h += '<div class="cmd-desc">' + esc(c.description) + '</div>';
+        h += '</div>';
+      });
+      h += '</div></div></div>';
+    }
+
+    // Built-ins — collapsible
+    if (builtins.length > 0) {
+      h += '<div class="secondary-section" style="margin-top:12px">';
+      h += '<div class="collapsible-header" onclick="toggleCollapsible(this)">';
+      h += '<span class="collapsible-arrow">\u25B6</span>';
+      h += '<span class="collapsible-title">Built-in Agents</span>';
+      h += '<span class="collapsible-count">' + builtins.length + '</span>';
+      h += '</div>';
+      h += '<div class="collapsible-body">';
+      h += '<div class="builtin-list">';
+      builtins.forEach(b => {
+        h += '<div class="builtin-item">';
+        h += '<div class="builtin-name">' + esc(b.name) + '</div>';
+        h += '<div class="builtin-desc">' + esc(b.description) + '</div>';
+        h += '<div class="builtin-model">' + esc(b.model) + '</div>';
+        h += '</div>';
+      });
+      h += '</div></div></div>';
+    }
+
+    document.getElementById('main').innerHTML = h;
+  } catch (e) {
+    document.getElementById('main').innerHTML = '<div style="padding:60px;text-align:center;color:#ef4444">Failed to load: ' + e.message + '</div>';
+  }
+}
+
+load();
+</script>
+</body>
+</html>

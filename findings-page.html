@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Findings &mdash; Mission Control</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=DM+Sans:wght@400;500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { margin:0; padding:0; box-sizing:border-box }
+  :root {
+    --bg:#ffffff; --bg-page:#f8f8f8; --surface:#f2f2f2; --surface2:#e8e8e8;
+    --text:#1a1a1a; --text2:#555; --text3:#999; --sep:#e5e5e5;
+    --green:#22c55e; --green-bg:rgba(34,197,94,0.08);
+    --blue:#3b82f6; --blue-bg:rgba(59,130,246,0.08);
+    --amber:#f59e0b; --amber-bg:rgba(245,158,11,0.08);
+    --purple:#8b5cf6; --purple-bg:rgba(139,92,246,0.08);
+    --rose:#ef4444; --rose-bg:rgba(239,68,68,0.06);
+  }
+  body { background:var(--bg-page); color:var(--text); font-family:'DM Sans',-apple-system,system-ui,sans-serif; min-height:100vh; -webkit-font-smoothing:antialiased }
+  header { display:flex; align-items:center; justify-content:space-between; padding:0 clamp(24px,4vw,48px); height:64px; background:var(--bg); border-bottom:1px solid var(--sep); position:sticky; top:0; z-index:10 }
+  .logo { display:flex; align-items:center; gap:12px }
+  .logo-dot { width:8px; height:8px; border-radius:50%; background:var(--purple) }
+  .logo-text { font-family:'Plus Jakarta Sans',sans-serif; font-size:15px; font-weight:600; letter-spacing:-0.02em }
+  .header-nav { display:flex; gap:4px; padding:3px; background:var(--surface); border-radius:8px; position:absolute; left:50%; transform:translateX(-50%) }
+  .nav-link { padding:5px 14px; border-radius:6px; font-family:'DM Sans',sans-serif; font-size:13px; font-weight:500; color:var(--text3); text-decoration:none; transition:all .15s }
+  .nav-link:hover { color:var(--text2) }
+  .nav-link.active { background:var(--bg); color:var(--text); box-shadow:0 1px 3px rgba(0,0,0,.06) }
+  .shell { max-width:960px; margin:0 auto; padding:clamp(24px,4vw,48px) }
+  .page-title { font-family:'Plus Jakarta Sans',sans-serif; font-size:clamp(28px,4vw,38px); font-weight:700; letter-spacing:-0.035em; margin-bottom:4px; line-height:1.1 }
+  .page-sub { font-size:15px; color:var(--text3); margin-bottom:36px }
+  .section { margin-bottom:32px }
+  .section-eyebrow { font-size:11px; font-weight:600; text-transform:uppercase; letter-spacing:0.1em; color:var(--text3); margin-bottom:6px }
+  .section-title { font-family:'Plus Jakarta Sans',sans-serif; font-size:20px; font-weight:700; letter-spacing:-0.03em; margin-bottom:16px }
+  .finding { background:var(--bg); border:1px solid var(--sep); border-radius:14px; padding:20px; margin-bottom:12px }
+  .finding-header { display:flex; align-items:center; gap:10px; margin-bottom:8px }
+  .finding-tag { font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:0.06em; padding:2px 8px; border-radius:100px }
+  .finding-tag.workflow { background:var(--purple-bg); color:var(--purple) }
+  .finding-tag.architecture { background:var(--blue-bg); color:var(--blue) }
+  .finding-tag.discovery { background:var(--green-bg); color:var(--green) }
+  .finding-tag.exploration { background:var(--amber-bg); color:var(--amber) }
+  .finding-title { font-family:'Plus Jakarta Sans',sans-serif; font-size:15px; font-weight:700; letter-spacing:-0.02em }
+  .finding-body { font-size:13px; line-height:1.7; color:var(--text2) }
+  .finding-body code { font-family:'DM Mono',monospace; font-size:12px; background:var(--surface); padding:2px 6px; border-radius:4px; color:var(--purple) }
+  .finding-meta { font-family:'DM Mono',monospace; font-size:11px; color:var(--text3); margin-top:8px }
+  .stat-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(200px,1fr)); gap:12px; margin-bottom:32px }
+  .stat-card { background:var(--bg); border:1px solid var(--sep); border-radius:12px; padding:16px; text-align:center }
+  .stat-value { font-family:'Plus Jakarta Sans',sans-serif; font-size:28px; font-weight:700; letter-spacing:-0.03em; color:var(--purple) }
+  .stat-label { font-size:12px; color:var(--text3); margin-top:4px }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">
+    <div class="logo-dot"></div>
+    <div class="logo-text">Mission Control</div>
+  </div>
+  <nav class="header-nav">
+    <a href="/" class="nav-link">Dashboard</a>
+    <a href="/findings" class="nav-link active">Findings</a>
+    <a href="/tools" class="nav-link">Toolbox</a>
+    <a href="/logic" class="nav-link">Logic</a>
+  </nav>
+  <div class="header-right"></div>
+</header>
+
+<div class="shell">
+  <h1 class="page-title">Findings</h1>
+  <p class="page-sub">Key discoveries, patterns, and lessons from past agent sessions &mdash; consolidated before cleanup</p>
+
+  <div class="stat-grid">
+    <div class="stat-card"><div class="stat-value">13</div><div class="stat-label">Legacy Sessions Reviewed</div></div>
+    <div class="stat-card"><div class="stat-value">7</div><div class="stat-label">Distinct Workstreams</div></div>
+    <div class="stat-card"><div class="stat-value">3</div><div class="stat-label">Architecture Discoveries</div></div>
+    <div class="stat-card"><div class="stat-value">4</div><div class="stat-label">Workflow Insights</div></div>
+  </div>
+
+  <div class="section">
+    <div class="section-eyebrow">Architecture</div>
+    <div class="section-title">System Design Discoveries</div>
+
+    <div class="finding">
+      <div class="finding-header">
+        <span class="finding-tag architecture">Architecture</span>
+        <span class="finding-title">PID-based liveness replaced broken process-count heuristic</span>
+      </div>
+      <div class="finding-body">
+        <p>The original Mission Control counted all <code>claude.exe</code> processes globally and assigned "active" to the top N by recency. This was fundamentally broken &mdash; no per-session correlation, cross-project contamination. Replaced with per-session <code>claudePid</code> tracking: hook walks process tree on first fire, server checks if PID is alive. Terminal open = active.</p>
+      </div>
+      <div class="finding-meta">Sessions: ed2482, c88d3c, 2a35e8 &bull; Resolved 2026-03-03</div>
+    </div>
+
+    <div class="finding">
+      <div class="finding-header">
+        <span class="finding-tag architecture">Architecture</span>
+        <span class="finding-title">Session IDs change within the same terminal window</span>
+      </div>
+      <div class="finding-body">
+        <p>Claude Code generates new session IDs on <code>/plan</code> &rarr; implement transitions and likely on <code>/compact</code>. The <code>claude.exe</code> process (PID) stays the same. This caused duplicate cards in the dashboard. Fixed by merging sessions that share a <code>claudePid</code> into a single card with combined prompts and inherited missions.</p>
+      </div>
+      <div class="finding-meta">Discovered during PID implementation &bull; Resolved 2026-03-03</div>
+    </div>
+
+    <div class="finding">
+      <div class="finding-header">
+        <span class="finding-tag architecture">Architecture</span>
+        <span class="finding-title">Windows process tree is walkable (contrary to initial analysis)</span>
+      </div>
+      <div class="finding-body">
+        <p>The critic agent concluded <code>process.ppid</code> was "useless on Windows." Testing proved the tree is <code>claude.exe &rarr; bash &rarr; bash &rarr; bash &rarr; node hook.js</code>. Walking up 3 levels via PowerShell <code>Get-CimInstance Win32_Process</code> reliably finds <code>claude.exe</code>. The lesson: always test OS assumptions empirically.</p>
+      </div>
+      <div class="finding-meta">Session: 2a35e8 (critic audit) &bull; Corrected 2026-03-03</div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-eyebrow">Workflow</div>
+    <div class="section-title">Agent Usage Patterns</div>
+
+    <div class="finding">
+      <div class="finding-header">
+        <span class="finding-tag workflow">Workflow</span>
+        <span class="finding-title">Critic agent needs empirical testing, not just code analysis</span>
+      </div>
+      <div class="finding-body">
+        <p>The critic agent reviewed Mission Control and produced a thorough logic page &mdash; but several conclusions were wrong because it theorized without testing. Updated the critic agent prompt to require running actual commands when analyzing OS/process behavior. Added a "Phase 0: Understand the user goal" step.</p>
+      </div>
+      <div class="finding-meta">Session: 2a35e8 &bull; Agent file updated 2026-03-03</div>
+    </div>
+
+    <div class="finding">
+      <div class="finding-header">
+        <span class="finding-tag workflow">Workflow</span>
+        <span class="finding-title">Agent customization journey: CLI &rarr; agents &rarr; hooks &rarr; dashboard</span>
+      </div>
+      <div class="finding-body">
+        <p>Early sessions explored Claude CLI customization, then agent creation, then hooks for state tracking, then the full Mission Control dashboard. The progression: "Can I customize the CLI?" &rarr; "Can I run specialized agents?" &rarr; "Can I track what agents are doing?" &rarr; "Can I build a PM dashboard for my agents?"</p>
+      </div>
+      <div class="finding-meta">Sessions: c0a16a, 2c3858, c88d3c</div>
+    </div>
+
+    <div class="finding">
+      <div class="finding-header">
+        <span class="finding-tag workflow">Workflow</span>
+        <span class="finding-title">Opus 4.6 cost analysis: worth it for deep sessions</span>
+      </div>
+      <div class="finding-body">
+        <p>Investigated the cost/benefit of running Opus 4.6 (1M context) frequently. Conclusion: the extended context window and deeper reasoning justify the cost for architecture reviews, complex debugging, and multi-file refactors. Use Haiku/Sonnet for quick tasks.</p>
+      </div>
+      <div class="finding-meta">Session: 78e7a9</div>
+    </div>
+
+    <div class="finding">
+      <div class="finding-header">
+        <span class="finding-tag workflow">Workflow</span>
+        <span class="finding-title">Graph RAG memory explored but not adopted</span>
+      </div>
+      <div class="finding-body">
+        <p>Explored integrating Graph RAG memory into the Claude CLI workflow &mdash; a persistent knowledge graph across sessions. Not adopted. The simpler file-based memory (<code>MEMORY.md</code> + topic files) proved sufficient and lower-maintenance.</p>
+      </div>
+      <div class="finding-meta">Session: 048bce &bull; Status: explored, not adopted</div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-eyebrow">Exploration</div>
+    <div class="section-title">Side Projects &amp; Experiments</div>
+
+    <div class="finding">
+      <div class="finding-header">
+        <span class="finding-tag exploration">Exploration</span>
+        <span class="finding-title">3D globe with interactive map and glassmorphic UI</span>
+      </div>
+      <div class="finding-body">
+        <p>Multiple sessions worked on a Three.js globe with map pins, flight arc animations, and a glassmorphic card overlay. Used for the travel/Southeast Asia section. Included mobile-responsive styling and animation performance tuning.</p>
+      </div>
+      <div class="finding-meta">Sessions: f8b40f, ec1dc8, 702132, 75b7c1</div>
+    </div>
+
+    <div class="finding">
+      <div class="finding-header">
+        <span class="finding-tag exploration">Exploration</span>
+        <span class="finding-title">Group trip itinerary planner</span>
+      </div>
+      <div class="finding-body">
+        <p>Built a group trip itinerary planner &mdash; a separate project exploring interactive travel planning with map integration, day-by-day routing, and collaborative features.</p>
+      </div>
+      <div class="finding-meta">Session: 222d07</div>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>

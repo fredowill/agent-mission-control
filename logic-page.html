@@ -1,0 +1,1197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Logic &mdash; Mission Control</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=DM+Sans:wght@400;500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { margin:0; padding:0; box-sizing:border-box }
+  :root {
+    --bg:#ffffff; --bg-page:#f8f8f8; --surface:#f2f2f2; --surface2:#e8e8e8;
+    --text:#1a1a1a; --text2:#555; --text3:#999; --sep:#e5e5e5;
+    --green:#22c55e; --green-bg:rgba(34,197,94,0.08);
+    --blue:#3b82f6; --blue-bg:rgba(59,130,246,0.08);
+    --amber:#f59e0b; --amber-bg:rgba(245,158,11,0.08);
+    --purple:#8b5cf6; --purple-bg:rgba(139,92,246,0.08);
+    --rose:#ef4444; --rose-bg:rgba(239,68,68,0.06);
+    --gray:#9ca3af;
+  }
+  body { background:var(--bg-page); color:var(--text); font-family:'DM Sans',-apple-system,system-ui,sans-serif; min-height:100vh; -webkit-font-smoothing:antialiased }
+
+  header { display:flex; align-items:center; justify-content:space-between; padding:0 clamp(24px,4vw,48px); height:64px; background:var(--bg); border-bottom:1px solid var(--sep); position:sticky; top:0; z-index:10 }
+  .logo { display:flex; align-items:center; gap:12px }
+  .logo-dot { width:8px; height:8px; border-radius:50%; background:var(--purple) }
+  .logo-text { font-family:'Plus Jakarta Sans',sans-serif; font-size:15px; font-weight:600; letter-spacing:-0.02em }
+  .header-nav { display:flex; gap:4px; padding:3px; background:var(--surface); border-radius:8px; position:absolute; left:50%; transform:translateX(-50%) }
+  .nav-link { padding:5px 14px; border-radius:6px; font-family:'DM Sans',sans-serif; font-size:13px; font-weight:500; color:var(--text3); text-decoration:none; transition:all .15s }
+  .nav-link:hover { color:var(--text2) }
+  .nav-link.active { background:var(--bg); color:var(--text); box-shadow:0 1px 3px rgba(0,0,0,.06) }
+  .header-right { font-family:'DM Mono',monospace; font-size:11px; color:var(--text3) }
+
+  .shell { max-width:960px; margin:0 auto; padding:clamp(24px,4vw,48px) }
+  .page-title { font-family:'Plus Jakarta Sans',sans-serif; font-size:clamp(28px,4vw,38px); font-weight:700; letter-spacing:-0.035em; margin-bottom:4px; line-height:1.1 }
+  .page-sub { font-size:15px; color:var(--text3); margin-bottom:36px }
+
+  /* Tab bar */
+  .tabs { display:flex; gap:4px; padding:3px; background:var(--surface); border-radius:10px; margin-bottom:32px; width:fit-content }
+  .tab { padding:7px 18px; border-radius:7px; font-size:13px; font-weight:500; color:var(--text3); cursor:pointer; transition:all .15s; user-select:none; border:none; background:none }
+  .tab:hover { color:var(--text2) }
+  .tab.active { background:var(--bg); color:var(--text); box-shadow:0 1px 3px rgba(0,0,0,.06) }
+  .tab-panel { display:none }
+  .tab-panel.active { display:block }
+
+  /* Document sections */
+  .doc-section { margin-bottom:40px }
+  .section-eyebrow { font-size:11px; font-weight:600; text-transform:uppercase; letter-spacing:0.1em; color:var(--text3); margin-bottom:6px }
+  .section-title { font-family:'Plus Jakarta Sans',sans-serif; font-size:22px; font-weight:700; letter-spacing:-0.03em; margin-bottom:16px }
+
+  /* Bug cards */
+  .bug-card { background:var(--bg); border:1px solid var(--sep); border-radius:14px; padding:24px; margin-bottom:16px }
+  .bug-card.critical { border-left:4px solid var(--rose) }
+  .bug-card.major { border-left:4px solid var(--amber) }
+  .bug-card.minor { border-left:4px solid var(--blue) }
+  .bug-card.fixed { border-left:4px solid var(--green); opacity:0.7 }
+  .bug-header { display:flex; align-items:center; gap:12px; margin-bottom:12px }
+  .bug-severity { font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:0.08em; padding:3px 10px; border-radius:100px }
+  .bug-severity.critical { background:var(--rose-bg); color:#dc2626 }
+  .bug-severity.major { background:var(--amber-bg); color:#d97706 }
+  .bug-severity.minor { background:var(--blue-bg); color:#2563eb }
+  .bug-severity.fixed { background:var(--green-bg); color:#16a34a }
+  .bug-title { font-family:'Plus Jakarta Sans',sans-serif; font-size:16px; font-weight:700; letter-spacing:-0.02em }
+  .bug-body { font-size:14px; line-height:1.7; color:var(--text2) }
+  .bug-body p { margin-bottom:10px }
+  .bug-body code { font-family:'DM Mono',monospace; font-size:12px; background:var(--surface); padding:2px 6px; border-radius:4px; color:var(--purple) }
+  .bug-body .file-ref { font-family:'DM Mono',monospace; font-size:12px; color:var(--purple); font-weight:500 }
+  .bug-body pre { background:#1a1a1a; color:#e5e5e5; padding:16px; border-radius:10px; font-family:'DM Mono',monospace; font-size:12px; line-height:1.6; overflow-x:auto; margin:12px 0 }
+  .bug-body pre .comment { color:#6b7280 }
+  .bug-body pre .keyword { color:#c084fc }
+  .bug-body pre .string { color:#86efac }
+  .bug-body pre .highlight { background:rgba(239,68,68,0.2); display:inline }
+  .bug-body ul { padding-left:20px; margin-bottom:10px }
+  .bug-body li { margin-bottom:4px }
+  .bug-body .symptom { background:var(--rose-bg); padding:10px 14px; border-radius:8px; font-size:13px; color:#dc2626; margin:10px 0 }
+  .bug-body .fix { background:var(--green-bg); padding:10px 14px; border-radius:8px; font-size:13px; color:#16a34a; margin:10px 0 }
+
+  /* Data flow diagram */
+  .flow { display:flex; flex-direction:column; gap:0; margin:20px 0 }
+  .flow-node { display:flex; align-items:center; gap:14px; padding:14px 20px; background:var(--bg); border:1px solid var(--sep) }
+  .flow-node:first-child { border-radius:14px 14px 0 0 }
+  .flow-node:last-child { border-radius:0 0 14px 14px }
+  .flow-node + .flow-node { border-top:none }
+  .flow-icon { width:36px; height:36px; border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:12px; font-family:'DM Mono',monospace; font-weight:600; flex-shrink:0 }
+  .flow-icon.hook { background:var(--blue-bg); color:var(--blue) }
+  .flow-icon.file { background:var(--amber-bg); color:var(--amber) }
+  .flow-icon.server { background:var(--purple-bg); color:var(--purple) }
+  .flow-icon.ui { background:var(--green-bg); color:var(--green) }
+  .flow-icon.broken { background:var(--rose-bg); color:var(--rose) }
+  .flow-label { font-family:'DM Mono',monospace; font-size:13px; font-weight:500; flex:1 }
+  .flow-meta { font-size:12px; color:var(--text3) }
+  .flow-arrow { width:2px; height:14px; background:var(--sep); margin-left:37px }
+  .flow-arrow.broken { background:var(--rose); width:3px }
+
+  /* Architecture overview */
+  .arch-grid { display:grid; grid-template-columns:1fr 1fr; gap:16px; margin:20px 0 }
+  .arch-card { background:var(--bg); border:1px solid var(--sep); border-radius:12px; padding:20px }
+  .arch-card h4 { font-family:'Plus Jakarta Sans',sans-serif; font-size:14px; font-weight:700; margin-bottom:8px }
+  .arch-card p { font-size:13px; color:var(--text2); line-height:1.6 }
+  .arch-card .mono { font-family:'DM Mono',monospace; font-size:12px; color:var(--purple) }
+
+  /* Live diagnostics */
+  .diag-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(180px,1fr)); gap:12px; margin:20px 0 }
+  .diag-card { background:var(--bg); border:1px solid var(--sep); border-radius:12px; padding:16px; text-align:center }
+  .diag-value { font-family:'Plus Jakarta Sans',sans-serif; font-size:28px; font-weight:700; letter-spacing:-0.03em; line-height:1 }
+  .diag-label { font-size:12px; color:var(--text3); margin-top:6px }
+  .diag-value.ok { color:var(--green) }
+  .diag-value.warn { color:var(--amber) }
+  .diag-value.bad { color:var(--rose) }
+
+  /* Session audit table */
+  .audit-table { width:100%; border-collapse:separate; border-spacing:0; background:var(--bg); border:1px solid var(--sep); border-radius:14px; overflow:hidden; margin:20px 0 }
+  .audit-table th { font-size:11px; font-weight:600; text-transform:uppercase; letter-spacing:0.06em; color:var(--text3); padding:12px 16px; text-align:left; background:var(--surface); border-bottom:1px solid var(--sep) }
+  .audit-table td { padding:10px 16px; font-size:13px; border-bottom:1px solid #f5f5f5; vertical-align:middle }
+  .audit-table tr:last-child td { border-bottom:none }
+  .sid { font-family:'DM Mono',monospace; font-size:12px; color:var(--purple); font-weight:500 }
+  .state-pill { display:inline-block; padding:2px 10px; border-radius:100px; font-size:11px; font-weight:600; text-transform:uppercase; letter-spacing:0.03em }
+  .state-pill.investigating { background:var(--blue-bg); color:var(--blue) }
+  .state-pill.developing { background:var(--purple-bg); color:var(--purple) }
+  .state-pill.verifying { background:var(--amber-bg); color:var(--amber) }
+  .state-pill.idle { background:var(--surface); color:var(--text3) }
+  .state-pill.done { background:var(--surface); color:var(--text3) }
+  .state-pill.thinking { background:var(--blue-bg); color:var(--blue) }
+  .check { color:var(--green) }
+  .cross { color:var(--rose) }
+
+  /* Collapsible summary bar */
+  .summary-bar { background:var(--bg); border:1px solid var(--sep); border-radius:14px; margin-bottom:32px; overflow:hidden }
+  .summary-toggle { display:flex; align-items:center; gap:12px; padding:16px 20px; cursor:pointer; user-select:none; width:100%; border:none; background:none; text-align:left; font-family:inherit }
+  .summary-toggle:hover { background:#fafafa }
+  .summary-arrow { font-size:10px; color:var(--text3); transition:transform .2s; flex-shrink:0 }
+  .summary-bar.open .summary-arrow { transform:rotate(90deg) }
+  .summary-title { font-family:'Plus Jakarta Sans',sans-serif; font-size:15px; font-weight:700; letter-spacing:-0.02em; flex:1 }
+  .summary-count { font-family:'DM Mono',monospace; font-size:11px; padding:2px 10px; border-radius:100px; background:var(--rose-bg); color:#dc2626 }
+  .summary-body { display:none; padding:0 20px 16px; border-top:1px solid var(--sep) }
+  .summary-bar.open .summary-body { display:block }
+  .summary-item { display:flex; align-items:baseline; gap:10px; padding:8px 0; border-bottom:1px solid #f5f5f5; font-size:13px }
+  .summary-item:last-child { border-bottom:none }
+  .summary-sev { font-size:9px; font-weight:700; text-transform:uppercase; letter-spacing:0.06em; padding:2px 8px; border-radius:100px; flex-shrink:0 }
+  .summary-sev.critical { background:var(--rose-bg); color:#dc2626 }
+  .summary-sev.major { background:var(--amber-bg); color:#d97706 }
+  .summary-sev.minor { background:var(--blue-bg); color:#2563eb }
+  .summary-fix { font-family:'DM Mono',monospace; font-size:11px; color:var(--text3); margin-left:auto; flex-shrink:0 }
+
+  /* North Star / Trust statement */
+  .trust-block { background:linear-gradient(135deg, #1a1a1a 0%, #2d2035 100%); color:#fff; border-radius:16px; padding:32px; margin-bottom:32px }
+  .trust-block h2 { font-family:'Plus Jakarta Sans',sans-serif; font-size:20px; font-weight:700; letter-spacing:-0.03em; margin-bottom:12px }
+  .trust-block p { font-size:14px; line-height:1.7; color:rgba(255,255,255,0.75); margin-bottom:10px }
+  .trust-block .principle { display:flex; align-items:flex-start; gap:12px; padding:10px 0 }
+  .trust-block .principle-num { font-family:'DM Mono',monospace; font-size:12px; font-weight:600; color:var(--purple); background:rgba(139,92,246,0.15); width:28px; height:28px; border-radius:8px; display:flex; align-items:center; justify-content:center; flex-shrink:0 }
+  .trust-block .principle-text { font-size:14px; color:rgba(255,255,255,0.9); line-height:1.5 }
+  .trust-block .principle-text strong { color:#fff }
+
+  /* Windows terminal deep-dive */
+  .terminal-section { background:var(--bg); border:1px solid var(--sep); border-radius:14px; padding:28px; margin-bottom:32px }
+  .terminal-section h3 { font-family:'Plus Jakarta Sans',sans-serif; font-size:18px; font-weight:700; letter-spacing:-0.02em; margin-bottom:16px }
+  .terminal-section h4 { font-family:'Plus Jakarta Sans',sans-serif; font-size:14px; font-weight:700; margin:20px 0 8px; padding-top:16px; border-top:1px solid var(--sep) }
+  .terminal-section h4:first-of-type { border-top:none; padding-top:0 }
+  .terminal-section p { font-size:13px; line-height:1.7; color:var(--text2); margin-bottom:8px }
+  .terminal-section ul { padding-left:20px; margin-bottom:12px }
+  .terminal-section li { font-size:13px; line-height:1.6; color:var(--text2); margin-bottom:4px }
+  .terminal-section code { font-family:'DM Mono',monospace; font-size:12px; background:var(--surface); padding:2px 6px; border-radius:4px; color:var(--purple) }
+  .terminal-section pre { background:#1a1a1a; color:#e5e5e5; padding:16px; border-radius:10px; font-family:'DM Mono',monospace; font-size:12px; line-height:1.6; overflow-x:auto; margin:12px 0 }
+  .truth-table { width:100%; border-collapse:collapse; margin:12px 0 }
+  .truth-table th { font-size:11px; font-weight:600; text-transform:uppercase; letter-spacing:0.05em; color:var(--text3); padding:8px 12px; text-align:left; border-bottom:2px solid var(--sep) }
+  .truth-table td { padding:8px 12px; font-size:12px; border-bottom:1px solid #f0f0f0; vertical-align:top }
+  .truth-table .yes { color:var(--green); font-weight:600 }
+  .truth-table .no { color:var(--rose); font-weight:600 }
+  .truth-table .maybe { color:var(--amber); font-weight:600 }
+
+  @media (max-width:800px) {
+    .shell { padding:20px 16px }
+    .arch-grid { grid-template-columns:1fr }
+    .diag-grid { grid-template-columns:repeat(2,1fr) }
+    .audit-table { display:block; overflow-x:auto }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">
+    <div class="logo-dot"></div>
+    <div class="logo-text">Mission Control</div>
+  </div>
+  <nav class="header-nav">
+    <a href="/" class="nav-link">Dashboard</a>
+    <a href="/findings" class="nav-link">Findings</a>
+    <a href="/tools" class="nav-link">Toolbox</a>
+    <a href="/logic" class="nav-link active">Logic</a>
+  </nav>
+  <div class="header-right" id="clock"></div>
+</header>
+
+<div class="shell">
+  <h1 class="page-title">System Logic</h1>
+  <p class="page-sub">Architecture audit, known bugs, and the fix plan &mdash; persistent reference for any agent session</p>
+
+  <!-- ================================================================
+       TRUST STATEMENT — The #1 Goal
+       ================================================================ -->
+  <div class="trust-block">
+    <h2>The Trust Problem</h2>
+    <p>Mission Control is useless if you can't trust it. Right now, when you look at an "active" card, you don't know if that agent is actually running. When you click into its prompts, you don't know if those are the real prompts. That has to end. Every fix below serves one goal:</p>
+    <div class="principle">
+      <div class="principle-num">1</div>
+      <div class="principle-text"><strong>If a card says "active", that session is actually running right now.</strong> Not 26 minutes ago. Not a ghost from another project. Right now, in a terminal tab on this machine, doing work.</div>
+    </div>
+    <div class="principle">
+      <div class="principle-num">2</div>
+      <div class="principle-text"><strong>If you click on a card and see prompts, those are YOUR prompts for THAT session.</strong> Not duplicated from another session. Not missing half the conversation. Not flooded with system junk. Your words, in order, complete.</div>
+    </div>
+    <div class="principle">
+      <div class="principle-num">3</div>
+      <div class="principle-text"><strong>When you close a terminal tab, that card moves to done.</strong> Within 2 minutes, not 6 hours. No zombie sessions. No manual cleanup. It just works.</div>
+    </div>
+  </div>
+
+  <!-- ================================================================
+       COLLAPSIBLE ONE-LINER SUMMARY — All Work Items
+       ================================================================ -->
+  <div class="summary-bar open" onclick="this.classList.toggle('open')">
+    <button class="summary-toggle">
+      <span class="summary-arrow">&#x25B6;</span>
+      <span class="summary-title">All Work Items &mdash; One-Liner Fixes</span>
+      <span class="summary-count">9 items</span>
+    </button>
+    <div class="summary-body">
+      <div class="summary-item"><span class="summary-sev critical">CRIT</span> Replace process-count heuristic with timestamp-based liveness (<code>ts</code> &lt; 120s = active) <span class="summary-fix">server.js:65-73, 546-568</span></div>
+      <div class="summary-item"><span class="summary-sev critical">CRIT</span> Infer session death from silence &mdash; no close event exists on Windows <span class="summary-fix">server.js readAgents()</span></div>
+      <div class="summary-item"><span class="summary-sev critical">CRIT</span> Dedup legacy prompts across sessions + add dedup guard in prompt-hook.js <span class="summary-fix">prompt-hook.js:28 + one-time script</span></div>
+      <div class="summary-item"><span class="summary-sev critical">CRIT</span> Fix prompts disappearing after /skill expansions (ndjson corruption or hook not firing) <span class="summary-fix">prompt-hook.js + investigation</span></div>
+      <div class="summary-item"><span class="summary-sev major">MAJ</span> Cache readAgents() in memory (5s TTL) &mdash; stop 168+ sync disk reads per poll <span class="summary-fix">server.js:518-587</span></div>
+      <div class="summary-item"><span class="summary-sev major">MAJ</span> DELETE endpoint must remove logs, prompts, summaries &mdash; not just state file <span class="summary-fix">server.js:2228</span></div>
+      <div class="summary-item"><span class="summary-sev major">MAJ</span> Card headline: show AI summary or first prompt, never bare filenames <span class="summary-fix">dashboard HTML + server.js</span></div>
+      <div class="summary-item"><span class="summary-sev minor">MIN</span> Auto-archive sessions older than 24h (move state to archive/, keep prompts/logs) <span class="summary-fix">server.js new routine</span></div>
+      <div class="summary-item"><span class="summary-sev minor">MIN</span> Derive "done" state from timestamp, don't pretend state file says "done" <span class="summary-fix">server.js readAgents()</span></div>
+    </div>
+  </div>
+
+  <div class="tabs">
+    <button class="tab active" onclick="switchTab('bugs')">Known Bugs</button>
+    <button class="tab" onclick="switchTab('windows')">Windows &amp; Terminals</button>
+    <button class="tab" onclick="switchTab('architecture')">Architecture</button>
+    <button class="tab" onclick="switchTab('diagnostics')">Live Diagnostics</button>
+    <button class="tab" onclick="switchTab('plan')">Fix Plan</button>
+    <button class="tab" onclick="switchTab('corrections')">Corrections</button>
+  </div>
+
+  <!-- ================================================================
+       TAB 1: KNOWN BUGS
+       ================================================================ -->
+  <div id="tab-bugs" class="tab-panel active">
+
+    <div class="doc-section">
+      <div class="section-eyebrow">Fixed</div>
+      <div class="section-title">Resolved Issues</div>
+
+      <!-- BUG 1 — FIXED -->
+      <div class="bug-card fixed">
+        <div class="bug-header">
+          <span class="bug-severity fixed">Fixed</span>
+          <span class="bug-title">Active/Done Detection &mdash; Now PID-Based</span>
+        </div>
+        <div class="bug-body">
+          <p><strong>Was:</strong> Counting all <code>claude.exe</code> globally, assigning "active" to top N by recency. No per-session correlation.</p>
+          <p><strong>Now:</strong> Each session stores its <code>claude.exe</code> PID (captured via process-tree walk on first hook fire). Server checks if that specific PID is alive. PID alive = active. PID dead = done. Zero cross-project contamination.</p>
+        </div>
+      </div>
+
+      <!-- BUG 2 — FIXED -->
+      <div class="bug-card fixed">
+        <div class="bug-header">
+          <span class="bug-severity fixed">Fixed</span>
+          <span class="bug-title">Session Close Detection &mdash; Solved by PID Check</span>
+        </div>
+        <div class="bug-body">
+          <p><strong>Was:</strong> No signal when terminal tab closes. Sessions stuck as "active" for hours.</p>
+          <p><strong>Now:</strong> When the tab closes, <code>claude.exe</code> dies. Next server poll sees the PID is gone &rarr; card moves to done immediately. No close event needed.</p>
+        </div>
+      </div>
+
+      <!-- BUG 2.5 — FIXED -->
+      <div class="bug-card fixed">
+        <div class="bug-header">
+          <span class="bug-severity fixed">Fixed</span>
+          <span class="bug-title">Session ID Changes Within Same Terminal</span>
+        </div>
+        <div class="bug-body">
+          <p><strong>Was:</strong> <code>/plan</code> &rarr; implement, <code>/compact</code>, <code>/resume</code> create new session IDs. Dashboard showed duplicate cards for the same terminal.</p>
+          <p><strong>Now:</strong> Sessions sharing a <code>claudePid</code> are merged into one card. Combined prompts, inherited mission, context-switch count badge.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="doc-section">
+      <div class="section-eyebrow">Open &mdash; Data Integrity</div>
+      <div class="section-title">Remaining Bugs</div>
+
+      <!-- BUG 3 -->
+      <div class="bug-card critical">
+        <div class="bug-header">
+          <span class="bug-severity critical">Critical</span>
+          <span class="bug-title">Prompt Duplication from /resume Sessions</span>
+        </div>
+        <div class="bug-body">
+          <p>When you use <code>/resume</code> to continue a previous session, the new session inherits context from the old one. A prior version of the prompt hook wrote inherited prompts into the new session's file with their original timestamps.</p>
+
+          <p>Result: the same prompts appear in multiple session files. Some session files contain prompts timestamped <strong>hours before the session even existed</strong>.</p>
+
+          <p><span class="file-ref">prompt-hook.js:28</span> &mdash; Current code uses <code>Date.now()</code> which prevents future duplication, but legacy damage persists in existing files.</p>
+
+          <div class="symptom">
+            <strong>What you see:</strong> When viewing an agent's prompts, you see prompts that don't belong to that session. Prompt counts are inflated. Cross-referencing sessions is unreliable because the same prompt appears in multiple places.
+          </div>
+
+          <div class="fix">
+            <strong>Fix:</strong> (1) Run a one-time dedup script that removes duplicate prompts across session files based on exact content + timestamp matches. (2) Add a dedup guard to prompt-hook.js that checks if this exact prompt (by content hash) was already written in the last 5 seconds. (3) Filter out system messages (<code>&lt;task-notification&gt;</code> tags) at write time.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="doc-section">
+      <div class="section-eyebrow">Major &mdash; Performance &amp; Reliability</div>
+      <div class="section-title">Issues That Degrade the Experience</div>
+
+      <!-- BUG 4 -->
+      <div class="bug-card major">
+        <div class="bug-header">
+          <span class="bug-severity major">Major</span>
+          <span class="bug-title">56+ Synchronous Disk Reads Every 2 Seconds</span>
+        </div>
+        <div class="bug-body">
+          <p><code>readAgents()</code> is called on the dashboard polling interval. Every call does synchronous <code>readFileSync</code> on every state file, every log file, every prompt file, and <code>missions.json</code> once per agent.</p>
+
+          <p><span class="file-ref">server.js:518-587</span></p>
+<pre>
+<span class="keyword">const</span> agents = fs.readdirSync(STATES_DIR)
+  .filter(f => f.endsWith('.json'))
+  .map(f => {
+    <span class="keyword">const</span> a = JSON.parse(<span class="highlight">fs.readFileSync</span>(...));
+    a.mission = <span class="highlight">deriveMission</span>(a.sessionId); <span class="comment">// re-reads missions.json!</span>
+    a.hasPrompts = <span class="highlight">readPrompts</span>(...).length > 0; <span class="comment">// reads prompt file!</span>
+    <span class="keyword">return</span> a;
+  });
+</pre>
+
+          <p>With ~56 session files, that's 56 state reads + 56 mission reads + 56 prompt reads = <strong>168+ synchronous disk operations</strong> every poll cycle.</p>
+
+          <div class="fix">
+            <strong>Fix:</strong> Cache <code>readAgents()</code> results in memory with a 3-5 second TTL. The dashboard polls every 2s &mdash; most polls should hit the cache. Invalidate on write (when a hook fires and updates a state file via the API). Also cache <code>missions.json</code> in memory instead of re-reading per agent.
+          </div>
+        </div>
+      </div>
+
+      <!-- BUG 5 -->
+      <div class="bug-card major">
+        <div class="bug-header">
+          <span class="bug-severity major">Major</span>
+          <span class="bug-title">DELETE Endpoint Leaves Orphaned Files</span>
+        </div>
+        <div class="bug-body">
+          <p>When you delete a session from the dashboard, only the state file is removed. The corresponding log file, prompt file, summary cache entry, and deep summary are left behind as orphans.</p>
+
+          <p><span class="file-ref">server.js:2228</span> &mdash; DELETE handler only removes <code>states/{sid}.json</code></p>
+
+          <div class="symptom">
+            <strong>What you see:</strong> Deleted sessions may reappear on the logic page (which unions all SIDs across states/, logs/, and prompts/). Disk usage grows without bound.
+          </div>
+
+          <div class="fix">
+            <strong>Fix:</strong> DELETE should remove <code>states/{sid}.json</code>, <code>logs/{sid}.ndjson</code>, <code>prompts/{sid}.ndjson</code>, and clear the session from <code>summariesCache</code>, <code>deepSummariesCache</code>, and <code>missions.json</code>.
+          </div>
+        </div>
+      </div>
+
+      <!-- BUG 6 -->
+      <div class="bug-card major">
+        <div class="bug-header">
+          <span class="bug-severity major">Major</span>
+          <span class="bug-title">Cards Show File Names Instead of Goals</span>
+        </div>
+        <div class="bug-body">
+          <p>The hook captures <code>detail</code> from tool inputs &mdash; which is a file path, grep pattern, or bash command. This is what gets displayed on the card.</p>
+
+          <p><span class="file-ref">hook.js:40-49</span> &mdash; <code>getDetail()</code></p>
+<pre>
+<span class="keyword">function</span> getDetail(toolName, input = {}) {
+  <span class="keyword">if</span> (input.file_path)   <span class="keyword">return</span> short(path.basename(input.file_path));
+  <span class="keyword">if</span> (input.pattern)     <span class="keyword">return</span> short(input.pattern);
+  <span class="keyword">if</span> (input.command)     <span class="keyword">return</span> short(input.command);
+  <span class="comment">// ...</span>
+}
+</pre>
+
+          <p>So a card says "globals.css" or "server.js" because that's the last file the agent read. The AI summary (via Cerebras) is supposed to replace this, but it takes time to generate and requires enough prompts to be meaningful.</p>
+
+          <div class="symptom">
+            <strong>What you see:</strong> Cards show "globals.css", "localtest.md", "server.js" &mdash; which tells you nothing about what the agent is actually trying to accomplish.
+          </div>
+
+          <div class="fix">
+            <strong>Fix:</strong> The <code>detail</code> field is fine for the activity log (it's useful as a trace). But the <strong>card headline</strong> should use the AI-generated summary tagline when available, and fall back to the first user prompt (truncated) when not. The card should never show a bare filename as its primary description.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="doc-section">
+      <div class="section-eyebrow">Critical &mdash; Prompt Capture</div>
+      <div class="section-title">Prompts Disappear After Tool/Skill Invocations</div>
+
+      <!-- BUG: Prompt loss -->
+      <div class="bug-card critical">
+        <div class="bug-header">
+          <span class="bug-severity critical">Critical</span>
+          <span class="bug-title">Prompts After Skill/Tool Expansion Are Lost</span>
+        </div>
+        <div class="bug-body">
+          <p>When a slash command like <code>/deep-scrape</code> is invoked, Claude Code expands the skill into a large markdown document and injects it into the conversation. The prompt hook captures this entire expansion as a single "prompt" entry &mdash; writing a massive blob into the ndjson file.</p>
+
+          <p><strong>Observed behavior (session f8b40f):</strong></p>
+          <ul>
+            <li>User invoked <code>/deep-scrape</code></li>
+            <li>The prompt hook captured the entire deep-scrape.md content (~5KB) as one prompt line</li>
+            <li>All subsequent user prompts in that session are missing from the prompts file</li>
+          </ul>
+
+          <div class="symptom">
+            <strong>What you see:</strong> On the agent detail page, the prompts list shows the skill expansion blob, then nothing after it. Your actual prompts typed after the skill invocation are gone. This makes the prompt history useless for understanding what you were working on.
+          </div>
+
+          <p><strong>Likely causes (investigate in order):</strong></p>
+          <ul>
+            <li><strong>Malformed ndjson:</strong> If the skill expansion contains unescaped newlines that break the JSON line format, subsequent <code>appendFileSync</code> calls may write to a corrupted position, or the reader may fail to parse lines after the break</li>
+            <li><strong>Hook not firing:</strong> After a skill is expanded, the conversation flow may change such that <code>UserPromptSubmit</code> events stop firing for subsequent user messages (e.g., if the skill takes over the turn)</li>
+            <li><strong>Session ID mismatch:</strong> If the skill invocation creates a subagent, subsequent prompts might write to a different session file</li>
+          </ul>
+
+          <div class="fix">
+            <strong>Fix (investigate then apply):</strong>
+            <ul>
+              <li>Add max length guard in prompt-hook.js: truncate prompts longer than 2000 chars (or store them in a separate overflow file)</li>
+              <li>Validate JSON serialization before appending &mdash; ensure the line is valid ndjson</li>
+              <li>Add a <code>type</code> field to distinguish user prompts from skill expansions: <code>{ prompt, ts, type: 'user' | 'skill' }</code></li>
+              <li>In the prompt display UI, collapse/hide skill expansion entries and only show actual user prompts by default</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="doc-section">
+      <div class="section-eyebrow">Minor &mdash; Cleanup</div>
+      <div class="section-title">Quality-of-Life Issues</div>
+
+      <!-- BUG 7 -->
+      <div class="bug-card minor">
+        <div class="bug-header">
+          <span class="bug-severity minor">Minor</span>
+          <span class="bug-title">No Auto-Archive for Stale Sessions</span>
+        </div>
+        <div class="bug-body">
+          <p>Sessions older than 24h get the <code>archived</code> flag but are never cleaned up. They stay in the state directory and continue to be read on every poll cycle. Over time this means dozens of dead sessions accumulating.</p>
+
+          <div class="fix">
+            <strong>Fix:</strong> Add a cleanup routine that runs once per hour. Sessions marked <code>archived</code> (>24h, done) should have their state files moved to an <code>archive/</code> directory (or just deleted, since logs and prompts are the real historical record).
+          </div>
+        </div>
+      </div>
+
+      <!-- BUG 8 -->
+      <div class="bug-card minor">
+        <div class="bug-header">
+          <span class="bug-severity minor">Minor</span>
+          <span class="bug-title">state:'done' Never Written by Current Hooks</span>
+        </div>
+        <div class="bug-body">
+          <p>The Stop hook writes <code>state: 'idle'</code> (or <code>'thinking'</code>), never <code>'done'</code>. The <code>'done'</code> state is only assigned by <code>readAgents()</code> in memory based on the process-count heuristic. This means the state file on disk never says "done" &mdash; it's always a derived property.</p>
+
+          <p>This creates inconsistency: old sessions that were manually set to done (if any) have a different data shape than sessions marked done by the heuristic.</p>
+
+          <div class="fix">
+            <strong>Fix:</strong> With timestamp-based liveness, "done" becomes a derived state in the server (last event > threshold). This is fine &mdash; just make sure the API response clearly distinguishes between the on-disk state and the derived liveness state. Don't pretend the file says "done" when it doesn't.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================================================================
+       TAB 2: WINDOWS & TERMINALS — The Foundation
+       ================================================================ -->
+  <div id="tab-windows" class="tab-panel">
+
+    <div class="trust-block" style="background:linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%); margin-bottom:24px">
+      <h2>How It Works (Verified)</h2>
+      <p>This documents the actual Windows Terminal + Claude Code process model as verified through testing. The original analysis had errors (see Corrections tab) &mdash; this version reflects what we confirmed empirically and shipped.</p>
+    </div>
+
+    <div class="terminal-section">
+      <h3>How Claude Code Runs on Windows</h3>
+
+      <h4>Process Lifecycle</h4>
+      <p>When you open a terminal tab and type <code>claude</code>, here's what happens:</p>
+      <ul>
+        <li><strong>Windows Terminal</strong> (or VS Code terminal) spawns a shell process (<code>bash.exe</code>, <code>powershell.exe</code>, etc.)</li>
+        <li>The shell spawns <code>claude.exe</code> as a child process</li>
+        <li><code>claude.exe</code> generates a UUID session ID at startup &mdash; this is the <strong>only stable identifier</strong> for this conversation</li>
+        <li>Every time the agent makes a tool call, Claude Code invokes hooks by spawning a <strong>new child process</strong> (e.g., <code>node hook.js</code>) and piping JSON to its stdin</li>
+        <li>Each hook invocation is a separate <code>node.exe</code> process with its own PID. The hook's <code>process.ppid</code> is NOT the claude.exe PID &mdash; it's an intermediate process</li>
+      </ul>
+
+      <h4>What Happens When You Close a Tab</h4>
+      <p>This is the critical gap that breaks everything:</p>
+      <ul>
+        <li>Windows Terminal sends <code>CTRL_CLOSE_EVENT</code> to the console process group</li>
+        <li>The shell receives the signal and terminates</li>
+        <li><code>claude.exe</code> is killed as part of the process tree &mdash; <strong>there is no graceful shutdown</strong></li>
+        <li>Node.js <code>SIGTERM</code>/<code>SIGINT</code> handlers <strong>do not reliably fire</strong> on Windows when the parent terminal is killed</li>
+        <li>The Stop hook <strong>never fires</strong> because there's no agent turn to end</li>
+        <li><strong>Result:</strong> Mission Control has absolutely no signal that the session ended. The state file just sits there forever with its last known state.</li>
+      </ul>
+
+      <h4>Process Detection: What's Available</h4>
+      <table class="truth-table">
+        <thead>
+          <tr><th>Signal</th><th>Reliable?</th><th>Per-Session?</th><th>Notes</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>tasklist /FI "IMAGENAME eq claude.exe"</code></td>
+            <td class="yes">Yes</td>
+            <td class="yes">Yes (with stored PID)</td>
+            <td><strong>SHIPPED:</strong> Hook stores <code>claudePid</code> per session. Server checks if that PID is in the live tasklist. Per-session, no cross-project contamination.</td>
+          </tr>
+          <tr>
+            <td><code>process.ppid</code> &rarr; walk to claude.exe</td>
+            <td class="yes">Yes</td>
+            <td class="yes">Yes</td>
+            <td><strong>SHIPPED:</strong> ppid changes per hook call (intermediate bash), but walking 3 levels up via PowerShell <code>Get-CimInstance</code> always reaches the stable <code>claude.exe</code> PID. Runs once per session (~1.2s).</td>
+          </tr>
+          <tr>
+            <td><code>data.session_id</code> from stdin</td>
+            <td class="yes">Yes</td>
+            <td class="yes">Yes</td>
+            <td>Claude Code passes the session UUID via stdin JSON on every hook call. This is the ONLY reliable per-session identifier.</td>
+          </tr>
+          <tr>
+            <td><code>ts</code> in state file (last hook event)</td>
+            <td class="yes">Yes</td>
+            <td class="yes">Yes</td>
+            <td>Written on every PostToolUse and Stop event. If it's recent (&lt;120s), the session is alive. If stale, it's dead or idle.</td>
+          </tr>
+          <tr>
+            <td>Stop hook firing</td>
+            <td class="maybe">Partial</td>
+            <td class="yes">Yes</td>
+            <td>Fires when agent turn ends (waiting for input). Does NOT fire on tab close, Ctrl+C, or crash.</td>
+          </tr>
+          <tr>
+            <td><code>SIGTERM</code>/<code>SIGINT</code> handler</td>
+            <td class="no">No</td>
+            <td class="no">N/A</td>
+            <td>Unreliable on Windows. The process tree is killed before handlers can run.</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h4>The Shipped Architecture (PID-Based)</h4>
+      <p>The timestamp-only approach proposed here originally was <strong>wrong</strong> &mdash; it failed during <code>/compact</code>, long thinking, and idle sessions where the terminal is still open. See Corrections tab for details. Here is what actually shipped:</p>
+<pre>
+<span style="color:#86efac">// HOOK (once per session): walk process tree to find claude.exe</span>
+<span style="color:#c084fc">if</span> (!state.claudePid) {
+  claudePid = findClaudePid(process.ppid); <span style="color:#6b7280">// PowerShell, ~1.2s</span>
+}
+
+<span style="color:#86efac">// SERVER (every poll): one tasklist call for ALL sessions</span>
+<span style="color:#c084fc">const</span> livePids = getLiveClaudePids(); <span style="color:#6b7280">// ~130ms, cached 3s</span>
+
+<span style="color:#86efac">// Per session: PID alive = active. PID dead = done.</span>
+<span style="color:#c084fc">if</span> (a.claudePid && livePids.has(a.claudePid)) {
+  a.active = <span style="color:#86efac">true</span>;  <span style="color:#6b7280">// terminal window is open</span>
+} <span style="color:#c084fc">else</span> {
+  a.done = <span style="color:#86efac">true</span>;    <span style="color:#6b7280">// terminal was closed (or no PID yet)</span>
+}
+
+<span style="color:#86efac">// Sessions sharing a claudePid are MERGED into one card</span>
+<span style="color:#6b7280">// (/plan → implement, /compact = same terminal = same card)</span>
+</pre>
+      <p>This works because:</p>
+      <ul>
+        <li><code>claude.exe</code> PID is stable for the lifetime of a terminal tab</li>
+        <li>When the tab closes, the process dies &mdash; next poll detects it</li>
+        <li>Works during <code>/compact</code>, idle, long responses &mdash; PID stays alive</li>
+        <li>Session ID changes (<code>/plan</code>, <code>/resume</code>) don't create new cards &mdash; same PID = same card</li>
+        <li>Zero cross-project contamination (each session checks its OWN PID)</li>
+      </ul>
+
+      <h4>Terminal Tabs vs. Windows</h4>
+      <p><strong>Important distinction:</strong> A "terminal window" can have multiple tabs. Each tab is an independent shell with an independent Claude process. Mission Control tracks <strong>sessions</strong>, not windows or tabs.</p>
+      <ul>
+        <li>1 terminal window with 3 tabs running <code>claude</code> = 3 sessions, 3 cards</li>
+        <li>3 separate terminal windows, each with 1 tab = also 3 sessions, 3 cards</li>
+        <li>There is <strong>no API</strong> to determine which tab belongs to which window. This grouping is invisible to hooks.</li>
+        <li><strong>Recommendation:</strong> Don't try to group by terminal window. Session is the right granularity. Each session = one conversation = one card. Keep it simple.</li>
+      </ul>
+
+      <h4>Edge Cases</h4>
+      <table class="truth-table">
+        <thead>
+          <tr><th>Scenario</th><th>What Happens</th><th>How MC Should Handle</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>User closes tab while agent is mid-turn</td>
+            <td>Process killed instantly. No Stop hook. State file frozen at last tool call.</td>
+            <td>Timestamp goes stale after 120s &rarr; auto-mark as done.</td>
+          </tr>
+          <tr>
+            <td>User closes tab while idle (waiting for prompt)</td>
+            <td>Stop hook may have already fired. State = 'idle'. No further signals.</td>
+            <td>'idle' + stale timestamp (&gt;5 min) &rarr; mark as done.</td>
+          </tr>
+          <tr>
+            <td>User does <code>/resume</code></td>
+            <td>New session ID created. Old session goes stale. New session starts fresh.</td>
+            <td>Old session auto-marks done (stale). New session gets its own card. Prompt-hook must NOT copy old prompts into new file.</td>
+          </tr>
+          <tr>
+            <td>Agent launches subagent (<code>Agent</code> tool)</td>
+            <td>Subagent runs in same process, same session ID. Hook events use same ID.</td>
+            <td>No special handling needed. One session ID = one card, subagents included.</td>
+          </tr>
+          <tr>
+            <td>Computer goes to sleep</td>
+            <td>All processes freeze. On wake, timestamps are stale.</td>
+            <td>Sessions will briefly show as "done" until agent resumes and hook fires again. This is correct behavior.</td>
+          </tr>
+          <tr>
+            <td>Claude crashes / OOM</td>
+            <td>Process dies. No Stop hook. Same as tab close.</td>
+            <td>Timestamp goes stale &rarr; auto-mark as done.</td>
+          </tr>
+          <tr>
+            <td>User runs <code>claude</code> in two different repos</td>
+            <td>Two separate claude.exe processes, two session IDs. Hook writes go to each project's own states/ dir.</td>
+            <td>Each Mission Control instance only reads its own states/ dir. No cross-contamination. (Unlike process counting which sees ALL claude.exe globally.)</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h4>Summary: What We Can and Cannot Track</h4>
+      <ul>
+        <li class="yes" style="color:var(--green)"><strong>CAN track:</strong> Which terminal windows are open (PID-based liveness)</li>
+        <li class="yes" style="color:var(--green)"><strong>CAN track:</strong> What state each agent is in (investigating, developing, idle, etc.)</li>
+        <li class="yes" style="color:var(--green)"><strong>CAN track:</strong> Every prompt the user types (append-only ndjson, combined across session chains)</li>
+        <li class="yes" style="color:var(--green)"><strong>CAN track:</strong> Every tool the agent uses (activity log)</li>
+        <li class="yes" style="color:var(--green)"><strong>CAN track:</strong> Context transitions within a terminal (/plan, /compact &mdash; via session chaining + ctx count)</li>
+        <li class="no" style="color:var(--rose)"><strong>CANNOT track:</strong> Which terminal window/tab a session belongs to (only the process, not the UI container)</li>
+        <li class="no" style="color:var(--rose)"><strong>CANNOT track:</strong> What happens during <code>/compact</code> or long responses (no hooks fire, but PID stays alive)</li>
+      </ul>
+      <p>No timestamp thresholds needed. The PID check is binary: alive or dead. The only fallback is for legacy sessions that don't have a <code>claudePid</code> yet (they use a 120s timestamp threshold until a hook fires and captures the PID).</p>
+    </div>
+  </div>
+
+  <!-- ================================================================
+       TAB 3: ARCHITECTURE
+       ================================================================ -->
+  <div id="tab-architecture" class="tab-panel">
+
+    <div class="doc-section">
+      <div class="section-eyebrow">Data Flow</div>
+      <div class="section-title">How a Session Becomes a Card</div>
+
+      <p style="font-size:14px;color:var(--text2);margin-bottom:20px;line-height:1.7">
+        Every time you type a prompt or an agent uses a tool, hooks fire and write data to disk.
+        The server reads that data, enriches it with AI summaries, and serves it to the dashboard.
+        Here is the exact flow, with each handoff point annotated.
+      </p>
+
+      <div class="flow">
+        <div class="flow-node">
+          <div class="flow-icon hook">01</div>
+          <div class="flow-label">User types a prompt in Claude Code</div>
+          <div class="flow-meta">Terminal window</div>
+        </div>
+        <div class="flow-arrow"></div>
+        <div class="flow-node">
+          <div class="flow-icon hook">02</div>
+          <div class="flow-label">prompt-hook.js fires (UserPromptSubmit)</div>
+          <div class="flow-meta">Receives: session_id, prompt text</div>
+        </div>
+        <div class="flow-arrow"></div>
+        <div class="flow-node">
+          <div class="flow-icon file">03</div>
+          <div class="flow-label">Appends to prompts/{session_id}.ndjson</div>
+          <div class="flow-meta">Append-only. One line per prompt. JSON: {prompt, ts}</div>
+        </div>
+        <div class="flow-arrow"></div>
+        <div class="flow-node">
+          <div class="flow-icon hook">04</div>
+          <div class="flow-label">Agent makes tool calls &rarr; hook.js fires (PostToolUse)</div>
+          <div class="flow-meta">Receives: session_id, tool_name, tool_input</div>
+        </div>
+        <div class="flow-arrow"></div>
+        <div class="flow-node">
+          <div class="flow-icon file">05</div>
+          <div class="flow-label">Overwrites states/{session_id}.json</div>
+          <div class="flow-meta">Full overwrite every time. Contains: state, tool, detail, ts</div>
+        </div>
+        <div class="flow-arrow"></div>
+        <div class="flow-node">
+          <div class="flow-icon file">06</div>
+          <div class="flow-label">Appends to logs/{session_id}.ndjson</div>
+          <div class="flow-meta">Append-only. Only on state transitions (deduped by state+tool)</div>
+        </div>
+        <div class="flow-arrow"></div>
+        <div class="flow-node">
+          <div class="flow-icon server">07</div>
+          <div class="flow-label">server.js readAgents() polls every 2s</div>
+          <div class="flow-meta">Reads ALL state files + prompts + missions.json synchronously</div>
+        </div>
+        <div class="flow-arrow broken"></div>
+        <div class="flow-node" style="border-color:var(--rose)">
+          <div class="flow-icon broken">08</div>
+          <div class="flow-label">getClaudeProcessCount() &rarr; slot assignment</div>
+          <div class="flow-meta" style="color:var(--rose)">BUG: Counts all claude.exe, assigns "active" by recency, not by process</div>
+        </div>
+        <div class="flow-arrow"></div>
+        <div class="flow-node">
+          <div class="flow-icon server">09</div>
+          <div class="flow-label">Cerebras AI summarizes prompts (async, 30s loop)</div>
+          <div class="flow-meta">Generates one-liner tagline per session. Stored in summaries.json</div>
+        </div>
+        <div class="flow-arrow"></div>
+        <div class="flow-node">
+          <div class="flow-icon ui">10</div>
+          <div class="flow-label">Dashboard renders agent cards</div>
+          <div class="flow-meta">Card shows: AI tagline (or file detail as fallback), state pill, time ago</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="doc-section">
+      <div class="section-eyebrow">Identity Model</div>
+      <div class="section-title">How Sessions Are Identified</div>
+
+      <div class="arch-grid">
+        <div class="arch-card">
+          <h4>Session ID Source</h4>
+          <p>The hook reads <code class="mono">data.session_id</code> from stdin (provided by Claude Code). Fallback chain: <code class="mono">process.env.CLAUDE_SESSION_ID</code> &rarr; <code class="mono">pid-{process.ppid}</code>. The <code>pid-</code> fallback is unreliable on Windows because each hook invocation spawns a new child process with a different parent PID.</p>
+        </div>
+        <div class="arch-card">
+          <h4>One Session = One Card</h4>
+          <p>Session ID is a UUID generated by Claude Code at conversation start. It's stable across the lifetime of one conversation. <code>/resume</code> creates a new session ID but inherits the old conversation context (which can cause prompt duplication).</p>
+        </div>
+        <div class="arch-card">
+          <h4>Terminal Tabs</h4>
+          <p>Each terminal tab running <code>claude</code> gets its own session ID. Multiple tabs = multiple sessions. There is no "terminal window" grouping &mdash; each tab is independent. Closing a tab kills the process without firing the Stop hook.</p>
+        </div>
+        <div class="arch-card">
+          <h4>What Claude Code Provides to Hooks</h4>
+          <p>Via stdin JSON: <code class="mono">session_id</code>, <code class="mono">tool_name</code>, <code class="mono">tool_input</code> (for PostToolUse), <code class="mono">prompt</code> (for UserPromptSubmit). There is no "window ID", no "tab ID", no "close" event. The session_id is the only reliable anchor.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="doc-section">
+      <div class="section-eyebrow">File Layout</div>
+      <div class="section-title">What Lives on Disk</div>
+
+      <div class="arch-grid">
+        <div class="arch-card">
+          <h4>states/{sid}.json</h4>
+          <p>Current snapshot. Overwritten on every tool call. Fields: <code class="mono">sessionId, tool, detail, state, emoji, label, ts</code>. The <code>ts</code> field is the key &mdash; it's the last time this session was heard from.</p>
+        </div>
+        <div class="arch-card">
+          <h4>logs/{sid}.ndjson</h4>
+          <p>Append-only activity log. One JSON line per state transition. Fields: <code class="mono">state, emoji, tool, detail, ts</code>. Deduped by state+tool to avoid flooding.</p>
+        </div>
+        <div class="arch-card">
+          <h4>prompts/{sid}.ndjson</h4>
+          <p>Append-only prompt log. One JSON line per user prompt. Fields: <code class="mono">prompt, ts</code>. Written by prompt-hook.js only. Server never modifies.</p>
+        </div>
+        <div class="arch-card">
+          <h4>summaries.json</h4>
+          <p>AI-generated one-liner summaries keyed by session ID. Contains <code class="mono">summary, hash, ts</code> per session. Generated by Cerebras on 30s loop. Hash is used to detect when prompts changed (stale summary).</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================================================================
+       TAB 3: LIVE DIAGNOSTICS
+       ================================================================ -->
+  <div id="tab-diagnostics" class="tab-panel">
+
+    <div class="doc-section">
+      <div class="section-eyebrow">System Health</div>
+      <div class="section-title">Live Metrics</div>
+      <div id="diag-health" class="diag-grid"></div>
+    </div>
+
+    <div class="doc-section">
+      <div class="section-eyebrow">Integrity Check</div>
+      <div class="section-title">Session Audit</div>
+      <div id="diag-sessions"></div>
+    </div>
+
+  </div>
+
+  <!-- ================================================================
+       TAB 4: FIX PLAN
+       ================================================================ -->
+  <div id="tab-plan" class="tab-panel">
+
+    <div class="doc-section">
+      <div class="section-eyebrow">Phase 1 &mdash; SHIPPED</div>
+      <div class="section-title">PID-Based Liveness &amp; Session Merging</div>
+
+      <div class="bug-card fixed">
+        <div class="bug-header">
+          <span class="bug-severity fixed">Shipped</span>
+          <span class="bug-title">Per-Session PID Detection + Session Chaining</span>
+        </div>
+        <div class="bug-body">
+          <p><strong>What shipped:</strong></p>
+          <ul>
+            <li><code>hook.js</code>: Walks process tree via <code>find-claude-pid.ps1</code> to find <code>claude.exe</code> PID (one-time ~1.2s). Stores as <code>claudePid</code> in state file.</li>
+            <li><code>server.js</code>: Single <code>tasklist</code> call (~130ms, 3s cache) checks all PIDs. <strong>PID alive = active. PID dead = done.</strong></li>
+            <li>Sessions sharing a <code>claudePid</code> merge into ONE card &mdash; combined prompts, inherited mission, <code>contextSwitches</code> count.</li>
+            <li>Survives <code>/compact</code>, <code>/plan</code>, long thinking, sleep/wake &mdash; anything where the terminal is open.</li>
+          </ul>
+          <p><strong>Identity model:</strong> Terminal = <code>claudePid</code>. Session = <code>sessionId</code> (changes on transitions). Card = PID group.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="doc-section">
+      <div class="section-eyebrow">Phase 2 &mdash; TODO &mdash; Data Integrity</div>
+      <div class="section-title">Fix Prompt Storage &amp; Cleanup</div>
+
+      <div class="bug-card" style="border-left:4px solid var(--purple)">
+        <div class="bug-body">
+          <p><strong>2a. Dedup legacy prompts</strong></p>
+          <ul>
+            <li>Write a one-time script that reads all <code>prompts/*.ndjson</code> files</li>
+            <li>For each prompt, compute a key: <code>hash(prompt_text + timestamp)</code></li>
+            <li>If the same key appears in multiple files, keep it only in the oldest file (the original session)</li>
+            <li>Rewrite affected files in-place</li>
+          </ul>
+
+          <p><strong>2b. Dedup guard in prompt-hook.js</strong></p>
+          <ul>
+            <li>Before appending, read the last 3 lines of the file</li>
+            <li>If the exact same prompt text was written in the last 5 seconds, skip</li>
+            <li>Filter out prompts that are purely <code>&lt;task-notification&gt;</code> system messages</li>
+          </ul>
+
+          <p><strong>2c. Fix DELETE endpoint</strong></p>
+          <ul>
+            <li>When deleting a session, also remove <code>logs/{sid}.ndjson</code>, <code>prompts/{sid}.ndjson</code></li>
+            <li>Clear the session from <code>summariesCache</code> and <code>deepSummariesCache</code></li>
+            <li>Remove from <code>missions.json</code></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="doc-section">
+      <div class="section-eyebrow">Phase 3 &mdash; TODO &mdash; Performance</div>
+      <div class="section-title">Cache readAgents() &amp; Reduce Disk I/O</div>
+
+      <div class="bug-card" style="border-left:4px solid var(--purple)">
+        <div class="bug-body">
+          <p><strong>Changes:</strong></p>
+          <ul>
+            <li>Add an in-memory cache to <code>readAgents()</code> with a 5-second TTL</li>
+            <li>Cache <code>missions.json</code> in memory (invalidate on write via POST /api/missions)</li>
+            <li>Don't read prompt file contents in readAgents &mdash; just check if the file exists (<code>fs.existsSync</code>)</li>
+            <li>Move <code>readAgents()</code> to async with <code>fs.promises</code> to avoid blocking the event loop</li>
+          </ul>
+
+          <p><strong>Expected result:</strong> Disk reads drop from ~168/poll to ~1 every 5 seconds (cache hit) or ~56 on cache miss (state files only, no prompt reads).</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="doc-section">
+      <div class="section-eyebrow">Phase 4 &mdash; TODO &mdash; Quality of Life</div>
+      <div class="section-title">Auto-Archive &amp; Card Display</div>
+
+      <div class="bug-card" style="border-left:4px solid var(--purple)">
+        <div class="bug-body">
+          <p><strong>4a. Auto-archive</strong></p>
+          <ul>
+            <li>Run a cleanup routine every hour</li>
+            <li>Sessions that have been "done" for &gt;24 hours: move state file to <code>archive/</code></li>
+            <li>Keep prompts and logs (they're the historical record)</li>
+            <li>Dashboard shows a count of archived sessions but doesn't load them by default</li>
+          </ul>
+
+          <p><strong>4b. Card headline priority</strong></p>
+          <ul>
+            <li>If AI summary exists &rarr; show summary tagline as card headline</li>
+            <li>Else if prompts exist &rarr; show first prompt (truncated to 80 chars)</li>
+            <li>Else &rarr; show "New session" (never show a bare filename)</li>
+            <li>The <code>detail</code> field (file name) moves to a secondary line or tooltip</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="doc-section">
+      <div class="section-eyebrow">Reference</div>
+      <div class="section-title">Terminal Window Behavior</div>
+
+      <div class="bug-card" style="border-left:4px solid var(--gray)">
+        <div class="bug-body">
+          <p><strong>How Mission Control actually tracks terminals (verified):</strong></p>
+          <ul>
+            <li><strong>Terminal identity</strong> = <code>claudePid</code> (the <code>claude.exe</code> process for that tab). Stable for terminal lifetime. Dies when tab closes.</li>
+            <li><strong>Session ID</strong> is per-conversation, NOT per-terminal. Changes on <code>/plan</code> &rarr; implement, <code>/compact</code>, <code>/resume</code>.</li>
+            <li><strong>One card = one PID.</strong> Multiple sessions sharing a PID are merged. Combined prompts, shared mission, context-switch count.</li>
+            <li><strong>Liveness</strong> = is the <code>claudePid</code> in the live <code>tasklist</code>? If yes &rarr; active. If no &rarr; done. No timestamp threshold.</li>
+            <li><strong>Process tree:</strong> <code>claude.exe &rarr; bash &rarr; bash &rarr; bash &rarr; node hook.js</code>. Hook walks 3 levels up via PowerShell <code>Get-CimInstance</code> to find <code>claude.exe</code>.</li>
+            <li><strong>Subagents</strong> and <strong>background agents</strong> share the parent session ID (same card).</li>
+            <li><strong>No close event</strong> exists on Windows. PID check replaces this entirely.</li>
+          </ul>
+
+          <p><strong>Implication:</strong> We CAN track terminal windows &mdash; via their <code>claude.exe</code> PID. One tab = one PID = one card. Session IDs are an internal detail that gets abstracted away by the merging layer.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================================================================
+       TAB 6: CORRECTIONS — What the Original Analysis Got Wrong
+       ================================================================ -->
+  <div id="tab-corrections" class="tab-panel">
+
+    <div class="trust-block" style="background:linear-gradient(135deg, #1e3a1e 0%, #0f2b1e 100%); margin-bottom:24px">
+      <h2>What We Got Wrong</h2>
+      <p>The original logic page was written by an AI agent analyzing the system from first principles. Several of its conclusions were <strong>wrong or incomplete</strong>. This tab documents the corrections discovered through actual testing on Windows Terminal, and the user's core requirements that the original analysis failed to account for.</p>
+    </div>
+
+    <div class="doc-section">
+      <div class="section-eyebrow">Fundamental &mdash; User Requirements</div>
+      <div class="section-title">The Goal Was Never "Timestamp Freshness"</div>
+
+      <div class="bug-card" style="border-left:4px solid var(--green)">
+        <div class="bug-body">
+          <p><strong>What the original page said:</strong> "The only reliable signal that a session is still alive is the timestamp of its last hook event. If no event for &gt;120s, the session is dead or the user has walked away."</p>
+
+          <p><strong>Why that's wrong for the user's goal:</strong></p>
+          <p>The user's mental model is: <strong>"If I have a terminal window open, that session is active."</strong> Not "if a hook fired recently." A user who opens 3 tabs, starts work in all 3, then sits in one thinking for 10 minutes &mdash; that session is <em>alive</em>. The terminal is open. The process is running. The agent is waiting. It should say active.</p>
+
+          <p>Timestamp-based liveness breaks this contract in multiple scenarios:</p>
+          <ul>
+            <li><strong><code>/compact</code></strong> &mdash; Claude Code compresses context internally. No hooks fire during this. Timestamp goes stale. Card drops to "done" while the agent is literally processing.</li>
+            <li><strong>User thinking for 5+ minutes</strong> &mdash; Stop hook fired once at end of agent turn. No events after that. Timestamp-only approach marks this as "done" while the user is reading output and composing their next prompt.</li>
+            <li><strong>Long agent responses</strong> &mdash; When Claude is generating a long response (not tool use), no PostToolUse hooks fire. The session appears dead to a timestamp check.</li>
+          </ul>
+
+          <div class="fix">
+            <strong>The correct goal:</strong> "Active" = the <code>claude.exe</code> process for that session is alive. Period. If the process exists, the window is open. If the process is dead, the window was closed. This is what the user wants, and it's what we can deliver.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="doc-section">
+      <div class="section-eyebrow">Technical &mdash; Process Tree</div>
+      <div class="section-title">ppid IS Walkable to claude.exe (The Logic Page Was Wrong)</div>
+
+      <div class="bug-card" style="border-left:4px solid var(--green)">
+        <div class="bug-body">
+          <p><strong>What the original page said:</strong> "The hook's <code>process.ppid</code> is NOT the claude.exe PID &mdash; it's an intermediate process." &#8230; "Each hook invocation spawns a new child process. The ppid changes every time. Useless on Windows."</p>
+
+          <p><strong>What's actually true:</strong></p>
+          <p>Yes, <code>process.ppid</code> changes per invocation (it's a fresh <code>bash.exe</code> each time). But the original analysis stopped there and concluded process detection was impossible. It's not.</p>
+
+          <p>The actual process tree (verified via PowerShell <code>Get-CimInstance Win32_Process</code>):</p>
+<pre>
+<span class="keyword">claude.exe</span>:70500          <span class="comment">← STABLE. Dies only when terminal closes.</span>
+  └─ bash.exe:28508         <span class="comment">← Intermediate (spawned by claude to run hook)</span>
+       └─ bash.exe:42444    <span class="comment">← Intermediate</span>
+            └─ bash.exe:49136  <span class="comment">← process.ppid for node hook.js</span>
+                 └─ node.exe:8064  <span class="comment">← The hook itself</span>
+</pre>
+
+          <p><strong>Walking from <code>process.ppid</code> up 3 levels always reaches <code>claude.exe</code>.</strong> This was verified across multiple invocations &mdash; the intermediate bash PIDs change every time, but claude.exe PID is rock-stable for the session's lifetime.</p>
+
+          <p><strong>How we walk it:</strong> A PowerShell script (<code>find-claude-pid.ps1</code>) uses <code>Get-CimInstance Win32_Process</code> to walk <code>ParentProcessId</code> until it finds a process named <code>claude</code>. Takes ~1.2 seconds. Runs <strong>once per session</strong> (first hook fire), result cached in state file forever after.</p>
+
+          <div class="fix">
+            <strong>Correction:</strong> The truth table should mark <code>process.ppid</code> as: "Not directly useful, but walkable to claude.exe via PowerShell CIM query. Per-session PID detection IS possible."
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="doc-section">
+      <div class="section-eyebrow">Technical &mdash; Liveness Architecture</div>
+      <div class="section-title">PID-Based Detection: The Correct Architecture</div>
+
+      <div class="bug-card" style="border-left:4px solid var(--green)">
+        <div class="bug-body">
+          <p><strong>The old broken approach:</strong> Count ALL claude.exe processes globally, assign "active" to top N by recency. No per-session mapping. Cross-project contamination.</p>
+
+          <p><strong>The timestamp-only approach (proposed by original logic page):</strong> If <code>ts &lt; 120s</code>, active. Else done. Per-session, but fails during silence (compact, thinking, long responses).</p>
+
+          <p><strong>The correct approach (PID-based):</strong></p>
+<pre>
+<span class="comment">// HOOK SIDE: Capture claude.exe PID once per session</span>
+<span class="keyword">if</span> (!existingState.claudePid) {
+  <span class="comment">// Walk process tree: ppid → bash → bash → bash → claude.exe</span>
+  <span class="comment">// via PowerShell Get-CimInstance (1.2s, one-time cost)</span>
+  claudePid = findClaudePid(process.ppid);
+}
+stateFile.claudePid = claudePid;
+
+<span class="comment">// SERVER SIDE: One tasklist call per poll (~130ms)</span>
+<span class="keyword">const</span> livePids = parseTasklist(
+  execSync('tasklist /FI "IMAGENAME eq claude.exe" /FO CSV /NH')
+);
+
+<span class="comment">// Per-session check</span>
+<span class="keyword">for</span> (<span class="keyword">const</span> session <span class="keyword">of</span> sessions) {
+  <span class="keyword">if</span> (session.claudePid) {
+    session.active = livePids.has(session.claudePid);  <span class="comment">// direct check</span>
+    session.done = !session.active;
+  } <span class="keyword">else</span> {
+    <span class="comment">// Fallback for sessions that haven't captured PID yet</span>
+    session.active = session.ago &lt; 120_000;
+    session.done = !session.active;
+  }
+}
+</pre>
+
+          <p><strong>Why this works for EVERY scenario:</strong></p>
+          <table class="truth-table">
+            <thead>
+              <tr><th>Scenario</th><th>Timestamp-Only</th><th>PID-Based</th></tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Agent making tool calls</td>
+                <td class="yes">Active (ts fresh)</td>
+                <td class="yes">Active (PID alive)</td>
+              </tr>
+              <tr>
+                <td><code>/compact</code> running</td>
+                <td class="no">Drops to done (no hooks)</td>
+                <td class="yes">Active (PID alive)</td>
+              </tr>
+              <tr>
+                <td>User thinking 10 min</td>
+                <td class="no">Drops to done</td>
+                <td class="yes">Active (PID alive)</td>
+              </tr>
+              <tr>
+                <td>Long agent response (no tools)</td>
+                <td class="no">Drops to done</td>
+                <td class="yes">Active (PID alive)</td>
+              </tr>
+              <tr>
+                <td>Tab closed</td>
+                <td class="yes">Done (ts stale)</td>
+                <td class="yes">Done (PID dead)</td>
+              </tr>
+              <tr>
+                <td>Crash / OOM</td>
+                <td class="yes">Done (ts stale)</td>
+                <td class="yes">Done (PID dead)</td>
+              </tr>
+              <tr>
+                <td>Sleep / wake</td>
+                <td class="no">Briefly "done" until hook fires</td>
+                <td class="yes">Active (PID alive after wake)</td>
+              </tr>
+              <tr>
+                <td>Cross-project sessions</td>
+                <td class="yes">No contamination</td>
+                <td class="yes">No contamination</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <p><strong>Performance:</strong></p>
+          <ul>
+            <li><strong>Hook side:</strong> ~1.2s PowerShell call, runs ONCE per session (first hook fire only). Subsequent hooks: 0ms (PID already cached in state file).</li>
+            <li><strong>Server side:</strong> Single <code>tasklist</code> call (~130ms) per poll covers ALL sessions. Well within the 2s poll budget.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="doc-section">
+      <div class="section-eyebrow">Meta &mdash; Lessons</div>
+      <div class="section-title">Why the Original Analysis Was Overconfident</div>
+
+      <div class="bug-card" style="border-left:4px solid var(--blue)">
+        <div class="bug-body">
+          <p>The original logic page made definitive statements like "there is exactly one reliable way to detect session liveness" and "The only reliable signal is the timestamp." These conclusions were reached by theorizing about the Windows process model rather than testing it.</p>
+
+          <p><strong>What was assumed vs. what testing revealed:</strong></p>
+          <ul>
+            <li><strong>Assumed:</strong> "ppid is useless on Windows." <strong>Reality:</strong> ppid is not directly useful, but walking the tree to claude.exe works perfectly. The assumption stopped one step too early.</li>
+            <li><strong>Assumed:</strong> No way to map a process to a session. <strong>Reality:</strong> The hook runs inside the claude.exe process tree. Walking up always finds the right claude.exe. Store the PID once, check forever.</li>
+            <li><strong>Assumed:</strong> <code>wmic</code> available for process queries. <strong>Reality:</strong> <code>wmic</code> is deprecated/removed on Windows 11. Must use PowerShell <code>Get-CimInstance</code>.</li>
+            <li><strong>Assumed:</strong> User's goal is "show recent activity." <strong>Reality:</strong> User's goal is "show which terminal windows are open." These are fundamentally different requirements.</li>
+          </ul>
+
+          <div class="fix">
+            <strong>Lesson:</strong> Always test process assumptions empirically on the target OS. And always ask the user what "active" means to them before designing the detection system.
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+</div>
+
+<script>
+function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
+function ago(ms){if(!ms&&ms!==0)return'?';if(ms<60000)return Math.round(ms/1000)+'s';if(ms<3600000)return Math.round(ms/60000)+'m';return Math.round(ms/3600000)+'h'}
+
+// Tab switching
+function switchTab(name) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  document.getElementById('tab-' + name).classList.add('active');
+  event.target.classList.add('active');
+}
+
+// Live diagnostics (only loads when diagnostics tab is active)
+async function refreshDiagnostics() {
+  if (!document.getElementById('tab-diagnostics').classList.contains('active')) return;
+  try {
+    const data = await fetch('/api/logic').then(r => r.json());
+
+    // Health grid
+    const items = [
+      {label:'AI Engine', value:data.health.aiReady?'ON':'OFF', cls:data.health.aiReady?'ok':'bad'},
+      {label:'Active Sessions', value:data.health.activeSessions, cls:data.health.activeSessions>0?'ok':'warn'},
+      {label:'State Files', value:data.health.states, cls:'ok'},
+      {label:'Log Files', value:data.health.logs, cls:'ok'},
+      {label:'Prompt Files', value:data.health.prompts, cls:'ok'},
+      {label:'AI Summaries', value:data.health.summaries, cls:data.health.summaries>0?'ok':'warn'},
+      {label:'Stale Summaries', value:data.health.staleSummaries, cls:data.health.staleSummaries>0?'warn':'ok'},
+      {label:'API Calls/min', value:data.health.apiCallsLastMin, cls:data.health.apiCallsLastMin<20?'ok':'warn'},
+    ];
+    document.getElementById('diag-health').innerHTML = items.map(i =>
+      '<div class="diag-card"><div class="diag-value '+i.cls+'">'+esc(String(i.value))+'</div><div class="diag-label">'+esc(i.label)+'</div></div>'
+    ).join('');
+
+    // Session audit table
+    if (data.sessions.length) {
+      let h = '<table class="audit-table"><thead><tr><th>Session</th><th>State</th><th>Age</th><th>Prompts</th><th>Log</th><th>Summary</th><th>Issues</th></tr></thead><tbody>';
+      for (const s of data.sessions) {
+        h += '<tr>';
+        h += '<td><span class="sid">'+esc(s.sid)+'</span></td>';
+        h += '<td><span class="state-pill '+(s.state||'idle')+'">'+esc(s.state||'?')+'</span></td>';
+        h += '<td>'+ago(s.stateAge)+'</td>';
+        h += '<td>'+(s.hasPrompts?'<span class="check">&#10003;</span> '+s.promptCount:'<span class="cross">&#10007;</span>')+'</td>';
+        h += '<td>'+(s.hasLog?'<span class="check">&#10003;</span> '+s.logCount:'<span class="cross">&#10007;</span>')+'</td>';
+        h += '<td>'+(s.hasSummary?'<span class="check">&#10003;</span>':'<span class="cross">&#10007;</span>')+'</td>';
+        h += '<td style="font-size:11px;color:var(--rose);max-width:200px">'+esc(s.issues.join('; ')||'\u2014')+'</td>';
+        h += '</tr>';
+      }
+      h += '</tbody></table>';
+      document.getElementById('diag-sessions').innerHTML = h;
+    } else {
+      document.getElementById('diag-sessions').innerHTML = '<p style="color:var(--text3)">No sessions found</p>';
+    }
+
+    document.getElementById('clock').textContent = 'Updated ' + new Date(data.ts).toLocaleTimeString();
+  } catch(e) {
+    console.error('Diagnostics fetch failed:', e);
+  }
+}
+
+// Run diagnostics on load and every 5s
+refreshDiagnostics();
+setInterval(refreshDiagnostics, 5000);
+
+// Clock
+function updateClock() { document.getElementById('clock').textContent = new Date().toLocaleTimeString(); }
+updateClock();
+setInterval(updateClock, 1000);
+</script>
+</body>
+</html>
