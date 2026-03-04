@@ -19,10 +19,12 @@ const SUMMARIES_F  = path.join(__dirname, 'summaries.json');
 const NORTHSTAR_F  = path.join(__dirname, 'northstar-cache.json');
 const DEEP_SUMM_F  = path.join(__dirname, 'deep-summaries.json');
 const ENV_FILE    = path.join(__dirname, '.env');
-const AGENTS_DIR  = path.join(__dirname, '..', 'agents');
-const COMMANDS_DIR = path.join(__dirname, '..', 'commands');
+const AGENTS_DIR  = path.join(process.env.HOME || process.env.USERPROFILE || '', '.claude', 'agents');
+const COMMANDS_DIR = path.join(process.env.HOME || process.env.USERPROFILE || '', '.claude', 'commands');
 // Transcript dir — Claude Code stores conversation .jsonl files here
-const TRANSCRIPTS_DIR = path.join(process.env.HOME || process.env.USERPROFILE || '', '.claude', 'projects', 'C--Users-ephra-phredomade');
+// Auto-detect transcript dir based on CWD slug (same logic Claude Code uses)
+const _cwdSlug = process.cwd().replace(/\\/g, '/').replace(/^([A-Za-z]):\//, (_, d) => d.toUpperCase() + '--').replace(/\//g, '-');
+const TRANSCRIPTS_DIR = path.join(process.env.HOME || process.env.USERPROFILE || '', '.claude', 'projects', _cwdSlug);
 const LOGIC_HTML_F = path.join(__dirname, 'logic-page.html');
 const FINDINGS_HTML_F = path.join(__dirname, 'findings-page.html');
 const TOOLS_HTML_F = path.join(__dirname, 'tools-page.html');
