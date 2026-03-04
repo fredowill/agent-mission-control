@@ -2524,23 +2524,36 @@ const server = http.createServer((req, res) => {
 
   // ── Dispatch CRUD API ───────────────────────────────────────────────────────
   if (url === '/api/dispatch' && req.method === 'GET') {
+    // Merge local dispatch + shared MC backlog (mc-backlog.json tracked in git)
+    const local = readJSON(DISPATCH_F, []).map(i => ({ ...i, _source: 'local' }));
+    const mcFile = path.join(__dirname, 'mc-backlog.json');
+    const mcData = readJSON(mcFile, { tasks: [] });
+    const shared = (mcData.tasks || []).map(i => ({ ...i, _source: 'mc' }));
     res.writeHead(200, { 'Content-Type': 'application/json', 'Cache-Control': 'no-store' });
-    return res.end(JSON.stringify(readJSON(DISPATCH_F, [])));
+    return res.end(JSON.stringify([...shared, ...local]));
   }
   if (url === '/api/dispatch' && req.method === 'POST') {
     let body = '';
     req.on('data', c => { body += c; });
     req.on('end', () => {
       try {
-        const { title, description, status, priority, workstream, tags, linkedSession } = JSON.parse(body);
+        const { title, description, status, priority, workstream, tags, linkedSession, _source } = JSON.parse(body);
         if (!title) { res.writeHead(400, { 'Content-Type': 'application/json' }); return res.end(JSON.stringify({ error: 'title required' })); }
-        const items = readJSON(DISPATCH_F, []);
-        const id = Math.random().toString(36).slice(2, 10);
+        const id = (_source === 'mc' ? 'mc-' : '') + Math.random().toString(36).slice(2, 10);
         const now = new Date().toISOString();
-        items.push({ id, title, description: description || '', status: status || 'todo', priority: priority || 'p2', workstream: workstream || '', tags: tags || [], linkedSession: linkedSession || null, created: now, updated: now });
-        writeJSON(DISPATCH_F, items);
+        const item = { id, title, description: description || '', status: status || 'todo', priority: priority || 'p2', workstream: workstream || '', tags: tags || [], linkedSession: linkedSession || null, created: now, updated: now };
+        if (_source === 'mc') {
+          const mcFile = path.join(__dirname, 'mc-backlog.json');
+          const mcData = readJSON(mcFile, { tasks: [] });
+          mcData.tasks.push(item);
+          writeJSON(mcFile, mcData);
+        } else {
+          const items = readJSON(DISPATCH_F, []);
+          items.push(item);
+          writeJSON(DISPATCH_F, items);
+        }
         res.writeHead(200, { 'Content-Type': 'application/json' });
-        res.end(JSON.stringify(items));
+        res.end(JSON.stringify({ ok: true, id }));
       } catch (e) { res.writeHead(400, { 'Content-Type': 'application/json' }); res.end(JSON.stringify({ error: e.message })); }
     });
     return;
@@ -2552,27 +2565,47 @@ const server = http.createServer((req, res) => {
     req.on('end', () => {
       try {
         const updates = JSON.parse(body);
-        const items = readJSON(DISPATCH_F, []);
-        const idx = items.findIndex(i => i.id === id);
-        if (idx === -1) { res.writeHead(404, { 'Content-Type': 'application/json' }); return res.end(JSON.stringify({ error: 'not found' })); }
-        for (const key of ['title', 'description', 'status', 'priority', 'workstream', 'tags', 'linkedSession']) {
-          if (updates[key] !== undefined) items[idx][key] = updates[key];
+        // Route to correct file based on id prefix
+        if (id.startsWith('mc-')) {
+          const mcFile = path.join(__dirname, 'mc-backlog.json');
+          const mcData = readJSON(mcFile, { tasks: [] });
+          const idx = mcData.tasks.findIndex(i => i.id === id);
+          if (idx === -1) { res.writeHead(404, { 'Content-Type': 'application/json' }); return res.end(JSON.stringify({ error: 'not found' })); }
+          for (const key of ['title', 'description', 'status', 'priority', 'workstream', 'tags', 'linkedSession']) {
+            if (updates[key] !== undefined) mcData.tasks[idx][key] = updates[key];
+          }
+          mcData.tasks[idx].updated = new Date().toISOString();
+          writeJSON(mcFile, mcData);
+        } else {
+          const items = readJSON(DISPATCH_F, []);
+          const idx = items.findIndex(i => i.id === id);
+          if (idx === -1) { res.writeHead(404, { 'Content-Type': 'application/json' }); return res.end(JSON.stringify({ error: 'not found' })); }
+          for (const key of ['title', 'description', 'status', 'priority', 'workstream', 'tags', 'linkedSession']) {
+            if (updates[key] !== undefined) items[idx][key] = updates[key];
+          }
+          items[idx].updated = new Date().toISOString();
+          writeJSON(DISPATCH_F, items);
         }
-        items[idx].updated = new Date().toISOString();
-        writeJSON(DISPATCH_F, items);
         res.writeHead(200, { 'Content-Type': 'application/json' });
-        res.end(JSON.stringify(items));
+        res.end(JSON.stringify({ ok: true }));
       } catch (e) { res.writeHead(400, { 'Content-Type': 'application/json' }); res.end(JSON.stringify({ error: e.message })); }
     });
     return;
   }
   if (url.startsWith('/api/dispatch/') && req.method === 'DELETE') {
     const id = decodeURIComponent(url.slice('/api/dispatch/'.length));
-    let items = readJSON(DISPATCH_F, []);
-    items = items.filter(i => i.id !== id);
-    writeJSON(DISPATCH_F, items);
+    if (id.startsWith('mc-')) {
+      const mcFile = path.join(__dirname, 'mc-backlog.json');
+      const mcData = readJSON(mcFile, { tasks: [] });
+      mcData.tasks = mcData.tasks.filter(i => i.id !== id);
+      writeJSON(mcFile, mcData);
+    } else {
+      let items = readJSON(DISPATCH_F, []);
+      items = items.filter(i => i.id !== id);
+      writeJSON(DISPATCH_F, items);
+    }
     res.writeHead(200, { 'Content-Type': 'application/json' });
-    return res.end(JSON.stringify(items));
+    return res.end(JSON.stringify({ ok: true }));
   }
 
   // ── Prompt Search API ───────────────────────────────────────────────────────
