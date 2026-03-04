@@ -226,9 +226,112 @@ Zero dependencies. No React, no bundler, no CSS framework. Just one Node.js serv
 
 ---
 
+## Running on a second machine
+
+Mission Control is 100% file-based — no database, no Docker, no `npm install`. If you can clone the repo and run `node`, you're done.
+
+### What to do
+
+**1. Copy the files** into your project's `.claude/agent-hub/` (same structure as Setup above).
+
+**2. Register the hooks** in `.claude/settings.json` — same JSON as Setup step 2. The hook commands use relative paths (`node .claude/agent-hub/hook.js`) so they work on any machine without editing.
+
+**3. Handle the transcript directory** — `server.js` has one hardcoded path near the top:
+
+```js
+const TRANSCRIPTS_DIR = path.join(
+  process.env.HOME || process.env.USERPROFILE || '',
+  '.claude', 'projects', 'C--Users-ephra-phredomade'  // ← machine-specific
+);
+```
+
+This reads Claude Code conversation transcripts for fallback prompt extraction after auto-compact. **It's optional** — the dashboard works without it. To make it portable, replace with:
+
+```js
+// Auto-detect transcript dir from repo path
+const PROJECT_SLUG = path.resolve(__dirname, '..', '..')
+  .replace(/^\//, '').replace(/[/\\:]/g, '-');
+const TRANSCRIPTS_DIR = path.join(
+  process.env.HOME || process.env.USERPROFILE || '',
+  '.claude', 'projects', PROJECT_SLUG
+);
+```
+
+**4. Add `.env`** with your Cerebras key (optional, same as Setup step 4).
+
+**5. Start** — `node .claude/agent-hub/server.js` → `http://localhost:3033`
+
+### What you get
+
+Each machine runs its own Mission Control instance tracking its own local Claude Code sessions. The hooks fire locally, write to local files, and the local server reads them. No network sync needed — each machine is self-contained.
+
+### What if I want both machines in one dashboard?
+
+Not supported yet. Each instance is local-only. Future options:
+- **Shared filesystem** (NFS, SMB, Syncthing) pointing both machines' `agent-hub/` data dirs at the same location
+- **Central server** — extend the API to accept remote hook POSTs and aggregate sessions
+- **SSH tunnel** — `ssh -L 3033:localhost:3033 user@other-machine` to view one machine's dashboard from the other
+
+---
+
 ## Platform notes
 
-PID-based liveness uses Windows `tasklist` and PowerShell. The dashboard, hooks, and AI features are cross-platform — only the process detection needs adapting for macOS/Linux (`ps` instead of `tasklist`).
+PID-based liveness uses Windows `tasklist` and PowerShell (`find-claude-pid.ps1`). The dashboard, hooks, and AI features are cross-platform — only the process detection needs adapting for macOS/Linux.
+
+### Windows → macOS/Linux changes
+
+**`server.js`** — replace the `tasklist` call (~line 83):
+
+```js
+// Windows (current):
+execSync('tasklist /FI "IMAGENAME eq claude.exe" /FO CSV /NH', ...)
+
+// macOS/Linux:
+execSync('pgrep -x claude', ...)
+```
+
+**`hook.js`** — replace the PowerShell PID resolution. The hook calls `find-claude-pid.ps1` to walk the process tree from the hook's parent PID up to find `claude.exe`. On macOS/Linux, replace with:
+
+```bash
+# Walk up process tree to find claude ancestor
+pid=$PPID
+while [ "$pid" != "1" ] && [ -n "$pid" ]; do
+  name=$(ps -o comm= -p "$pid" 2>/dev/null)
+  if [ "$name" = "claude" ]; then echo "$pid"; exit 0; fi
+  pid=$(ps -o ppid= -p "$pid" 2>/dev/null | tr -d ' ')
+done
+```
+
+If both machines are Windows, no platform changes needed.
+
+---
+
+## Troubleshooting
+
+**No cards appearing?**
+- Open a Claude Code session, use any tool, then check `agent-hub/states/` for a new `.json` file
+- If nothing appears, hooks aren't firing — verify `.claude/settings.json` has the hooks registered
+- Test the hook directly: `node .claude/agent-hub/hook.js` (it'll error about missing env vars, but at least confirms the path resolves)
+
+**Cards stuck on "Idle" after sending a prompt?**
+- Known ~30s timing gap between receiving a prompt and the first tool call
+- `prompt-hook.js` partially mitigates this by writing a "thinking" state immediately
+- The gap is a Claude Code limitation — no hook fires for "agent is thinking"
+
+**AI summaries not generating?**
+- Verify `.env` has a valid `CEREBRAS_API_KEY`
+- Check server stdout for rate limit errors (free tier = 30 RPM)
+- Summaries are optional — the dashboard works fully without them
+
+**Port 3033 already in use?**
+- Windows: `netstat -ano | findstr 3033`
+- macOS/Linux: `lsof -i :3033`
+- Kill the process or change `PORT` on line 13 of `server.js`
+
+**Hook paths not resolving?**
+- The hook commands in `settings.json` run from the project root (where you launched Claude Code)
+- Verify with: `node -e "console.log(require('path').resolve('.claude/agent-hub/hook.js'))"`
+- If you use absolute paths, update them for each machine
 
 ---
 
@@ -236,7 +339,7 @@ PID-based liveness uses Windows `tasklist` and PowerShell. The dashboard, hooks,
 
 - Node.js `http` — no Express, no frameworks
 - Cerebras API — free Llama-based models for summarization
-- PowerShell — Windows process tree walking
+- PowerShell — Windows process tree walking (see Platform notes for macOS/Linux)
 - Vanilla JS + CSS — the entire UI is a template literal in `server.js`
 
 **4,300 lines. Zero dependencies. One command to run.**
