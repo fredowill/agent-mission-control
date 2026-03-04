@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Radar &mdash; Mission Control</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=DM+Sans:wght@400;500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { margin:0; padding:0; box-sizing:border-box }
+  :root {
+    --bg:#ffffff; --bg-page:#f8f8f8; --surface:#f2f2f2; --surface2:#e8e8e8;
+    --text:#1a1a1a; --text2:#555; --text3:#999; --sep:#e5e5e5;
+    --green:#22c55e; --green-bg:rgba(34,197,94,0.08);
+    --blue:#3b82f6; --blue-bg:rgba(59,130,246,0.08);
+    --amber:#f59e0b; --amber-bg:rgba(245,158,11,0.08);
+    --purple:#8b5cf6; --purple-bg:rgba(139,92,246,0.08);
+    --rose:#ef4444; --rose-bg:rgba(239,68,68,0.06);
+    --gray:#9ca3af;
+  }
+  body { background:var(--bg-page); color:var(--text); font-family:'DM Sans',-apple-system,system-ui,sans-serif; min-height:100vh; -webkit-font-smoothing:antialiased }
+
+  /* Header */
+  header { display:flex; align-items:center; justify-content:space-between; padding:0 clamp(24px,4vw,48px); height:64px; background:var(--bg); border-bottom:1px solid var(--sep); position:sticky; top:0; z-index:10 }
+  .logo { display:flex; align-items:center; gap:12px }
+  .logo-dot { width:8px; height:8px; border-radius:50%; background:var(--purple) }
+  .logo-text { font-family:'Plus Jakarta Sans',sans-serif; font-size:15px; font-weight:600; letter-spacing:-0.02em }
+  .header-nav { display:flex; gap:4px; padding:3px; background:var(--surface); border-radius:8px; position:absolute; left:50%; transform:translateX(-50%) }
+  .nav-link { padding:5px 14px; border-radius:6px; font-family:'DM Sans',sans-serif; font-size:13px; font-weight:500; color:var(--text3); text-decoration:none; transition:all .15s }
+  .nav-link:hover { color:var(--text2) }
+  .nav-link.active { background:var(--bg); color:var(--text); box-shadow:0 1px 3px rgba(0,0,0,.06) }
+  .header-right { font-family:'DM Mono',monospace; font-size:11px; color:var(--text3) }
+
+  /* Shell */
+  .shell { max-width:960px; margin:0 auto; padding:clamp(24px,4vw,48px) }
+  .page-title { font-family:'Plus Jakarta Sans',sans-serif; font-size:clamp(28px,4vw,38px); font-weight:700; letter-spacing:-0.035em; margin-bottom:4px; line-height:1.1 }
+  .page-sub { font-size:15px; color:var(--text3); margin-bottom:28px }
+
+  /* Summary strip */
+  .summary-strip {
+    display:flex; gap:24px; padding:14px 20px;
+    background:var(--bg); border:1px solid var(--sep); border-radius:12px;
+    margin-bottom:32px; align-items:center;
+  }
+  .summary-stat { display:flex; align-items:baseline; gap:6px }
+  .summary-num { font-family:'Plus Jakarta Sans',sans-serif; font-size:20px; font-weight:700; letter-spacing:-0.02em; color:var(--text) }
+  .summary-label { font-size:13px; color:var(--text3) }
+  .summary-sep { width:1px; height:20px; background:var(--sep) }
+
+  /* Category filter pills */
+  .cat-nav { display:flex; gap:8px; margin-bottom:32px; flex-wrap:wrap; align-items:center }
+  .cat-pill {
+    display:flex; align-items:center; gap:6px;
+    padding:6px 14px; border-radius:100px;
+    font-size:13px; font-weight:500;
+    background:var(--bg); border:1px solid var(--sep);
+    color:var(--text2); cursor:pointer;
+    transition:all .15s; user-select:none;
+  }
+  .cat-pill:hover { border-color:var(--text3) }
+  .cat-pill .cat-count {
+    font-family:'DM Mono',monospace; font-size:11px;
+    padding:1px 7px; border-radius:100px;
+    background:var(--surface); color:var(--text3);
+  }
+  .cat-pill.active { border-color:var(--purple); color:var(--purple); background:var(--purple-bg) }
+  .cat-pill.active .cat-count { background:rgba(139,92,246,0.15); color:#7c3aed }
+
+  /* Add button */
+  .add-btn {
+    margin-left:auto;
+    display:flex; align-items:center; gap:6px;
+    padding:6px 16px; border-radius:100px;
+    font-size:13px; font-weight:600;
+    background:var(--purple); color:#fff; border:none;
+    cursor:pointer; transition:all .15s;
+    font-family:'DM Sans',sans-serif;
+  }
+  .add-btn:hover { background:#7c3aed }
+
+  /* Source cards */
+  .source-grid {
+    display:grid; grid-template-columns:repeat(auto-fill,minmax(280px,1fr)); gap:12px;
+  }
+  .source-card {
+    background:var(--bg); border:1px solid var(--sep); border-radius:14px;
+    padding:20px;
+    transition:transform .15s ease, box-shadow .15s ease;
+  }
+  .source-card:hover {
+    transform:translateY(-2px);
+    box-shadow:0 8px 24px rgba(0,0,0,0.06);
+  }
+  .source-card.pinned { border-color:var(--purple); border-width:1.5px }
+
+  .source-top { display:flex; align-items:center; gap:10px; margin-bottom:8px }
+  .source-name {
+    font-family:'Plus Jakarta Sans',sans-serif;
+    font-size:15px; font-weight:700; letter-spacing:-0.01em;
+    color:var(--text); flex:1;
+  }
+  .pin-icon { font-size:12px; color:var(--purple); flex-shrink:0 }
+  .source-link {
+    width:28px; height:28px; border-radius:8px;
+    display:flex; align-items:center; justify-content:center;
+    background:var(--surface); color:var(--text3);
+    text-decoration:none; font-size:13px;
+    transition:all .15s; flex-shrink:0;
+  }
+  .source-link:hover { background:var(--purple-bg); color:var(--purple) }
+
+  .source-cat {
+    display:inline-block;
+    font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:0.06em;
+    padding:2px 8px; border-radius:100px;
+    margin-bottom:8px;
+  }
+  .source-cat.cat-components { background:var(--green-bg); color:#166534 }
+  .source-cat.cat-skills { background:var(--purple-bg); color:#6d28d9 }
+  .source-cat.cat-inspiration { background:var(--amber-bg); color:#92400e }
+  .source-cat.cat-research { background:var(--blue-bg); color:#1d4ed8 }
+  .source-cat.cat-tools { background:var(--rose-bg); color:var(--rose) }
+
+  .source-desc { font-size:13px; line-height:1.6; color:var(--text2); margin-bottom:10px }
+
+  .source-tags { display:flex; flex-wrap:wrap; gap:4px }
+  .source-tag {
+    font-family:'DM Mono',monospace; font-size:10px; font-weight:500;
+    padding:2px 8px; border-radius:100px;
+    background:var(--surface); color:var(--text3);
+  }
+
+  /* Delete action — inline in source-top row */
+  .source-delete {
+    width:28px; height:28px; border-radius:8px;
+    display:flex; align-items:center; justify-content:center;
+    background:transparent; border:none; color:var(--text3);
+    cursor:pointer; font-size:12px; flex-shrink:0;
+    opacity:0; transition:all .15s;
+  }
+  .source-card:hover .source-delete { opacity:1 }
+  .source-delete:hover { background:var(--rose-bg); color:var(--rose) }
+
+  /* Add form */
+  .add-form-overlay {
+    display:none; position:fixed; inset:0; background:rgba(0,0,0,0.3);
+    z-index:100; backdrop-filter:blur(4px);
+    justify-content:center; align-items:center;
+  }
+  .add-form-overlay.visible { display:flex }
+  .add-form {
+    background:var(--bg); border-radius:16px; padding:32px;
+    width:90%; max-width:480px;
+    box-shadow:0 20px 60px rgba(0,0,0,0.15);
+  }
+  .add-form h2 {
+    font-family:'Plus Jakarta Sans',sans-serif; font-size:20px; font-weight:700;
+    letter-spacing:-0.03em; margin-bottom:20px;
+  }
+  .form-group { margin-bottom:14px }
+  .form-group label {
+    display:block; font-size:12px; font-weight:600; color:var(--text3);
+    text-transform:uppercase; letter-spacing:0.06em; margin-bottom:4px;
+  }
+  .form-group input, .form-group textarea, .form-group select {
+    width:100%; padding:10px 14px; border:1px solid var(--sep); border-radius:10px;
+    font-family:'DM Sans',sans-serif; font-size:14px; color:var(--text);
+    background:var(--bg-page); outline:none; transition:border-color .15s;
+  }
+  .form-group input:focus, .form-group textarea:focus, .form-group select:focus {
+    border-color:var(--purple);
+  }
+  .form-group textarea { resize:vertical; min-height:60px }
+  .form-actions { display:flex; gap:10px; margin-top:20px }
+  .form-actions button {
+    padding:10px 20px; border-radius:10px; font-family:'DM Sans',sans-serif;
+    font-size:14px; font-weight:600; cursor:pointer; transition:all .15s;
+  }
+  .btn-save { background:var(--purple); color:#fff; border:none }
+  .btn-save:hover { background:#7c3aed }
+  .btn-cancel { background:var(--surface); color:var(--text2); border:1px solid var(--sep) }
+  .btn-cancel:hover { background:var(--surface2) }
+
+  /* Empty state */
+  .empty-state {
+    text-align:center; padding:60px 20px; color:var(--text3);
+  }
+  .empty-state .empty-icon { font-size:32px; margin-bottom:12px; opacity:.5 }
+  .empty-state p { font-size:14px }
+
+  /* Responsive */
+  @media (max-width:800px) {
+    .shell { padding:20px 16px }
+    .page-title { font-size:24px }
+    .summary-strip { flex-wrap:wrap; gap:12px 20px }
+    .source-grid { grid-template-columns:1fr }
+    .cat-nav { gap:6px }
+    .cat-pill { font-size:12px; padding:5px 12px }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">
+    <div class="logo-dot"></div>
+    <div class="logo-text">Mission Control</div>
+  </div>
+  <nav class="header-nav">
+    <a href="/" class="nav-link">Dashboard</a>
+    <a href="/dispatch" class="nav-link">Dispatch</a>
+    <a href="/findings" class="nav-link">Findings</a>
+    <a href="/tools" class="nav-link">Toolbox</a>
+    <a href="/logic" class="nav-link">Logic</a>
+    <a href="/radar" class="nav-link active">Radar</a>
+  </nav>
+  <div class="header-right"></div>
+</header>
+
+<div class="shell">
+  <h1 class="page-title">Radar</h1>
+  <p class="page-sub">External sources, inspiration, and tools on your watch list</p>
+  <div id="main"><div style="padding:60px;text-align:center;color:#999">Loading...</div></div>
+</div>
+
+<!-- Add Source Form -->
+<div class="add-form-overlay" id="addOverlay">
+  <div class="add-form">
+    <h2>Add Source</h2>
+    <div class="form-group">
+      <label>Name</label>
+      <input type="text" id="f-name" placeholder="e.g. Aceternity UI">
+    </div>
+    <div class="form-group">
+      <label>URL</label>
+      <input type="url" id="f-url" placeholder="https://...">
+    </div>
+    <div class="form-group">
+      <label>Category</label>
+      <select id="f-category">
+        <option value="Components">Components</option>
+        <option value="Skills">Skills</option>
+        <option value="Inspiration">Inspiration</option>
+        <option value="Research">Research</option>
+        <option value="Tools">Tools</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label>Description</label>
+      <textarea id="f-desc" placeholder="Brief description..."></textarea>
+    </div>
+    <div class="form-group">
+      <label>Tags (comma-separated)</label>
+      <input type="text" id="f-tags" placeholder="react, tailwind, ui">
+    </div>
+    <div class="form-actions">
+      <button class="btn-save" onclick="saveSource()">Save</button>
+      <button class="btn-cancel" onclick="closeForm()">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<script>
+let sources = [];
+let activeFilter = 'all';
+
+function esc(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function catClass(cat) {
+  return 'source-cat cat-' + cat.toLowerCase().replace(/\s+/g, '-');
+}
+
+function renderCard(s) {
+  const pinHtml = s.pinned ? '<span class="pin-icon" title="Pinned">&#9733;</span>' : '';
+  const pinnedClass = s.pinned ? ' pinned' : '';
+  let tagsHtml = '';
+  (s.tags || []).forEach(t => {
+    tagsHtml += '<span class="source-tag">' + esc(t) + '</span>';
+  });
+
+  return '<div class="source-card' + pinnedClass + '" data-id="' + esc(s.id) + '" data-cat="' + esc(s.category) + '">'
+    + '<div class="source-top">'
+    + '<span class="source-name">' + esc(s.name) + '</span>'
+    + pinHtml
+    + '<a class="source-link" href="' + esc(s.url) + '" target="_blank" rel="noopener" title="Open">&#8599;</a>'
+    + '<button class="source-delete" onclick="deleteSource(\'' + esc(s.id) + '\')" title="Remove">&#10005;</button>'
+    + '</div>'
+    + '<span class="' + catClass(s.category) + '">' + esc(s.category) + '</span>'
+    + '<div class="source-desc">' + esc(s.description) + '</div>'
+    + '<div class="source-tags">' + tagsHtml + '</div>'
+    + '</div>';
+}
+
+function render() {
+  const filtered = activeFilter === 'all'
+    ? sources
+    : sources.filter(s => s.category === activeFilter);
+
+  // Sort: pinned first, then by added date descending
+  filtered.sort((a, b) => {
+    if (a.pinned && !b.pinned) return -1;
+    if (!a.pinned && b.pinned) return 1;
+    return (b.added || '').localeCompare(a.added || '');
+  });
+
+  // Count by category
+  const counts = {};
+  sources.forEach(s => {
+    counts[s.category] = (counts[s.category] || 0) + 1;
+  });
+
+  let h = '';
+
+  // Summary strip
+  h += '<div class="summary-strip">';
+  h += '<div class="summary-stat"><span class="summary-num">' + sources.length + '</span><span class="summary-label">sources</span></div>';
+  h += '<div class="summary-sep"></div>';
+  h += '<div class="summary-stat"><span class="summary-num">' + sources.filter(s => s.pinned).length + '</span><span class="summary-label">pinned</span></div>';
+  h += '<div class="summary-sep"></div>';
+  h += '<div class="summary-stat"><span class="summary-num">' + Object.keys(counts).length + '</span><span class="summary-label">categories</span></div>';
+  h += '</div>';
+
+  // Category filter pills + add button
+  h += '<div class="cat-nav">';
+  h += '<div class="cat-pill' + (activeFilter === 'all' ? ' active' : '') + '" data-cat="all" onclick="setFilter(\'all\')">All<span class="cat-count">' + sources.length + '</span></div>';
+  for (const [cat, count] of Object.entries(counts).sort((a, b) => a[0].localeCompare(b[0]))) {
+    h += '<div class="cat-pill' + (activeFilter === cat ? ' active' : '') + '" data-cat="' + esc(cat) + '" onclick="setFilter(\'' + esc(cat) + '\')">'
+      + esc(cat)
+      + '<span class="cat-count">' + count + '</span></div>';
+  }
+  h += '<button class="add-btn" onclick="openForm()">+ Add Source</button>';
+  h += '</div>';
+
+  // Cards
+  if (filtered.length === 0) {
+    h += '<div class="empty-state"><div class="empty-icon">&#9737;</div><p>No sources in this category yet</p></div>';
+  } else {
+    h += '<div class="source-grid">';
+    filtered.forEach(s => { h += renderCard(s); });
+    h += '</div>';
+  }
+
+  document.getElementById('main').innerHTML = h;
+}
+
+function setFilter(cat) {
+  activeFilter = cat;
+  render();
+}
+
+function openForm() {
+  document.getElementById('addOverlay').classList.add('visible');
+  document.getElementById('f-name').focus();
+}
+
+function closeForm() {
+  document.getElementById('addOverlay').classList.remove('visible');
+  document.getElementById('f-name').value = '';
+  document.getElementById('f-url').value = '';
+  document.getElementById('f-desc').value = '';
+  document.getElementById('f-tags').value = '';
+}
+
+async function saveSource() {
+  const name = document.getElementById('f-name').value.trim();
+  const url = document.getElementById('f-url').value.trim();
+  const category = document.getElementById('f-category').value;
+  const description = document.getElementById('f-desc').value.trim();
+  const tags = document.getElementById('f-tags').value.split(',').map(t => t.trim()).filter(Boolean);
+
+  if (!name || !url) return alert('Name and URL are required');
+
+  try {
+    const res = await fetch('/api/sources', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name, url, category, description, tags })
+    });
+    if (!res.ok) throw new Error('Failed to save');
+    sources = await res.json();
+    closeForm();
+    render();
+  } catch (e) {
+    alert('Error: ' + e.message);
+  }
+}
+
+async function deleteSource(id) {
+  if (!confirm('Remove this source?')) return;
+  try {
+    const res = await fetch('/api/sources/' + encodeURIComponent(id), { method: 'DELETE' });
+    if (!res.ok) throw new Error('Failed to delete');
+    sources = await res.json();
+    render();
+  } catch (e) {
+    alert('Error: ' + e.message);
+  }
+}
+
+// Close overlay on backdrop click
+document.getElementById('addOverlay').addEventListener('click', function(e) {
+  if (e.target === this) closeForm();
+});
+
+// Close on Escape
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') closeForm();
+});
+
+// Initial load
+async function load() {
+  try {
+    const res = await fetch('/api/sources');
+    sources = await res.json();
+    render();
+  } catch (e) {
+    document.getElementById('main').innerHTML = '<div style="padding:60px;text-align:center;color:#ef4444">Failed to load: ' + e.message + '</div>';
+  }
+}
+load();
+</script>
+</body>
+</html>

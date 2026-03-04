@@ -7,6 +7,10 @@ deep-summaries.json
 northstar-cache.json
 missions.json
 chains.json
+dispatch.json
+sources.json
+workstreams.json
+agent-workstreams.json
 .env
 
 node_modules/

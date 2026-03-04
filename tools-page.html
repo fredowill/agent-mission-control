@@ -33,7 +33,7 @@
   .header-right { font-family:'DM Mono',monospace; font-size:11px; color:var(--text3) }
 
   /* Shell */
-  .shell { max-width:960px; margin:0 auto; padding:clamp(24px,4vw,48px) }
+  .shell { max-width:1120px; margin:0 auto; padding:clamp(24px,4vw,48px) }
   .page-title { font-family:'Plus Jakarta Sans',sans-serif; font-size:clamp(28px,4vw,38px); font-weight:700; letter-spacing:-0.035em; margin-bottom:4px; line-height:1.1 }
   .page-sub { font-size:15px; color:var(--text3); margin-bottom:28px }
 
@@ -101,70 +101,104 @@
     font-weight:500;
   }
 
-  /* Compact agent cards */
+  /* Agent card grid */
   .agent-list {
-    display:flex; flex-direction:column; gap:8px;
+    display:grid; grid-template-columns:repeat(auto-fill, minmax(220px, 1fr)); gap:10px;
   }
   .agent-row {
-    background:var(--bg); border:1px solid var(--sep); border-radius:12px;
-    padding:16px 20px; position:relative;
+    background:var(--bg); border:1px solid var(--sep); border-radius:14px;
+    padding:16px; position:relative;
     transition:transform .15s ease, box-shadow .15s ease;
-    overflow:hidden;
+    overflow:hidden; display:flex; flex-direction:column;
   }
   .agent-row:hover {
-    transform:translateY(-1px);
-    box-shadow:0 4px 16px rgba(0,0,0,0.04);
+    transform:translateY(-2px);
+    box-shadow:0 6px 20px rgba(0,0,0,0.05);
   }
   .agent-row::before {
     content:''; position:absolute; left:0; top:0; bottom:0; width:3px;
-    background:var(--row-accent, var(--gray)); border-radius:3px 0 0 3px; opacity:.6;
+    background:var(--row-accent, var(--gray)); border-radius:3px 0 0 3px; opacity:.5;
   }
   .agent-row:hover::before { opacity:1 }
 
   .agent-top {
-    display:flex; align-items:center; gap:10px; margin-bottom:4px;
+    display:flex; align-items:center; gap:6px; margin-bottom:8px; flex-wrap:wrap;
   }
   .agent-name {
     font-family:'Plus Jakarta Sans',sans-serif;
-    font-size:15px; font-weight:700; letter-spacing:-0.01em; color:var(--text);
+    font-size:14px; font-weight:700; letter-spacing:-0.01em; color:var(--text);
+    width:100%; margin-bottom:2px;
   }
   .model-badge {
-    font-family:'DM Mono',monospace; font-size:10px; font-weight:500;
-    padding:2px 8px; border-radius:100px;
+    font-family:'DM Mono',monospace; font-size:9px; font-weight:500;
+    padding:1px 6px; border-radius:100px;
     background:var(--purple-bg); color:#6d28d9;
     text-transform:uppercase; letter-spacing:0.03em;
   }
   .perm-badge {
-    font-size:10px; font-weight:600; padding:2px 8px; border-radius:100px;
+    font-size:9px; font-weight:600; padding:1px 6px; border-radius:100px;
     text-transform:uppercase; letter-spacing:0.03em;
   }
   .perm-badge.rw { background:var(--green-bg); color:#166534 }
   .perm-badge.ro { background:var(--surface); color:var(--text3) }
 
   .agent-when {
-    font-size:13px; color:var(--text2); line-height:1.5;
+    font-size:12px; color:var(--text2); line-height:1.4;
+    flex:1;
+    display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical;
+    overflow:hidden;
   }
 
-  /* Tools row — collapsed by default, shown on hover */
+  /* Tools row — always visible, compact */
   .agent-tools {
-    display:flex; flex-wrap:wrap; gap:4px;
-    margin-top:8px; max-height:0; overflow:hidden;
-    transition:max-height .2s ease, opacity .2s ease;
-    opacity:0;
-  }
-  .agent-row:hover .agent-tools {
-    max-height:60px; opacity:1;
+    display:flex; flex-wrap:wrap; gap:3px;
+    margin-top:10px; padding-top:8px;
+    border-top:1px solid var(--sep);
   }
   .tool-pill {
-    font-family:'DM Mono',monospace; font-size:10px; font-weight:500;
-    padding:2px 8px; border-radius:100px;
+    font-family:'DM Mono',monospace; font-size:9px; font-weight:500;
+    padding:1px 6px; border-radius:100px;
     background:var(--surface); color:var(--text3);
   }
   .tool-pill.t-edit { background:var(--green-bg); color:#166534 }
   .tool-pill.t-bash { background:var(--amber-bg); color:#92400e }
   .tool-pill.t-web { background:var(--blue-bg); color:#1d4ed8 }
 
-  /* Secondary sections (commands + builtins) */
+  /* Command cards — same grid as agents */
+  .cmd-card {
+    background:var(--bg); border:1px solid var(--sep); border-radius:14px;
+    padding:16px; position:relative;
+    transition:transform .15s ease, box-shadow .15s ease;
+    overflow:hidden; display:flex; flex-direction:column;
+  }
+  .cmd-card:hover {
+    transform:translateY(-2px);
+    box-shadow:0 6px 20px rgba(0,0,0,0.05);
+  }
+  .cmd-card::before {
+    content:''; position:absolute; left:0; top:0; bottom:0; width:3px;
+    background:var(--purple); border-radius:3px 0 0 3px; opacity:.5;
+  }
+  .cmd-card:hover::before { opacity:1 }
+  .cmd-card-name {
+    font-family:'DM Mono',monospace;
+    font-size:14px; font-weight:600; color:var(--purple);
+    margin-bottom:6px;
+  }
+  .cmd-card-desc {
+    font-size:12px; color:var(--text2); line-height:1.4;
+    display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical;
+    overflow:hidden; flex:1;
+  }
+  .cmd-card-type {
+    font-family:'DM Mono',monospace; font-size:9px; font-weight:500;
+    padding:1px 6px; border-radius:100px;
+    background:var(--purple-bg); color:#6d28d9;
+    text-transform:uppercase; letter-spacing:0.03em;
+    align-self:flex-start; margin-top:10px;
+  }
+
+  /* Secondary sections (builtins only now) */
   .secondary-section { margin-top:48px }
   .collapsible-header {
     display:flex; align-items:center; gap:12px;
@@ -193,21 +227,6 @@
   }
   .collapsible-header.open + .collapsible-body { display:block }
 
-  /* Command items inside collapsible */
-  .cmd-list {
-    display:flex; flex-direction:column; gap:1px;
-    background:var(--sep); border-radius:12px; overflow:hidden;
-  }
-  .cmd-item {
-    display:flex; align-items:center; gap:16px;
-    padding:12px 20px; background:var(--bg);
-  }
-  .cmd-name {
-    font-family:'DM Mono',monospace; font-size:13px; font-weight:500;
-    color:var(--purple); white-space:nowrap; min-width:120px;
-  }
-  .cmd-desc { font-size:13px; color:var(--text2); line-height:1.4 }
-
   /* Built-in items */
   .builtin-list {
     display:flex; flex-direction:column; gap:1px;
@@ -235,8 +254,8 @@
     .summary-strip { flex-wrap:wrap; gap:12px 20px }
     .cat-nav { gap:6px }
     .cat-pill { font-size:12px; padding:5px 12px }
-    .agent-row { padding:14px 16px }
-    .agent-tools { max-height:none; opacity:1 }
+    .agent-list { grid-template-columns:repeat(auto-fill, minmax(160px, 1fr)); gap:8px }
+    .agent-row { padding:12px }
   }
 </style>
 </head>
@@ -249,9 +268,11 @@
   </div>
   <nav class="header-nav">
     <a href="/" class="nav-link">Dashboard</a>
+    <a href="/dispatch" class="nav-link">Dispatch</a>
     <a href="/findings" class="nav-link">Findings</a>
-    <a href="/tools" class="nav-link active">Toolbox</a>
+    <a href="/tools" class="nav-link">Toolbox</a>
     <a href="/logic" class="nav-link">Logic</a>
+    <a href="/radar" class="nav-link">Radar</a>
   </nav>
   <div class="header-right"></div>
 </header>
@@ -424,13 +445,19 @@ async function load() {
 
     // Category filter pills
     h += '<div class="cat-nav">';
-    h += '<div class="cat-pill active" data-cat="all" onclick="setFilter(\'all\')">All<span class="cat-count">' + agents.length + '</span></div>';
+    const totalItems = agents.length + commands.length;
+    h += '<div class="cat-pill active" data-cat="all" onclick="setFilter(\'all\')">All<span class="cat-count">' + totalItems + '</span></div>';
     for (const [key, cat] of Object.entries(CATEGORIES)) {
       const count = grouped[key].length;
       if (count === 0) continue;
       h += '<div class="cat-pill" data-cat="' + key + '" onclick="setFilter(\'' + key + '\')">'
         + esc(cat.label)
         + '<span class="cat-count">' + count + '</span></div>';
+    }
+    if (commands.length > 0) {
+      h += '<div class="cat-pill" data-cat="commands" onclick="setFilter(\'commands\')">'
+        + 'Commands'
+        + '<span class="cat-count">' + commands.length + '</span></div>';
     }
     h += '</div>';
 
@@ -463,23 +490,24 @@ async function load() {
       h += '</div>';
     }
 
-    // Commands — collapsible
+    // Commands — full card grid (same prominence as agents)
     if (commands.length > 0) {
-      h += '<div class="secondary-section">';
-      h += '<div class="collapsible-header" onclick="toggleCollapsible(this)">';
-      h += '<span class="collapsible-arrow">\u25B6</span>';
-      h += '<span class="collapsible-title">Slash Commands</span>';
-      h += '<span class="collapsible-count">' + commands.length + '</span>';
+      h += '<div class="cat-section" data-cat="commands">';
+      h += '<div class="cat-header">';
+      h += '<div class="cat-icon" style="background:var(--purple-bg);color:var(--purple)">/</div>';
+      h += '<div class="cat-title">Slash Commands</div>';
+      h += '<div class="cat-subtitle">' + commands.length + ' commands</div>';
       h += '</div>';
-      h += '<div class="collapsible-body">';
-      h += '<div class="cmd-list">';
+      h += '<div class="agent-list">';
       commands.forEach(c => {
-        h += '<div class="cmd-item">';
-        h += '<div class="cmd-name">/' + esc(c.name) + '</div>';
-        h += '<div class="cmd-desc">' + esc(c.description) + '</div>';
+        h += '<div class="cmd-card">';
+        h += '<div class="cmd-card-name">/' + esc(c.name) + '</div>';
+        h += '<div class="cmd-card-desc">' + esc(c.description) + '</div>';
+        h += '<div class="cmd-card-type">command</div>';
         h += '</div>';
       });
-      h += '</div></div></div>';
+      h += '</div>';
+      h += '</div>';
     }
 
     // Built-ins — collapsible

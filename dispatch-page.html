@@ -1,0 +1,819 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Dispatch &mdash; Mission Control</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=DM+Sans:wght@400;500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { margin:0; padding:0; box-sizing:border-box }
+  :root {
+    --bg:#ffffff; --bg-page:#f8f8f8; --surface:#f2f2f2; --surface2:#e8e8e8;
+    --text:#1a1a1a; --text2:#555; --text3:#999; --sep:#e5e5e5;
+    --green:#22c55e; --green-bg:rgba(34,197,94,0.08);
+    --blue:#3b82f6; --blue-bg:rgba(59,130,246,0.08);
+    --amber:#f59e0b; --amber-bg:rgba(245,158,11,0.08);
+    --purple:#8b5cf6; --purple-bg:rgba(139,92,246,0.08);
+    --rose:#ef4444; --rose-bg:rgba(239,68,68,0.06);
+    --gray:#9ca3af;
+  }
+  body { background:var(--bg-page); color:var(--text); font-family:'DM Sans',-apple-system,system-ui,sans-serif; min-height:100vh; -webkit-font-smoothing:antialiased }
+
+  /* Header */
+  header { display:flex; align-items:center; justify-content:space-between; padding:0 clamp(24px,4vw,48px); height:64px; background:var(--bg); border-bottom:1px solid var(--sep); position:sticky; top:0; z-index:10 }
+  .logo { display:flex; align-items:center; gap:12px }
+  .logo-dot { width:8px; height:8px; border-radius:50%; background:var(--purple) }
+  .logo-text { font-family:'Plus Jakarta Sans',sans-serif; font-size:15px; font-weight:600; letter-spacing:-0.02em }
+  .header-nav { display:flex; gap:4px; padding:3px; background:var(--surface); border-radius:8px; position:absolute; left:50%; transform:translateX(-50%) }
+  .nav-link { padding:5px 14px; border-radius:6px; font-family:'DM Sans',sans-serif; font-size:13px; font-weight:500; color:var(--text3); text-decoration:none; transition:all .15s }
+  .nav-link:hover { color:var(--text2) }
+  .nav-link.active { background:var(--bg); color:var(--text); box-shadow:0 1px 3px rgba(0,0,0,.06) }
+  .header-right { font-family:'DM Mono',monospace; font-size:11px; color:var(--text3) }
+
+  /* Shell */
+  .shell { max-width:960px; margin:0 auto; padding:clamp(20px,3vw,40px) }
+  .page-title { font-family:'Plus Jakarta Sans',sans-serif; font-size:clamp(28px,4vw,38px); font-weight:700; letter-spacing:-0.035em; margin-bottom:6px; line-height:1.1 }
+  .page-sub { font-size:17px; color:var(--text2); margin-bottom:20px; letter-spacing:-0.01em }
+
+  /* Search bar */
+  .search-wrap {
+    position:relative; margin-bottom:16px;
+  }
+  .search-input {
+    width:100%; padding:11px 16px 11px 38px;
+    border:1px solid var(--sep); border-radius:10px;
+    font-family:'DM Sans',sans-serif; font-size:14px; color:var(--text);
+    background:var(--bg); outline:none; transition:all .15s;
+    box-shadow:0 1px 3px rgba(0,0,0,0.04);
+  }
+  .search-input:focus { border-color:var(--purple); box-shadow:0 0 0 3px rgba(139,92,246,0.08) }
+  .search-input::placeholder { color:var(--text3) }
+  .search-icon {
+    position:absolute; left:13px; top:50%; transform:translateY(-50%);
+    font-size:14px; color:var(--text3); pointer-events:none;
+  }
+  .search-results {
+    display:none; position:absolute; top:calc(100% + 4px); left:0; right:0;
+    background:var(--bg); border:1px solid var(--sep); border-radius:12px;
+    max-height:360px; overflow-y:auto; z-index:20;
+    box-shadow:0 12px 40px rgba(0,0,0,0.1);
+  }
+  .search-results.visible { display:block }
+  .search-result {
+    display:block; padding:12px 16px; border-bottom:1px solid var(--sep);
+    text-decoration:none; color:inherit; transition:background .1s;
+  }
+  .search-result:last-child { border-bottom:none }
+  .search-result:hover { background:var(--bg-page) }
+  .sr-top { display:flex; align-items:center; gap:8px; margin-bottom:4px }
+  .sr-hex { font-family:'DM Mono',monospace; font-size:11px; color:var(--purple); font-weight:500 }
+  .sr-mission { font-size:12px; color:var(--text2); font-weight:500 }
+  .sr-time { margin-left:auto; font-family:'DM Mono',monospace; font-size:10px; color:var(--text3) }
+  .sr-text { font-size:13px; color:var(--text2); line-height:1.5 }
+  .sr-text mark { background:rgba(139,92,246,0.2); color:var(--text); border-radius:2px; padding:0 2px }
+  .sr-empty { padding:20px 16px; text-align:center; color:var(--text3); font-size:13px }
+
+  /* Summary strip */
+  .summary-strip {
+    display:flex; gap:20px; padding:10px 16px;
+    background:var(--bg); border:1px solid var(--sep); border-radius:10px;
+    margin-bottom:12px; align-items:center;
+  }
+  .summary-stat { display:flex; align-items:baseline; gap:5px }
+  .summary-num { font-family:'Plus Jakarta Sans',sans-serif; font-size:17px; font-weight:700; letter-spacing:-0.02em; color:var(--text) }
+  .summary-num.zero { color:var(--text3) }
+  .summary-label { font-size:12px; color:var(--text3) }
+  .summary-sep { width:1px; height:16px; background:var(--sep) }
+
+  /* Filter row */
+  .filter-row { display:flex; gap:6px; margin-bottom:16px; flex-wrap:wrap; align-items:center }
+  .ws-pill {
+    display:flex; align-items:center; gap:5px;
+    padding:5px 12px; border-radius:100px;
+    font-size:12px; font-weight:500;
+    background:var(--bg); border:1px solid var(--sep);
+    color:var(--text2); cursor:pointer;
+    transition:all .15s; user-select:none;
+  }
+  .ws-pill:hover { border-color:var(--text3) }
+  .ws-pill.active { border-color:var(--purple); color:var(--purple); background:var(--purple-bg) }
+  .ws-pill .ws-dot { width:7px; height:7px; border-radius:50%; flex-shrink:0 }
+  .ws-pill .ws-count {
+    font-family:'DM Mono',monospace; font-size:10px;
+    padding:0 5px; border-radius:100px;
+    background:var(--surface); color:var(--text3);
+  }
+  .ws-pill.active .ws-count { background:rgba(139,92,246,0.15); color:#7c3aed }
+
+  .filter-sep { width:1px; height:20px; background:var(--sep); margin:0 2px }
+
+  .priority-pills { display:flex; gap:3px }
+  .pri-pill {
+    padding:5px 10px; border-radius:100px; font-size:11px; font-weight:600;
+    text-transform:uppercase; letter-spacing:0.04em;
+    background:var(--bg); color:var(--text3); border:1px solid var(--sep);
+    cursor:pointer; transition:all .15s; user-select:none;
+  }
+  .pri-pill:hover { border-color:var(--text3) }
+  .pri-pill.active { border-color:var(--purple); color:var(--purple); background:var(--purple-bg) }
+
+  .add-btn {
+    margin-left:auto;
+    display:flex; align-items:center; gap:5px;
+    padding:5px 14px; border-radius:100px;
+    font-size:12px; font-weight:600;
+    background:var(--purple); color:#fff; border:none;
+    cursor:pointer; transition:all .15s;
+    font-family:'DM Sans',sans-serif;
+  }
+  .add-btn:hover { background:#7c3aed }
+
+  /* Section headers */
+  .section-head {
+    display:flex; align-items:center; gap:8px;
+    margin-bottom:8px; margin-top:20px; cursor:pointer; user-select:none;
+  }
+  .section-head:first-of-type { margin-top:0 }
+  .section-label {
+    font-family:'Plus Jakarta Sans',sans-serif; font-size:11px; font-weight:700;
+    text-transform:uppercase; letter-spacing:0.08em; color:var(--text3);
+  }
+  .section-count {
+    font-family:'DM Mono',monospace; font-size:10px;
+    padding:0 6px; border-radius:100px;
+    background:var(--surface); color:var(--text3);
+  }
+  .section-chevron { font-size:10px; color:var(--text3); transition:transform .15s }
+  .section-chevron.collapsed { transform:rotate(-90deg) }
+
+  /* Item cards */
+  .item-list { display:flex; flex-direction:column; gap:4px; margin-bottom:4px }
+  .item-card {
+    background:var(--bg); border:1px solid var(--sep); border-radius:10px;
+    padding:10px 14px; transition:box-shadow .15s ease;
+    cursor:default;
+  }
+  .item-card:hover {
+    box-shadow:0 2px 8px rgba(0,0,0,0.05);
+  }
+  .item-top { display:flex; align-items:center; gap:6px; margin-bottom:3px; flex-wrap:wrap }
+  .item-priority {
+    font-size:9px; font-weight:700; text-transform:uppercase; letter-spacing:0.06em;
+    padding:1px 6px; border-radius:100px;
+  }
+  .item-priority.p0 { background:var(--rose-bg); color:var(--rose) }
+  .item-priority.p1 { background:var(--amber-bg); color:#92400e }
+  .item-priority.p2 { background:var(--blue-bg); color:#1d4ed8 }
+  .item-priority.p3 { background:var(--surface); color:var(--text3) }
+  .item-ws {
+    display:flex; align-items:center; gap:3px;
+    font-size:10px; font-weight:500; color:var(--text3);
+  }
+  .item-ws .ws-dot { width:5px; height:5px; border-radius:50% }
+  .item-tags { display:flex; gap:3px; flex-wrap:wrap }
+  .item-tag {
+    font-family:'DM Mono',monospace; font-size:9px; font-weight:500;
+    padding:0 6px; border-radius:100px;
+    background:var(--surface); color:var(--text3);
+  }
+  .item-time { margin-left:auto; font-family:'DM Mono',monospace; font-size:9px; color:var(--text3) }
+  .item-title {
+    font-family:'Plus Jakarta Sans',sans-serif;
+    font-size:14px; font-weight:600; letter-spacing:-0.01em;
+    color:var(--text); line-height:1.3;
+  }
+  .item-desc { font-size:12px; color:var(--text3); line-height:1.4; display:-webkit-box; -webkit-line-clamp:1; -webkit-box-orient:vertical; overflow:hidden; margin-top:1px }
+  .item-footer { display:flex; gap:6px; margin-top:6px; align-items:center }
+  .item-session-badge {
+    font-family:'DM Mono',monospace; font-size:10px; font-weight:500;
+    padding:2px 8px; border-radius:100px;
+    background:var(--purple-bg); color:var(--purple);
+    text-decoration:none;
+  }
+  .item-session-badge:hover { background:rgba(139,92,246,0.15) }
+  .item-actions { margin-left:auto; display:flex; gap:4px; opacity:0; transition:opacity .15s }
+  .item-card:hover .item-actions { opacity:1 }
+  .item-action {
+    width:22px; height:22px; border-radius:5px; border:none; cursor:pointer;
+    display:flex; align-items:center; justify-content:center;
+    font-size:10px; background:transparent; color:var(--text3); transition:all .15s;
+  }
+  .item-action:hover { background:var(--surface) }
+  .item-action.act-done:hover { background:var(--green-bg); color:var(--green) }
+  .item-action.act-delete:hover { background:var(--rose-bg); color:var(--rose) }
+  .item-action.act-progress:hover { background:var(--blue-bg); color:var(--blue) }
+
+  /* Status checkbox */
+  .status-check {
+    width:15px; height:15px; border-radius:50%; border:1.5px solid var(--sep);
+    display:flex; align-items:center; justify-content:center; flex-shrink:0;
+    cursor:pointer; transition:all .15s; font-size:8px; color:transparent;
+  }
+  .status-check:hover { border-color:var(--green); color:var(--green) }
+  .status-check.checked { border-color:var(--green); background:var(--green); color:#fff }
+
+  /* Add form */
+  .add-form-overlay {
+    display:none; position:fixed; inset:0; background:rgba(0,0,0,0.3);
+    z-index:100; backdrop-filter:blur(4px);
+    justify-content:center; align-items:center;
+  }
+  .add-form-overlay.visible { display:flex }
+  .add-form {
+    background:var(--bg); border-radius:16px; padding:32px;
+    width:90%; max-width:520px;
+    box-shadow:0 20px 60px rgba(0,0,0,0.15);
+  }
+  .add-form h2 {
+    font-family:'Plus Jakarta Sans',sans-serif; font-size:20px; font-weight:700;
+    letter-spacing:-0.03em; margin-bottom:20px;
+  }
+  .form-group { margin-bottom:14px }
+  .form-group label {
+    display:block; font-size:12px; font-weight:600; color:var(--text3);
+    text-transform:uppercase; letter-spacing:0.06em; margin-bottom:4px;
+  }
+  .form-group input, .form-group textarea, .form-group select {
+    width:100%; padding:10px 14px; border:1px solid var(--sep); border-radius:10px;
+    font-family:'DM Sans',sans-serif; font-size:14px; color:var(--text);
+    background:var(--bg-page); outline:none; transition:border-color .15s;
+  }
+  .form-group input:focus, .form-group textarea:focus, .form-group select:focus {
+    border-color:var(--purple);
+  }
+  .form-group textarea { resize:vertical; min-height:60px }
+  .form-row { display:flex; gap:12px }
+  .form-row .form-group { flex:1 }
+  .form-actions { display:flex; gap:10px; margin-top:20px }
+  .form-actions button {
+    padding:10px 20px; border-radius:10px; font-family:'DM Sans',sans-serif;
+    font-size:14px; font-weight:600; cursor:pointer; transition:all .15s;
+  }
+  .btn-save { background:var(--purple); color:#fff; border:none }
+  .btn-save:hover { background:#7c3aed }
+  .btn-cancel { background:var(--surface); color:var(--text2); border:1px solid var(--sep) }
+  .btn-cancel:hover { background:var(--surface2) }
+
+  /* Workstream management */
+  .ws-manage-btn {
+    font-size:12px; color:var(--text3); background:none; border:none;
+    cursor:pointer; padding:4px 8px; transition:color .15s;
+  }
+  .ws-manage-btn:hover { color:var(--purple) }
+
+  /* Empty state */
+  .empty-state { text-align:center; padding:60px 20px; color:var(--text3) }
+  .empty-state .empty-icon { font-size:32px; margin-bottom:12px; opacity:.5 }
+  .empty-state p { font-size:14px }
+
+  /* Responsive */
+  @media (max-width:800px) {
+    .shell { padding:20px 16px }
+    .page-title { font-size:24px }
+    .summary-strip { flex-wrap:wrap; gap:12px 20px }
+    .filter-row { gap:6px }
+    .ws-pill { font-size:12px; padding:5px 12px }
+    .form-row { flex-direction:column; gap:0 }
+    .item-actions { opacity:1 }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">
+    <div class="logo-dot"></div>
+    <div class="logo-text">Mission Control</div>
+  </div>
+  <nav class="header-nav">
+    <a href="/" class="nav-link">Dashboard</a>
+    <a href="/dispatch" class="nav-link active">Dispatch</a>
+    <a href="/findings" class="nav-link">Findings</a>
+    <a href="/tools" class="nav-link">Toolbox</a>
+    <a href="/logic" class="nav-link">Logic</a>
+    <a href="/radar" class="nav-link">Radar</a>
+  </nav>
+  <div class="header-right"></div>
+</header>
+
+<div class="shell">
+  <h1 class="page-title">Dispatch</h1>
+  <p class="page-sub">Your work queue &mdash; ideas, tasks, and priorities</p>
+
+  <!-- Prompt search bar -->
+  <div class="search-wrap">
+    <span class="search-icon">&#8981;</span>
+    <input type="text" class="search-input" id="searchInput" placeholder="Search all prompts across sessions..." autocomplete="off">
+    <div class="search-results" id="searchResults"></div>
+  </div>
+
+  <div id="main"><div style="padding:60px;text-align:center;color:#999">Loading...</div></div>
+</div>
+
+<!-- Add Item Form -->
+<div class="add-form-overlay" id="addOverlay">
+  <div class="add-form">
+    <h2 id="formTitle">Add Item</h2>
+    <div class="form-group">
+      <label>Title</label>
+      <input type="text" id="f-title" placeholder="e.g. Add keyboard shortcuts to dashboard">
+    </div>
+    <div class="form-group">
+      <label>Description</label>
+      <textarea id="f-desc" placeholder="Details, acceptance criteria..."></textarea>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Priority</label>
+        <select id="f-priority">
+          <option value="p1">P1 &mdash; High</option>
+          <option value="p2" selected>P2 &mdash; Medium</option>
+          <option value="p3">P3 &mdash; Low</option>
+          <option value="p0">P0 &mdash; Critical</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Workstream</label>
+        <select id="f-workstream"></select>
+      </div>
+    </div>
+    <div class="form-group">
+      <label>Tags (comma-separated)</label>
+      <input type="text" id="f-tags" placeholder="ux, api, bug">
+    </div>
+    <div class="form-group">
+      <label>Linked Session (hex ID, optional)</label>
+      <input type="text" id="f-session" placeholder="e.g. a1b2c3">
+    </div>
+    <input type="hidden" id="f-edit-id" value="">
+    <div class="form-actions">
+      <button class="btn-save" onclick="saveItem()">Save</button>
+      <button class="btn-cancel" onclick="closeForm()">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- Workstream Management Form -->
+<div class="add-form-overlay" id="wsOverlay">
+  <div class="add-form">
+    <h2>Manage Workstreams</h2>
+    <div id="ws-list"></div>
+    <div style="margin-top:16px; border-top:1px solid var(--sep); padding-top:16px">
+      <div class="form-group">
+        <label>New Workstream</label>
+        <div style="display:flex; gap:8px">
+          <input type="text" id="ws-new-name" placeholder="Name" style="flex:1">
+          <input type="color" id="ws-new-color" value="#8b5cf6" style="width:44px; padding:4px; border-radius:8px; border:1px solid var(--sep)">
+          <button class="btn-save" onclick="addWorkstream()" style="padding:8px 16px">Add</button>
+        </div>
+      </div>
+    </div>
+    <div class="form-actions">
+      <button class="btn-cancel" onclick="closeWsForm()" style="margin-left:auto">Done</button>
+    </div>
+  </div>
+</div>
+
+<script>
+let items = [];
+let workstreams = [];
+let activeWsFilter = 'all';
+let activePriFilter = 'all';
+let collapsedSections = new Set();
+let searchTimeout = null;
+
+function esc(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function timeAgo(ts) {
+  const d = Date.now() - new Date(ts).getTime();
+  if (d < 60000) return 'just now';
+  if (d < 3600000) return Math.floor(d/60000) + 'm ago';
+  if (d < 86400000) return Math.floor(d/3600000) + 'h ago';
+  return Math.floor(d/86400000) + 'd ago';
+}
+
+function getWsColor(wsId) {
+  const ws = workstreams.find(w => w.id === wsId);
+  return ws ? ws.color : '#9ca3af';
+}
+
+function getWsName(wsId) {
+  const ws = workstreams.find(w => w.id === wsId);
+  return ws ? ws.name : wsId || 'None';
+}
+
+// ── Render ───────────────────────────────────────────────────────────────────
+
+function renderItem(item) {
+  const priClass = item.priority || 'p2';
+  const wsColor = getWsColor(item.workstream);
+  const wsName = getWsName(item.workstream);
+  const isDone = item.status === 'done';
+
+  let tagsHtml = '';
+  (item.tags || []).forEach(t => {
+    tagsHtml += '<span class="item-tag">' + esc(t) + '</span>';
+  });
+
+  let sessionHtml = '';
+  if (item.linkedSession) {
+    sessionHtml = '<a class="item-session-badge" href="/session/' + esc(item.linkedSession) + '" title="Linked session">' + esc(item.linkedSession.slice(-6)) + '</a>';
+  }
+
+  const checkClass = isDone ? 'status-check checked' : 'status-check';
+  const checkContent = isDone ? '&#10003;' : '&#10003;';
+
+  // Next status on click
+  let nextStatus = 'done';
+  if (item.status === 'todo') nextStatus = 'in-progress';
+  if (item.status === 'in-progress') nextStatus = 'done';
+  if (item.status === 'done') nextStatus = 'todo';
+
+  return '<div class="item-card" data-id="' + esc(item.id) + '">'
+    + '<div class="item-top">'
+    + '<div class="' + checkClass + '" onclick="cycleStatus(\'' + esc(item.id) + '\',\'' + nextStatus + '\')" title="Click to change status">' + checkContent + '</div>'
+    + '<span class="item-priority ' + priClass + '">' + priClass.toUpperCase() + '</span>'
+    + '<span class="item-ws"><span class="ws-dot" style="background:' + wsColor + '"></span>' + esc(wsName) + '</span>'
+    + '<div class="item-tags">' + tagsHtml + '</div>'
+    + '<span class="item-time">' + timeAgo(item.created) + '</span>'
+    + '</div>'
+    + '<div class="item-title">' + esc(item.title) + '</div>'
+    + (item.description ? '<div class="item-desc">' + esc(item.description) + '</div>' : '')
+    + '<div class="item-footer">'
+    + sessionHtml
+    + '<div class="item-actions">'
+    + '<button class="item-action act-progress" onclick="editItem(\'' + esc(item.id) + '\')" title="Edit">&#9998;</button>'
+    + '<button class="item-action act-delete" onclick="deleteItem(\'' + esc(item.id) + '\')" title="Delete">&#10005;</button>'
+    + '</div>'
+    + '</div>'
+    + '</div>';
+}
+
+function render() {
+  let filtered = items.filter(i => i.status !== 'archived');
+  if (activeWsFilter !== 'all') filtered = filtered.filter(i => i.workstream === activeWsFilter);
+  if (activePriFilter !== 'all') filtered = filtered.filter(i => i.priority === activePriFilter);
+
+  const inProgress = filtered.filter(i => i.status === 'in-progress');
+  const todo = filtered.filter(i => i.status === 'todo');
+  const done = filtered.filter(i => i.status === 'done');
+
+  // Sort: p0 first within each group
+  const priOrder = { p0: 0, p1: 1, p2: 2, p3: 3 };
+  const sortByPri = (a, b) => (priOrder[a.priority] || 2) - (priOrder[b.priority] || 2);
+  inProgress.sort(sortByPri);
+  todo.sort(sortByPri);
+  done.sort((a, b) => new Date(b.updated) - new Date(a.updated));
+
+  // Summary
+  const totalItems = items.filter(i => i.status !== 'archived').length;
+  const ipCount = items.filter(i => i.status === 'in-progress').length;
+  const doneCount = items.filter(i => i.status === 'done').length;
+
+  let h = '';
+
+  // Summary strip
+  h += '<div class="summary-strip">';
+  h += '<div class="summary-stat"><span class="summary-num">' + totalItems + '</span><span class="summary-label">items</span></div>';
+  h += '<div class="summary-sep"></div>';
+  h += '<div class="summary-stat"><span class="summary-num' + (ipCount === 0 ? ' zero' : '') + '">' + ipCount + '</span><span class="summary-label">in progress</span></div>';
+  h += '<div class="summary-sep"></div>';
+  h += '<div class="summary-stat"><span class="summary-num' + (doneCount === 0 ? ' zero' : '') + '">' + doneCount + '</span><span class="summary-label">done</span></div>';
+  h += '</div>';
+
+  // Workstream filter pills + priority + add button
+  h += '<div class="filter-row">';
+  h += '<div class="ws-pill' + (activeWsFilter === 'all' ? ' active' : '') + '" onclick="setWsFilter(\'all\')">All<span class="ws-count">' + totalItems + '</span></div>';
+  workstreams.forEach(ws => {
+    const count = items.filter(i => i.workstream === ws.id && i.status !== 'archived').length;
+    h += '<div class="ws-pill' + (activeWsFilter === ws.id ? ' active' : '') + '" onclick="setWsFilter(\'' + esc(ws.id) + '\')">'
+      + '<span class="ws-dot" style="background:' + esc(ws.color) + '"></span>'
+      + esc(ws.name)
+      + '<span class="ws-count">' + count + '</span></div>';
+  });
+  h += '<div class="filter-sep"></div>';
+  h += '<div class="priority-pills">';
+  ['all','p0','p1','p2','p3'].forEach(p => {
+    const label = p === 'all' ? 'Any' : p.toUpperCase();
+    h += '<div class="pri-pill' + (activePriFilter === p ? ' active' : '') + '" onclick="setPriFilter(\'' + p + '\')">' + label + '</div>';
+  });
+  h += '</div>';
+  h += '<button class="ws-manage-btn" onclick="openWsForm()" title="Manage workstreams">&#9881;</button>';
+  h += '<button class="add-btn" onclick="openForm()">+ Add Item</button>';
+  h += '</div>';
+
+  // Sections
+  if (inProgress.length) {
+    const collapsed = collapsedSections.has('in-progress');
+    h += '<div class="section-head" onclick="toggleSection(\'in-progress\')">'
+      + '<span class="section-label">In Progress</span>'
+      + '<span class="section-count">' + inProgress.length + '</span>'
+      + '<span class="section-chevron' + (collapsed ? ' collapsed' : '') + '">&#9660;</span>'
+      + '</div>';
+    if (!collapsed) {
+      h += '<div class="item-list">' + inProgress.map(renderItem).join('') + '</div>';
+    }
+  }
+
+  if (todo.length) {
+    const collapsed = collapsedSections.has('todo');
+    h += '<div class="section-head" onclick="toggleSection(\'todo\')">'
+      + '<span class="section-label">Todo</span>'
+      + '<span class="section-count">' + todo.length + '</span>'
+      + '<span class="section-chevron' + (collapsed ? ' collapsed' : '') + '">&#9660;</span>'
+      + '</div>';
+    if (!collapsed) {
+      h += '<div class="item-list">' + todo.map(renderItem).join('') + '</div>';
+    }
+  }
+
+  if (done.length) {
+    const collapsed = collapsedSections.has('done');
+    h += '<div class="section-head" onclick="toggleSection(\'done\')">'
+      + '<span class="section-label">Done</span>'
+      + '<span class="section-count">' + done.length + '</span>'
+      + '<span class="section-chevron' + (collapsed ? ' collapsed' : '') + '">&#9660;</span>'
+      + '</div>';
+    if (!collapsed) {
+      h += '<div class="item-list">' + done.map(renderItem).join('') + '</div>';
+    }
+  }
+
+  if (!inProgress.length && !todo.length && !done.length) {
+    h += '<div class="empty-state"><div class="empty-icon">&#9744;</div><p>No items yet. Add your first work item to get started.</p></div>';
+  }
+
+  document.getElementById('main').innerHTML = h;
+}
+
+function toggleSection(name) {
+  if (collapsedSections.has(name)) collapsedSections.delete(name);
+  else collapsedSections.add(name);
+  render();
+}
+
+function setWsFilter(ws) { activeWsFilter = ws; render(); }
+function setPriFilter(p) { activePriFilter = p; render(); }
+
+// ── CRUD ─────────────────────────────────────────────────────────────────────
+
+function openForm(editId) {
+  const overlay = document.getElementById('addOverlay');
+  const titleEl = document.getElementById('formTitle');
+  document.getElementById('f-edit-id').value = editId || '';
+
+  // Populate workstream dropdown
+  const wsSel = document.getElementById('f-workstream');
+  wsSel.innerHTML = '<option value="">None</option>' + workstreams.map(ws =>
+    '<option value="' + esc(ws.id) + '">' + esc(ws.name) + '</option>'
+  ).join('');
+
+  if (editId) {
+    const item = items.find(i => i.id === editId);
+    if (!item) return;
+    titleEl.textContent = 'Edit Item';
+    document.getElementById('f-title').value = item.title;
+    document.getElementById('f-desc').value = item.description || '';
+    document.getElementById('f-priority').value = item.priority || 'p2';
+    document.getElementById('f-workstream').value = item.workstream || '';
+    document.getElementById('f-tags').value = (item.tags || []).join(', ');
+    document.getElementById('f-session').value = item.linkedSession || '';
+  } else {
+    titleEl.textContent = 'Add Item';
+    document.getElementById('f-title').value = '';
+    document.getElementById('f-desc').value = '';
+    document.getElementById('f-priority').value = 'p2';
+    document.getElementById('f-workstream').value = activeWsFilter !== 'all' ? activeWsFilter : '';
+    document.getElementById('f-tags').value = '';
+    document.getElementById('f-session').value = '';
+  }
+
+  overlay.classList.add('visible');
+  document.getElementById('f-title').focus();
+}
+
+function editItem(id) { openForm(id); }
+
+function closeForm() {
+  document.getElementById('addOverlay').classList.remove('visible');
+}
+
+async function saveItem() {
+  const editId = document.getElementById('f-edit-id').value;
+  const title = document.getElementById('f-title').value.trim();
+  const description = document.getElementById('f-desc').value.trim();
+  const priority = document.getElementById('f-priority').value;
+  const workstream = document.getElementById('f-workstream').value;
+  const tags = document.getElementById('f-tags').value.split(',').map(t => t.trim()).filter(Boolean);
+  const linkedSession = document.getElementById('f-session').value.trim() || null;
+
+  if (!title) return alert('Title is required');
+
+  try {
+    if (editId) {
+      const res = await fetch('/api/dispatch/' + encodeURIComponent(editId), {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ title, description, priority, workstream, tags, linkedSession })
+      });
+      if (!res.ok) throw new Error('Failed to update');
+      items = await res.json();
+    } else {
+      const res = await fetch('/api/dispatch', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ title, description, priority, workstream, tags, linkedSession })
+      });
+      if (!res.ok) throw new Error('Failed to save');
+      items = await res.json();
+    }
+    closeForm();
+    render();
+  } catch (e) {
+    alert('Error: ' + e.message);
+  }
+}
+
+async function deleteItem(id) {
+  if (!confirm('Delete this item?')) return;
+  try {
+    const res = await fetch('/api/dispatch/' + encodeURIComponent(id), { method: 'DELETE' });
+    if (!res.ok) throw new Error('Failed to delete');
+    items = await res.json();
+    render();
+  } catch (e) {
+    alert('Error: ' + e.message);
+  }
+}
+
+async function cycleStatus(id, newStatus) {
+  try {
+    const res = await fetch('/api/dispatch/' + encodeURIComponent(id), {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ status: newStatus })
+    });
+    if (!res.ok) throw new Error('Failed to update');
+    items = await res.json();
+    render();
+  } catch (e) {
+    alert('Error: ' + e.message);
+  }
+}
+
+// ── Workstream Management ────────────────────────────────────────────────────
+
+function openWsForm() {
+  renderWsList();
+  document.getElementById('wsOverlay').classList.add('visible');
+}
+
+function closeWsForm() {
+  document.getElementById('wsOverlay').classList.remove('visible');
+}
+
+function renderWsList() {
+  let h = '';
+  workstreams.forEach(ws => {
+    h += '<div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--sep)">'
+      + '<span class="ws-dot" style="background:' + esc(ws.color) + ';width:10px;height:10px;border-radius:50%;flex-shrink:0"></span>'
+      + '<span style="flex:1;font-size:14px;font-weight:500">' + esc(ws.name) + '</span>'
+      + '<button class="item-action act-delete" onclick="deleteWorkstream(\'' + esc(ws.id) + '\')" title="Delete" style="opacity:1">&#10005;</button>'
+      + '</div>';
+  });
+  if (!workstreams.length) h = '<div style="padding:12px 0;color:var(--text3);font-size:13px">No workstreams yet</div>';
+  document.getElementById('ws-list').innerHTML = h;
+}
+
+async function addWorkstream() {
+  const name = document.getElementById('ws-new-name').value.trim();
+  const color = document.getElementById('ws-new-color').value;
+  if (!name) return;
+  try {
+    const res = await fetch('/api/workstreams', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name, color })
+    });
+    if (!res.ok) throw new Error('Failed to add');
+    workstreams = await res.json();
+    document.getElementById('ws-new-name').value = '';
+    renderWsList();
+    render();
+  } catch (e) { alert('Error: ' + e.message); }
+}
+
+async function deleteWorkstream(id) {
+  if (!confirm('Delete this workstream?')) return;
+  try {
+    const res = await fetch('/api/workstreams/' + encodeURIComponent(id), { method: 'DELETE' });
+    if (!res.ok) throw new Error('Failed to delete');
+    workstreams = await res.json();
+    renderWsList();
+    if (activeWsFilter === id) activeWsFilter = 'all';
+    render();
+  } catch (e) { alert('Error: ' + e.message); }
+}
+
+// ── Prompt Search ────────────────────────────────────────────────────────────
+
+const searchInput = document.getElementById('searchInput');
+const searchResults = document.getElementById('searchResults');
+
+searchInput.addEventListener('input', function() {
+  clearTimeout(searchTimeout);
+  const q = this.value.trim();
+  if (q.length < 2) {
+    searchResults.classList.remove('visible');
+    return;
+  }
+  searchTimeout = setTimeout(() => searchPrompts(q), 250);
+});
+
+searchInput.addEventListener('focus', function() {
+  if (searchResults.children.length > 0 && this.value.trim().length >= 2) {
+    searchResults.classList.add('visible');
+  }
+});
+
+document.addEventListener('click', function(e) {
+  if (!e.target.closest('.search-wrap')) {
+    searchResults.classList.remove('visible');
+  }
+});
+
+async function searchPrompts(q) {
+  try {
+    const res = await fetch('/api/search/prompts?q=' + encodeURIComponent(q) + '&limit=20');
+    const data = await res.json();
+    let h = '';
+    if (!data.results || !data.results.length) {
+      h = '<div class="sr-empty">No results for "' + esc(q) + '"</div>';
+    } else {
+      data.results.forEach(r => {
+        const highlighted = highlightMatch(r.prompt, q);
+        const time = new Date(r.ts).toLocaleString([], { month:'short', day:'numeric', hour:'2-digit', minute:'2-digit' });
+        h += '<a class="search-result" href="/session/' + esc(r.sessionId) + '">'
+          + '<div class="sr-top">'
+          + '<span class="sr-hex">' + esc(r.sessionId.slice(-6)) + '</span>'
+          + (r.mission ? '<span class="sr-mission">' + esc(r.mission) + '</span>' : '')
+          + '<span class="sr-time">' + esc(time) + '</span>'
+          + '</div>'
+          + '<div class="sr-text">' + highlighted + '</div>'
+          + '</a>';
+      });
+      if (data.total > data.results.length) {
+        h += '<div class="sr-empty">' + (data.total - data.results.length) + ' more results</div>';
+      }
+    }
+    searchResults.innerHTML = h;
+    searchResults.classList.add('visible');
+  } catch (e) {
+    searchResults.innerHTML = '<div class="sr-empty">Search error</div>';
+    searchResults.classList.add('visible');
+  }
+}
+
+function highlightMatch(text, query) {
+  const escaped = esc(text.slice(0, 200));
+  const qEsc = esc(query);
+  const idx = escaped.toLowerCase().indexOf(qEsc.toLowerCase());
+  if (idx === -1) return escaped;
+  return escaped.slice(0, idx) + '<mark>' + escaped.slice(idx, idx + qEsc.length) + '</mark>' + escaped.slice(idx + qEsc.length);
+}
+
+// ── Close overlays ───────────────────────────────────────────────────────────
+
+document.getElementById('addOverlay').addEventListener('click', function(e) {
+  if (e.target === this) closeForm();
+});
+document.getElementById('wsOverlay').addEventListener('click', function(e) {
+  if (e.target === this) closeWsForm();
+});
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') { closeForm(); closeWsForm(); searchResults.classList.remove('visible'); }
+});
+
+// ── Initial Load ─────────────────────────────────────────────────────────────
+
+async function load() {
+  try {
+    const [dispatchRes, wsRes] = await Promise.all([
+      fetch('/api/dispatch'),
+      fetch('/api/workstreams'),
+    ]);
+    items = await dispatchRes.json();
+    workstreams = await wsRes.json();
+    render();
+  } catch (e) {
+    document.getElementById('main').innerHTML = '<div style="padding:60px;text-align:center;color:#ef4444">Failed to load: ' + e.message + '</div>';
+  }
+}
+load();
+</script>
+</body>
+</html>

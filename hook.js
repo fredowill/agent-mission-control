@@ -84,14 +84,30 @@ process.stdin.on('end', () => {
       if (!fs.existsSync(d)) fs.mkdirSync(d, { recursive: true });
     }
 
-    // ── Resolve claude.exe PID (once per session) ──
+    // ── Resolve claude.exe PID (once per session, re-resolve if dead) ──
     const stateFile = path.join(STATES_DIR, `${sid}.json`);
     let claudePid = null;
+    let resumeCount = 0;
     try {
       const prev = JSON.parse(fs.readFileSync(stateFile, 'utf8'));
       claudePid = prev.claudePid || null;
+      resumeCount = prev.resumeCount || 0;
     } catch (_) { /* first fire — no state file yet */ }
 
+    // If stored PID exists, check if it's still alive.
+    // If dead, this is likely a /resume in a new terminal — force re-resolve.
+    if (claudePid) {
+      try {
+        const check = execSync(
+          `tasklist /FI "PID eq ${claudePid}" /NH`,
+          { encoding: 'utf8', timeout: 3000, stdio: ['pipe', 'pipe', 'pipe'] }
+        );
+        if (!check.includes(String(claudePid))) {
+          claudePid = null; // stored PID is dead — re-resolve
+          resumeCount++;    // track terminal resume
+        }
+      } catch (_) { claudePid = null; resumeCount++; }
+    }
     if (!claudePid) {
       claudePid = findClaudePid(process.ppid);
     }
@@ -112,7 +128,7 @@ process.stdin.on('end', () => {
         }
       } catch (_) { /* no previous state — proceed normally */ }
     }
-    const stateData = { sessionId: sid, tool: tool || null, detail, ts: now, claudePid, ...info };
+    const stateData = { sessionId: sid, tool: tool || null, detail, ts: now, claudePid, resumeCount, ...info };
     fs.writeFileSync(stateFile, JSON.stringify(stateData));
 
     // ── Append to activity log (only on state transitions) ──

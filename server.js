@@ -26,6 +26,12 @@ const TRANSCRIPTS_DIR = path.join(process.env.HOME || process.env.USERPROFILE ||
 const LOGIC_HTML_F = path.join(__dirname, 'logic-page.html');
 const FINDINGS_HTML_F = path.join(__dirname, 'findings-page.html');
 const TOOLS_HTML_F = path.join(__dirname, 'tools-page.html');
+const RADAR_HTML_F = path.join(__dirname, 'radar-page.html');
+const SOURCES_F    = path.join(__dirname, 'sources.json');
+const DISPATCH_HTML_F = path.join(__dirname, 'dispatch-page.html');
+const WORKSTREAMS_F   = path.join(__dirname, 'workstreams.json');
+const AGENT_WS_F      = path.join(__dirname, 'agent-workstreams.json');
+const DISPATCH_F      = path.join(__dirname, 'dispatch.json');
 const STALE_MS    = 21_600_000; // 6 hours
 
 // ── Load .env ────────────────────────────────────────────────────────────────
@@ -527,8 +533,8 @@ async function runSummarizationLoop() {
   }
 }
 
-// Run every 30 seconds (stay well within 15 RPM free tier)
-setInterval(runSummarizationLoop, 30_000);
+// Run every 12 seconds (stays within 30 RPM free tier — max ~5 calls/min)
+setInterval(runSummarizationLoop, 12_000);
 // Run immediately on startup (after a brief delay for server to be ready)
 setTimeout(runSummarizationLoop, 2000);
 
@@ -620,9 +626,25 @@ function readAgents() {
     // Prompts: check across ALL chained sessions
     merged.hasPrompts = allSids.some(sid => readPrompts(sid).length > 0);
 
+    // Detect if summary is stale (new prompts came in since last summarization)
+    merged.isSummarizing = false;
+    if (merged.hasPrompts) {
+      const currentHash = getPromptsHash(newest.sessionId);
+      const cached = summariesCache[newest.sessionId];
+      if (!cached || !cached.summary) {
+        merged.isSummarizing = true; // never summarized yet
+      } else if (cached.hash !== currentHash) {
+        merged.isSummarizing = true; // new prompts since last summary
+      }
+    }
+
     // Context switches: how many times this terminal transitioned
     // (e.g. /plan → implement, /compact). 0 = fresh, 1+ = tenured agent.
     merged.contextSwitches = allSids.length - 1;
+
+    // Resume count: how many times this session was /resumed in a new terminal
+    // Sum across all chained sessions (each may have its own resumeCount)
+    merged.resumeCount = sessions.reduce((sum, s) => sum + (s.resumeCount || 0), 0);
 
     // Liveness: based on whether this PID is alive
     if (livePids.has(pid)) {
@@ -646,6 +668,16 @@ function readAgents() {
     a.archived = a.done && a.ago > ARCHIVE_MS;
     a.mission  = deriveMission(a.sessionId);
     a.hasPrompts = readPrompts(a.sessionId).length > 0;
+    a.isSummarizing = false;
+    if (a.hasPrompts) {
+      const currentHash = getPromptsHash(a.sessionId);
+      const cached = summariesCache[a.sessionId];
+      if (!cached || !cached.summary) {
+        a.isSummarizing = true;
+      } else if (cached.hash !== currentHash) {
+        a.isSummarizing = true;
+      }
+    }
     a.chainedSessions = [a.sessionId];
     agents.push(a);
   }
@@ -655,6 +687,26 @@ function readAgents() {
   // Use stable hex ID instead of flip-flopping letters
   agents.forEach(a => {
     a.letter = a.sessionId.slice(-6);
+  });
+
+  // Merge workstream assignment data into each agent
+  const agentWs = readJSON(AGENT_WS_F, {});
+  const wsList = readJSON(WORKSTREAMS_F, []);
+  agents.forEach(a => {
+    const assignment = agentWs[a.sessionId];
+    if (assignment) {
+      a.workstream = assignment.workstream;
+      a.wsTags = assignment.tags || [];
+      a.wsAssignedBy = assignment.assignedBy;
+    } else {
+      a.workstream = null;
+      a.wsTags = [];
+      a.wsAssignedBy = null;
+    }
+    // Resolve workstream color/name for frontend
+    const ws = wsList.find(w => w.id === a.workstream);
+    a.wsName = ws ? ws.name : null;
+    a.wsColor = ws ? ws.color : null;
   });
 
   return agents;
@@ -1295,6 +1347,69 @@ const DASHBOARD = `<!DOCTYPE html>
     border-radius: 4px;
     letter-spacing: 0.02em;
   }
+  .resume-badge {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--blue);
+    background: rgba(59,130,246,0.08);
+    padding: 1px 6px;
+    border-radius: 4px;
+    letter-spacing: 0.02em;
+  }
+
+  .card-ws {
+    display: flex; align-items: center; gap: 5px;
+    font-size: 11px; font-weight: 500; color: var(--text3);
+    margin-top: 4px;
+  }
+  .card-ws-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0 }
+  .ws-suggest {
+    display: flex; align-items: center; gap: 8px;
+    margin-top: 8px; padding: 6px 10px;
+    background: rgba(139,92,246,0.06); border-radius: 8px;
+    font-size: 11px; color: var(--text2);
+  }
+  .ws-suggest span { flex: 1 }
+  .ws-suggest b { color: var(--purple) }
+  .ws-accept {
+    font-size: 11px; font-weight: 600; color: var(--purple);
+    background: none; border: 1px solid rgba(139,92,246,0.3);
+    border-radius: 4px; padding: 2px 8px; cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+  }
+  .ws-accept:hover { background: rgba(139,92,246,0.1) }
+  .ws-dismiss {
+    font-size: 13px; color: var(--text3); background: none; border: none;
+    cursor: pointer; padding: 0 4px;
+  }
+  .ws-dismiss:hover { color: var(--text) }
+  .card-tag {
+    font-family: 'DM Mono', monospace; font-size: 9px; font-weight: 500;
+    padding: 1px 6px; border-radius: 100px;
+    background: var(--surface); color: var(--text3);
+  }
+
+  /* Workstream filter row */
+  .ws-filters {
+    display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; align-items: center;
+  }
+  .ws-fpill {
+    display: flex; align-items: center; gap: 5px;
+    padding: 5px 12px; border-radius: 100px;
+    font-size: 12px; font-weight: 500;
+    background: var(--bg); border: 1px solid var(--sep);
+    color: var(--text3); cursor: pointer;
+    transition: all .15s; user-select: none;
+  }
+  .ws-fpill:hover { border-color: var(--text3) }
+  .ws-fpill.active { border-color: var(--purple); color: var(--purple); background: rgba(139,92,246,0.06) }
+  .ws-fpill .wf-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0 }
+  .ws-fpill .wf-count {
+    font-family: 'DM Mono', monospace; font-size: 10px;
+    padding: 0 5px; border-radius: 100px;
+    background: var(--surface); color: var(--text3);
+  }
 
   .card.stale { opacity: 0.45; border-color: transparent }
   .card.stale:hover { opacity: 0.7 }
@@ -1357,9 +1472,11 @@ const DASHBOARD = `<!DOCTYPE html>
   </div>
   <nav class="header-nav">
     <a href="/" class="nav-link active">Dashboard</a>
+    <a href="/dispatch" class="nav-link">Dispatch</a>
     <a href="/findings" class="nav-link">Findings</a>
     <a href="/tools" class="nav-link">Toolbox</a>
     <a href="/logic" class="nav-link">Logic</a>
+    <a href="/radar" class="nav-link">Radar</a>
   </nav>
   <div class="hstats" id="stats"></div>
 </header>
@@ -1442,16 +1559,32 @@ function renderCard(a) {
     inputBanner = '<div class="needs-input"><span class="needs-input-dot"></span>Waiting for your input</div>';
   }
 
-  let heroHtml = '';
-  if (mission) {
-    heroHtml = '<div class="card-mission">' + esc(mission) + '</div>';
-  } else if (a.hasPrompts) {
-    heroHtml = '<div class="card-summarizing">Summarizing...</div>';
-  } else {
-    heroHtml = '<div class="card-no-prompt">No prompt captured yet</div>';
+  // Workstream badge
+  let wsHtml = '';
+  if (a.wsName) {
+    wsHtml = '<div class="card-ws"><span class="card-ws-dot" style="background:' + (a.wsColor || '#9ca3af') + '"></span>' + esc(a.wsName) + '</div>';
   }
 
-  return '<a href="/session/' + esc(sid) + '" class="' + cardCls + '" style="--card-accent:' + accent + ';text-decoration:none;color:inherit;display:block" data-sid="' + esc(sid) + '">'
+  let heroHtml = '';
+  if (mission && a.isSummarizing) {
+    heroHtml = '<div class="card-mission">' + esc(mission) + '</div>'
+      + wsHtml
+      + '<div class="card-summarizing">Re-summarizing...</div>';
+  } else if (mission) {
+    heroHtml = '<div class="card-mission">' + esc(mission) + '</div>' + wsHtml;
+  } else if (a.hasPrompts || (a.active && !a.done)) {
+    heroHtml = '<div class="card-summarizing">Summarizing...</div>' + wsHtml;
+  } else {
+    heroHtml = '<div class="card-no-prompt">No prompt captured yet</div>' + wsHtml;
+  }
+
+  // Tag pills
+  let tagPills = '';
+  if (a.wsTags && a.wsTags.length) {
+    tagPills = a.wsTags.map(t => '<span class="card-tag">' + esc(t) + '</span>').join('');
+  }
+
+  return '<a href="/session/' + esc(sid) + '" class="' + cardCls + '" style="--card-accent:' + accent + ';text-decoration:none;color:inherit;display:block" data-sid="' + esc(sid) + '" data-ws="' + (a.workstream || '') + '">'
     + '<div class="card-body">'
     + '<div class="card-top">'
     + '<span class="state-pill s-' + stateKey + '"><span class="sdot"></span>' + esc(label) + '</span>'
@@ -1461,6 +1594,8 @@ function renderCard(a) {
     + heroHtml
     + '</div>'
     + '<div class="card-footer">'
+    + tagPills
+    + (a.resumeCount > 0 ? '<span class="resume-badge" title="Resumed ' + a.resumeCount + ' time' + (a.resumeCount > 1 ? 's' : '') + ' in a new terminal">' + a.resumeCount + 'x resume</span>' : '')
     + (a.contextSwitches > 0 ? '<span class="ctx-badge" title="' + a.contextSwitches + ' context transition' + (a.contextSwitches > 1 ? 's' : '') + ' (/plan, /compact, etc.)">' + a.contextSwitches + 'x ctx</span>' : '')
     + '<span class="card-id">' + esc(letter) + '</span>'
     + '</div>'
@@ -1546,13 +1681,58 @@ function renderEmpty() {
 }
 
 let currentFilter = 'active';
+let currentWsFilter = 'all';
 
 function filterAgents(agents) {
-  if (currentFilter === 'all') return agents.filter(a => !a.archived);
-  if (currentFilter === 'done') return agents.filter(a => a.done && !a.archived);
-  if (currentFilter === 'archived') return agents.filter(a => a.archived);
-  // active = window is open (PID alive)
-  return agents.filter(a => a.active);
+  let result;
+  if (currentFilter === 'all') result = agents.filter(a => !a.archived);
+  else if (currentFilter === 'done') result = agents.filter(a => a.done && !a.archived);
+  else if (currentFilter === 'archived') result = agents.filter(a => a.archived);
+  else result = agents.filter(a => a.active);
+
+  // Apply workstream filter
+  if (currentWsFilter !== 'all') {
+    if (currentWsFilter === 'unassigned') result = result.filter(a => !a.workstream);
+    else result = result.filter(a => a.workstream === currentWsFilter);
+  }
+  return result;
+}
+
+function renderWsFilters(agents) {
+  const nonArchived = agents.filter(a => !a.archived);
+  const wsCounts = {};
+  let unassigned = 0;
+  nonArchived.forEach(a => {
+    if (a.workstream) wsCounts[a.workstream] = (wsCounts[a.workstream] || 0) + 1;
+    else unassigned++;
+  });
+
+  // Only show if there are any assignments or more than 0 workstreams defined
+  const hasAny = Object.keys(wsCounts).length > 0 || unassigned > 0;
+  if (!hasAny) return '';
+
+  let h = '<div class="ws-filters">';
+  h += '<div class="ws-fpill' + (currentWsFilter === 'all' ? ' active' : '') + '" data-ws="all">All</div>';
+
+  // Get workstream metadata from agents (already merged in readAgents)
+  const seen = new Set();
+  nonArchived.forEach(a => {
+    if (a.workstream && !seen.has(a.workstream)) {
+      seen.add(a.workstream);
+      const count = wsCounts[a.workstream] || 0;
+      h += '<div class="ws-fpill' + (currentWsFilter === a.workstream ? ' active' : '') + '" data-ws="' + esc(a.workstream) + '">'
+        + '<span class="wf-dot" style="background:' + (a.wsColor || '#9ca3af') + '"></span>'
+        + esc(a.wsName || a.workstream)
+        + '<span class="wf-count">' + count + '</span></div>';
+    }
+  });
+
+  if (unassigned > 0) {
+    h += '<div class="ws-fpill' + (currentWsFilter === 'unassigned' ? ' active' : '') + '" data-ws="unassigned">Unassigned<span class="wf-count">' + unassigned + '</span></div>';
+  }
+
+  h += '</div>';
+  return h;
 }
 
 function renderFilters(agents) {
@@ -1589,6 +1769,7 @@ async function refresh() {
     h += '<p class="page-sub">' + agents.length + ' sessions tracked</p>';
     h += renderNorthStar(nsData);
     h += renderFilters(agents);
+    h += renderWsFilters(agents);
 
     if (filtered.length) {
       h += '<div class="grid">' + filtered.map(renderCard).join('') + '</div>';
@@ -1598,15 +1779,64 @@ async function refresh() {
 
     document.getElementById('main').innerHTML = h;
 
+    document.querySelectorAll('.ws-fpill').forEach(pill => {
+      pill.addEventListener('click', () => {
+        currentWsFilter = pill.dataset.ws;
+        refresh();
+      });
+    });
+
     document.querySelectorAll('.filter-btn').forEach(btn => {
       btn.addEventListener('click', () => {
         currentFilter = btn.dataset.f;
         refresh();
       });
     });
+
+    // AI workstream suggestions for unassigned sessions with prompts
+    agents.forEach(a => {
+      if (!a.workstream && a.hasPrompts && !suggestedSessions.has(a.sessionId)) {
+        suggestedSessions.add(a.sessionId);
+        fetch('/api/suggest-workstream/' + encodeURIComponent(a.sessionId))
+          .then(r => r.json())
+          .then(data => {
+            if (data.workstream && data.confidence > 0.4) {
+              const card = document.querySelector('[data-sid="' + a.sessionId + '"]');
+              if (!card) return;
+              if (card.querySelector('.ws-suggest')) return;
+              const banner = document.createElement('div');
+              banner.className = 'ws-suggest';
+              const span = document.createElement('span');
+              span.innerHTML = 'Looks like <b>' + esc(data.workstream) + '</b>';
+              banner.appendChild(span);
+              const acceptBtn = document.createElement('button');
+              acceptBtn.className = 'ws-accept';
+              acceptBtn.textContent = 'Accept';
+              acceptBtn.onclick = function(e) { e.preventDefault(); e.stopPropagation(); acceptWs(a.sessionId, data.workstream); };
+              banner.appendChild(acceptBtn);
+              const dismissBtn = document.createElement('button');
+              dismissBtn.className = 'ws-dismiss';
+              dismissBtn.textContent = 'x';
+              dismissBtn.onclick = function(e) { e.preventDefault(); e.stopPropagation(); banner.remove(); };
+              banner.appendChild(dismissBtn);
+              card.querySelector('.card-body').appendChild(banner);
+            }
+          }).catch(() => {});
+      }
+    });
   } catch (e) {
     console.warn('refresh error', e);
   }
+}
+
+const suggestedSessions = new Set();
+
+function acceptWs(sid, workstream) {
+  fetch('/api/agent-workstreams', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ sessionId: sid, workstream })
+  }).then(() => refresh()).catch(() => {});
 }
 
 refresh();
@@ -1735,9 +1965,11 @@ const DETAIL_PAGE = `<!DOCTYPE html>
   <a href="/" class="back-link"><span>\u2190</span> All agents</a>
   <nav class="header-nav">
     <a href="/" class="nav-link active">Dashboard</a>
+    <a href="/dispatch" class="nav-link">Dispatch</a>
     <a href="/findings" class="nav-link">Findings</a>
     <a href="/tools" class="nav-link">Toolbox</a>
     <a href="/logic" class="nav-link">Logic</a>
+    <a href="/radar" class="nav-link">Radar</a>
   </nav>
 </header>
 
@@ -1978,6 +2210,10 @@ let LOGIC_PAGE = '';
 try { LOGIC_PAGE = fs.readFileSync(LOGIC_HTML_F, 'utf8'); } catch { LOGIC_PAGE = '<html><body>Logic page not found</body></html>'; }
 let FINDINGS_PAGE = '';
 try { FINDINGS_PAGE = fs.readFileSync(FINDINGS_HTML_F, 'utf8'); } catch { FINDINGS_PAGE = '<html><body>Findings page not found</body></html>'; }
+let RADAR_PAGE = '';
+try { RADAR_PAGE = fs.readFileSync(RADAR_HTML_F, 'utf8'); } catch { RADAR_PAGE = '<html><body>Radar page not found</body></html>'; }
+let DISPATCH_PAGE = '';
+try { DISPATCH_PAGE = fs.readFileSync(DISPATCH_HTML_F, 'utf8'); } catch { DISPATCH_PAGE = '<html><body>Dispatch page not found</body></html>'; }
 
 // ── HTTP Server ──────────────────────────────────────────────────────────────
 
@@ -2150,6 +2386,326 @@ const server = http.createServer((req, res) => {
     return res.end(JSON.stringify(readLogicData()));
   }
 
+  // Sources API (Radar)
+  if (url === '/api/sources' && req.method === 'GET') {
+    res.writeHead(200, { 'Content-Type': 'application/json', 'Cache-Control': 'no-store' });
+    return res.end(JSON.stringify(readJSON(SOURCES_F, [])));
+  }
+  if (url === '/api/sources' && req.method === 'POST') {
+    let body = '';
+    req.on('data', c => { body += c; });
+    req.on('end', () => {
+      try {
+        const { name, url: srcUrl, category, description, tags } = JSON.parse(body);
+        if (!name || !srcUrl) {
+          res.writeHead(400, { 'Content-Type': 'application/json' });
+          return res.end(JSON.stringify({ error: 'name and url required' }));
+        }
+        const sources = readJSON(SOURCES_F, []);
+        const id = name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+        sources.push({ id, name, url: srcUrl, category: category || 'Research', description: description || '', tags: tags || [], added: new Date().toISOString().slice(0, 10), pinned: false });
+        writeJSON(SOURCES_F, sources);
+        res.writeHead(200, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify(sources));
+      } catch (e) {
+        res.writeHead(400, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ error: e.message }));
+      }
+    });
+    return;
+  }
+  if (url.startsWith('/api/sources/') && req.method === 'DELETE') {
+    const id = decodeURIComponent(url.slice('/api/sources/'.length));
+    let sources = readJSON(SOURCES_F, []);
+    sources = sources.filter(s => s.id !== id);
+    writeJSON(SOURCES_F, sources);
+    res.writeHead(200, { 'Content-Type': 'application/json' });
+    return res.end(JSON.stringify(sources));
+  }
+  if (url.startsWith('/api/sources/') && req.method === 'PUT') {
+    const id = decodeURIComponent(url.slice('/api/sources/'.length));
+    let body = '';
+    req.on('data', c => { body += c; });
+    req.on('end', () => {
+      try {
+        const updates = JSON.parse(body);
+        const sources = readJSON(SOURCES_F, []);
+        const idx = sources.findIndex(s => s.id === id);
+        if (idx === -1) {
+          res.writeHead(404, { 'Content-Type': 'application/json' });
+          return res.end(JSON.stringify({ error: 'not found' }));
+        }
+        Object.assign(sources[idx], updates);
+        writeJSON(SOURCES_F, sources);
+        res.writeHead(200, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify(sources));
+      } catch (e) {
+        res.writeHead(400, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ error: e.message }));
+      }
+    });
+    return;
+  }
+
+  // ── Workstreams API ──────────────────────────────────────────────────────────
+  if (url === '/api/workstreams' && req.method === 'GET') {
+    res.writeHead(200, { 'Content-Type': 'application/json', 'Cache-Control': 'no-store' });
+    return res.end(JSON.stringify(readJSON(WORKSTREAMS_F, [])));
+  }
+  if (url === '/api/workstreams' && req.method === 'POST') {
+    let body = '';
+    req.on('data', c => { body += c; });
+    req.on('end', () => {
+      try {
+        const { name, color } = JSON.parse(body);
+        if (!name) { res.writeHead(400, { 'Content-Type': 'application/json' }); return res.end(JSON.stringify({ error: 'name required' })); }
+        const ws = readJSON(WORKSTREAMS_F, []);
+        const id = name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+        ws.push({ id, name, color: color || '#8b5cf6', order: ws.length, created: new Date().toISOString().slice(0, 10) });
+        writeJSON(WORKSTREAMS_F, ws);
+        res.writeHead(200, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify(ws));
+      } catch (e) { res.writeHead(400, { 'Content-Type': 'application/json' }); res.end(JSON.stringify({ error: e.message })); }
+    });
+    return;
+  }
+  if (url.startsWith('/api/workstreams/') && req.method === 'PUT') {
+    const id = decodeURIComponent(url.slice('/api/workstreams/'.length));
+    let body = '';
+    req.on('data', c => { body += c; });
+    req.on('end', () => {
+      try {
+        const updates = JSON.parse(body);
+        const ws = readJSON(WORKSTREAMS_F, []);
+        const idx = ws.findIndex(w => w.id === id);
+        if (idx === -1) { res.writeHead(404, { 'Content-Type': 'application/json' }); return res.end(JSON.stringify({ error: 'not found' })); }
+        if (updates.name !== undefined) ws[idx].name = updates.name;
+        if (updates.color !== undefined) ws[idx].color = updates.color;
+        if (updates.order !== undefined) ws[idx].order = updates.order;
+        writeJSON(WORKSTREAMS_F, ws);
+        res.writeHead(200, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify(ws));
+      } catch (e) { res.writeHead(400, { 'Content-Type': 'application/json' }); res.end(JSON.stringify({ error: e.message })); }
+    });
+    return;
+  }
+  if (url.startsWith('/api/workstreams/') && req.method === 'DELETE') {
+    const id = decodeURIComponent(url.slice('/api/workstreams/'.length));
+    let ws = readJSON(WORKSTREAMS_F, []);
+    ws = ws.filter(w => w.id !== id);
+    writeJSON(WORKSTREAMS_F, ws);
+    res.writeHead(200, { 'Content-Type': 'application/json' });
+    return res.end(JSON.stringify(ws));
+  }
+
+  // ── Agent Workstream Assignments API ────────────────────────────────────────
+  if (url === '/api/agent-workstreams' && req.method === 'GET') {
+    res.writeHead(200, { 'Content-Type': 'application/json', 'Cache-Control': 'no-store' });
+    return res.end(JSON.stringify(readJSON(AGENT_WS_F, {})));
+  }
+  if (url === '/api/agent-workstreams' && req.method === 'POST') {
+    let body = '';
+    req.on('data', c => { body += c; });
+    req.on('end', () => {
+      try {
+        const { sessionId, workstream, tags } = JSON.parse(body);
+        if (!sessionId || !workstream) { res.writeHead(400, { 'Content-Type': 'application/json' }); return res.end(JSON.stringify({ error: 'sessionId and workstream required' })); }
+        const aws = readJSON(AGENT_WS_F, {});
+        aws[sessionId] = { workstream, tags: tags || [], assignedBy: 'user', overridden: !!(aws[sessionId] && aws[sessionId].assignedBy === 'ai') };
+        writeJSON(AGENT_WS_F, aws);
+        res.writeHead(200, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ ok: true }));
+      } catch (e) { res.writeHead(400, { 'Content-Type': 'application/json' }); res.end(JSON.stringify({ error: e.message })); }
+    });
+    return;
+  }
+
+  // ── Dispatch CRUD API ───────────────────────────────────────────────────────
+  if (url === '/api/dispatch' && req.method === 'GET') {
+    res.writeHead(200, { 'Content-Type': 'application/json', 'Cache-Control': 'no-store' });
+    return res.end(JSON.stringify(readJSON(DISPATCH_F, [])));
+  }
+  if (url === '/api/dispatch' && req.method === 'POST') {
+    let body = '';
+    req.on('data', c => { body += c; });
+    req.on('end', () => {
+      try {
+        const { title, description, status, priority, workstream, tags, linkedSession } = JSON.parse(body);
+        if (!title) { res.writeHead(400, { 'Content-Type': 'application/json' }); return res.end(JSON.stringify({ error: 'title required' })); }
+        const items = readJSON(DISPATCH_F, []);
+        const id = Math.random().toString(36).slice(2, 10);
+        const now = new Date().toISOString();
+        items.push({ id, title, description: description || '', status: status || 'todo', priority: priority || 'p2', workstream: workstream || '', tags: tags || [], linkedSession: linkedSession || null, created: now, updated: now });
+        writeJSON(DISPATCH_F, items);
+        res.writeHead(200, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify(items));
+      } catch (e) { res.writeHead(400, { 'Content-Type': 'application/json' }); res.end(JSON.stringify({ error: e.message })); }
+    });
+    return;
+  }
+  if (url.startsWith('/api/dispatch/') && req.method === 'PUT') {
+    const id = decodeURIComponent(url.slice('/api/dispatch/'.length));
+    let body = '';
+    req.on('data', c => { body += c; });
+    req.on('end', () => {
+      try {
+        const updates = JSON.parse(body);
+        const items = readJSON(DISPATCH_F, []);
+        const idx = items.findIndex(i => i.id === id);
+        if (idx === -1) { res.writeHead(404, { 'Content-Type': 'application/json' }); return res.end(JSON.stringify({ error: 'not found' })); }
+        for (const key of ['title', 'description', 'status', 'priority', 'workstream', 'tags', 'linkedSession']) {
+          if (updates[key] !== undefined) items[idx][key] = updates[key];
+        }
+        items[idx].updated = new Date().toISOString();
+        writeJSON(DISPATCH_F, items);
+        res.writeHead(200, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify(items));
+      } catch (e) { res.writeHead(400, { 'Content-Type': 'application/json' }); res.end(JSON.stringify({ error: e.message })); }
+    });
+    return;
+  }
+  if (url.startsWith('/api/dispatch/') && req.method === 'DELETE') {
+    const id = decodeURIComponent(url.slice('/api/dispatch/'.length));
+    let items = readJSON(DISPATCH_F, []);
+    items = items.filter(i => i.id !== id);
+    writeJSON(DISPATCH_F, items);
+    res.writeHead(200, { 'Content-Type': 'application/json' });
+    return res.end(JSON.stringify(items));
+  }
+
+  // ── Prompt Search API ───────────────────────────────────────────────────────
+  if (url.startsWith('/api/search/prompts') && req.method === 'GET') {
+    const params = new URL(req.url, 'http://localhost').searchParams;
+    const q = (params.get('q') || '').toLowerCase().trim();
+    const limit = Math.min(parseInt(params.get('limit') || '50', 10), 200);
+    const offset = parseInt(params.get('offset') || '0', 10);
+
+    if (!q || q.length < 2) {
+      res.writeHead(200, { 'Content-Type': 'application/json' });
+      return res.end(JSON.stringify({ results: [], total: 0, query: q }));
+    }
+
+    const results = [];
+    const missions = readJSON(MISSIONS_F, {});
+
+    // Scan all prompt ndjson files
+    try {
+      const promptFiles = fs.existsSync(PROMPTS_DIR) ? fs.readdirSync(PROMPTS_DIR).filter(f => f.endsWith('.ndjson')) : [];
+      for (const f of promptFiles) {
+        const sid = f.replace('.ndjson', '');
+        try {
+          const lines = fs.readFileSync(path.join(PROMPTS_DIR, f), 'utf8').trim().split('\n').filter(Boolean);
+          for (let i = 0; i < lines.length; i++) {
+            try {
+              const entry = JSON.parse(lines[i]);
+              const text = (entry.prompt || '').toLowerCase();
+              if (text.includes(q)) {
+                results.push({
+                  sessionId: sid,
+                  prompt: entry.prompt.slice(0, 300),
+                  ts: entry.ts,
+                  mission: missions[sid] || deriveMission(sid) || '',
+                  matchIndex: i
+                });
+              }
+            } catch {}
+          }
+        } catch {}
+      }
+    } catch {}
+
+    // Also scan transcript files for prompts missed by hooks
+    try {
+      const tFiles = fs.existsSync(TRANSCRIPTS_DIR) ? fs.readdirSync(TRANSCRIPTS_DIR).filter(f => f.endsWith('.jsonl')) : [];
+      const alreadyFound = new Set(results.map(r => r.sessionId + ':' + r.ts));
+      for (const f of tFiles) {
+        const sid = f.replace('.jsonl', '');
+        if (!isValidSid(sid)) continue;
+        try {
+          const lines = fs.readFileSync(path.join(TRANSCRIPTS_DIR, f), 'utf8').trim().split('\n').filter(Boolean);
+          for (const l of lines) {
+            try {
+              const d = JSON.parse(l);
+              let text = '';
+              if (d.type === 'user') {
+                const msg = d.message;
+                if (typeof msg === 'string') text = msg;
+                else if (msg && Array.isArray(msg.content)) {
+                  for (const p of msg.content) { if (p.type === 'text') text += p.text; }
+                }
+              }
+              if (text && text.length > 5 && text.toLowerCase().includes(q)) {
+                const ts = typeof d.timestamp === 'number' ? d.timestamp : typeof d.timestamp === 'string' ? new Date(d.timestamp).getTime() : 0;
+                const key = sid + ':' + ts;
+                if (!alreadyFound.has(key) && ts > 0) {
+                  results.push({ sessionId: sid, prompt: text.slice(0, 300), ts, mission: missions[sid] || deriveMission(sid) || '', matchIndex: -1 });
+                  alreadyFound.add(key);
+                }
+              }
+            } catch {}
+          }
+        } catch {}
+      }
+    } catch {}
+
+    // Sort by timestamp desc
+    results.sort((a, b) => b.ts - a.ts);
+
+    res.writeHead(200, { 'Content-Type': 'application/json' });
+    return res.end(JSON.stringify({ results: results.slice(offset, offset + limit), total: results.length, query: q }));
+  }
+
+  // ── AI Workstream Suggestion ────────────────────────────────────────────────
+  if (url.startsWith('/api/suggest-workstream/') && req.method === 'GET') {
+    const sid = decodeURIComponent(url.slice('/api/suggest-workstream/'.length));
+    if (!isValidSid(sid)) {
+      res.writeHead(400, { 'Content-Type': 'application/json' });
+      return res.end(JSON.stringify({ error: 'invalid session id' }));
+    }
+
+    const prompts = readChainedPrompts(sid);
+    const ws = readJSON(WORKSTREAMS_F, []);
+    if (!prompts.length || !ws.length || !AI_READY) {
+      res.writeHead(200, { 'Content-Type': 'application/json' });
+      return res.end(JSON.stringify({ workstream: null, confidence: 0, reasoning: 'No data' }));
+    }
+
+    const promptText = prompts.slice(0, 5).map((p, i) => `${i + 1}. ${(p.prompt || '').slice(0, 200)}`).join('\n');
+    const wsNames = ws.map(w => w.id + ' (' + w.name + ')').join(', ');
+
+    callLLM(
+      `Given these user prompts from a coding session, classify which workstream this session belongs to.
+Available workstreams: ${wsNames}
+
+Prompts:
+${promptText}
+
+Respond with ONLY a JSON object: {"workstream": "the-id", "confidence": 0.0-1.0, "reasoning": "brief reason"}`,
+      256
+    ).then(result => {
+      try {
+        const parsed = JSON.parse(result.replace(/```json?\s*/g, '').replace(/```/g, '').trim());
+        // Auto-assign if high confidence
+        if (parsed.confidence > 0.6 && ws.some(w => w.id === parsed.workstream)) {
+          const aws = readJSON(AGENT_WS_F, {});
+          if (!aws[sid] || !aws[sid].overridden) {
+            aws[sid] = { workstream: parsed.workstream, tags: [], assignedBy: 'ai', overridden: false };
+            writeJSON(AGENT_WS_F, aws);
+          }
+        }
+        res.writeHead(200, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify(parsed));
+      } catch {
+        res.writeHead(200, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ workstream: null, confidence: 0, reasoning: 'Failed to parse' }));
+      }
+    }).catch(() => {
+      res.writeHead(200, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({ workstream: null, confidence: 0, reasoning: 'API error' }));
+    });
+    return;
+  }
+
   // Session detail page
   if (url.startsWith('/session/')) {
     res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
@@ -2172,6 +2728,17 @@ const server = http.createServer((req, res) => {
   if (url === '/logic') {
     res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
     return res.end(LOGIC_PAGE);
+  }
+
+  // Radar page
+  if (url === '/radar') {
+    res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
+    return res.end(RADAR_PAGE);
+  }
+
+  if (url === '/dispatch') {
+    res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
+    return res.end(DISPATCH_PAGE);
   }
 
   res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
