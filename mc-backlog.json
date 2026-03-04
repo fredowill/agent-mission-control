@@ -1,0 +1,31 @@
+{
+  "tasks": [
+    {
+      "id": "mc-001",
+      "title": "Implement shared MC backlog (mc-backlog.json)",
+      "description": "Server reads from both dispatch.json (local, gitignored) and mc-backlog.json (tracked). Dispatch page merges both, shows which pool each task belongs to. Creating/editing a task lets you pick local vs MC.",
+      "status": "pending",
+      "priority": "high",
+      "created": "2026-03-04",
+      "machine": "work"
+    },
+    {
+      "id": "mc-002",
+      "title": "Fix 'needs input' detection for CLI prompts",
+      "description": "Agent cards don't always detect when Claude CLI is waiting for user input. The Stop hook fires but sometimes the state shows as IDLE instead of NEEDS INPUT. Investigate hook timing and AskUserQuestion detection.",
+      "status": "pending",
+      "priority": "medium",
+      "created": "2026-03-04",
+      "machine": "work"
+    },
+    {
+      "id": "mc-003",
+      "title": "Set up home PC git flow (fredowill auth + pull)",
+      "description": "Clone or pull agent-mission-control on home PC, install hooks in ~/.claude/settings.json, set up .env with Cerebras key, verify toolbox renders with home machine's agents.",
+      "status": "pending",
+      "priority": "high",
+      "created": "2026-03-04",
+      "machine": "home"
+    }
+  ]
+}
