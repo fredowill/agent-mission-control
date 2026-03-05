@@ -15,6 +15,8 @@ const FIND_PID_SCRIPT = path.join(__dirname, 'find-claude-pid.ps1');
 
 const STATES_DIR = path.join(__dirname, 'states');
 const LOGS_DIR   = path.join(__dirname, 'logs');
+const DEBUG_LOG  = path.join(__dirname, 'debug-events.ndjson');
+const DEBUG_MAX_LINES = 5000;
 
 const TOOL_MAP = {
   // ── Investigating ──
@@ -112,6 +114,10 @@ process.stdin.on('end', () => {
       claudePid = findClaudePid(process.ppid);
     }
 
+    // ── Capture previous state for debug log (before overwrite) ──
+    let _prevState = null;
+    try { _prevState = JSON.parse(fs.readFileSync(stateFile, 'utf8')).state; } catch {}
+
     // ── Write current state ──
     // Guard: if Stop hook fires while state is 'waiting' (AskUserQuestion),
     // preserve the waiting state — the user hasn't answered yet.
@@ -145,6 +151,23 @@ process.stdin.on('end', () => {
       fs.appendFileSync(logFile,
         JSON.stringify({ state: info.state, emoji: info.emoji, tool: tool || 'stop', detail, ts: now }) + '\n'
       );
+    }
+
+    // ── Raw event debug log (toggled via DEBUG_EVENTS=true in .env) ──
+    if (process.env.DEBUG_EVENTS === 'true') {
+      try {
+        const debugEntry = JSON.stringify({
+          ts: now, session_id: sid, tool: tool || 'stop',
+          input_summary: detail, prev_state: _prevState, new_state: info.state,
+        });
+        fs.appendFileSync(DEBUG_LOG, debugEntry + '\n');
+        // Rotate if over cap
+        const content = fs.readFileSync(DEBUG_LOG, 'utf8');
+        const lines = content.trim().split('\n');
+        if (lines.length > DEBUG_MAX_LINES) {
+          fs.writeFileSync(DEBUG_LOG, lines.slice(-Math.floor(DEBUG_MAX_LINES / 2)).join('\n') + '\n');
+        }
+      } catch {}
     }
   } catch (_) {
     // never crash — agent must not be disrupted

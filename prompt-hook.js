@@ -93,59 +93,62 @@ process.stdin.on('end', () => {
 
     // ── Write "thinking" state so dashboard shows immediate activity ──
     // Bridges the gap between UserPromptSubmit and first PostToolUse.
-    // Only write if it's a real user prompt (not a skill expansion).
-    if (!skillName) {
+    // Works for both user prompts AND skill expansions — any prompt means
+    // the user answered, so "waiting" → "thinking" is always correct.
+    try {
+      if (!fs.existsSync(STATES_DIR)) fs.mkdirSync(STATES_DIR, { recursive: true });
+      if (!fs.existsSync(LOGS_DIR))   fs.mkdirSync(LOGS_DIR, { recursive: true });
+
+      const stateFile = path.join(STATES_DIR, `${sid}.json`);
+      // Preserve claudePid and resumeCount from existing state file
+      let claudePid = null;
+      let resumeCount = 0;
       try {
-        if (!fs.existsSync(STATES_DIR)) fs.mkdirSync(STATES_DIR, { recursive: true });
-        if (!fs.existsSync(LOGS_DIR))   fs.mkdirSync(LOGS_DIR, { recursive: true });
-
-        const stateFile = path.join(STATES_DIR, `${sid}.json`);
-        // Preserve claudePid from existing state file, but re-resolve if dead
-        let claudePid = null;
-        try {
-          const prev = JSON.parse(fs.readFileSync(stateFile, 'utf8'));
-          claudePid = prev.claudePid || null;
-        } catch {}
-
-        // If stored PID exists, check liveness. Dead PID = /resume in new terminal.
-        if (claudePid) {
-          try {
-            const { execSync } = require('child_process');
-            const check = execSync(
-              `tasklist /FI "PID eq ${claudePid}" /NH`,
-              { encoding: 'utf8', timeout: 3000, stdio: ['pipe', 'pipe', 'pipe'] }
-            );
-            if (!check.includes(String(claudePid))) {
-              claudePid = null; // dead — will be re-resolved by next hook.js fire
-            }
-          } catch { claudePid = null; }
-        }
-
-        const stateData = {
-          sessionId: sid,
-          tool: null,
-          detail: '',
-          ts: Date.now(),
-          claudePid,
-          state: 'thinking',
-          emoji: '💭',
-          label: 'THINKING',
-        };
-        fs.writeFileSync(stateFile, JSON.stringify(stateData));
-
-        // Append to activity log
-        const logFile = path.join(LOGS_DIR, `${sid}.ndjson`);
-        let shouldLog = true;
-        try {
-          const lines = fs.readFileSync(logFile, 'utf8').trim().split('\n');
-          const last  = JSON.parse(lines[lines.length - 1]);
-          if (last.state === 'thinking') shouldLog = false; // don't flood
-        } catch {}
-        if (shouldLog) {
-          fs.appendFileSync(logFile, JSON.stringify({ state: 'thinking', emoji: '💭', tool: 'prompt', detail: '', ts: Date.now() }) + '\n');
-        }
+        const prev = JSON.parse(fs.readFileSync(stateFile, 'utf8'));
+        claudePid = prev.claudePid || null;
+        resumeCount = prev.resumeCount || 0;
       } catch {}
-    }
+
+      // If stored PID exists, check liveness. Dead PID = /resume in new terminal.
+      if (claudePid) {
+        try {
+          const { execSync } = require('child_process');
+          const check = execSync(
+            `tasklist /FI "PID eq ${claudePid}" /NH`,
+            { encoding: 'utf8', timeout: 3000, stdio: ['pipe', 'pipe', 'pipe'] }
+          );
+          if (!check.includes(String(claudePid))) {
+            claudePid = null; // dead — will be re-resolved by next hook.js fire
+          }
+        } catch { claudePid = null; }
+      }
+
+      const stateData = {
+        sessionId: sid,
+        tool: null,
+        detail: skillName ? `${skillName} invoked` : '',
+        ts: Date.now(),
+        claudePid,
+        resumeCount,
+        state: 'thinking',
+        emoji: '💭',
+        label: 'THINKING',
+      };
+      fs.writeFileSync(stateFile, JSON.stringify(stateData));
+
+      // Append to activity log
+      const logFile = path.join(LOGS_DIR, `${sid}.ndjson`);
+      let shouldLog = true;
+      try {
+        const lines = fs.readFileSync(logFile, 'utf8').trim().split('\n');
+        const last  = JSON.parse(lines[lines.length - 1]);
+        if (last.state === 'thinking') shouldLog = false; // don't flood
+      } catch {}
+      if (shouldLog) {
+        const logDetail = skillName ? `${skillName} invoked` : '';
+        fs.appendFileSync(logFile, JSON.stringify({ state: 'thinking', emoji: '💭', tool: 'prompt', detail: logDetail, ts: Date.now() }) + '\n');
+      }
+    } catch {}
   } catch (_) {
     // never crash — agent must not be disrupted
   }

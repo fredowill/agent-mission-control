@@ -12,5 +12,6 @@ sources.json
 workstreams.json
 agent-workstreams.json
 .env
+debug-events.ndjson
 
 node_modules/

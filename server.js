@@ -76,7 +76,7 @@ const ACTIVE_THRESHOLD  = 120_000;  // 2 min — fallback for sessions without P
 
 // Cache live claude.exe PIDs with a short TTL
 let _livePidCache = { pids: new Set(), ts: 0 };
-const PID_CACHE_TTL = 3000; // 3 seconds
+const PID_CACHE_TTL = 1500; // 1.5 seconds — reduced from 3s to minimize stale PID window
 
 function getLiveClaudePids() {
   const now = Date.now();
@@ -100,6 +100,23 @@ function getLiveClaudePids() {
 // CRITICAL: Prompt files are APPEND-ONLY. Only prompt-hook.js writes to them.
 // The server MUST NEVER modify, merge, deduplicate, or overwrite prompt files.
 // Each session's prompts are sacred user data captured exactly as submitted.
+
+// MC-004: Filter system/interrupt messages from transcript fallback
+function isSystemText(text) {
+  const t = text.trimStart();
+  return t.startsWith('[Request interrupted') ||
+         t.startsWith('<system-reminder>') ||
+         t.startsWith('<task-notification>') ||
+         t.startsWith('<tool_result>');
+}
+
+// MC-004: Detect raw skill expansion markdown leaked from transcript
+function isSkillExpansion(text) {
+  if (/<command-name>[^<]+<\/command-name>/.test(text)) return true;
+  if (/^---\s*\n[\s\S]*?name:\s*\S+[\s\S]*?---/.test(text)) return true;
+  if (text.length > 2000 && (text.includes('```') || text.includes('<system') || text.startsWith('---\n'))) return true;
+  return false;
+}
 
 function readPrompts(sid) {
   // Primary source: hook-captured prompts
@@ -139,6 +156,9 @@ function readPrompts(sid) {
               text = d.content;
             }
           }
+          // MC-004: Skip system messages and raw skill expansions
+          if (text && isSystemText(text)) continue;
+          if (text && isSkillExpansion(text)) continue;
           // Only include real user text (not tool results, not tiny fragments)
           if (text && text.length > 5) {
             // Timestamps can be Unix ms or ISO strings depending on entry type
@@ -156,9 +176,15 @@ function readPrompts(sid) {
   if (!transcriptPrompts.length) return hookPrompts;
   if (!hookPrompts.length) return transcriptPrompts;
 
-  // Dedup by content prefix (first 80 chars) to handle timestamp mismatches
+  // Dedup: content prefix (first 80 chars) + timestamp proximity (within 3s of any hook prompt)
   const hookTexts = new Set(hookPrompts.map(p => p.prompt.slice(0, 80)));
-  const extras = transcriptPrompts.filter(p => !hookTexts.has(p.prompt.slice(0, 80)));
+  const hookTimes = hookPrompts.map(p => p.ts);
+  const extras = transcriptPrompts.filter(p => {
+    if (hookTexts.has(p.prompt.slice(0, 80))) return false;
+    // MC-004: Skip transcript entries within 3s of any hook prompt (collapsed vs expanded pairs)
+    if (hookTimes.some(t => Math.abs(t - p.ts) < 3000)) return false;
+    return true;
+  });
   if (!extras.length) return hookPrompts;
 
   return [...hookPrompts, ...extras].sort((a, b) => a.ts - b.ts);
@@ -663,8 +689,9 @@ function readAgents() {
   }
 
   // Orphan sessions (no PID): fallback to timestamp-based liveness
+  // Exception: "waiting" state is preserved indefinitely — user hasn't answered yet
   for (const a of orphans) {
-    a.active = a.ago < ACTIVE_THRESHOLD;
+    a.active = a.state === 'waiting' || a.ago < ACTIVE_THRESHOLD;
     a.done   = !a.active;
     a.stale    = a.done && a.ago > STALE_MS;
     a.archived = a.done && a.ago > ARCHIVE_MS;
@@ -888,6 +915,9 @@ function readLogicData() {
   return { ts: now, pipeline, sessions, health: { aiReady: AI_READY, activeSessions: activeCount, states: stateFiles.length, logs: logFiles.length, prompts: promptFiles.length, summaries: summaryCount, deepSummaries: deepSummaryCount, staleSummaries, northStarAge, northStarThemes: (northStarCache.themes || []).length, apiCallsLastMin: apiCallLog.filter(ts => now - ts < 60000).length }, issues: globalIssues };
 }
 
+// ── UI Zoom (single source of truth for all pages) ──────────────────────────
+const UI_ZOOM = 1.3;
+
 // ── Dashboard HTML ───────────────────────────────────────────────────────────
 
 const DASHBOARD = `<!DOCTYPE html>
@@ -901,6 +931,7 @@ const DASHBOARD = `<!DOCTYPE html>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=DM+Sans:wght@400;500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 
+  html { zoom: ${UI_ZOOM} }
   *, *::before, *::after { margin:0; padding:0; box-sizing:border-box }
 
   :root {
@@ -1859,6 +1890,7 @@ const DETAIL_PAGE = `<!DOCTYPE html>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=DM+Sans:wght@400;500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
+  html { zoom: ${UI_ZOOM} }
   *, *::before, *::after { margin:0; padding:0; box-sizing:border-box }
   :root {
     --bg: #ffffff; --bg-page: #f8f8f8; --surface: #f2f2f2; --surface2: #e8e8e8;
@@ -1913,8 +1945,11 @@ const DETAIL_PAGE = `<!DOCTYPE html>
   .prompt-card { background:var(--bg); border:1px solid var(--sep); border-radius:12px; padding:16px 20px; margin-bottom:8px; scroll-margin-top:80px; transition:border-color .3s,box-shadow .3s }
   .prompt-card:hover { border-color:var(--surface2) }
   .prompt-card.highlighted { border-color:var(--blue); box-shadow:0 0 0 3px var(--blue-bg) }
-  .prompt-card.skill { border-left:3px solid var(--purple); opacity:0.7 }
-  .skill-badge { font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:0.06em; padding:2px 8px; border-radius:100px; background:var(--purple-bg); color:var(--purple); margin-right:4px }
+  .prompt-card.skill { border:1px solid rgba(139,92,246,0.25); border-left:3px solid var(--purple); background:linear-gradient(135deg, rgba(139,92,246,0.04) 0%, rgba(139,92,246,0.01) 100%); padding:12px 20px }
+  .skill-header { display:flex; align-items:center; gap:8px; margin-bottom:6px }
+  .skill-badge { font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:0.08em; padding:3px 10px; border-radius:100px; background:var(--purple); color:#fff }
+  .skill-icon { font-family:'DM Mono',monospace; font-size:13px; color:var(--purple); font-weight:600 }
+  .prompt-card.skill .prompt-text { font-family:'DM Mono',monospace; font-size:13px; color:var(--purple); font-weight:500; white-space:pre-wrap; word-break:break-word; line-height:1.5 }
   .prompt-text { font-size:15px; color:var(--text); line-height:1.6; white-space:pre-wrap; word-break:break-word }
   .prompt-meta { display:flex; justify-content:space-between; align-items:center; margin-top:10px; padding-top:10px; border-top:1px solid var(--sep) }
   .prompt-time { font-family:'DM Mono',monospace; font-size:11px; color:var(--text3) }
@@ -2129,10 +2164,11 @@ async function load() {
   h += '<div id="tab-prompts" class="tab-content">';
   if (sessionData.prompts.length) {
     sessionData.prompts.forEach((p, i) => {
-      const isSkill = p.type === 'skill';
+      const isSkill = p.type === 'skill' || /^\\s*\\/[a-z][\\w-]*\\s*$/i.test(p.prompt);
       h += '<div class="prompt-card' + (isSkill ? ' skill' : '') + '" id="prompt-' + i + '">';
       if (isSkill) {
-        h += '<div class="prompt-text"><span class="skill-badge">SKILL</span> ' + esc(p.prompt) + '</div>';
+        h += '<div class="skill-header"><span class="skill-badge">COMMAND</span><span class="skill-icon">&gt;_</span></div>';
+        h += '<div class="prompt-text">' + esc(p.prompt) + '</div>';
       } else {
         h += '<div class="prompt-text">' + esc(p.prompt) + '</div>';
       }
@@ -2203,19 +2239,13 @@ load();
 </body>
 </html>`;
 
-// ── Tools Page HTML (loaded from file) ───────────────────────────────────────
-let TOOLS_PAGE = '';
-try { TOOLS_PAGE = fs.readFileSync(TOOLS_HTML_F, 'utf8'); } catch { TOOLS_PAGE = '<html><body>Tools page not found</body></html>'; }
-
-// ── Load Logic Page HTML ─────────────────────────────────────────────────────
-let LOGIC_PAGE = '';
-try { LOGIC_PAGE = fs.readFileSync(LOGIC_HTML_F, 'utf8'); } catch { LOGIC_PAGE = '<html><body>Logic page not found</body></html>'; }
-let FINDINGS_PAGE = '';
-try { FINDINGS_PAGE = fs.readFileSync(FINDINGS_HTML_F, 'utf8'); } catch { FINDINGS_PAGE = '<html><body>Findings page not found</body></html>'; }
-let RADAR_PAGE = '';
-try { RADAR_PAGE = fs.readFileSync(RADAR_HTML_F, 'utf8'); } catch { RADAR_PAGE = '<html><body>Radar page not found</body></html>'; }
-let DISPATCH_PAGE = '';
-try { DISPATCH_PAGE = fs.readFileSync(DISPATCH_HTML_F, 'utf8'); } catch { DISPATCH_PAGE = '<html><body>Dispatch page not found</body></html>'; }
+// ── Page HTML helpers (read from disk on each request for live reloading) ────
+function readPage(file, fallback) {
+  try {
+    const html = fs.readFileSync(file, 'utf8');
+    return html.replace('<style>', `<style>\n  html { zoom: ${UI_ZOOM} }`);
+  } catch { return `<html><body>${fallback} not found</body></html>`; }
+}
 
 // ── HTTP Server ──────────────────────────────────────────────────────────────
 
@@ -2750,30 +2780,30 @@ Respond with ONLY a JSON object: {"workstream": "the-id", "confidence": 0.0-1.0,
   // Tools page
   if (url === '/tools') {
     res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
-    return res.end(TOOLS_PAGE);
+    return res.end(readPage(TOOLS_HTML_F, 'Tools page'));
   }
 
   // Findings page
   if (url === '/findings') {
     res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
-    return res.end(FINDINGS_PAGE);
+    return res.end(readPage(FINDINGS_HTML_F, 'Findings page'));
   }
 
   // Logic page
   if (url === '/logic') {
     res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
-    return res.end(LOGIC_PAGE);
+    return res.end(readPage(LOGIC_HTML_F, 'Logic page'));
   }
 
   // Radar page
   if (url === '/radar') {
     res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
-    return res.end(RADAR_PAGE);
+    return res.end(readPage(RADAR_HTML_F, 'Radar page'));
   }
 
   if (url === '/dispatch') {
     res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
-    return res.end(DISPATCH_PAGE);
+    return res.end(readPage(DISPATCH_HTML_F, 'Dispatch page'));
   }
 
   res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });

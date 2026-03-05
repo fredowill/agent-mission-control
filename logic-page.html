@@ -379,11 +379,73 @@
         <div class="bug-body">
           <p><code>readAgents()</code> is called on the dashboard polling interval. Every call does synchronous <code>readFileSync</code> on every state file, every log file, every prompt file, and <code>missions.json</code> once per agent.</p>
 
-          <p><strong>Partially mitigated:</strong> <code>getLiveClaudePids()</code> now has a 3-second cache, so the expensive <code>tasklist</code> call isn't repeated every poll. However, <code>readAgents()</code> itself still does sync reads of all state files on every cycle.</p>
+          <p><strong>Partially mitigated:</strong> <code>getLiveClaudePids()</code> now has a 1.5-second cache (reduced from 3s for faster state detection), so the expensive <code>tasklist</code> call isn't repeated every poll. However, <code>readAgents()</code> itself still does sync reads of all state files on every cycle.</p>
 
           <div class="fix">
             <strong>Remaining fix:</strong> Cache <code>readAgents()</code> results in memory with a 3-5 second TTL. Invalidate on write (when a hook fires and updates a state file via the API). Also cache <code>missions.json</code> in memory instead of re-reading per agent.
           </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="doc-section">
+      <div class="section-eyebrow">Fixed &mdash; MC-002</div>
+      <div class="section-title">"Needs Input" Detection Fixes</div>
+
+      <div class="bug-card fixed">
+        <div class="bug-header">
+          <span class="bug-severity fixed">Fixed</span>
+          <span class="bug-title">Skill Invocations Skip "waiting" &rarr; "thinking" Transition</span>
+        </div>
+        <div class="bug-body">
+          <p><strong>Was:</strong> <code>prompt-hook.js</code> only wrote "thinking" state for non-skill prompts (<code>if (!skillName)</code>). When user answered via <code>/commit</code> or other skill, state stayed "waiting" &mdash; false positive on dashboard.</p>
+          <p><strong>Now:</strong> Both user prompts and skill expansions trigger "thinking" transition. Skill detail logged as <code>/skill-name invoked</code>. Also preserves <code>resumeCount</code> across prompt-hook writes.</p>
+          <div class="fix"><span class="file-ref">prompt-hook.js</span> &mdash; removed <code>if (!skillName)</code> guard, added resumeCount preservation</div>
+        </div>
+      </div>
+
+      <div class="bug-card fixed">
+        <div class="bug-header">
+          <span class="bug-severity fixed">Fixed</span>
+          <span class="bug-title">Orphan "waiting" Sessions Time Out After 2 Minutes</span>
+        </div>
+        <div class="bug-body">
+          <p><strong>Was:</strong> Sessions without a PID (orphans) used <code>ACTIVE_THRESHOLD</code> (2 min) to determine liveness. If user took &gt;2 min to answer, card jumped to "done".</p>
+          <p><strong>Now:</strong> Orphan sessions with <code>state === 'waiting'</code> stay active indefinitely until state actually changes. PID cache TTL also reduced from 3s to 1.5s to minimize stale window.</p>
+          <div class="fix"><span class="file-ref">server.js</span> &mdash; <code>a.active = a.state === 'waiting' || a.ago &lt; ACTIVE_THRESHOLD</code>, PID_CACHE_TTL: 3000 &rarr; 1500</div>
+        </div>
+      </div>
+
+      <div class="bug-card fixed">
+        <div class="bug-header">
+          <span class="bug-severity fixed">Fixed</span>
+          <span class="bug-title">Raw Event Debug Log Added</span>
+        </div>
+        <div class="bug-body">
+          <p>New observability feature: set <code>DEBUG_EVENTS=true</code> in <code>.env</code> to append every hook fire to <code>debug-events.ndjson</code>. Each line includes: <code>session_id</code>, <code>tool</code>, <code>input_summary</code>, <code>prev_state</code>, <code>new_state</code>, <code>ts</code>. Auto-rotates at 5000 lines.</p>
+          <div class="fix"><span class="file-ref">hook.js</span> &mdash; captures prev_state before overwrite, appends debug entry when <code>DEBUG_EVENTS=true</code></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="doc-section">
+      <div class="section-eyebrow">Open &mdash; MC-004</div>
+      <div class="section-title">Prompt Display Issues</div>
+
+      <div class="bug-card major">
+        <div class="bug-header">
+          <span class="bug-severity major">Major</span>
+          <span class="bug-title">Transcript Fallback Leaking Raw Skill Expansions into Prompt Cards</span>
+        </div>
+        <div class="bug-body">
+          <p><strong>Problem:</strong> Session detail pages showed ~23 prompt cards for sessions with only 5 real user messages. The extra 18 entries leaked from the transcript fallback &mdash; including 6000+ char raw <code>/dissect-video</code> skill markdown, <code>[Request interrupted by user]</code> system messages, and duplicates.</p>
+          <div class="symptom"><strong>Root cause:</strong> <code>readPrompts()</code> in <code>server.js</code> merges two sources: hook prompts (correctly collapsed by <code>detectSkill()</code>) and transcript fallback (no skill detection, no system-message filtering). The 80-char prefix dedup failed because collapsed <code>"/dissect-video was used"</code> doesn't match raw <code>"# Dissect Video\n..."</code>.</div>
+          <p><strong>Applied fix (pending validation):</strong></p>
+          <ul>
+            <li><code>isSystemText()</code> helper &mdash; filters <code>[Request interrupted]</code>, <code>&lt;system-reminder&gt;</code>, <code>&lt;task-notification&gt;</code>, <code>&lt;tool_result&gt;</code> from transcript entries</li>
+            <li><code>isSkillExpansion()</code> helper &mdash; detects raw skill markdown via <code>&lt;command-name&gt;</code> tags, YAML frontmatter, and length+content heuristic (&gt;2000 chars with code blocks or system tags)</li>
+            <li>Timestamp proximity dedup &mdash; transcript entries within 3s of any hook prompt are skipped (catches collapsed-vs-expanded pairs that prefix matching misses)</li>
+          </ul>
         </div>
       </div>
     </div>
@@ -632,7 +694,7 @@
         <div class="flow-node">
           <div class="flow-icon hook">02</div>
           <div class="flow-label">prompt-hook.js fires (UserPromptSubmit)</div>
-          <div class="flow-meta">Receives: session_id, prompt text</div>
+          <div class="flow-meta">Receives: session_id, prompt text. Detects skills, collapses expansions. Writes "thinking" state (for both user &amp; skill prompts).</div>
         </div>
         <div class="flow-arrow"></div>
         <div class="flow-node">
@@ -668,7 +730,7 @@
         <div class="flow-node">
           <div class="flow-icon server">08</div>
           <div class="flow-label">getLiveClaudePids() &rarr; per-session PID check</div>
-          <div class="flow-meta" style="color:var(--green)">PID alive = active, PID dead = done. Cached 3s. No cross-project contamination.</div>
+          <div class="flow-meta" style="color:var(--green)">PID alive = active, PID dead = done. Cached 1.5s. Orphan "waiting" sessions stay active indefinitely.</div>
         </div>
         <div class="flow-arrow"></div>
         <div class="flow-node">
@@ -729,6 +791,10 @@
         <div class="arch-card">
           <h4>summaries.json</h4>
           <p>AI-generated one-liner summaries keyed by session ID. Contains <code class="mono">summary, hash, ts</code> per session. Generated by Cerebras on 30s loop. Hash is used to detect when prompts changed (stale summary).</p>
+        </div>
+        <div class="arch-card">
+          <h4>debug-events.ndjson</h4>
+          <p>Optional raw event log. Enabled via <code class="mono">DEBUG_EVENTS=true</code> in <code>.env</code>. Every hook fire appends one JSON line: <code class="mono">ts, session_id, tool, input_summary, prev_state, new_state</code>. Auto-rotates at 5000 lines. Gitignored.</p>
         </div>
       </div>
     </div>
