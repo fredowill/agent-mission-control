@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Post-Mortems &mdash; Mission Control</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=DM+Sans:wght@400;500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { margin:0; padding:0; box-sizing:border-box }
+  :root {
+    --bg:#fff; --bg2:#fafafa; --surface:#f4f4f5; --surface2:#e4e4e7;
+    --text:#09090b; --text2:#52525b; --text3:#a1a1aa; --sep:#e4e4e7;
+    --purple:#8b5cf6; --purple-bg:rgba(139,92,246,0.06);
+    --blue:#3b82f6; --blue-bg:rgba(59,130,246,0.06);
+    --green:#22c55e; --green-bg:rgba(34,197,94,0.06);
+    --amber:#f59e0b; --amber-bg:rgba(245,158,11,0.06);
+    --rose:#ef4444; --rose-bg:rgba(239,68,68,0.05);
+  }
+  body { background:var(--bg2); color:var(--text); font-family:'DM Sans',-apple-system,system-ui,sans-serif; -webkit-font-smoothing:antialiased }
+
+  header { display:flex; align-items:center; justify-content:space-between; padding:0 clamp(24px,4vw,48px); height:64px; background:var(--bg); border-bottom:1px solid var(--sep); position:sticky; top:0; z-index:10 }
+  .logo { display:flex; align-items:center; gap:12px }
+  .logo-dot { width:8px; height:8px; border-radius:50%; background:var(--purple) }
+  .logo-text { font-family:'Plus Jakarta Sans',sans-serif; font-size:15px; font-weight:600; letter-spacing:-0.02em }
+  .header-nav { display:flex; gap:4px; padding:3px; background:var(--surface); border-radius:8px; position:absolute; left:50%; transform:translateX(-50%) }
+  .nav-link { padding:5px 14px; border-radius:6px; font-family:'DM Sans',sans-serif; font-size:13px; font-weight:500; color:var(--text3); text-decoration:none; transition:all .15s; white-space:nowrap }
+  .nav-link:hover { color:var(--text2) }
+  .nav-link.active { background:var(--bg); color:var(--text); box-shadow:0 1px 3px rgba(0,0,0,.06) }
+
+  .shell { max-width:860px; margin:0 auto; padding:36px clamp(24px,4vw,48px) 80px }
+
+  /* ── Hero ── */
+  .hero { margin-bottom:32px }
+  .hero-top { display:flex; align-items:center; gap:14px; margin-bottom:6px }
+  .hero-icon { width:44px; height:44px; border-radius:12px; background:linear-gradient(135deg,var(--rose-bg),rgba(239,68,68,0.12)); display:flex; align-items:center; justify-content:center; font-size:20px; border:1px solid rgba(239,68,68,0.1) }
+  .page-title { font-family:'Plus Jakarta Sans',sans-serif; font-size:30px; font-weight:800; letter-spacing:-0.04em; line-height:1.1 }
+  .page-sub { font-size:13px; color:var(--text3); margin-left:58px }
+
+  /* ── Stats ── */
+  .stats {
+    display:flex; gap:2px; margin:24px 0 28px; background:var(--bg); border:1px solid var(--sep);
+    border-radius:12px; overflow:hidden;
+  }
+  .stat {
+    flex:1; padding:16px 20px; text-align:center; position:relative;
+  }
+  .stat + .stat::before { content:''; position:absolute; left:0; top:20%; height:60%; width:1px; background:var(--sep) }
+  .stat-num { font-family:'Plus Jakarta Sans',sans-serif; font-size:32px; font-weight:800; letter-spacing:-0.03em; line-height:1 }
+  .stat-num.rose { color:var(--rose) }
+  .stat-num.amber { color:var(--amber) }
+  .stat-num.green { color:var(--green) }
+  .stat-label { font-size:11px; color:var(--text3); margin-top:4px; text-transform:uppercase; letter-spacing:0.06em; font-weight:500 }
+
+  /* ── PM Card ── */
+  .pm-card {
+    background:var(--bg); border:1px solid var(--sep); border-radius:14px;
+    margin-bottom:12px; overflow:hidden; transition:all .15s;
+    position:relative;
+  }
+  .pm-card::before {
+    content:''; position:absolute; left:0; top:0; bottom:0; width:3px;
+    border-radius:3px 0 0 3px;
+  }
+  .pm-card.sev-critical::before { background:var(--rose) }
+  .pm-card.sev-warning::before { background:var(--amber) }
+  .pm-card.sev-info::before { background:var(--blue) }
+  .pm-card:hover { box-shadow:0 4px 16px rgba(0,0,0,.05) }
+
+  .pm-header { padding:16px 20px 16px 24px; cursor:pointer; display:flex; align-items:center; gap:14px; user-select:none }
+  .pm-header:hover { background:rgba(0,0,0,.008) }
+
+  .pm-sev-badge {
+    width:32px; height:32px; border-radius:8px; display:flex; align-items:center; justify-content:center;
+    font-family:'Plus Jakarta Sans',sans-serif; font-size:14px; font-weight:800; flex-shrink:0;
+  }
+  .pm-sev-badge.critical { background:var(--rose); color:#fff }
+  .pm-sev-badge.warning { background:var(--amber); color:#fff }
+  .pm-sev-badge.info { background:var(--blue); color:#fff }
+
+  .pm-header-content { flex:1; min-width:0 }
+  .pm-title { font-family:'Plus Jakarta Sans',sans-serif; font-size:14px; font-weight:700; letter-spacing:-0.02em; line-height:1.35 }
+  .pm-meta { display:flex; align-items:center; gap:6px; margin-top:3px; flex-wrap:wrap }
+  .pm-date { font-family:'DM Mono',monospace; font-size:10px; color:var(--text3) }
+  .pm-tag { font-size:8px; font-weight:700; text-transform:uppercase; letter-spacing:0.05em; padding:2px 6px; border-radius:4px; background:var(--surface); color:var(--text3) }
+  .pm-tag.safety { background:var(--rose-bg); color:var(--rose) }
+  .pm-tag.cross { background:var(--amber-bg); color:var(--amber) }
+  .pm-status { font-size:8px; font-weight:700; text-transform:uppercase; letter-spacing:0.06em; padding:2px 6px; border-radius:4px }
+  .pm-status.open { background:var(--rose); color:#fff }
+  .pm-status.resolved { background:var(--green); color:#fff }
+
+  .pm-chevron { color:var(--text3); font-size:11px; transition:transform .2s; flex-shrink:0 }
+  .pm-chevron.open { transform:rotate(180deg) }
+
+  /* ── Expanded ── */
+  .pm-body { display:none; padding:0 24px 20px; }
+  .pm-body.open { display:block; }
+  .pm-body-inner { border-top:1px solid var(--sep); padding-top:18px }
+
+  .pm-section { margin-bottom:18px }
+  .pm-section:last-child { margin-bottom:0 }
+  .pm-sec-title {
+    font-family:'Plus Jakarta Sans',sans-serif; font-size:10px; font-weight:700;
+    text-transform:uppercase; letter-spacing:0.1em; color:var(--text3); margin-bottom:8px;
+  }
+  .pm-text { font-size:13px; line-height:1.7; color:var(--text2) }
+
+  /* Failure cards */
+  .failures-grid { display:flex; flex-direction:column; gap:8px }
+  .f-card {
+    border-radius:10px; overflow:hidden; border:1px solid var(--sep);
+  }
+  .f-card-header {
+    display:flex; align-items:center; gap:10px; padding:12px 16px;
+    background:linear-gradient(135deg,var(--rose-bg),rgba(239,68,68,0.02));
+  }
+  .f-num {
+    width:24px; height:24px; border-radius:6px; background:var(--rose); color:#fff;
+    display:flex; align-items:center; justify-content:center;
+    font-family:'Plus Jakarta Sans',sans-serif; font-size:11px; font-weight:800; flex-shrink:0;
+  }
+  .f-title { font-family:'Plus Jakarta Sans',sans-serif; font-size:13px; font-weight:700 }
+  .f-body { padding:12px 16px }
+  .f-desc { font-size:12px; color:var(--text2); line-height:1.6; margin-bottom:8px }
+  .f-lesson {
+    padding:10px 14px; border-radius:8px; font-size:12px; line-height:1.6; margin-bottom:6px;
+    background:var(--green-bg); border-left:3px solid var(--green);
+  }
+  .f-lesson strong { color:var(--green) }
+  .f-fix {
+    padding:10px 14px; border-radius:8px; font-size:12px; line-height:1.6;
+    background:var(--blue-bg); border-left:3px solid var(--blue);
+  }
+  .f-fix strong { color:var(--blue) }
+
+  /* Action items */
+  .action-list { list-style:none; display:flex; flex-direction:column; gap:4px }
+  .action-item {
+    display:flex; align-items:flex-start; gap:8px; font-size:12px; line-height:1.5;
+    color:var(--text2); padding:8px 12px; border-radius:8px; background:var(--bg2);
+    border:1px solid transparent; transition:border-color .12s;
+  }
+  .action-item:hover { border-color:var(--sep) }
+  .action-dot { width:6px; height:6px; border-radius:50%; background:var(--text3); flex-shrink:0; margin-top:5px }
+  .action-item.done { opacity:0.4 }
+  .action-item.done .action-dot { background:var(--green) }
+
+  .pm-link {
+    font-family:'DM Mono',monospace; font-size:11px; color:var(--purple);
+    text-decoration:none; padding:6px 12px; border-radius:6px; background:var(--purple-bg);
+    display:inline-flex; align-items:center; gap:4px; transition:all .12s;
+  }
+  .pm-link:hover { background:rgba(139,92,246,0.12) }
+
+  /* Empty */
+  .empty { text-align:center; padding:80px 20px; color:var(--text3) }
+  .empty-icon { font-size:32px; margin-bottom:8px; opacity:0.3 }
+  .empty-title { font-family:'Plus Jakarta Sans',sans-serif; font-size:16px; font-weight:700; color:var(--text2); margin-bottom:4px }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo"><div class="logo-dot"></div><div class="logo-text">Mission Control</div></div>
+  <nav class="header-nav">
+    <a href="/" class="nav-link">Dashboard</a>
+    <a href="/dispatch" class="nav-link">Dispatch</a>
+    <a href="/findings" class="nav-link">Findings</a>
+    <a href="/workflow" class="nav-link">Workflow</a>
+    <a href="/postmortems" class="nav-link active">Post-Mortems</a>
+    <a href="/tools" class="nav-link">Toolbox</a>
+    <a href="/logic" class="nav-link">Logic</a>
+    <a href="/radar" class="nav-link">Radar</a>
+  </nav>
+  <div style="width:120px"></div>
+</header>
+
+<div class="shell">
+  <div class="hero">
+    <div class="hero-top">
+      <div class="hero-icon">!</div>
+      <h1 class="page-title">Post-Mortems</h1>
+    </div>
+    <p class="page-sub">Incident analysis from failed agent sessions &mdash; what broke, why, and how to prevent it next time</p>
+  </div>
+
+  <div class="stats" id="stats"></div>
+  <div id="pm-list"></div>
+</div>
+
+<script>
+function parsePM(item) {
+  const d = item.description || '';
+  const sections = {};
+  let currentKey = '_intro';
+  sections[currentKey] = [];
+
+  for (const line of d.split('\n')) {
+    const h = line.match(/^## (.+)/);
+    if (h) { currentKey = h[1].trim(); sections[currentKey] = []; }
+    else { (sections[currentKey] = sections[currentKey] || []).push(line); }
+  }
+
+  const failures = [];
+  for (const [key, lines] of Object.entries(sections)) {
+    if (!key.toLowerCase().includes('failure')) continue;
+    const text = lines.join('\n');
+    const title = key.replace(/^###?\s*/, '').replace(/Failure \d+:\s*/i, '');
+    const lessonMatch = text.match(/\*\*Lesson:(.+?)\*\*/s);
+    const fixMatch = text.match(/\*\*Systemic fix:(.+?)\*\*/s);
+    const descLines = lines.filter(l => !l.startsWith('- **Lesson') && !l.startsWith('- **Systemic') && l.trim());
+    failures.push({
+      title: title || key,
+      desc: descLines.map(l => l.replace(/^- /, '')).join(' ').trim(),
+      lesson: lessonMatch ? lessonMatch[1].trim() : '',
+      fix: fixMatch ? fixMatch[1].trim() : '',
+    });
+  }
+
+  const actionLines = (sections['Action items'] || []).filter(l => l.match(/^\d+\./));
+  const actions = actionLines.map(l => ({ text: l.replace(/^\d+\.\s*/, ''), done: false }));
+
+  return {
+    id: item.id, title: item.title, date: item.created, status: item.status,
+    tags: item.tags || [], session: item.linkedSession,
+    intro: (sections['Incident (2026-03-05)'] || sections['_intro'] || []).join('\n').trim(),
+    whatHappened: (sections['What actually happened'] || []).join('\n').trim(),
+    failures, actions,
+    whyWorkflow: (sections['Why the workflow page matters'] || []).join('\n').trim(),
+  };
+}
+
+function esc(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function fmtDate(iso) {
+  if (!iso) return '';
+  return new Date(iso).toLocaleDateString('en-US', { month:'short', day:'numeric', year:'numeric' });
+}
+
+function sevClass(pm) {
+  if (pm.tags.includes('agent-safety')) return 'critical';
+  return 'warning';
+}
+
+function renderPM(pm, idx) {
+  const sev = sevClass(pm);
+  const statusCls = pm.status === 'done' ? 'resolved' : 'open';
+  const statusLabel = pm.status === 'done' ? 'Resolved' : 'Open';
+
+  const tags = pm.tags.filter(t => t !== 'post-mortem').map(t => {
+    const cls = t === 'agent-safety' ? 'safety' : t === 'cross-agent' ? 'cross' : '';
+    return `<span class="pm-tag ${cls}">${esc(t)}</span>`;
+  }).join('');
+
+  const failuresHtml = pm.failures.map((f, i) => `
+    <div class="f-card">
+      <div class="f-card-header">
+        <div class="f-num">${i + 1}</div>
+        <div class="f-title">${esc(f.title)}</div>
+      </div>
+      <div class="f-body">
+        <div class="f-desc">${esc(f.desc)}</div>
+        ${f.lesson ? `<div class="f-lesson"><strong>Lesson:</strong> ${esc(f.lesson)}</div>` : ''}
+        ${f.fix ? `<div class="f-fix"><strong>Systemic fix:</strong> ${esc(f.fix)}</div>` : ''}
+      </div>
+    </div>
+  `).join('');
+
+  const actionsHtml = pm.actions.length ? `
+    <div class="pm-section">
+      <div class="pm-sec-title">Action Items</div>
+      <ul class="action-list">
+        ${pm.actions.map(a => `<li class="action-item"><div class="action-dot"></div>${esc(a.text)}</li>`).join('')}
+      </ul>
+    </div>
+  ` : '';
+
+  const sessionLink = pm.session
+    ? `<div class="pm-section"><a href="/session/${pm.session}" class="pm-link">View linked session &#8599;</a></div>`
+    : '';
+
+  return `
+    <div class="pm-card sev-${sev}" data-idx="${idx}">
+      <div class="pm-header" onclick="toggle(${idx})">
+        <div class="pm-sev-badge ${sev}">${sev === 'critical' ? '!' : '?'}</div>
+        <div class="pm-header-content">
+          <div class="pm-title">${esc(pm.title)}</div>
+          <div class="pm-meta">
+            <span class="pm-date">${fmtDate(pm.date)}</span>
+            <span class="pm-status ${statusCls}">${statusLabel}</span>
+            ${tags}
+          </div>
+        </div>
+        <div class="pm-chevron" id="ch-${idx}">&#9662;</div>
+      </div>
+      <div class="pm-body" id="bd-${idx}">
+        <div class="pm-body-inner">
+          ${pm.intro ? `<div class="pm-section"><div class="pm-sec-title">Incident</div><div class="pm-text">${esc(pm.intro)}</div></div>` : ''}
+          ${pm.whatHappened ? `<div class="pm-section"><div class="pm-sec-title">What Actually Happened</div><div class="pm-text">${esc(pm.whatHappened)}</div></div>` : ''}
+          ${failuresHtml ? `<div class="pm-section"><div class="pm-sec-title">Failures</div><div class="failures-grid">${failuresHtml}</div></div>` : ''}
+          ${actionsHtml}
+          ${pm.whyWorkflow ? `<div class="pm-section"><div class="pm-sec-title">Why This Matters</div><div class="pm-text">${esc(pm.whyWorkflow)}</div></div>` : ''}
+          ${sessionLink}
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function toggle(idx) {
+  document.getElementById('bd-' + idx).classList.toggle('open');
+  document.getElementById('ch-' + idx).classList.toggle('open');
+}
+
+async function load() {
+  const res = await fetch('/api/dispatch');
+  const items = await res.json();
+
+  // Only items with IDs starting with "pm" AND tagged post-mortem (actual incidents, not tasks about post-mortems)
+  const pmItems = items.filter(i => i.id.startsWith('pm') && i.id !== 'pm-agent' && (i.tags || []).includes('post-mortem'));
+
+  if (pmItems.length === 0) {
+    document.getElementById('stats').style.display = 'none';
+    document.getElementById('pm-list').innerHTML = `
+      <div class="empty">
+        <div class="empty-icon">&#9675;</div>
+        <div class="empty-title">No post-mortems yet</div>
+        <div>Incidents are captured in Dispatch with the "post-mortem" tag and a pm- prefix ID</div>
+      </div>`;
+    return;
+  }
+
+  const parsed = pmItems.map(parsePM);
+  const open = parsed.filter(p => p.status !== 'done').length;
+  const resolved = parsed.filter(p => p.status === 'done').length;
+  const critical = parsed.filter(p => p.tags.includes('agent-safety')).length;
+
+  document.getElementById('stats').innerHTML = `
+    <div class="stat"><div class="stat-num rose">${parsed.length}</div><div class="stat-label">Incidents</div></div>
+    <div class="stat"><div class="stat-num amber">${open}</div><div class="stat-label">Open</div></div>
+    <div class="stat"><div class="stat-num green">${resolved}</div><div class="stat-label">Resolved</div></div>
+    ${critical ? `<div class="stat"><div class="stat-num rose">${critical}</div><div class="stat-label">Critical</div></div>` : ''}
+  `;
+
+  document.getElementById('pm-list').innerHTML = parsed.map((pm, i) => renderPM(pm, i)).join('');
+}
+
+load();
+</script>
+</body>
+</html>

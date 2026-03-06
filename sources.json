@@ -1,0 +1,64 @@
+[
+  {
+    "id": "21st-dev",
+    "name": "21st.dev",
+    "url": "https://21st.dev/community/components/s/hero",
+    "category": "Components",
+    "description": "Community React component registry. Hero sections, UI primitives, shadcn-style install.",
+    "tags": [
+      "react",
+      "tailwind",
+      "ui",
+      "shadcn"
+    ],
+    "added": "2026-03-03",
+    "pinned": true
+  },
+  {
+    "id": "mcp-market",
+    "name": "MCP Market",
+    "url": "https://mcpmarket.com",
+    "category": "Skills",
+    "description": "Agent Skills directory for Claude/ChatGPT. Skill bundles, workflow teaching, MCP servers.",
+    "tags": [
+      "mcp",
+      "agents",
+      "claude",
+      "skills"
+    ],
+    "added": "2026-03-03",
+    "pinned": true
+  },
+  {
+    "id": "awwwards",
+    "name": "Awwwards",
+    "url": "https://www.awwwards.com",
+    "category": "Inspiration",
+    "description": "Web design awards & inspiration. Benchmarking, trends, case studies.",
+    "tags": [
+      "design",
+      "awards",
+      "inspiration",
+      "css"
+    ],
+    "added": "2026-03-03",
+    "pinned": true
+  },
+  {
+    "id": "mapbox-gl-js-examples",
+    "name": "Mapbox GL JS Examples",
+    "url": "https://docs.mapbox.com/mapbox-gl-js/example/",
+    "category": "Research",
+    "description": "Official Mapbox GL JS examples hub. Interactive maps, markers, popups, routes, 3D terrain, geolocation, clustering, and custom styles. Key reference for SE Asia trip mapping (Thailand/Vietnam May-Jun 2026).",
+    "tags": [
+      "mapbox",
+      "maps",
+      "gl-js",
+      "geolocation",
+      "southeast-asia",
+      "travel"
+    ],
+    "added": "2026-03-03",
+    "pinned": true
+  }
+]

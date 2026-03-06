@@ -1,0 +1,26 @@
+{
+  "home": [
+    { "id": "dashboard", "name": "Dashboard", "icon": "\ud83d\udcca", "color": "#3b82f6", "pattern": "\\bdashboard\\b|card tagline|workstream filter|classifi" },
+    { "id": "dispatch", "name": "Dispatch", "icon": "\ud83d\udccb", "color": "#6366f1", "pattern": "\\bdispatch\\b|\\bkanban\\b|work item board" },
+    { "id": "findings", "name": "Findings", "icon": "\ud83d\udd0d", "color": "#14b8a6", "pattern": "\\bfindings?\\b" },
+    { "id": "workflow", "name": "Workflow", "icon": "\u2699\ufe0f", "color": "#f97316", "pattern": "\\bworkflow\\b" },
+    { "id": "postmortems", "name": "Post-Mortems", "icon": "\ud83d\udcdd", "color": "#ef4444", "pattern": "post-?mortem" },
+    { "id": "toolbox", "name": "Toolbox", "icon": "\ud83d\udd27", "color": "#10b981", "pattern": "\\btoolbox\\b|agent roster" },
+    { "id": "logic", "name": "Logic", "icon": "\ud83e\udde0", "color": "#a855f7", "pattern": "\\blogic\\b" },
+    { "id": "radar", "name": "Radar", "icon": "\ud83d\udce1", "color": "#06b6d4", "pattern": "\\bradar\\b" },
+    { "id": "bug", "name": "Bug", "icon": "\ud83d\udc1b", "color": "#dc2626", "pattern": "\\bbug\\b" },
+    { "id": "hooks", "name": "Hooks", "icon": "\ud83e\ude9d", "color": "#64748b", "pattern": "\\bhooks?\\b" },
+    { "id": "agents", "name": "Agents", "icon": "\ud83e\udd16", "color": "#ec4899", "pattern": "agent (?:creation|routing|selection|track|discovery)|create.*agent|agent.*skill" },
+    { "id": "prompts", "name": "Prompts", "icon": "\ud83d\udcac", "color": "#71717a", "pattern": "\\bprompt(?:s| recording| timeline| capture| search)\\b" },
+    { "id": "search", "name": "Search", "icon": "\ud83d\udd0e", "color": "#2563eb", "pattern": "\\bsearch\\b" },
+    { "id": "notifications", "name": "Notifications", "icon": "\ud83d\udd14", "color": "#f59e0b", "pattern": "\\bnotification|sound cue" },
+    { "id": "infra", "name": "Infra", "icon": "\ud83c\udfd7\ufe0f", "color": "#78716c", "pattern": "\\binfrastructure\\b|\\brepo structure\\b" },
+    { "id": "demo", "name": "Demo", "icon": "\ud83c\udfac", "color": "#8b5cf6", "pattern": "\\bdemo\\b|\\bwalkthrough\\b" }
+  ],
+  "work": [
+    { "id": "aqg", "name": "AQG", "icon": "\ud83d\udcd0", "color": "#f59e0b", "pattern": "\\baqg\\b" },
+    { "id": "cares", "name": "CARES", "icon": "\ud83d\udc9a", "color": "#22c55e", "pattern": "\\bcares\\b" },
+    { "id": "matching", "name": "Matching", "icon": "\ud83d\udd17", "color": "#3b82f6", "pattern": "\\bmatching\\b" },
+    { "id": "api", "name": "API", "icon": "\ud83d\udd0c", "color": "#8b5cf6", "pattern": "\\bapi\\b" }
+  ]
+}

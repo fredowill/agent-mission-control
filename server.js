@@ -19,8 +19,21 @@ const SUMMARIES_F  = path.join(__dirname, 'summaries.json');
 const NORTHSTAR_F  = path.join(__dirname, 'northstar-cache.json');
 const DEEP_SUMM_F  = path.join(__dirname, 'deep-summaries.json');
 const ENV_FILE    = path.join(__dirname, '.env');
-const AGENTS_DIR  = path.join(process.env.HOME || process.env.USERPROFILE || '', '.claude', 'agents');
-const COMMANDS_DIR = path.join(process.env.HOME || process.env.USERPROFILE || '', '.claude', 'commands');
+// Check project-level first (../agents relative to agent-hub), then global (~/.claude/agents)
+const _projAgents  = path.join(__dirname, '..', 'agents');
+const _globalAgents = path.join(process.env.HOME || process.env.USERPROFILE || '', '.claude', 'agents');
+const AGENTS_DIR   = fs.existsSync(_projAgents) ? _projAgents : _globalAgents;
+const _projCmds    = path.join(__dirname, '..', 'commands');
+const _globalCmds  = path.join(process.env.HOME || process.env.USERPROFILE || '', '.claude', 'commands');
+const COMMANDS_DIR = fs.existsSync(_projCmds) ? _projCmds : _globalCmds;
+// Skills: check project-level first, then global ~/.claude/skills/
+const SKILLS_DIR_PROJECT = path.join(__dirname, '..', 'skills');
+const SKILLS_DIR_GLOBAL  = path.join(process.env.HOME || process.env.USERPROFILE || '', '.claude', 'skills');
+const SKILLS_DIRS = [SKILLS_DIR_PROJECT, SKILLS_DIR_GLOBAL].filter(d => fs.existsSync(d));
+// Toolbox export dirs (synced from other machines via git)
+const TOOLBOX_AGENTS_DIR  = path.join(__dirname, 'toolbox', 'agents');
+const TOOLBOX_CMDS_DIR    = path.join(__dirname, 'toolbox', 'commands');
+const TOOLBOX_SKILLS_DIR  = path.join(__dirname, 'toolbox', 'skills');
 // Transcript dir — Claude Code stores conversation .jsonl files here
 // Auto-detect transcript dir based on CWD slug (same logic Claude Code uses)
 const _cwdSlug = process.cwd().replace(/\\/g, '/').replace(/^([A-Za-z]):\//, (_, d) => d.toUpperCase() + '--').replace(/\//g, '-');
@@ -30,11 +43,26 @@ const FINDINGS_HTML_F = path.join(__dirname, 'findings-page.html');
 const TOOLS_HTML_F = path.join(__dirname, 'tools-page.html');
 const RADAR_HTML_F = path.join(__dirname, 'radar-page.html');
 const SOURCES_F    = path.join(__dirname, 'sources.json');
+const ICON_HTML_F = path.join(__dirname, 'icon-page.html');
 const DISPATCH_HTML_F = path.join(__dirname, 'dispatch-page.html');
+const WORKFLOW_HTML_F = path.join(__dirname, 'workflow-page.html');
+const POSTMORTEM_HTML_F = path.join(__dirname, 'postmortem-page.html');
 const WORKSTREAMS_F   = path.join(__dirname, 'workstreams.json');
 const AGENT_WS_F      = path.join(__dirname, 'agent-workstreams.json');
 const DISPATCH_F      = path.join(__dirname, 'dispatch.json');
+const AREAS_F         = path.join(__dirname, 'areas.json');
+const MODE_F          = path.join(__dirname, 'mode.json');
+const FINDINGS_F      = path.join(__dirname, 'findings.json');
+const TOOLBOX_CTX_F   = path.join(__dirname, 'toolbox-context.json');
 const STALE_MS    = 21_600_000; // 6 hours
+
+// ── Favicon SVG (data URI) ──────────────────────────────────────────────────
+// Radar-hub icon: dark circle, subtle ring, colored center dot
+function faviconSvg(color) {
+  return `data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><circle cx='16' cy='16' r='15' fill='%231a1a1a'/><circle cx='16' cy='16' r='9' fill='none' stroke='rgba(255,255,255,0.2)' stroke-width='1.2'/><line x1='16' y1='1' x2='16' y2='7' stroke='rgba(255,255,255,0.15)' stroke-width='1' stroke-linecap='round'/><line x1='16' y1='25' x2='16' y2='31' stroke='rgba(255,255,255,0.15)' stroke-width='1' stroke-linecap='round'/><line x1='1' y1='16' x2='7' y2='16' stroke='rgba(255,255,255,0.15)' stroke-width='1' stroke-linecap='round'/><line x1='25' y1='16' x2='31' y2='16' stroke='rgba(255,255,255,0.15)' stroke-width='1' stroke-linecap='round'/><circle cx='16' cy='16' r='3.5' fill='${color}'/></svg>`;
+}
+const FAVICON_DEFAULT = faviconSvg('%239ca3af');
+const FAVICON_LINK = `<link rel="icon" type="image/svg+xml" href="${FAVICON_DEFAULT}">`;
 
 // ── Load .env ────────────────────────────────────────────────────────────────
 function loadEnv() {
@@ -67,7 +95,11 @@ const VALID_SID = /^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}
 function isValidSid(sid) { return VALID_SID.test(sid); }
 
 // ── Session Liveness Detection ───────────────────────────────────────────────
-// PID-based: each session stores its claude.exe PID (captured by hook.js on
+// DESIGN TRUTH: PID alive = active. Period. No timeout/expiration overrides.
+// If a closed tab leaves a zombie process, that's an OS bug to fix at the source.
+// Do NOT add idle-detection heuristics to "improve" this. Ask before changing.
+//
+// Implementation: each session stores its claude.exe PID (captured by hook.js on
 // first fire via PowerShell process-tree walk). Server checks if that PID is
 // still alive via a single `tasklist` call per poll (~130ms for all sessions).
 // Fallback: timestamp-based for sessions that haven't captured a PID yet.
@@ -674,7 +706,7 @@ function readAgents() {
     // Sum across all chained sessions (each may have its own resumeCount)
     merged.resumeCount = sessions.reduce((sum, s) => sum + (s.resumeCount || 0), 0);
 
-    // Liveness: based on whether this PID is alive
+    // DESIGN TRUTH: PID alive = active. No idle timeouts. No expiration overrides.
     if (livePids.has(pid)) {
       merged.active = true;
       merged.done   = false;
@@ -809,6 +841,105 @@ function readToolsData() {
     }
   } catch {}
 
+  // Read agents from toolbox export (synced from other machines)
+  const seenAgentNames = new Set(agents.map(a => a.name));
+  try {
+    if (fs.existsSync(TOOLBOX_AGENTS_DIR)) {
+      const files = fs.readdirSync(TOOLBOX_AGENTS_DIR).filter(f => f.endsWith('.md'));
+      for (const f of files) {
+        const name = f.replace('.md', '');
+        if (seenAgentNames.has(name)) continue;
+        try {
+          const content = fs.readFileSync(path.join(TOOLBOX_AGENTS_DIR, f), 'utf8');
+          const { meta } = parseFrontmatter(content);
+          const tools = (meta.tools || '').split(',').map(t => t.trim()).filter(Boolean);
+          agents.push({ name: meta.name || name, description: meta.description || '', model: meta.model || 'sonnet', tools, canEdit: tools.some(t => ['Edit','Write'].includes(t)), canBash: tools.includes('Bash') });
+        } catch {}
+      }
+    }
+  } catch {}
+
+  // Read commands from toolbox export
+  const seenCmdNames = new Set(commands.map(c => c.name));
+  try {
+    if (fs.existsSync(TOOLBOX_CMDS_DIR)) {
+      const files = fs.readdirSync(TOOLBOX_CMDS_DIR).filter(f => f.endsWith('.md'));
+      for (const f of files) {
+        const name = f.replace('.md', '');
+        if (seenCmdNames.has(name)) continue;
+        try {
+          const content = fs.readFileSync(path.join(TOOLBOX_CMDS_DIR, f), 'utf8');
+          const lines = content.trim().split('\n');
+          let description = '';
+          for (const line of lines) { const clean = line.replace(/^#+\s*/, '').trim(); if (clean.length > 10 && clean.length < 200) { description = clean; break; } }
+          commands.push({ name, description });
+        } catch {}
+      }
+    }
+  } catch {}
+
+  // Read skills from project-level and global dirs
+  const skills = [];
+  const seenSkills = new Set();
+  for (const skillsDir of SKILLS_DIRS) {
+    try {
+      const dirs = fs.readdirSync(skillsDir).filter(d => {
+        try { return fs.statSync(path.join(skillsDir, d)).isDirectory(); } catch { return false; }
+      });
+      for (const d of dirs) {
+        if (seenSkills.has(d)) continue;
+        try {
+          const skillFile = path.join(skillsDir, d, 'SKILL.md');
+          if (!fs.existsSync(skillFile)) continue;
+          const content = fs.readFileSync(skillFile, 'utf8');
+          let name = d, description = '', version = '';
+          const fmMatch = content.match(/^---\n([\s\S]*?)\n---/);
+          if (fmMatch) {
+            const fm = fmMatch[1];
+            const nm = fm.match(/^name:\s*(.+)/m);
+            const desc = fm.match(/^description:\s*(.+)/m);
+            const ver = fm.match(/^version:\s*(.+)/m);
+            if (nm) name = nm[1].trim();
+            if (desc) description = desc[1].trim();
+            if (ver) version = ver[1].trim();
+          }
+          seenSkills.add(d);
+          skills.push({ name, description, version, source: d });
+        } catch {}
+      }
+    } catch {}
+  }
+
+  // Read skills from toolbox export
+  try {
+    if (fs.existsSync(TOOLBOX_SKILLS_DIR)) {
+      const dirs = fs.readdirSync(TOOLBOX_SKILLS_DIR).filter(d => {
+        try { return fs.statSync(path.join(TOOLBOX_SKILLS_DIR, d)).isDirectory(); } catch { return false; }
+      });
+      for (const d of dirs) {
+        if (seenSkills.has(d)) continue;
+        try {
+          const skillFile = path.join(TOOLBOX_SKILLS_DIR, d, 'SKILL.md');
+          if (!fs.existsSync(skillFile)) continue;
+          const content = fs.readFileSync(skillFile, 'utf8');
+          let name = d, description = '', version = '';
+          const fmMatch = content.match(/^---\n([\s\S]*?)\n---/);
+          if (fmMatch) {
+            const fm = fmMatch[1];
+            const nm = fm.match(/^name:\s*(.+)/m);
+            const desc = fm.match(/^description:\s*(.+)/m);
+            const ver = fm.match(/^version:\s*(.+)/m);
+            if (nm) name = nm[1].trim();
+            if (desc) description = desc[1].trim();
+            if (ver) version = ver[1].trim();
+          }
+          seenSkills.add(d);
+          skills.push({ name, description, version, source: d });
+        } catch {}
+      }
+    }
+  } catch {}
+
   const builtins = [
     { name: 'Explore', model: 'haiku', description: 'Fast codebase exploration — find files, search code, answer questions about the codebase' },
     { name: 'Plan', model: 'inherit', description: 'Software architect — designs implementation plans, identifies critical files, considers trade-offs' },
@@ -817,7 +948,46 @@ function readToolsData() {
     { name: 'statusline-setup', model: 'inherit', description: 'Configures Claude Code status line settings' },
   ];
 
-  return { agents, commands, builtins };
+  // Read MCP servers from .claude.json
+  const mcpServers = [];
+  try {
+    const HOME = process.env.HOME || process.env.USERPROFILE || '';
+    const claudeJson = path.join(HOME, '.claude.json');
+    if (fs.existsSync(claudeJson)) {
+      const cj = JSON.parse(fs.readFileSync(claudeJson, 'utf8'));
+      const cwd = process.cwd().replace(/\\/g, '/');
+      const projects = cj.projects || {};
+      for (const [pPath, pData] of Object.entries(projects)) {
+        if (pPath.replace(/\\/g, '/') === cwd && pData.mcpServers) {
+          for (const [name, config] of Object.entries(pData.mcpServers)) {
+            mcpServers.push({
+              name,
+              type: config.type || 'stdio',
+              command: config.command || '',
+              args: config.args || [],
+              scope: 'project',
+            });
+          }
+        }
+      }
+      // Also check global mcpServers
+      if (cj.mcpServers) {
+        for (const [name, config] of Object.entries(cj.mcpServers)) {
+          if (!mcpServers.some(m => m.name === name)) {
+            mcpServers.push({
+              name,
+              type: config.type || 'stdio',
+              command: config.command || '',
+              args: config.args || [],
+              scope: 'global',
+            });
+          }
+        }
+      }
+    }
+  } catch {}
+
+  return { agents, commands, skills, builtins, mcpServers };
 }
 
 // ── Logic Introspection ─────────────────────────────────────────────────────
@@ -918,6 +1088,46 @@ function readLogicData() {
 // ── UI Zoom (single source of truth for all pages) ──────────────────────────
 const UI_ZOOM = 1.3;
 
+// ── Mode Toggle Snippet (injected into every page via readPage + embedded HTML) ──
+const MODE_TOGGLE_SNIPPET = `<script>
+(function(){
+  var s=document.createElement('style');
+  s.textContent=''
+    +'.mode-toggle{display:flex;align-items:center;gap:7px;padding:4px 12px 4px 10px;background:rgba(255,255,255,0.95);border:1px solid rgba(0,0,0,0.1);border-radius:18px;margin-left:14px;white-space:nowrap;flex-shrink:0;position:relative;z-index:52;box-shadow:0 1px 3px rgba(0,0,0,0.06)}'
+    +'.mode-label{font-family:"DM Sans",-apple-system,sans-serif;font-size:11px;font-weight:600;cursor:pointer;transition:all .2s;user-select:none}'
+    +'.mode-label.active{color:var(--text,#1a1a1a);opacity:1}'
+    +'.mode-label:not(.active){color:var(--text3,#999);opacity:.35}'
+    +'.toggle-track{width:30px;height:16px;border-radius:8px;background:#d4d4d8;position:relative;cursor:pointer;transition:background .3s cubic-bezier(.4,0,.2,1);flex-shrink:0}'
+    +'.toggle-track.work{background:#3b82f6}'
+    +'.toggle-thumb{width:12px;height:12px;border-radius:50%;background:#fff;position:absolute;top:2px;left:2px;transition:transform .3s cubic-bezier(.4,0,.2,1);box-shadow:0 1px 2px rgba(0,0,0,.18)}'
+    +'.toggle-track.work .toggle-thumb{transform:translateX(14px)}';
+  document.head.appendChild(s);
+  var header=document.querySelector('header');
+  if(header){
+    var logo=header.querySelector('.logo');
+    var t=document.createElement('div');t.className='mode-toggle';t.id='modeToggle';
+    t.innerHTML='<span class="mode-label mode-home" onclick="window.__toggleMode()">Home</span>'
+      +'<div class="toggle-track" onclick="window.__toggleMode()"><div class="toggle-thumb"></div></div>'
+      +'<span class="mode-label mode-work" onclick="window.__toggleMode()">Work</span>';
+    if(logo){logo.appendChild(t)}
+    else{header.appendChild(t)}
+  }
+  window.__getMode=function(){return localStorage.getItem('mc-mode')||'home'};
+  window.__setMode=function(m){
+    localStorage.setItem('mc-mode',m);
+    document.body.setAttribute('data-mode',m);
+    var tr=document.querySelector('.toggle-track'),hl=document.querySelector('.mode-home'),wl=document.querySelector('.mode-work');
+    if(tr)tr.classList.toggle('work',m==='work');
+    if(hl)hl.classList.toggle('active',m==='home');
+    if(wl)wl.classList.toggle('active',m==='work');
+    window.dispatchEvent(new CustomEvent('modechange',{detail:{mode:m}}));
+    fetch('/api/mode',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({mode:m})}).catch(function(){});
+  };
+  window.__toggleMode=function(){window.__setMode(window.__getMode()==='home'?'work':'home')};
+  window.__setMode(window.__getMode());
+})();
+<\/script>`;
+
 // ── Dashboard HTML ───────────────────────────────────────────────────────────
 
 const DASHBOARD = `<!DOCTYPE html>
@@ -926,6 +1136,7 @@ const DASHBOARD = `<!DOCTYPE html>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Mission Control</title>
+<link rel="icon" id="favicon" type="image/svg+xml" href="${FAVICON_DEFAULT}">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=DM+Sans:wght@400;500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -987,15 +1198,28 @@ const DASHBOARD = `<!DOCTYPE html>
     align-items: center;
     gap: 12px;
   }
-  .logo-dot {
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-    background: var(--gray);
-    transition: background 0.4s ease;
+  .logo-icon {
+    width: 28px;
+    height: 28px;
+    flex-shrink: 0;
+    color: var(--text);
   }
-  .logo-dot.active { background: var(--green) }
-  .logo-dot.waiting { background: var(--amber); animation: blink 1.4s ease-in-out infinite }
+  .logo-icon svg { display: block }
+  .mc-dot {
+    fill: var(--gray);
+    transition: fill 0.4s ease;
+  }
+  .logo-icon.active .mc-dot { fill: var(--green) }
+  .logo-icon.waiting .mc-dot { fill: var(--amber); animation: blink 1.4s ease-in-out infinite }
+  .mc-sweep {
+    transform-origin: 16px 16px;
+    opacity: 0;
+    transition: opacity 0.4s ease;
+  }
+  .logo-icon.active .mc-sweep {
+    opacity: 0.1;
+    animation: sweep 3s linear infinite;
+  }
 
   .logo-text {
     font-family: 'Plus Jakarta Sans', sans-serif;
@@ -1070,6 +1294,7 @@ const DASHBOARD = `<!DOCTYPE html>
 
   @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
   @keyframes pulse { 0%,100%{opacity:0.4} 50%{opacity:1} }
+  @keyframes sweep { from{transform:rotate(0deg)} to{transform:rotate(360deg)} }
 
   /* ================================================================
      LAYOUT
@@ -1500,13 +1725,26 @@ const DASHBOARD = `<!DOCTYPE html>
 
 <header>
   <div class="logo">
-    <div class="logo-dot" id="logo-dot"></div>
+    <div class="logo-icon" id="logo-icon">
+      <svg viewBox="0 0 32 32" width="28" height="28" fill="none">
+        <circle cx="16" cy="16" r="14" stroke="currentColor" stroke-width="1.4" opacity="0.3"/>
+        <circle cx="16" cy="16" r="8" stroke="currentColor" stroke-width="1.2" opacity="0.2"/>
+        <line x1="16" y1="1" x2="16" y2="6.5" stroke="currentColor" stroke-width="1" opacity="0.3" stroke-linecap="round"/>
+        <line x1="16" y1="25.5" x2="16" y2="31" stroke="currentColor" stroke-width="1" opacity="0.3" stroke-linecap="round"/>
+        <line x1="1" y1="16" x2="6.5" y2="16" stroke="currentColor" stroke-width="1" opacity="0.3" stroke-linecap="round"/>
+        <line x1="25.5" y1="16" x2="31" y2="16" stroke="currentColor" stroke-width="1" opacity="0.3" stroke-linecap="round"/>
+        <path class="mc-sweep" d="M16 16 L16 2 A14 14 0 0 1 29.8 13.2 Z" fill="currentColor"/>
+        <circle class="mc-dot" cx="16" cy="16" r="4"/>
+      </svg>
+    </div>
     <div class="logo-text">Mission Control</div>
   </div>
   <nav class="header-nav">
     <a href="/" class="nav-link active">Dashboard</a>
     <a href="/dispatch" class="nav-link">Dispatch</a>
     <a href="/findings" class="nav-link">Findings</a>
+    <a href="/workflow" class="nav-link">Workflow</a>
+    <a href="/postmortems" class="nav-link">Post-Mortems</a>
     <a href="/tools" class="nav-link">Toolbox</a>
     <a href="/logic" class="nav-link">Logic</a>
     <a href="/radar" class="nav-link">Radar</a>
@@ -1691,9 +1929,17 @@ function renderStats(agents) {
   if (done)    h += '<div class="stat-pill"><span class="sdot sdot-done"></span>' + done + ' done</div>';
   if (!agents.length) h = '<div class="stat-pill" style="color:var(--text3)">No agents</div>';
 
-  const dot = document.getElementById('logo-dot');
-  if (dot) {
-    dot.className = 'logo-dot' + (waiting ? ' waiting' : active ? ' active' : '');
+  const icon = document.getElementById('logo-icon');
+  if (icon) {
+    icon.className = 'logo-icon' + (waiting ? ' waiting' : active ? ' active' : '');
+  }
+
+  // Dynamic favicon color
+  var favColor = waiting ? '%23f59e0b' : active ? '%2322c55e' : '%239ca3af';
+  var fav = document.getElementById('favicon');
+  if (fav) {
+    var svg = "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><circle cx='16' cy='16' r='15' fill='%231a1a1a'/><circle cx='16' cy='16' r='9' fill='none' stroke='rgba(255,255,255,0.2)' stroke-width='1.2'/><line x1='16' y1='1' x2='16' y2='7' stroke='rgba(255,255,255,0.15)' stroke-width='1' stroke-linecap='round'/><line x1='16' y1='25' x2='16' y2='31' stroke='rgba(255,255,255,0.15)' stroke-width='1' stroke-linecap='round'/><line x1='1' y1='16' x2='7' y2='16' stroke='rgba(255,255,255,0.15)' stroke-width='1' stroke-linecap='round'/><line x1='25' y1='16' x2='31' y2='16' stroke='rgba(255,255,255,0.15)' stroke-width='1' stroke-linecap='round'/><circle cx='16' cy='16' r='3.5' fill='" + favColor + "'/></svg>";
+    fav.href = svg;
   }
 
   document.title = waiting
@@ -1732,32 +1978,33 @@ function filterAgents(agents) {
 }
 
 function renderWsFilters(agents) {
+  const mode = (window.__getMode && window.__getMode()) || 'home';
+  const defs = window.__wsDefs || [];
+  // Only show workstreams matching current mode (shared + mode-specific)
+  const modeWsIds = new Set(defs.filter(w => w.context === null || w.context === undefined || w.context === mode).map(w => w.id));
+
   const nonArchived = agents.filter(a => !a.archived);
   const wsCounts = {};
   let unassigned = 0;
   nonArchived.forEach(a => {
-    if (a.workstream) wsCounts[a.workstream] = (wsCounts[a.workstream] || 0) + 1;
+    if (a.workstream && modeWsIds.has(a.workstream)) wsCounts[a.workstream] = (wsCounts[a.workstream] || 0) + 1;
+    else if (a.workstream && !modeWsIds.has(a.workstream)) { /* skip — wrong mode */ }
     else unassigned++;
   });
 
-  // Only show if there are any assignments or more than 0 workstreams defined
   const hasAny = Object.keys(wsCounts).length > 0 || unassigned > 0;
   if (!hasAny) return '';
 
   let h = '<div class="ws-filters">';
   h += '<div class="ws-fpill' + (currentWsFilter === 'all' ? ' active' : '') + '" data-ws="all">All</div>';
 
-  // Get workstream metadata from agents (already merged in readAgents)
-  const seen = new Set();
-  nonArchived.forEach(a => {
-    if (a.workstream && !seen.has(a.workstream)) {
-      seen.add(a.workstream);
-      const count = wsCounts[a.workstream] || 0;
-      h += '<div class="ws-fpill' + (currentWsFilter === a.workstream ? ' active' : '') + '" data-ws="' + esc(a.workstream) + '">'
-        + '<span class="wf-dot" style="background:' + (a.wsColor || '#9ca3af') + '"></span>'
-        + esc(a.wsName || a.workstream)
-        + '<span class="wf-count">' + count + '</span></div>';
-    }
+  // Show ALL workstreams for current mode (even if 0 agents assigned)
+  defs.filter(w => w.context === null || w.context === undefined || w.context === mode).forEach(w => {
+    const count = wsCounts[w.id] || 0;
+    h += '<div class="ws-fpill' + (currentWsFilter === w.id ? ' active' : '') + '" data-ws="' + esc(w.id) + '">'
+      + '<span class="wf-dot" style="background:' + esc(w.color) + '"></span>'
+      + esc(w.name)
+      + '<span class="wf-count">' + count + '</span></div>';
   });
 
   if (unassigned > 0) {
@@ -1785,10 +2032,13 @@ function renderFilters(agents) {
 
 async function refresh() {
   try {
-    const [agents, nsData] = await Promise.all([
+    const [agents, nsData, wsDefs] = await Promise.all([
       fetch('/api/agents').then(r => r.json()),
       fetch('/api/northstar').then(r => r.json()),
+      fetch('/api/workstreams').then(r => r.json()),
     ]);
+    // Store workstream defs for mode filtering
+    window.__wsDefs = wsDefs;
 
     document.getElementById('stats').innerHTML = renderStats(agents);
 
@@ -1874,7 +2124,10 @@ function acceptWs(sid, workstream) {
 
 refresh();
 setInterval(refresh, 1500);
+// Re-render when mode toggles
+window.addEventListener('modechange', function() { currentWsFilter = 'all'; refresh(); });
 </script>
+${MODE_TOGGLE_SNIPPET}
 </body>
 </html>`;
 
@@ -1886,6 +2139,7 @@ const DETAIL_PAGE = `<!DOCTYPE html>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Session Detail — Mission Control</title>
+<link rel="icon" type="image/svg+xml" href="${FAVICON_DEFAULT}">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=DM+Sans:wght@400;500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -2004,6 +2258,8 @@ const DETAIL_PAGE = `<!DOCTYPE html>
     <a href="/" class="nav-link active">Dashboard</a>
     <a href="/dispatch" class="nav-link">Dispatch</a>
     <a href="/findings" class="nav-link">Findings</a>
+    <a href="/workflow" class="nav-link">Workflow</a>
+    <a href="/postmortems" class="nav-link">Post-Mortems</a>
     <a href="/tools" class="nav-link">Toolbox</a>
     <a href="/logic" class="nav-link">Logic</a>
     <a href="/radar" class="nav-link">Radar</a>
@@ -2236,14 +2492,21 @@ async function load() {
 
 load();
 </script>
+${MODE_TOGGLE_SNIPPET}
 </body>
 </html>`;
 
 // ── Page HTML helpers (read from disk on each request for live reloading) ────
+
 function readPage(file, fallback) {
   try {
-    const html = fs.readFileSync(file, 'utf8');
-    return html.replace('<style>', `<style>\n  html { zoom: ${UI_ZOOM} }`);
+    let html = fs.readFileSync(file, 'utf8');
+    html = html.replace('<style>', `<style>\n  html { zoom: ${UI_ZOOM} }`);
+    // Inject favicon into all pages
+    html = html.replace('</title>', `</title>\n${FAVICON_LINK}`);
+    // Inject mode toggle into all pages
+    html = html.replace('</body>', `${MODE_TOGGLE_SNIPPET}\n</body>`);
+    return html;
   } catch { return `<html><body>${fallback} not found</body></html>`; }
 }
 
@@ -2251,6 +2514,143 @@ function readPage(file, fallback) {
 
 const server = http.createServer((req, res) => {
   const url = req.url.split('?')[0];
+
+  // ── Mode API (Home/Work toggle) ──
+  if (url === '/api/mode' && req.method === 'GET') {
+    res.writeHead(200, { 'Content-Type': 'application/json' });
+    return res.end(JSON.stringify(readJSON(MODE_F, { mode: 'home' })));
+  }
+  if (url === '/api/mode' && req.method === 'POST') {
+    let body = '';
+    req.on('data', c => body += c);
+    req.on('end', () => {
+      try {
+        const { mode } = JSON.parse(body);
+        if (mode === 'home' || mode === 'work') {
+          writeJSON(MODE_F, { mode });
+          res.writeHead(200, { 'Content-Type': 'application/json' });
+          res.end('{"ok":true}');
+        } else {
+          res.writeHead(400, { 'Content-Type': 'application/json' });
+          res.end('{"error":"mode must be home or work"}');
+        }
+      } catch { res.writeHead(400); res.end('{"error":"bad json"}'); }
+    });
+    return;
+  }
+
+  // ── Areas API (editable per-mode area tags) ──
+  if (url === '/api/areas' && req.method === 'GET') {
+    res.writeHead(200, { 'Content-Type': 'application/json' });
+    return res.end(JSON.stringify(readJSON(AREAS_F, { home: [], work: [] })));
+  }
+  if (url === '/api/areas' && req.method === 'POST') {
+    let body = '';
+    req.on('data', c => body += c);
+    req.on('end', () => {
+      try {
+        const { mode, area } = JSON.parse(body);
+        if (!mode || !area || !area.id || !area.name) {
+          res.writeHead(400, { 'Content-Type': 'application/json' });
+          return res.end('{"error":"mode, area.id, area.name required"}');
+        }
+        const areas = readJSON(AREAS_F, { home: [], work: [] });
+        if (!areas[mode]) areas[mode] = [];
+        const existing = areas[mode].findIndex(a => a.id === area.id);
+        if (existing >= 0) areas[mode][existing] = { ...areas[mode][existing], ...area };
+        else areas[mode].push(area);
+        writeJSON(AREAS_F, areas);
+        res.writeHead(200, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify(areas));
+      } catch { res.writeHead(400); res.end('{"error":"bad json"}'); }
+    });
+    return;
+  }
+  if (url === '/api/areas' && req.method === 'DELETE') {
+    let body = '';
+    req.on('data', c => body += c);
+    req.on('end', () => {
+      try {
+        const { mode, id } = JSON.parse(body);
+        const areas = readJSON(AREAS_F, { home: [], work: [] });
+        if (areas[mode]) areas[mode] = areas[mode].filter(a => a.id !== id);
+        writeJSON(AREAS_F, areas);
+        res.writeHead(200, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify(areas));
+      } catch { res.writeHead(400); res.end('{"error":"bad json"}'); }
+    });
+    return;
+  }
+
+  // ── Findings API (data-driven findings) ──
+  if (url === '/api/findings' && req.method === 'GET') {
+    res.writeHead(200, { 'Content-Type': 'application/json', 'Cache-Control': 'no-store' });
+    return res.end(JSON.stringify(readJSON(FINDINGS_F, [])));
+  }
+  if (url === '/api/findings' && req.method === 'POST') {
+    let body = '';
+    req.on('data', c => body += c);
+    req.on('end', () => {
+      try {
+        const finding = JSON.parse(body);
+        if (!finding.title) { res.writeHead(400); return res.end('{"error":"title required"}'); }
+        const all = readJSON(FINDINGS_F, []);
+        finding.id = finding.id || 'f' + String(all.length + 1).padStart(3, '0');
+        all.push(finding);
+        writeJSON(FINDINGS_F, all);
+        res.writeHead(200, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ ok: true, id: finding.id }));
+      } catch { res.writeHead(400); res.end('{"error":"bad json"}'); }
+    });
+    return;
+  }
+  if (url.startsWith('/api/findings/') && req.method === 'PUT') {
+    const id = decodeURIComponent(url.slice('/api/findings/'.length));
+    let body = '';
+    req.on('data', c => body += c);
+    req.on('end', () => {
+      try {
+        const updates = JSON.parse(body);
+        const all = readJSON(FINDINGS_F, []);
+        const idx = all.findIndex(f => f.id === id);
+        if (idx === -1) { res.writeHead(404); return res.end('{"error":"not found"}'); }
+        Object.assign(all[idx], updates);
+        writeJSON(FINDINGS_F, all);
+        res.writeHead(200, { 'Content-Type': 'application/json' });
+        res.end('{"ok":true}');
+      } catch { res.writeHead(400); res.end('{"error":"bad json"}'); }
+    });
+    return;
+  }
+  if (url.startsWith('/api/findings/') && req.method === 'DELETE') {
+    const id = decodeURIComponent(url.slice('/api/findings/'.length));
+    let all = readJSON(FINDINGS_F, []);
+    all = all.filter(f => f.id !== id);
+    writeJSON(FINDINGS_F, all);
+    res.writeHead(200, { 'Content-Type': 'application/json' });
+    return res.end('{"ok":true}');
+  }
+
+  // ── Toolbox Context API (tag tools as home/work/shared) ──
+  if (url === '/api/toolbox-context' && req.method === 'GET') {
+    res.writeHead(200, { 'Content-Type': 'application/json' });
+    return res.end(JSON.stringify(readJSON(TOOLBOX_CTX_F, {})));
+  }
+  if (url === '/api/toolbox-context' && req.method === 'POST') {
+    let body = '';
+    req.on('data', c => body += c);
+    req.on('end', () => {
+      try {
+        const { name, context } = JSON.parse(body);
+        const ctx = readJSON(TOOLBOX_CTX_F, {});
+        ctx[name] = context; // null = shared, "home", "work"
+        writeJSON(TOOLBOX_CTX_F, ctx);
+        res.writeHead(200, { 'Content-Type': 'application/json' });
+        res.end('{"ok":true}');
+      } catch { res.writeHead(400); res.end('{"error":"bad json"}'); }
+    });
+    return;
+  }
 
   if (url === '/api/agents' && req.method === 'GET') {
     res.writeHead(200, { 'Content-Type': 'application/json', 'Cache-Control': 'no-store' });
@@ -2412,6 +2812,58 @@ const server = http.createServer((req, res) => {
     return res.end(JSON.stringify(readToolsData()));
   }
 
+  // Hook file reader API — reads script content for workflow page detail view
+  // Only allows reading from .claude/scripts/ and .claude/agent-hub/ for safety
+  if (url.startsWith('/api/hook-file/') && req.method === 'GET') {
+    const reqPath = decodeURIComponent(url.slice('/api/hook-file/'.length));
+    const allowedDirs = [path.join(__dirname, '..', 'scripts'), __dirname];
+    const resolved = path.resolve(reqPath.replace(/^\/c\//i, 'C:/'));
+    const allowed = allowedDirs.some(d => resolved.startsWith(path.resolve(d)));
+    if (allowed && fs.existsSync(resolved)) {
+      const content = fs.readFileSync(resolved, 'utf8');
+      res.writeHead(200, { 'Content-Type': 'application/json', 'Cache-Control': 'no-store' });
+      return res.end(JSON.stringify({ path: reqPath, content }));
+    }
+    res.writeHead(404, { 'Content-Type': 'application/json' });
+    return res.end(JSON.stringify({ error: 'not found or not allowed' }));
+  }
+
+  // Skill detail API
+  if (url.startsWith('/api/skill/') && req.method === 'GET') {
+    const skillSource = decodeURIComponent(url.slice('/api/skill/'.length));
+    // Check local skills dirs + toolbox export
+    const allSkillDirs = [...SKILLS_DIRS, TOOLBOX_SKILLS_DIR].filter(d => fs.existsSync(d));
+    for (const dir of allSkillDirs) {
+      const skillFile = path.join(dir, skillSource, 'SKILL.md');
+      if (fs.existsSync(skillFile)) {
+        const content = fs.readFileSync(skillFile, 'utf8');
+        res.writeHead(200, { 'Content-Type': 'application/json', 'Cache-Control': 'no-store' });
+        return res.end(JSON.stringify({ source: skillSource, content }));
+      }
+    }
+    res.writeHead(404, { 'Content-Type': 'application/json' });
+    return res.end(JSON.stringify({ error: 'not found' }));
+  }
+
+  // Agent detail API
+  if (url.startsWith('/api/agent/') && req.method === 'GET') {
+    const agentName = decodeURIComponent(url.slice('/api/agent/'.length));
+    // Check local agents first, then toolbox export
+    const candidates = [
+      path.join(AGENTS_DIR, agentName + '.md'),
+      path.join(TOOLBOX_AGENTS_DIR, agentName + '.md'),
+    ];
+    for (const agentFile of candidates) {
+      if (fs.existsSync(agentFile)) {
+        const content = fs.readFileSync(agentFile, 'utf8');
+        res.writeHead(200, { 'Content-Type': 'application/json', 'Cache-Control': 'no-store' });
+        return res.end(JSON.stringify({ name: agentName, content }));
+      }
+    }
+    res.writeHead(404, { 'Content-Type': 'application/json' });
+    return res.end(JSON.stringify({ error: 'not found' }));
+  }
+
   // Logic API
   if (url === '/api/logic' && req.method === 'GET') {
     res.writeHead(200, { 'Content-Type': 'application/json', 'Cache-Control': 'no-store' });
@@ -2489,11 +2941,11 @@ const server = http.createServer((req, res) => {
     req.on('data', c => { body += c; });
     req.on('end', () => {
       try {
-        const { name, color } = JSON.parse(body);
+        const { name, color, context } = JSON.parse(body);
         if (!name) { res.writeHead(400, { 'Content-Type': 'application/json' }); return res.end(JSON.stringify({ error: 'name required' })); }
         const ws = readJSON(WORKSTREAMS_F, []);
         const id = name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
-        ws.push({ id, name, color: color || '#8b5cf6', order: ws.length, created: new Date().toISOString().slice(0, 10) });
+        ws.push({ id, name, color: color || '#8b5cf6', order: ws.length, context: context !== undefined ? context : null, created: new Date().toISOString().slice(0, 10) });
         writeJSON(WORKSTREAMS_F, ws);
         res.writeHead(200, { 'Content-Type': 'application/json' });
         res.end(JSON.stringify(ws));
@@ -2514,6 +2966,7 @@ const server = http.createServer((req, res) => {
         if (updates.name !== undefined) ws[idx].name = updates.name;
         if (updates.color !== undefined) ws[idx].color = updates.color;
         if (updates.order !== undefined) ws[idx].order = updates.order;
+        if (updates.context !== undefined) ws[idx].context = updates.context;
         writeJSON(WORKSTREAMS_F, ws);
         res.writeHead(200, { 'Content-Type': 'application/json' });
         res.end(JSON.stringify(ws));
@@ -2552,6 +3005,41 @@ const server = http.createServer((req, res) => {
     return;
   }
 
+  // ── Workflow API ─────────────────────────────────────────────────────────────
+  if (url === '/api/workflow' && req.method === 'GET') {
+    const HOME = process.env.HOME || process.env.USERPROFILE || '';
+    const globalSettingsPath = path.join(HOME, '.claude', 'settings.json');
+    const projectSettingsPath = path.join(__dirname, '..', 'settings.json');
+    // CLAUDE.md is at the project root (parent of .claude/agent-hub/)
+    const projectRoot = path.resolve(__dirname, '..', '..');
+    const claudeMdPath = path.join(projectRoot, 'CLAUDE.md');
+    // Memory dir uses the project root's CWD slug, not agent-hub's
+    const projectSlug = projectRoot.replace(/\\/g, '/').replace(/^([A-Za-z]):\//, (_, d) => d.toUpperCase() + '--').replace(/\//g, '-');
+    const memoryDir = path.join(HOME, '.claude', 'projects', projectSlug, 'memory');
+
+    const globalSettings = readJSON(globalSettingsPath, {});
+    const projectSettings = readJSON(projectSettingsPath, {});
+    const claudeMd = (() => { try { return fs.readFileSync(claudeMdPath, 'utf8'); } catch { return null; } })();
+    const memoryFiles = (() => {
+      try {
+        return fs.readdirSync(memoryDir).filter(f => f.endsWith('.md')).map(f => {
+          const content = fs.readFileSync(path.join(memoryDir, f), 'utf8');
+          return { name: f, size: content.length, lines: content.split('\n').length, preview: content.slice(0, 300), content };
+        });
+      } catch { return []; }
+    })();
+
+    res.writeHead(200, { 'Content-Type': 'application/json', 'Cache-Control': 'no-store' });
+    return res.end(JSON.stringify({
+      globalSettings: { path: globalSettingsPath, data: globalSettings },
+      projectSettings: { path: projectSettingsPath, data: projectSettings },
+      claudeMd: { path: claudeMdPath, content: claudeMd },
+      memoryFiles: { dir: memoryDir, files: memoryFiles },
+      repo: process.cwd(),
+      cwdSlug: _cwdSlug,
+    }));
+  }
+
   // ── Dispatch CRUD API ───────────────────────────────────────────────────────
   if (url === '/api/dispatch' && req.method === 'GET') {
     // Merge local dispatch + shared MC backlog (mc-backlog.json tracked in git)
@@ -2567,11 +3055,11 @@ const server = http.createServer((req, res) => {
     req.on('data', c => { body += c; });
     req.on('end', () => {
       try {
-        const { title, description, status, priority, workstream, tags, linkedSession, _source } = JSON.parse(body);
+        const { title, description, status, priority, workstream, tags, linkedSession, context, _source } = JSON.parse(body);
         if (!title) { res.writeHead(400, { 'Content-Type': 'application/json' }); return res.end(JSON.stringify({ error: 'title required' })); }
         const id = (_source === 'mc' ? 'mc-' : '') + Math.random().toString(36).slice(2, 10);
         const now = new Date().toISOString();
-        const item = { id, title, description: description || '', status: status || 'todo', priority: priority || 'p2', workstream: workstream || '', tags: tags || [], linkedSession: linkedSession || null, created: now, updated: now };
+        const item = { id, title, description: description || '', status: status || 'todo', priority: priority || 'p2', workstream: workstream || '', tags: tags || [], linkedSession: linkedSession || null, context: context !== undefined ? context : null, created: now, updated: now };
         if (_source === 'mc') {
           const mcFile = path.join(__dirname, 'mc-backlog.json');
           const mcData = readJSON(mcFile, { tasks: [] });
@@ -2601,7 +3089,7 @@ const server = http.createServer((req, res) => {
           const mcData = readJSON(mcFile, { tasks: [] });
           const idx = mcData.tasks.findIndex(i => i.id === id);
           if (idx === -1) { res.writeHead(404, { 'Content-Type': 'application/json' }); return res.end(JSON.stringify({ error: 'not found' })); }
-          for (const key of ['title', 'description', 'status', 'priority', 'workstream', 'tags', 'linkedSession']) {
+          for (const key of ['title', 'description', 'status', 'priority', 'workstream', 'tags', 'linkedSession', 'sortOrder', 'context', 'areas']) {
             if (updates[key] !== undefined) mcData.tasks[idx][key] = updates[key];
           }
           mcData.tasks[idx].updated = new Date().toISOString();
@@ -2610,7 +3098,7 @@ const server = http.createServer((req, res) => {
           const items = readJSON(DISPATCH_F, []);
           const idx = items.findIndex(i => i.id === id);
           if (idx === -1) { res.writeHead(404, { 'Content-Type': 'application/json' }); return res.end(JSON.stringify({ error: 'not found' })); }
-          for (const key of ['title', 'description', 'status', 'priority', 'workstream', 'tags', 'linkedSession']) {
+          for (const key of ['title', 'description', 'status', 'priority', 'workstream', 'tags', 'linkedSession', 'sortOrder', 'context', 'areas']) {
             if (updates[key] !== undefined) items[idx][key] = updates[key];
           }
           items[idx].updated = new Date().toISOString();
@@ -2636,6 +3124,34 @@ const server = http.createServer((req, res) => {
     }
     res.writeHead(200, { 'Content-Type': 'application/json' });
     return res.end(JSON.stringify({ ok: true }));
+  }
+
+  // ── Dispatch Reorder API ──────────────────────────────────────────────────
+  if (url === '/api/dispatch/reorder' && req.method === 'POST') {
+    let body = '';
+    req.on('data', c => { body += c; });
+    req.on('end', () => {
+      try {
+        const { orderedIds } = JSON.parse(body);
+        if (!Array.isArray(orderedIds)) { res.writeHead(400, { 'Content-Type': 'application/json' }); return res.end(JSON.stringify({ error: 'orderedIds required' })); }
+        // Update sortOrder in both local dispatch and mc-backlog
+        const localItems = readJSON(DISPATCH_F, []);
+        const mcFile = path.join(__dirname, 'mc-backlog.json');
+        const mcData = readJSON(mcFile, { tasks: [] });
+        let localChanged = false, mcChanged = false;
+        orderedIds.forEach((id, idx) => {
+          const local = localItems.find(i => i.id === id);
+          if (local) { local.sortOrder = idx; localChanged = true; }
+          const mc = mcData.tasks.find(i => i.id === id);
+          if (mc) { mc.sortOrder = idx; mcChanged = true; }
+        });
+        if (localChanged) writeJSON(DISPATCH_F, localItems);
+        if (mcChanged) writeJSON(mcFile, mcData);
+        res.writeHead(200, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ ok: true }));
+      } catch (e) { res.writeHead(400, { 'Content-Type': 'application/json' }); res.end(JSON.stringify({ error: e.message })); }
+    });
+    return;
   }
 
   // ── Prompt Search API ───────────────────────────────────────────────────────
@@ -2777,6 +3293,12 @@ Respond with ONLY a JSON object: {"workstream": "the-id", "confidence": 0.0-1.0,
     return res.end(DETAIL_PAGE);
   }
 
+  // Icon preview page
+  if (url === '/icon') {
+    res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
+    return res.end(readPage(ICON_HTML_F, 'Icon page'));
+  }
+
   // Tools page
   if (url === '/tools') {
     res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
@@ -2804,6 +3326,16 @@ Respond with ONLY a JSON object: {"workstream": "the-id", "confidence": 0.0-1.0,
   if (url === '/dispatch') {
     res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
     return res.end(readPage(DISPATCH_HTML_F, 'Dispatch page'));
+  }
+
+  if (url === '/workflow') {
+    res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
+    return res.end(readPage(WORKFLOW_HTML_F, 'Workflow page'));
+  }
+
+  if (url === '/postmortems') {
+    res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
+    return res.end(readPage(POSTMORTEM_HTML_F, 'Post-Mortems page'));
   }
 
   res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });

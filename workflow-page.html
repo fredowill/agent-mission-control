@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Workflow &mdash; Mission Control</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=DM+Sans:wght@400;500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { margin:0; padding:0; box-sizing:border-box }
+  :root {
+    --bg:#fff; --bg2:#fafafa; --surface:#f4f4f5; --surface2:#e4e4e7;
+    --text:#09090b; --text2:#52525b; --text3:#a1a1aa; --sep:#e4e4e7;
+    --purple:#8b5cf6; --purple-bg:rgba(139,92,246,0.06);
+    --blue:#3b82f6; --blue-bg:rgba(59,130,246,0.06);
+    --green:#22c55e; --green-bg:rgba(34,197,94,0.06);
+    --amber:#f59e0b; --amber-bg:rgba(245,158,11,0.06);
+    --rose:#ef4444; --rose-bg:rgba(239,68,68,0.05);
+    --cyan:#06b6d4; --cyan-bg:rgba(6,182,212,0.06);
+    --r:12px;
+  }
+  body { background:var(--bg2); color:var(--text); font-family:'DM Sans',-apple-system,system-ui,sans-serif; -webkit-font-smoothing:antialiased }
+
+  /* ── Header ── */
+  header { display:flex; align-items:center; justify-content:space-between; padding:0 clamp(24px,4vw,48px); height:64px; background:var(--bg); border-bottom:1px solid var(--sep); position:sticky; top:0; z-index:10 }
+  .logo { display:flex; align-items:center; gap:12px }
+  .logo-dot { width:8px; height:8px; border-radius:50%; background:var(--purple) }
+  .logo-text { font-family:'Plus Jakarta Sans',sans-serif; font-size:15px; font-weight:600; letter-spacing:-0.02em }
+  .header-nav { display:flex; gap:4px; padding:3px; background:var(--surface); border-radius:8px; position:absolute; left:50%; transform:translateX(-50%) }
+  .nav-link { padding:5px 14px; border-radius:6px; font-family:'DM Sans',sans-serif; font-size:13px; font-weight:500; color:var(--text3); text-decoration:none; transition:all .15s }
+  .nav-link:hover { color:var(--text2) }
+  .nav-link.active { background:var(--bg); color:var(--text); box-shadow:0 1px 3px rgba(0,0,0,.06) }
+
+  .shell { max-width:1060px; margin:0 auto; padding:36px clamp(24px,4vw,48px) 80px }
+  .page-title { font-family:'Plus Jakarta Sans',sans-serif; font-size:32px; font-weight:800; letter-spacing:-0.04em; line-height:1.1 }
+  .page-sub { font-size:14px; color:var(--text3); margin:4px 0 32px }
+
+  /* ════════════════════════════════════
+     PIPELINE — vertical stepper
+     ════════════════════════════════════ */
+  .pipeline { margin-bottom:44px }
+  .sec-label { font-family:'Plus Jakarta Sans',sans-serif; font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.1em; color:var(--text3); margin-bottom:16px }
+
+  .steps { display:flex; flex-direction:column; gap:0; position:relative }
+  .step { display:grid; grid-template-columns:48px 1fr; min-height:72px }
+  .step-rail { display:flex; flex-direction:column; align-items:center }
+  .step-dot {
+    width:36px; height:36px; border-radius:10px; display:flex; align-items:center; justify-content:center;
+    font-family:'Plus Jakarta Sans',sans-serif; font-size:13px; font-weight:800; flex-shrink:0; z-index:1;
+  }
+  .step-line { width:2px; flex:1; min-height:12px }
+  .step:last-child .step-line { display:none }
+
+  /* phase colors */
+  .phase-boot .step-dot { background:#f3f0ff; color:var(--purple); border:1.5px solid rgba(139,92,246,0.2) }
+  .phase-boot .step-line { background:linear-gradient(var(--purple), var(--blue)) }
+  .phase-context .step-dot { background:#eff6ff; color:var(--blue); border:1.5px solid rgba(59,130,246,0.2) }
+  .phase-context .step-line { background:var(--blue) }
+  .phase-arm .step-dot { background:#f0fdf4; color:var(--green); border:1.5px solid rgba(34,197,94,0.2) }
+  .phase-arm .step-line { background:linear-gradient(var(--green), var(--amber)) }
+  .phase-run .step-dot { background:#fffbeb; color:var(--amber); border:1.5px solid rgba(245,158,11,0.2) }
+
+  .step-body { padding:6px 0 20px 0 }
+  .step-phase { font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:0.08em; margin-bottom:1px }
+  .step-phase.boot { color:var(--purple) }
+  .step-phase.context { color:var(--blue) }
+  .step-phase.arm { color:var(--green) }
+  .step-phase.run { color:var(--amber) }
+  .step-title { font-family:'Plus Jakarta Sans',sans-serif; font-size:15px; font-weight:700; letter-spacing:-0.02em }
+  .step-desc { font-size:12px; color:var(--text3); line-height:1.5; margin-top:2px }
+  .step-pills { display:flex; flex-wrap:wrap; gap:5px; margin-top:6px }
+  .pill { font-family:'DM Mono',monospace; font-size:10px; padding:2px 8px; border-radius:5px; background:var(--surface); color:var(--text2) }
+  .pill.lit { background:var(--blue-bg); color:var(--blue); border:1px solid rgba(59,130,246,0.12) }
+  .pill.lit-green { background:var(--green-bg); color:var(--green); border:1px solid rgba(34,197,94,0.12) }
+
+  /* ════════════════════════════════════
+     SECTIONS
+     ════════════════════════════════════ */
+  .section { margin-bottom:36px }
+  .sec-head { display:flex; align-items:center; justify-content:space-between; margin-bottom:12px }
+  .sec-title { font-family:'Plus Jakarta Sans',sans-serif; font-size:18px; font-weight:800; letter-spacing:-0.03em }
+  .sec-badge { font-family:'DM Mono',monospace; font-size:11px; color:var(--text3); background:var(--surface); padding:2px 10px; border-radius:100px }
+
+  /* ════════════════════════════════════
+     HOOKS — compact table-style rows
+     ════════════════════════════════════ */
+  .hook-group { margin-bottom:16px }
+  .hook-group-head { display:flex; align-items:center; gap:8px; margin-bottom:8px }
+  .hg-dot { width:7px; height:7px; border-radius:50% }
+  .hg-dot.mc { background:var(--purple) }
+  .hg-dot.quality { background:var(--green) }
+  .hg-dot.safety { background:var(--rose) }
+  .hg-dot.system { background:var(--amber) }
+  .hg-label { font-family:'Plus Jakarta Sans',sans-serif; font-size:12px; font-weight:700 }
+  .hg-count { font-family:'DM Mono',monospace; font-size:10px; color:var(--text3) }
+
+  .hook-list { display:flex; flex-direction:column; gap:4px }
+  .hook-row {
+    display:grid; grid-template-columns:160px 1fr 120px auto;
+    align-items:center; gap:12px;
+    background:var(--bg); border:1px solid var(--sep); border-radius:8px;
+    padding:8px 14px; font-size:12px; transition:all .12s;
+    cursor:pointer;
+  }
+  .hook-row:hover { border-color:var(--surface2); box-shadow:0 1px 4px rgba(0,0,0,.03); background:#fcfcfc }
+  .hook-name { font-family:'Plus Jakarta Sans',sans-serif; font-weight:700; font-size:12px }
+  .hook-desc { color:var(--text3); font-size:11px; line-height:1.3 }
+  .hook-trigger { font-family:'DM Mono',monospace; font-size:10px; color:var(--purple) }
+  .hook-scope { font-size:9px; font-weight:600; text-transform:uppercase; letter-spacing:0.05em; padding:1px 6px; border-radius:4px; background:var(--surface); color:var(--text3); text-align:center }
+  @media (max-width:720px) {
+    .hook-row { grid-template-columns:1fr; gap:4px }
+  }
+
+  /* ════════════════════════════════════
+     GAP BANNER
+     ════════════════════════════════════ */
+  .gap { background:linear-gradient(135deg,rgba(245,158,11,0.04),rgba(239,68,68,0.03)); border:1px solid rgba(245,158,11,0.15); border-radius:10px; padding:12px 16px; margin-bottom:28px; display:flex; align-items:center; gap:10px; font-size:12px; color:var(--text2) }
+  .gap-dot { width:6px; height:6px; border-radius:50%; background:var(--amber); flex-shrink:0 }
+  .gap strong { color:var(--amber) }
+
+  /* ════════════════════════════════════
+     MEMORY — compact cards
+     ════════════════════════════════════ */
+  .mem-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(200px,1fr)); gap:6px }
+  .mem-card {
+    background:var(--bg); border:1px solid var(--sep); border-radius:10px;
+    padding:12px 14px; cursor:pointer; transition:all .12s;
+  }
+  .mem-card:hover { border-color:var(--surface2); box-shadow:0 2px 8px rgba(0,0,0,.03); transform:translateY(-1px) }
+  .mem-card.primary { border-color:var(--blue); background:linear-gradient(135deg,#fff,var(--blue-bg)) }
+  .mem-card.rules { border-color:var(--green); background:linear-gradient(135deg,#fff,var(--green-bg)) }
+  .mem-name { font-family:'DM Mono',monospace; font-size:12px; font-weight:500 }
+  .mem-role { font-size:10px; color:var(--text3); margin-top:1px; line-height:1.3 }
+  .mem-stats { font-family:'DM Mono',monospace; font-size:9px; color:var(--text3); margin-top:4px }
+
+  /* ════════════════════════════════════
+     CLAUDE.MD — rendered, collapsible
+     ════════════════════════════════════ */
+  .rules-card {
+    background:var(--bg); border:1px solid var(--sep); border-radius:var(--r); overflow:hidden;
+  }
+  .rules-header {
+    padding:14px 18px; cursor:pointer; display:flex; align-items:center; justify-content:space-between;
+    user-select:none; transition:background .12s;
+  }
+  .rules-header:hover { background:var(--surface) }
+  .rules-header-left { display:flex; align-items:center; gap:10px }
+  .rules-icon { width:28px; height:28px; border-radius:8px; background:var(--green-bg); color:var(--green); display:flex; align-items:center; justify-content:center; font-size:14px; font-weight:700; border:1px solid rgba(34,197,94,0.12) }
+  .rules-label { font-family:'Plus Jakarta Sans',sans-serif; font-size:14px; font-weight:700 }
+  .rules-meta { font-family:'DM Mono',monospace; font-size:10px; color:var(--text3) }
+  .rules-chevron { color:var(--text3); font-size:12px; transition:transform .2s }
+  .rules-chevron.open { transform:rotate(180deg) }
+  .rules-body { display:none; padding:0 18px 18px; border-top:1px solid var(--sep) }
+  .rules-body.open { display:block; padding-top:14px }
+  .rules-content { font-size:13px; line-height:1.8; color:var(--text2) }
+  .rules-content h1 { font-family:'Plus Jakarta Sans',sans-serif; font-size:16px; font-weight:800; color:var(--text); margin:0 0 10px; letter-spacing:-0.02em }
+  .rules-content h2 { font-family:'Plus Jakarta Sans',sans-serif; font-size:14px; font-weight:700; color:var(--text); margin:16px 0 6px; letter-spacing:-0.02em }
+  .rules-content p { margin-bottom:6px }
+  .rules-content ul { margin:4px 0 8px 18px }
+  .rules-content li { margin-bottom:3px }
+
+  /* ════════════════════════════════════
+     SETTINGS — inline row
+     ════════════════════════════════════ */
+  .settings-row { display:flex; flex-wrap:wrap; gap:6px }
+  .setting-chip {
+    background:var(--bg); border:1px solid var(--sep); border-radius:8px;
+    padding:8px 14px; display:flex; align-items:center; gap:8px; font-size:12px;
+  }
+  .setting-k { color:var(--text3); font-weight:500 }
+  .setting-v { font-family:'DM Mono',monospace; font-weight:500 }
+
+  /* ════════════════════════════════════
+     MODAL — full content viewer
+     ════════════════════════════════════ */
+  .modal-bg { display:none; position:fixed; inset:0; background:rgba(0,0,0,.2); backdrop-filter:blur(6px); z-index:100; justify-content:center; align-items:center; padding:24px }
+  .modal-bg.open { display:flex }
+  .modal-box {
+    background:var(--bg); border-radius:14px; max-width:700px; width:100%; max-height:70vh;
+    display:flex; flex-direction:column; box-shadow:0 24px 80px rgba(0,0,0,.1);
+    animation:mIn .18s ease; margin:48px 0;
+  }
+  @keyframes mIn { from { opacity:0; transform:translateY(6px) scale(0.98) } to { opacity:1; transform:none } }
+  .modal-top { display:flex; align-items:center; justify-content:space-between; padding:10px 20px; border-bottom:1px solid var(--sep); flex-shrink:0 }
+  .modal-top-title { font-family:'DM Mono',monospace; font-size:14px; font-weight:600 }
+  .modal-x { width:26px; height:26px; border-radius:6px; border:none; background:var(--surface); color:var(--text3); cursor:pointer; font-size:13px; display:flex; align-items:center; justify-content:center }
+  .modal-x:hover { background:var(--surface2); color:var(--text) }
+  .modal-scroll { overflow-y:auto; padding:20px; flex:1 }
+  .modal-text {
+    font-family:'DM Mono',monospace; font-size:12px; line-height:1.7;
+    white-space:pre-wrap; color:var(--text);
+    background:#1e1e2e; color:#cdd6f4; padding:20px; border-radius:10px;
+    tab-size:2;
+  }
+  /* Rendered markdown view */
+  .modal-md {
+    font-family:'DM Sans',sans-serif; font-size:14px; color:var(--text2); line-height:1.7;
+    padding:4px 0;
+  }
+  .modal-md h1,.modal-md h2,.modal-md h3 { font-family:'Plus Jakarta Sans',sans-serif; color:var(--text); margin:18px 0 6px; letter-spacing:-0.02em }
+  .modal-md h1:first-child,.modal-md p:first-child+h1 { margin-top:0 }
+  .modal-md h1 { font-size:22px; font-weight:800; border-bottom:1px solid var(--sep); padding-bottom:8px }
+  .modal-md textarea { display:none !important }
+  .modal-md h2 { font-size:17px; font-weight:700 }
+  .modal-md h3 { font-size:14px; font-weight:600 }
+  .modal-md p { margin:6px 0 }
+  .modal-md ul,.modal-md ol { padding-left:20px; margin:6px 0 }
+  .modal-md li { margin:3px 0 }
+  .modal-md code { font-family:'DM Mono',monospace; font-size:12px; background:var(--surface); padding:1px 5px; border-radius:4px }
+  .modal-md pre { background:#1e1e2e; border-radius:8px; padding:12px 16px; overflow-x:auto; margin:8px 0; color:#cdd6f4 }
+  .modal-md pre code { background:none; padding:0; color:inherit; font-size:12px; line-height:1.5 }
+  .modal-md blockquote { border-left:3px solid var(--purple); padding-left:12px; margin:8px 0; color:var(--text3); font-style:italic }
+  .modal-md strong { color:var(--text); font-weight:600 }
+  .modal-md em { font-style:italic }
+  .modal-md hr { border:none; border-top:1px solid var(--sep); margin:16px 0 }
+  .modal-md table { border-collapse:collapse; width:100%; margin:8px 0 }
+  .modal-md th,.modal-md td { border:1px solid var(--sep); padding:6px 10px; font-size:12px; text-align:left }
+  .modal-md th { background:var(--surface); font-weight:600 }
+  .modal-md a { color:var(--blue); text-decoration:none }
+  .modal-md a:hover { text-decoration:underline }
+
+  .modal-text .kw { color:#cba6f7 }
+  .modal-text .fn { color:#89b4fa }
+  .modal-text .str { color:#a6e3a1 }
+  .modal-text .cm { color:#6c7086; font-style:italic }
+  .modal-text .num { color:#fab387 }
+  .modal-text .op { color:#89dceb }
+  .modal-text .prop { color:#f5c2e7 }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo"><div class="logo-dot"></div><div class="logo-text">Mission Control</div></div>
+  <nav class="header-nav">
+    <a href="/" class="nav-link">Dashboard</a>
+    <a href="/dispatch" class="nav-link">Dispatch</a>
+    <a href="/findings" class="nav-link">Findings</a>
+    <a href="/workflow" class="nav-link active">Workflow</a>
+    <a href="/postmortems" class="nav-link">Post-Mortems</a>
+    <a href="/tools" class="nav-link">Toolbox</a>
+    <a href="/logic" class="nav-link">Logic</a>
+    <a href="/radar" class="nav-link">Radar</a>
+  </nav>
+  <div style="width:120px"></div>
+</header>
+
+<div class="shell">
+  <h1 class="page-title">Agent Workflow</h1>
+  <p class="page-sub">The complete agent initialization pipeline, active hooks, memory, and behavioral rules</p>
+
+  <!-- ══ PIPELINE ══ -->
+  <div class="pipeline">
+    <div class="sec-label">Initialization Pipeline</div>
+    <div class="steps">
+
+      <div class="step phase-boot">
+        <div class="step-rail"><div class="step-dot">1</div><div class="step-line"></div></div>
+        <div class="step-body">
+          <div class="step-phase boot">Boot</div>
+          <div class="step-title">Terminal Opens</div>
+          <div class="step-desc">User runs <strong>claude</strong>. A new claude.exe process starts with a unique session ID and PID.</div>
+        </div>
+      </div>
+
+      <div class="step phase-context">
+        <div class="step-rail"><div class="step-dot">2</div><div class="step-line"></div></div>
+        <div class="step-body">
+          <div class="step-phase context">Context</div>
+          <div class="step-title">CLAUDE.md Loaded</div>
+          <div class="step-desc">Behavioral rules injected into system prompt. Non-negotiable constraints for every task.</div>
+          <div class="step-pills"><span class="pill lit" id="claudemd-pill">CLAUDE.md</span></div>
+        </div>
+      </div>
+
+      <div class="step phase-context">
+        <div class="step-rail"><div class="step-dot">3</div><div class="step-line"></div></div>
+        <div class="step-body">
+          <div class="step-phase context">Context</div>
+          <div class="step-title">Memory Loaded</div>
+          <div class="step-desc">MEMORY.md (first 200 lines always in context) plus topic files loaded on demand. Project knowledge, stack, preferences.</div>
+          <div class="step-pills" id="mem-pills"></div>
+        </div>
+      </div>
+
+      <div class="step phase-arm">
+        <div class="step-rail"><div class="step-dot">4</div><div class="step-line"></div></div>
+        <div class="step-body">
+          <div class="step-phase arm">Armed</div>
+          <div class="step-title">Hooks Activate</div>
+          <div class="step-desc">Global and project hooks register on lifecycle events. Fire automatically on every tool call, prompt, and session stop.</div>
+          <div class="step-pills">
+            <span class="pill lit-green" id="ghook-pill"></span>
+            <span class="pill lit-green" id="phook-pill"></span>
+          </div>
+        </div>
+      </div>
+
+      <div class="step phase-run">
+        <div class="step-rail"><div class="step-dot">5</div><div class="step-line"></div></div>
+        <div class="step-body">
+          <div class="step-phase run">Running</div>
+          <div class="step-title">First Prompt, First Tool Call</div>
+          <div class="step-desc">UserPromptSubmit fires (captures prompt). Agent thinks, calls tools. PostToolUse fires (state tracking, guards). Agent is live.</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ══ GAP ══ -->
+  <div class="gap" id="gap" style="display:none">
+    <div class="gap-dot"></div>
+    <div id="gap-text"></div>
+  </div>
+
+  <!-- ══ HOOKS ══ -->
+  <div class="section">
+    <div class="sec-head">
+      <div class="sec-title">Active Hooks</div>
+      <div class="sec-badge" id="hook-total"></div>
+    </div>
+    <div id="hooks-container"></div>
+  </div>
+
+  <!-- ══ MEMORY ══ -->
+  <div class="section">
+    <div class="sec-head">
+      <div class="sec-title">Memory Files</div>
+      <div class="sec-badge" id="mem-total"></div>
+    </div>
+    <div class="mem-grid" id="mem-grid"></div>
+  </div>
+
+  <!-- ══ CLAUDE.MD ══ -->
+  <div class="section" id="rules-section" style="display:none">
+    <div class="rules-card">
+      <div class="rules-header" onclick="toggleRules()">
+        <div class="rules-header-left">
+          <div class="rules-icon">R</div>
+          <div>
+            <div class="rules-label">CLAUDE.md &mdash; Behavioral Rules</div>
+            <div class="rules-meta" id="rules-meta"></div>
+          </div>
+        </div>
+        <div class="rules-chevron" id="rules-chev">&#9662;</div>
+      </div>
+      <div class="rules-body" id="rules-body">
+        <div class="rules-content" id="rules-content"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ SETTINGS ══ -->
+  <div class="section">
+    <div class="sec-head"><div class="sec-title">Settings</div></div>
+    <div class="settings-row" id="settings-row"></div>
+  </div>
+</div>
+
+<!-- ══ MODAL ══ -->
+<div class="modal-bg" id="modal">
+  <div class="modal-box">
+    <div class="modal-top">
+      <div class="modal-top-title" id="m-title"></div>
+      <button class="modal-x" onclick="closeModal()">&times;</button>
+    </div>
+    <div class="modal-scroll">
+      <div class="modal-text" id="m-text"></div>
+      <div class="modal-md" id="m-md" style="display:none"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ── Hook metadata ── */
+const hookMeta = {
+  'hook.js':                    { cat:'mc',     name:'State Tracker',         desc:'Writes agent state to dashboard cards' },
+  'prompt-hook.js':             { cat:'mc',     name:'Prompt Capture',        desc:'Records user prompts for history & search' },
+  'session-start-compact.js':   { cat:'mc',     name:'Context Restore',       desc:'Injects "where you left off" briefing after compaction' },
+  'check-code-change.sh':       { cat:'safety', name:'Stale Build Guard',     desc:'Warns if server runs prod build after edits' },
+  'check-file-conflict.js':     { cat:'safety', name:'File Conflict Check',   desc:'Detects conflicting file edits across agents' },
+  'check-server.sh':            { cat:'quality',name:'Server Health',         desc:'Verifies dev server after shell commands' },
+  'verify-deploy.sh':           { cat:'quality',name:'Deploy Verifier',       desc:'Checks deployment state after shell commands' },
+};
+const catInfo = {
+  mc:      { label:'MC Telemetry',  order:0 },
+  quality: { label:'Code Quality',  order:1 },
+  safety:  { label:'Safety Guards', order:2 },
+  system:  { label:'System',        order:3 },
+};
+
+function classify(cmd) {
+  if (cmd.includes('VERIFY BEFORE DONE')) return { cat:'safety', name:'Anti-Rationalization', desc:'Reminds agent to verify work before claiming done' };
+  const key = cmd.split(/[\/\\]/).pop();
+  return hookMeta[key] || { cat:'system', name:key, desc:'Custom hook' };
+}
+
+function parseHooks(data, scope) {
+  const out = [];
+  for (const [ev, matchers] of Object.entries(data.hooks || {})) {
+    for (const m of matchers) for (const h of (m.hooks||[])) {
+      const meta = classify(h.command||'');
+      const matcher = m.matcher||'';
+      const trigger = ev + (matcher && matcher !== '.*' ? ' ['+matcher+']' : '');
+      out.push({ ...meta, scope, trigger, command:h.command||'' });
+    }
+  }
+  return out;
+}
+
+function renderHooks(all) {
+  document.getElementById('hook-total').textContent = all.length + ' hooks';
+  const groups = {};
+  for (const h of all) { (groups[h.cat] = groups[h.cat]||[]).push(h); }
+  const sorted = Object.entries(groups).sort((a,b) => (catInfo[a[0]]?.order??99) - (catInfo[b[0]]?.order??99));
+
+  document.getElementById('hooks-container').innerHTML = sorted.map(([cat, hooks]) => `
+    <div class="hook-group">
+      <div class="hook-group-head">
+        <div class="hg-dot ${cat}"></div>
+        <div class="hg-label">${catInfo[cat]?.label||cat}</div>
+        <div class="hg-count">${hooks.length}</div>
+      </div>
+      <div class="hook-list">
+        ${hooks.map(h => `
+          <div class="hook-row" onclick="openHook('${h.name}', \`${h.command.replace(/`/g,'\\`').replace(/\\/g,'\\\\')}\`)">
+            <div class="hook-name">${h.name}</div>
+            <div class="hook-desc">${h.desc}</div>
+            <div class="hook-trigger">${h.trigger}</div>
+            <div class="hook-scope">${h.scope}</div>
+          </div>
+        `).join('')}
+      </div>
+    </div>
+  `).join('');
+
+  // Gap detection — check for missing categories
+  const hasSafety = all.some(h => h.cat === 'safety');
+  if (!hasSafety) {
+    document.getElementById('gap').style.display = 'flex';
+    document.getElementById('gap-text').innerHTML = '<strong>Gap:</strong> No safety hooks active. Agents can claim completion without verification.';
+  }
+}
+
+/* ── Memory ── */
+const memRoles = {
+  'MEMORY.md':'Always in context (first 200 lines)',
+  'principles.md':'Design principles & anti-patterns',
+  'design-context.md':'Visual direction & aesthetics',
+  'phredomade.md':'Architecture deep-dive',
+  'security-audit.md':'Security findings checklist',
+  'resend-setup.md':'Email/Resend configuration',
+  'promo-video-pipeline.md':'Video render pipeline',
+  'local-ports.md':'Dev server port assignments',
+};
+
+let memCache = {};
+function renderMemory(data) {
+  document.getElementById('mem-total').textContent = data.files.length + ' files';
+  // Cache full content
+  data.files.forEach(f => { memCache[f.name] = f.content || f.preview; });
+
+  // Pipeline pills
+  document.getElementById('mem-pills').innerHTML = data.files.map(f =>
+    `<span class="pill ${f.name==='MEMORY.md'?'lit':''}">${f.name}</span>`
+  ).join('');
+
+  // Grid
+  document.getElementById('mem-grid').innerHTML = data.files.map(f => `
+    <div class="mem-card ${f.name==='MEMORY.md'?'primary':''} ${f.name==='principles.md'?'rules':''}" onclick="openMem('${f.name}')">
+      <div class="mem-name">${f.name}</div>
+      <div class="mem-role">${memRoles[f.name]||'Topic file'}</div>
+      <div class="mem-stats">${f.lines} lines &middot; ${(f.size/1024).toFixed(1)}KB</div>
+    </div>
+  `).join('');
+}
+
+function escHtml(s) { return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function renderMd(md) {
+  md = md.replace(/^---\n[\s\S]*?\n---\n?/, '');
+  md = md.replace(/```(\w*)\n([\s\S]*?)```/g, (_, lang, code) => '<pre><code>' + escHtml(code) + '</code></pre>');
+  md = md.replace(/`([^`]+)`/g, (_, code) => '<code>' + escHtml(code) + '</code>');
+  md = md.replace(/^### (.+)$/gm, '<h3>$1</h3>');
+  md = md.replace(/^## (.+)$/gm, '<h2>$1</h2>');
+  md = md.replace(/^# (.+)$/gm, '<h1>$1</h1>');
+  md = md.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
+  md = md.replace(/\*([^*]+)\*/g, '<em>$1</em>');
+  md = md.replace(/^> (.+)$/gm, '<blockquote>$1</blockquote>');
+  md = md.replace(/^- (.+)$/gm, '<li>$1</li>');
+  md = md.replace(/(<li>[\s\S]*?<\/li>)/g, '<ul>$1</ul>');
+  md = md.replace(/<\/ul>\s*<ul>/g, '');
+  md = md.replace(/^---$/gm, '<hr>');
+  md = md.replace(/^\|(.+)\|\s*\n\|[-| ]+\|\s*\n((?:\|.+\|\s*\n?)*)/gm, (_, hdr, body) => {
+    const ths = hdr.split('|').filter(Boolean).map(c => '<th>' + c.trim() + '</th>').join('');
+    const rows = body.trim().split('\n').map(r => {
+      const tds = r.split('|').filter(Boolean).map(c => '<td>' + c.trim() + '</td>').join('');
+      return '<tr>' + tds + '</tr>';
+    }).join('');
+    return '<table><thead><tr>' + ths + '</tr></thead><tbody>' + rows + '</tbody></table>';
+  });
+  md = md.replace(/\n{2,}/g, '</p><p>');
+  md = '<p>' + md + '</p>';
+  md = md.replace(/<p>\s*(<h[123]|<pre|<ul|<blockquote|<hr|<table)/g, '$1');
+  md = md.replace(/(<\/h[123]>|<\/pre>|<\/ul>|<\/blockquote>|<hr>|<\/table>)\s*<\/p>/g, '$1');
+  return md;
+}
+
+function openMem(name) {
+  document.getElementById('m-title').textContent = name;
+  const code = document.getElementById('m-text');
+  const md = document.getElementById('m-md');
+  const content = memCache[name] || 'No content';
+  // Show rendered markdown, hide code view
+  code.style.display = 'none';
+  md.style.display = 'block';
+  md.innerHTML = renderMd(content);
+  document.getElementById('modal').classList.add('open');
+}
+function highlightCode(code) {
+  // Escape HTML first
+  let h = code.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  // Comments (// and #)
+  h = h.replace(/(\/\/.*$|#.*$)/gm, '<span class="cm">$1</span>');
+  // Strings (single and double quoted)
+  h = h.replace(/('(?:[^'\\]|\\.)*')/g, '<span class="str">$1</span>');
+  h = h.replace(/("(?:[^"\\]|\\.)*")/g, '<span class="str">$1</span>');
+  // Template literals
+  h = h.replace(/(`(?:[^`\\]|\\.)*`)/g, '<span class="str">$1</span>');
+  // Keywords
+  h = h.replace(/\b(const|let|var|function|return|if|else|for|of|in|try|catch|require|new|process|module|exports|async|await|throw|class|import|from|true|false|null|undefined)\b/g, '<span class="kw">$1</span>');
+  // Numbers
+  h = h.replace(/\b(\d+)\b/g, '<span class="num">$1</span>');
+  // Function calls
+  h = h.replace(/\b([a-zA-Z_]\w*)\s*\(/g, '<span class="fn">$1</span>(');
+  // Operators
+  h = h.replace(/(===|!==|=>|&&|\|\||\.\.\.)/g, '<span class="op">$1</span>');
+  return h;
+}
+
+async function openHook(name, command) {
+  document.getElementById('m-title').textContent = name;
+  document.getElementById('m-text').style.display = 'block';
+  document.getElementById('m-md').style.display = 'none';
+  const mt = document.getElementById('m-text');
+  // For echo-based hooks, show the echo content directly
+  if (command.includes('echo ') && !command.includes('.js') && !command.includes('.sh')) {
+    const text = command.replace(/&&/g, '\n').replace(/echo\s+'?/g, '').replace(/'$/gm, '').replace(/━/g, '─').trim();
+    mt.innerHTML = highlightCode('// Type: Inline echo command\n\n' + text);
+    document.getElementById('modal').classList.add('open');
+    return;
+  }
+  // For script hooks, extract file path and fetch content
+  const pathMatch = command.match(/(?:node|bash)\s+(.+?)(?:\s|$)/);
+  if (pathMatch) {
+    mt.innerHTML = '<span class="cm">// Loading...</span>';
+    document.getElementById('modal').classList.add('open');
+    try {
+      const r = await fetch('/api/hook-file/' + encodeURIComponent(pathMatch[1]));
+      const d = await r.json();
+      if (d.error) throw new Error(d.error);
+      mt.innerHTML = highlightCode(d.content);
+    } catch (e) {
+      mt.innerHTML = highlightCode('// File: ' + pathMatch[1] + '\n// Could not load: ' + e.message + '\n\n// Raw command:\n' + command);
+    }
+    return;
+  }
+  // Fallback — show raw command
+  mt.innerHTML = highlightCode('// Raw command:\n\n' + command);
+  document.getElementById('modal').classList.add('open');
+}
+
+function closeModal() { document.getElementById('modal').classList.remove('open'); }
+document.getElementById('modal').addEventListener('click', function(e) { if (e.target === this) closeModal(); });
+document.addEventListener('keydown', function(e) { if (e.key === 'Escape') closeModal(); });
+
+/* ── CLAUDE.md ── */
+function renderRules(data) {
+  if (!data.content) return;
+  document.getElementById('rules-section').style.display = 'block';
+  const lines = data.content.split('\n').length;
+  document.getElementById('rules-meta').textContent = lines + ' lines';
+  document.getElementById('claudemd-pill').textContent = 'CLAUDE.md (' + lines + ' lines)';
+
+  // Render markdown
+  let html = data.content
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+    .replace(/^# (.+)$/gm, '<h1>$1</h1>')
+    .replace(/^## \d+\. (.+)$/gm, '<h2>$1</h2>')
+    .replace(/^## (.+)$/gm, '<h2>$1</h2>')
+    .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+    .replace(/\n\n/g, '</p><p>')
+    .replace(/\n/g, '<br>');
+  document.getElementById('rules-content').innerHTML = '<p>' + html + '</p>';
+}
+
+let rulesOpen = false;
+function toggleRules() {
+  rulesOpen = !rulesOpen;
+  document.getElementById('rules-body').classList.toggle('open', rulesOpen);
+  document.getElementById('rules-chev').classList.toggle('open', rulesOpen);
+}
+
+/* ── Settings ── */
+function renderSettings(gs, ps) {
+  const gsd = gs.data||{}, psd = ps.data||{};
+  const gCount = Object.values(gsd.hooks||{}).flat().reduce((s,m)=>s+(m.hooks||[]).length,0);
+  const pCount = Object.values(psd.hooks||{}).flat().reduce((s,m)=>s+(m.hooks||[]).length,0);
+  document.getElementById('ghook-pill').textContent = gCount + ' global hooks';
+  document.getElementById('phook-pill').textContent = pCount + ' project hooks';
+
+  const items = [
+    ['Model', gsd.model||'default'],
+    ['Permissions', gsd.permissions?.defaultMode||'normal'],
+    ['Plugins', Object.keys(psd.enabledPlugins||{}).map(p=>p.split('@')[0]).join(', ')||'none'],
+    ['Updates', gsd.autoUpdatesChannel||'stable'],
+  ];
+  document.getElementById('settings-row').innerHTML = items.map(([k,v]) =>
+    `<div class="setting-chip"><span class="setting-k">${k}</span><span class="setting-v">${v}</span></div>`
+  ).join('');
+}
+
+/* ── Load ── */
+async function load() {
+  const r = await fetch('/api/workflow');
+  const d = await r.json();
+  renderHooks([...parseHooks(d.projectSettings.data,'Project'), ...parseHooks(d.globalSettings.data,'Global')]);
+  renderMemory(d.memoryFiles);
+  renderRules(d.claudeMd);
+  renderSettings(d.globalSettings, d.projectSettings);
+}
+load();
+</script>
+</body>
+</html>

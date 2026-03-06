@@ -6,600 +6,1484 @@
 <title>Dispatch &mdash; Mission Control</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=DM+Sans:wght@400;500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=DM+Sans:wght@400;500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
-  *, *::before, *::after { margin:0; padding:0; box-sizing:border-box }
-  :root {
-    --bg:#ffffff; --bg-page:#f8f8f8; --surface:#f2f2f2; --surface2:#e8e8e8;
-    --text:#1a1a1a; --text2:#555; --text3:#999; --sep:#e5e5e5;
-    --green:#22c55e; --green-bg:rgba(34,197,94,0.08);
-    --blue:#3b82f6; --blue-bg:rgba(59,130,246,0.08);
-    --amber:#f59e0b; --amber-bg:rgba(245,158,11,0.08);
-    --purple:#8b5cf6; --purple-bg:rgba(139,92,246,0.08);
-    --rose:#ef4444; --rose-bg:rgba(239,68,68,0.06);
-    --gray:#9ca3af;
-  }
-  body { background:var(--bg-page); color:var(--text); font-family:'DM Sans',-apple-system,system-ui,sans-serif; min-height:100vh; -webkit-font-smoothing:antialiased }
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#fff;--bg2:#fafafa;--surface:#f4f4f5;--surface2:#e4e4e7;
+  --text:#09090b;--text2:#52525b;--text3:#a1a1aa;--sep:#e4e4e7;
+  --purple:#8b5cf6;--purple-bg:rgba(139,92,246,0.06);
+  --blue:#3b82f6;--blue-bg:rgba(59,130,246,0.06);
+  --green:#22c55e;--green-bg:rgba(34,197,94,0.06);
+  --amber:#f59e0b;--amber-bg:rgba(245,158,11,0.06);
+  --rose:#ef4444;--rose-bg:rgba(239,68,68,0.05);
+  --radius:12px;
+}
+body{background:var(--bg2);color:var(--text);font-family:'DM Sans',-apple-system,sans-serif;-webkit-font-smoothing:antialiased;overflow-x:hidden;min-height:100vh}
 
-  /* Header */
-  header { display:flex; align-items:center; justify-content:space-between; padding:0 clamp(24px,4vw,48px); height:64px; background:var(--bg); border-bottom:1px solid var(--sep); position:sticky; top:0; z-index:10 }
-  .logo { display:flex; align-items:center; gap:12px }
-  .logo-dot { width:8px; height:8px; border-radius:50%; background:var(--purple) }
-  .logo-text { font-family:'Plus Jakarta Sans',sans-serif; font-size:15px; font-weight:600; letter-spacing:-0.02em }
-  .header-nav { display:flex; gap:4px; padding:3px; background:var(--surface); border-radius:8px; position:absolute; left:50%; transform:translateX(-50%) }
-  .nav-link { padding:5px 14px; border-radius:6px; font-family:'DM Sans',sans-serif; font-size:13px; font-weight:500; color:var(--text3); text-decoration:none; transition:all .15s }
-  .nav-link:hover { color:var(--text2) }
-  .nav-link.active { background:var(--bg); color:var(--text); box-shadow:0 1px 3px rgba(0,0,0,.06) }
-  .header-right { font-family:'DM Mono',monospace; font-size:11px; color:var(--text3) }
+/* ── Header ── */
+header{display:flex;align-items:center;justify-content:space-between;padding:0 clamp(24px,4vw,48px);height:64px;background:var(--bg);border-bottom:1px solid var(--sep);position:sticky;top:0;z-index:50}
+.logo{display:flex;align-items:center;gap:10px}
+.logo-dot{width:8px;height:8px;border-radius:50%;background:var(--purple)}
+.logo-text{font-family:'Plus Jakarta Sans',sans-serif;font-size:14px;font-weight:700;letter-spacing:-0.02em}
+.header-nav{display:flex;gap:2px;padding:3px;background:var(--surface);border-radius:8px;position:absolute;left:50%;transform:translateX(-50%)}
+.nav-link{padding:5px 14px;border-radius:6px;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;color:var(--text3);text-decoration:none;transition:all .15s;white-space:nowrap}
+.nav-link:hover{color:var(--text2)}
+.nav-link.active{background:var(--bg);color:var(--text);box-shadow:0 1px 3px rgba(0,0,0,.06)}
+.header-right{display:flex;align-items:center;gap:8px}
+.h-search{width:160px;padding:6px 10px;border:1px solid var(--sep);border-radius:6px;font-family:'DM Sans',sans-serif;font-size:11px;color:var(--text);background:var(--bg2);outline:none;transition:all .15s}
+.h-search:focus{border-color:var(--purple);width:220px;background:var(--bg)}
+.h-search::placeholder{color:var(--text3)}
 
-  /* Shell */
-  .shell { max-width:960px; margin:0 auto; padding:clamp(20px,3vw,40px) }
-  .page-title { font-family:'Plus Jakarta Sans',sans-serif; font-size:clamp(28px,4vw,38px); font-weight:700; letter-spacing:-0.035em; margin-bottom:6px; line-height:1.1 }
-  .page-sub { font-size:17px; color:var(--text2); margin-bottom:20px; letter-spacing:-0.01em }
+/* ── Page Title Area ── */
+.page-header{max-width:1400px;margin:0 auto;padding:28px 20px 0}
+.page-title-row{display:flex;align-items:baseline;gap:16px;margin-bottom:18px}
+.page-title-row h1{font-family:'Plus Jakarta Sans',sans-serif;font-size:28px;font-weight:800;letter-spacing:-0.04em}
+.top-stats{display:flex;gap:12px}
+.t-stat{font-family:'DM Mono',monospace;font-size:11px;color:var(--text3);display:flex;align-items:center;gap:3px}
+.t-stat strong{font-weight:700}
+.t-stat .rose{color:var(--rose)}
+.t-stat .blue{color:var(--blue)}
+.t-stat .green{color:var(--green)}
+/* Filter bar */
+.filter-bar{display:flex;align-items:center;gap:8px;padding:10px 16px;background:var(--bg);border:1px solid var(--sep);border-radius:10px;flex-wrap:wrap}
+.filter-label{font-family:'DM Sans',sans-serif;font-size:11px;font-weight:500;color:var(--text3);margin-right:4px}
+.f-pill{display:flex;align-items:center;gap:4px;padding:5px 12px;border-radius:100px;font-size:11px;font-weight:500;background:transparent;border:1px solid var(--sep);color:var(--text3);cursor:pointer;transition:all .12s;user-select:none}
+.f-pill:hover{border-color:var(--text3);color:var(--text2)}
+.f-pill.active{border-color:var(--purple);color:var(--purple);background:var(--purple-bg)}
+.f-pill .dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
+.add-btn{display:flex;align-items:center;gap:4px;padding:7px 16px;border-radius:8px;font-size:12px;font-weight:600;background:var(--purple);color:#fff;border:none;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .12s;margin-left:auto}
+.add-btn:hover{background:#7c3aed}
 
-  /* Search bar */
-  .search-wrap {
-    position:relative; margin-bottom:16px;
-  }
-  .search-input {
-    width:100%; padding:11px 16px 11px 38px;
-    border:1px solid var(--sep); border-radius:10px;
-    font-family:'DM Sans',sans-serif; font-size:14px; color:var(--text);
-    background:var(--bg); outline:none; transition:all .15s;
-    box-shadow:0 1px 3px rgba(0,0,0,0.04);
-  }
-  .search-input:focus { border-color:var(--purple); box-shadow:0 0 0 3px rgba(139,92,246,0.08) }
-  .search-input::placeholder { color:var(--text3) }
-  .search-icon {
-    position:absolute; left:13px; top:50%; transform:translateY(-50%);
-    font-size:14px; color:var(--text3); pointer-events:none;
-  }
-  .search-results {
-    display:none; position:absolute; top:calc(100% + 4px); left:0; right:0;
-    background:var(--bg); border:1px solid var(--sep); border-radius:12px;
-    max-height:360px; overflow-y:auto; z-index:20;
-    box-shadow:0 12px 40px rgba(0,0,0,0.1);
-  }
-  .search-results.visible { display:block }
-  .search-result {
-    display:block; padding:12px 16px; border-bottom:1px solid var(--sep);
-    text-decoration:none; color:inherit; transition:background .1s;
-  }
-  .search-result:last-child { border-bottom:none }
-  .search-result:hover { background:var(--bg-page) }
-  .sr-top { display:flex; align-items:center; gap:8px; margin-bottom:4px }
-  .sr-hex { font-family:'DM Mono',monospace; font-size:11px; color:var(--purple); font-weight:500 }
-  .sr-mission { font-size:12px; color:var(--text2); font-weight:500 }
-  .sr-time { margin-left:auto; font-family:'DM Mono',monospace; font-size:10px; color:var(--text3) }
-  .sr-text { font-size:13px; color:var(--text2); line-height:1.5 }
-  .sr-text mark { background:rgba(139,92,246,0.2); color:var(--text); border-radius:2px; padding:0 2px }
-  .sr-empty { padding:20px 16px; text-align:center; color:var(--text3); font-size:13px }
+/* ── Kanban Board ── */
+.kanban{display:grid;grid-template-columns:auto 1fr 1fr auto;gap:12px;padding:14px 20px 40px;min-height:calc(100vh - 140px);max-width:1400px;margin:0 auto;transition:max-width .3s ease}
+/* When both side columns collapse, narrow the board so cards don't stretch too wide */
+.kanban.both-collapsed{max-width:920px}
+.column{background:var(--surface);border-radius:var(--radius);display:flex;flex-direction:column;min-height:200px}
+.col-header{padding:12px 14px 10px;display:flex;align-items:center;gap:7px;flex-shrink:0;cursor:default;border-bottom:1px solid var(--sep)}
+.col-dot{width:7px;height:7px;border-radius:50%}
+.col-dot.ip{background:var(--blue)}
+.col-dot.todo{background:var(--amber)}
+.col-dot.backlog{background:var(--text3)}
+.col-dot.done{background:var(--green)}
+.col-name{font-family:'Plus Jakarta Sans',sans-serif;font-size:13px;font-weight:700;letter-spacing:-0.01em}
+.col-count{font-family:'DM Mono',monospace;font-size:10px;color:var(--text3);margin-left:auto;background:var(--bg);padding:1px 6px;border-radius:100px}
+.col-body{flex:1;padding:10px 10px 14px;overflow-y:auto;display:flex;flex-direction:column;gap:6px}
+.col-body::-webkit-scrollbar{width:4px}
+.col-body::-webkit-scrollbar-thumb{background:var(--surface2);border-radius:2px}
 
-  /* Summary strip */
-  .summary-strip {
-    display:flex; gap:20px; padding:10px 16px;
-    background:var(--bg); border:1px solid var(--sep); border-radius:10px;
-    margin-bottom:12px; align-items:center;
-  }
-  .summary-stat { display:flex; align-items:baseline; gap:5px }
-  .summary-num { font-family:'Plus Jakarta Sans',sans-serif; font-size:17px; font-weight:700; letter-spacing:-0.02em; color:var(--text) }
-  .summary-num.zero { color:var(--text3) }
-  .summary-label { font-size:12px; color:var(--text3) }
-  .summary-sep { width:1px; height:16px; background:var(--sep) }
+/* Backlog — collapses horizontally to thin strip */
+.column.backlog-col{background:var(--bg);border:1px solid var(--sep);width:180px;transition:width .25s ease}
+.column.backlog-col .col-header{cursor:pointer;user-select:none}
+.column.backlog-col .col-header .chevron{font-size:9px;color:var(--text3);transition:transform .2s;margin-left:2px}
+.column.backlog-col .k-card{opacity:0.6}
+.column.backlog-col .k-card:hover{opacity:1}
+/* Collapsed: thin vertical strip */
+.column.backlog-col.collapsed{width:36px;min-height:200px;overflow:hidden}
+.column.backlog-col.collapsed .col-header{flex-direction:column;padding:12px 4px;gap:8px;align-items:center;height:100%}
+.column.backlog-col.collapsed .col-header .chevron{transform:rotate(-90deg)}
+.column.backlog-col.collapsed .col-name{writing-mode:vertical-lr;text-orientation:mixed;transform:rotate(180deg);font-size:11px;letter-spacing:0.02em}
+.column.backlog-col.collapsed .col-dot{flex-shrink:0}
+.column.backlog-col.collapsed .col-count{margin-left:0;margin-top:auto}
+.column.backlog-col.collapsed .col-body{display:none}
 
-  /* Filter row */
-  .filter-row { display:flex; gap:6px; margin-bottom:16px; flex-wrap:wrap; align-items:center }
-  .ws-pill {
-    display:flex; align-items:center; gap:5px;
-    padding:5px 12px; border-radius:100px;
-    font-size:12px; font-weight:500;
-    background:var(--bg); border:1px solid var(--sep);
-    color:var(--text2); cursor:pointer;
-    transition:all .15s; user-select:none;
-  }
-  .ws-pill:hover { border-color:var(--text3) }
-  .ws-pill.active { border-color:var(--purple); color:var(--purple); background:var(--purple-bg) }
-  .ws-pill .ws-dot { width:7px; height:7px; border-radius:50%; flex-shrink:0 }
-  .ws-pill .ws-count {
-    font-family:'DM Mono',monospace; font-size:10px;
-    padding:0 5px; border-radius:100px;
-    background:var(--surface); color:var(--text3);
-  }
-  .ws-pill.active .ws-count { background:rgba(139,92,246,0.15); color:#7c3aed }
+/* Drop zone */
+.col-body.drag-over{background:rgba(139,92,246,0.03);border-radius:8px}
+/* Drop indicator line between cards */
+.drop-indicator{height:3px;background:var(--purple);border-radius:2px;margin:2px 4px;animation:dropPulse .6s ease infinite alternate}
+@keyframes dropPulse{from{opacity:.5}to{opacity:1}}
 
-  .filter-sep { width:1px; height:20px; background:var(--sep); margin:0 2px }
+/* ── Workstream Sub-Group with tinted container ── */
+.ws-group{margin-bottom:14px;padding:10px 10px 10px;border-radius:14px;background:rgba(0,0,0,0.015)}
+.ws-group.ws-purple{background:rgba(139,92,246,0.04);border:1px solid rgba(139,92,246,0.08)}
+.ws-group.ws-blue{background:rgba(59,130,246,0.04);border:1px solid rgba(59,130,246,0.08)}
+.ws-group.ws-green{background:rgba(34,197,94,0.04);border:1px solid rgba(34,197,94,0.08)}
+.ws-group.ws-amber{background:rgba(245,158,11,0.04);border:1px solid rgba(245,158,11,0.08)}
+.ws-group.ws-other{background:rgba(0,0,0,0.015);border:1px solid rgba(0,0,0,0.04)}
+.ws-group-label{display:flex;align-items:center;gap:6px;padding:4px 6px 8px;font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;color:var(--text2);cursor:pointer;user-select:none;border-radius:8px;transition:background .15s,transform .12s cubic-bezier(.4,.2,.2,1)}
+.ws-group-label:hover{background:rgba(0,0,0,0.05)}
+.ws-group-label:active{transform:scale(0.975)}
+.ws-group-label .dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+.ws-group-label .ws-chevron{margin-left:auto;font-size:10px;color:var(--text3);transition:transform .35s cubic-bezier(.4,.2,.2,1)}
+.ws-group.collapsed .ws-chevron{transform:rotate(-90deg)}
+.ws-group-label .ws-group-count{font-family:'DM Mono',monospace;font-size:9px;color:var(--text3);font-weight:500}
+.ws-grip{display:flex;align-items:center;justify-content:center;width:16px;height:18px;cursor:grab;opacity:0;transition:opacity .15s;color:var(--text3);flex-shrink:0;border-radius:4px;margin-left:-2px}
+.ws-group-label:hover .ws-grip{opacity:0.5}
+.ws-grip:hover{opacity:1 !important;background:rgba(0,0,0,0.05);color:var(--text2)}
+.ws-grip:active{cursor:grabbing;color:var(--text)}
+.ws-grip svg{pointer-events:none}
+.ws-group.ws-custom-dragging{opacity:0.25;transition:opacity .15s ease}
+.ws-group.ws-drop-target{outline:2px dashed var(--purple);outline-offset:2px;border-radius:14px;background:rgba(139,92,246,0.06) !important}
+.ws-group.ws-drop-target .ws-group-label{color:var(--purple)}
+.ws-drag-ghost{position:fixed;z-index:1000;pointer-events:none;display:flex;align-items:center;gap:6px;padding:6px 12px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;border-radius:10px;box-shadow:0 8px 24px rgba(0,0,0,0.18);transform:scale(1.03);transition:opacity .1s}
+.ws-drop-line{left:4px;right:4px;height:3px;border-radius:2px;background:var(--purple);z-index:99;margin:6px 0;animation:wsLinePop .15s ease forwards}
+@keyframes wsLinePop{from{transform:scaleX(0)}to{transform:scaleX(1)}}
 
-  .priority-pills { display:flex; gap:3px }
-  .pri-pill {
-    padding:5px 10px; border-radius:100px; font-size:11px; font-weight:600;
-    text-transform:uppercase; letter-spacing:0.04em;
-    background:var(--bg); color:var(--text3); border:1px solid var(--sep);
-    cursor:pointer; transition:all .15s; user-select:none;
-  }
-  .pri-pill:hover { border-color:var(--text3) }
-  .pri-pill.active { border-color:var(--purple); color:var(--purple); background:var(--purple-bg) }
+/* ── Cards (Trello-style) ── */
+.ws-group-cards{display:flex;flex-direction:column;gap:12px;overflow:hidden;transition:max-height .4s cubic-bezier(.4,.2,.2,1),opacity .3s ease;max-height:5000px;opacity:1;padding:2px 0}
+.ws-group.collapsed > .ws-group-cards{max-height:0 !important;opacity:0;pointer-events:none;padding:0}
+.k-card{background:var(--bg);border:1px solid rgba(0,0,0,.06);border-radius:12px;padding:0;cursor:grab;transition:box-shadow .25s cubic-bezier(.4,.2,.2,1),transform .25s cubic-bezier(.4,.2,.2,1),border-color .2s;position:relative;box-shadow:0 1px 3px rgba(0,0,0,.06);overflow:hidden;min-height:80px}
+.k-card:hover{box-shadow:0 6px 20px rgba(0,0,0,.08);transform:translateY(-2px);border-color:rgba(0,0,0,.1)}
+.k-card:active{cursor:grabbing;transform:scale(0.98);box-shadow:0 1px 4px rgba(0,0,0,.08)}
+.k-card.dragging{opacity:0.4;transform:rotate(1.5deg) scale(1.02);box-shadow:0 12px 32px rgba(0,0,0,.12)}
+/* Priority color bar at top of card */
+.k-card .k-bar{height:3px}
+.k-card.p0 .k-bar{background:var(--rose)}
+.k-card.p1 .k-bar{background:var(--amber)}
+.k-card.p2 .k-bar{background:var(--blue)}
+.k-card.p3 .k-bar{background:var(--surface2)}
+.k-card .k-inner{padding:14px 16px 16px;display:flex;flex-direction:column;gap:8px}
+/* Card top row: label pill + date */
+.k-labels{display:flex;align-items:center;gap:6px}
+.k-ws-pill{display:inline-flex;align-items:center;gap:4px;font-family:'DM Sans',sans-serif;font-size:10px;font-weight:600;padding:3px 9px;border-radius:6px;letter-spacing:.01em}
+.k-ws-pill .dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
+.k-ws-pill.ws-purple{background:rgba(139,92,246,0.12);color:#7c3aed}
+.k-ws-pill.ws-blue{background:rgba(59,130,246,0.12);color:#2563eb}
+.k-ws-pill.ws-green{background:rgba(34,197,94,0.12);color:#16a34a}
+.k-ws-pill.ws-amber{background:rgba(245,158,11,0.12);color:#b45309}
+.k-ws-pill.ws-other{background:var(--surface);color:var(--text3)}
+.k-date{font-family:'DM Mono',monospace;font-size:9.5px;color:var(--text3);margin-left:auto}
+/* Card title */
+.k-title{font-family:'Plus Jakarta Sans',sans-serif;font-size:14px;font-weight:700;letter-spacing:-0.025em;line-height:1.4;color:var(--text);display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+/* Area tags — sub-labels showing which MC page/area a task targets */
+.k-areas{display:flex;flex-wrap:wrap;gap:4px;margin-top:3px}
+.k-area-tag{display:inline-flex;align-items:center;gap:3px;font-size:9.5px;font-weight:600;padding:2px 7px 2px 5px;border-radius:4px;letter-spacing:.02em;font-family:'DM Mono',monospace;line-height:1.3;white-space:nowrap}
+.k-area-tag .area-icon{font-size:10px;line-height:1}
+.area-dashboard{background:rgba(59,130,246,0.09);color:#2563eb}
+.area-dispatch{background:rgba(99,102,241,0.09);color:#6366f1}
+.area-findings{background:rgba(20,184,166,0.09);color:#0d9488}
+.area-workflow{background:rgba(249,115,22,0.09);color:#ea580c}
+.area-postmortems{background:rgba(239,68,68,0.07);color:#dc2626}
+.area-toolbox{background:rgba(16,185,129,0.09);color:#059669}
+.area-logic{background:rgba(168,85,247,0.09);color:#9333ea}
+.area-radar{background:rgba(6,182,212,0.09);color:#0891b2}
+.area-hooks{background:rgba(100,116,139,0.09);color:#475569}
+.area-agents{background:rgba(236,72,153,0.09);color:#db2777}
+.area-prompts{background:rgba(161,161,170,0.09);color:#52525b}
+.area-search{background:rgba(37,99,235,0.09);color:#1d4ed8}
+.area-notifications{background:rgba(245,158,11,0.09);color:#d97706}
+.area-infra{background:rgba(120,113,108,0.09);color:#57534e}
+.area-bug{background:rgba(220,38,38,0.09);color:#b91c1c}
+.area-demo{background:rgba(139,92,246,0.09);color:#7c3aed}
 
-  .add-btn {
-    margin-left:auto;
-    display:flex; align-items:center; gap:5px;
-    padding:5px 14px; border-radius:100px;
-    font-size:12px; font-weight:600;
-    background:var(--purple); color:#fff; border:none;
-    cursor:pointer; transition:all .15s;
-    font-family:'DM Sans',sans-serif;
-  }
-  .add-btn:hover { background:#7c3aed }
+/* Done column — collapsible like backlog */
+.column.done-col{background:var(--bg);border:1px solid var(--sep);width:260px;transition:width .25s ease}
+.column.done-col .col-header{cursor:pointer;user-select:none}
+.column.done-col .col-header .chevron{font-size:9px;color:var(--text3);transition:transform .2s;margin-left:2px}
+.column.done-col .k-card{opacity:0.55}
+.column.done-col .k-card:hover{opacity:1}
+.column.done-col.collapsed{width:36px;min-height:200px;overflow:hidden}
+.column.done-col.collapsed .col-header{flex-direction:column;padding:12px 4px;gap:8px;align-items:center;height:100%}
+.column.done-col.collapsed .col-header .chevron{transform:rotate(90deg)}
+.column.done-col.collapsed .col-name{writing-mode:vertical-lr;text-orientation:mixed;font-size:11px;letter-spacing:0.02em}
+.column.done-col.collapsed .col-dot{flex-shrink:0}
+.column.done-col.collapsed .col-count{margin-left:0;margin-top:auto}
+.column.done-col.collapsed .col-body{display:none}
 
-  /* Section headers */
-  .section-head {
-    display:flex; align-items:center; gap:8px;
-    margin-bottom:8px; margin-top:20px; cursor:pointer; user-select:none;
-  }
-  .section-head:first-of-type { margin-top:0 }
-  .section-label {
-    font-family:'Plus Jakarta Sans',sans-serif; font-size:11px; font-weight:700;
-    text-transform:uppercase; letter-spacing:0.08em; color:var(--text3);
-  }
-  .section-count {
-    font-family:'DM Mono',monospace; font-size:10px;
-    padding:0 6px; border-radius:100px;
-    background:var(--surface); color:var(--text3);
-  }
-  .section-chevron { font-size:10px; color:var(--text3); transition:transform .15s }
-  .section-chevron.collapsed { transform:rotate(-90deg) }
+/* Empty state */
+.col-empty{display:flex;align-items:center;justify-content:center;flex:1;font-size:11px;color:var(--text3);font-style:italic;padding:16px}
 
-  /* Item cards */
-  .item-list { display:flex; flex-direction:column; gap:4px; margin-bottom:4px }
-  .item-card {
-    background:var(--bg); border:1px solid var(--sep); border-radius:10px;
-    padding:10px 14px; transition:box-shadow .15s ease;
-    cursor:default;
-  }
-  .item-card:hover {
-    box-shadow:0 2px 8px rgba(0,0,0,0.05);
-  }
-  .item-top { display:flex; align-items:center; gap:6px; margin-bottom:3px; flex-wrap:wrap }
-  .item-priority {
-    font-size:9px; font-weight:700; text-transform:uppercase; letter-spacing:0.06em;
-    padding:1px 6px; border-radius:100px;
-  }
-  .item-priority.p0 { background:var(--rose-bg); color:var(--rose) }
-  .item-priority.p1 { background:var(--amber-bg); color:#92400e }
-  .item-priority.p2 { background:var(--blue-bg); color:#1d4ed8 }
-  .item-priority.p3 { background:var(--surface); color:var(--text3) }
-  .item-ws {
-    display:flex; align-items:center; gap:3px;
-    font-size:10px; font-weight:500; color:var(--text3);
-  }
-  .item-ws .ws-dot { width:5px; height:5px; border-radius:50% }
-  .item-tags { display:flex; gap:3px; flex-wrap:wrap }
-  .item-tag {
-    font-family:'DM Mono',monospace; font-size:9px; font-weight:500;
-    padding:0 6px; border-radius:100px;
-    background:var(--surface); color:var(--text3);
-  }
-  .item-time { margin-left:auto; font-family:'DM Mono',monospace; font-size:9px; color:var(--text3) }
-  .item-title {
-    font-family:'Plus Jakarta Sans',sans-serif;
-    font-size:14px; font-weight:600; letter-spacing:-0.01em;
-    color:var(--text); line-height:1.3;
-  }
-  .item-desc { font-size:12px; color:var(--text3); line-height:1.4; display:-webkit-box; -webkit-line-clamp:1; -webkit-box-orient:vertical; overflow:hidden; margin-top:1px }
-  .item-footer { display:flex; gap:6px; margin-top:6px; align-items:center }
-  .item-session-badge {
-    font-family:'DM Mono',monospace; font-size:10px; font-weight:500;
-    padding:2px 8px; border-radius:100px;
-    background:var(--purple-bg); color:var(--purple);
-    text-decoration:none;
-  }
-  .item-session-badge:hover { background:rgba(139,92,246,0.15) }
-  .item-actions { margin-left:auto; display:flex; gap:4px; opacity:0; transition:opacity .15s }
-  .item-card:hover .item-actions { opacity:1 }
-  .item-action {
-    width:22px; height:22px; border-radius:5px; border:none; cursor:pointer;
-    display:flex; align-items:center; justify-content:center;
-    font-size:10px; background:transparent; color:var(--text3); transition:all .15s;
-  }
-  .item-action:hover { background:var(--surface) }
-  .item-action.act-done:hover { background:var(--green-bg); color:var(--green) }
-  .item-action.act-delete:hover { background:var(--rose-bg); color:var(--rose) }
-  .item-action.act-progress:hover { background:var(--blue-bg); color:var(--blue) }
+/* ── Detail Modal ── */
+.modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.3);backdrop-filter:blur(10px);z-index:100;justify-content:center;align-items:center;padding:24px}
+.modal-bg.open{display:flex}
+.modal-box{background:var(--bg);border-radius:16px;max-width:860px;width:95%;max-height:90vh;display:flex;flex-direction:column;box-shadow:0 24px 80px rgba(0,0,0,.15);animation:modalIn .2s ease;position:relative;overflow:hidden}
+@keyframes modalIn{from{opacity:0;transform:translateY(12px) scale(0.97)}to{opacity:1;transform:none}}
+.modal-close{position:absolute;top:16px;right:16px;width:32px;height:32px;border-radius:8px;border:none;background:var(--surface);color:var(--text3);cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;z-index:1;transition:all .12s}
+.modal-close:hover{background:var(--surface2);color:var(--text)}
+/* Modal header with color bar */
+.modal-bar{height:5px;flex-shrink:0}
+.modal-bar.p0{background:var(--rose)}
+.modal-bar.p1{background:var(--amber)}
+.modal-bar.p2{background:var(--blue)}
+.modal-bar.p3{background:var(--surface2)}
+.modal-top{padding:24px 28px 0;flex-shrink:0}
+.modal-scroll{overflow-y:auto;padding:0 28px 28px;flex:1}
+/* Two-column: main content + sidebar */
+.modal-layout{display:grid;grid-template-columns:1fr 220px;gap:28px;margin-top:16px}
+@media(max-width:600px){.modal-layout{grid-template-columns:1fr}}
+.modal-main{min-width:0}
+.modal-sidebar{display:flex;flex-direction:column;gap:18px;position:sticky;top:0;align-self:start}
+/* Inline-editable title */
+.m-title{font-family:'Plus Jakarta Sans',sans-serif;font-size:22px;font-weight:800;letter-spacing:-0.03em;line-height:1.3;margin-bottom:4px;cursor:text;border-radius:6px;padding:2px 4px;margin:-2px -4px;transition:background .12s}
+.m-title:hover{background:var(--surface)}
+.m-title-input{font-family:'Plus Jakarta Sans',sans-serif;font-size:22px;font-weight:800;letter-spacing:-0.03em;line-height:1.3;border:2px solid var(--purple);border-radius:8px;padding:4px 8px;width:100%;outline:none;background:var(--bg);color:var(--text);margin-bottom:4px}
+/* Description */
+.m-desc{font-size:14px;line-height:1.8;color:var(--text);white-space:pre-wrap;margin-bottom:0;word-break:break-word}
+.m-desc strong,.m-desc b{font-weight:700;color:var(--text)}
+.m-desc code{font-family:'DM Mono',monospace;font-size:12px;padding:2px 6px;border-radius:4px;background:rgba(139,92,246,0.08);color:#7c3aed}
+.m-desc-section{margin-top:16px}
+.m-desc-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text3);margin-bottom:8px}
+.m-desc-box{padding:16px 18px;background:var(--bg2);border-radius:10px;border:1px solid var(--sep);cursor:text;transition:border-color .12s;max-height:320px;overflow-y:auto}
+.m-desc-box:hover{border-color:var(--text3)}
+.m-desc-box::-webkit-scrollbar{width:4px}
+.m-desc-box::-webkit-scrollbar-thumb{background:var(--surface2);border-radius:2px}
+.m-desc-empty{color:var(--text3);font-style:italic;font-size:13px}
+.m-desc-textarea{width:100%;min-height:120px;border:2px solid var(--purple);border-radius:10px;padding:14px 16px;font-family:'DM Sans',sans-serif;font-size:14px;line-height:1.7;color:var(--text);background:var(--bg);outline:none;resize:vertical}
+/* ── Custom Description Editor (native textarea + toolbar) ── */
+.m-editor-wrap{margin-top:4px}
+.m-editor-toolbar{display:flex;align-items:center;gap:2px;padding:4px;background:var(--bg2);border-radius:8px;margin-bottom:6px}
+.m-editor-toolbar button{display:flex;align-items:center;justify-content:center;width:30px;height:28px;border:none;border-radius:6px;background:transparent;color:var(--text2);cursor:pointer;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:600;transition:all .1s}
+.m-editor-toolbar button:hover{background:var(--surface);color:var(--text)}
+.m-editor-toolbar button.active{background:var(--purple-bg);color:var(--purple)}
+.m-editor-toolbar .tb-sep{width:1px;height:16px;background:var(--sep);margin:0 4px;flex-shrink:0}
+.m-editor-ta{width:100%;min-height:120px;max-height:300px;border:1px solid var(--sep);border-radius:10px;padding:12px 14px;font-family:'DM Sans',sans-serif;font-size:14px;line-height:1.6;color:var(--text);background:var(--bg);outline:none;resize:none;transition:border-color .12s}
+.m-editor-ta:focus{border-color:var(--purple);box-shadow:0 0 0 3px rgba(139,92,246,.08)}
+.m-editor-ta::placeholder{color:var(--text3)}
+.m-editor-preview{padding:14px 16px;background:var(--bg2);border-radius:10px;border:1px solid var(--sep);max-height:300px;overflow-y:auto;font-family:'DM Sans',sans-serif;font-size:14px;line-height:1.7;color:var(--text)}
+.m-editor-preview h1,.m-editor-preview h2,.m-editor-preview h3{font-family:'Plus Jakarta Sans',sans-serif;font-weight:700;letter-spacing:-0.02em;margin:12px 0 6px;color:var(--text)}
+.m-editor-preview h1{font-size:18px}.m-editor-preview h2{font-size:16px}.m-editor-preview h3{font-size:15px}
+.m-editor-preview code{font-family:'DM Mono',monospace;font-size:12px;padding:2px 6px;border-radius:4px;background:rgba(139,92,246,0.08);color:#7c3aed}
+.m-editor-preview pre{background:var(--surface);border-radius:8px;padding:12px;margin:8px 0;overflow-x:auto}
+.m-editor-preview pre code{background:none;padding:0;font-size:13px;color:var(--text)}
+.m-editor-preview ul,.m-editor-preview ol{padding-left:20px;margin:4px 0}
+.m-editor-preview li{margin:2px 0}
+.m-editor-preview strong{font-weight:700}
+.m-editor-preview blockquote{border-left:3px solid var(--purple);padding-left:12px;margin:8px 0;color:var(--text2)}
+.m-editor-actions{display:flex;gap:8px;margin-top:10px;justify-content:flex-end}
+.m-editor-actions .m-btn{padding:7px 16px;font-size:12px}
+/* Sidebar fields */
+.m-field{display:flex;flex-direction:column;gap:4px}
+.m-field-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text3)}
+.m-field-value{font-size:13px;font-weight:500;color:var(--text);display:flex;align-items:center;gap:6px}
+.m-field-value .dot{width:7px;height:7px;border-radius:50%}
+/* Custom dropdown */
+.m-dropdown{position:relative;width:100%}
+.m-dropdown-trigger{display:flex;align-items:center;gap:6px;padding:6px 10px;border:1px solid var(--sep);border-radius:8px;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:500;color:var(--text);background:var(--bg);transition:all .12s;user-select:none}
+.m-dropdown-trigger:hover{border-color:var(--purple);background:var(--purple-bg)}
+.m-dropdown-trigger .dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+.m-dropdown-trigger .arrow{margin-left:auto;font-size:8px;color:var(--text3);transition:transform .2s}
+.m-dropdown.open .m-dropdown-trigger{border-color:var(--purple);box-shadow:0 0 0 3px rgba(139,92,246,.08)}
+.m-dropdown.open .arrow{transform:rotate(180deg)}
+.m-dropdown-menu{position:absolute;top:calc(100% + 4px);left:0;right:0;background:var(--bg);border:1px solid var(--sep);border-radius:10px;box-shadow:0 8px 24px rgba(0,0,0,.12);z-index:10;overflow:hidden;opacity:0;transform:translateY(-4px) scale(0.98);pointer-events:none;transition:all .15s ease}
+.m-dropdown.open .m-dropdown-menu{opacity:1;transform:none;pointer-events:auto}
+.m-dropdown-item{display:flex;align-items:center;gap:8px;padding:8px 12px;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:500;color:var(--text);cursor:pointer;transition:background .1s}
+.m-dropdown-item:hover{background:var(--surface)}
+.m-dropdown-item.selected{background:var(--purple-bg);color:var(--purple);font-weight:600}
+.m-dropdown-item .dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+/* Tags (inline editable) */
+.m-tags{display:flex;gap:5px;flex-wrap:wrap;align-items:center}
+.m-areas{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.m-tag{font-family:'DM Mono',monospace;font-size:10px;padding:4px 10px;border-radius:6px;background:var(--surface);color:var(--text2);border:1px solid var(--sep)}
+.m-tags-edit{font-family:'DM Mono',monospace;font-size:11px;padding:4px 8px;border:1px solid var(--purple);border-radius:6px;outline:none;background:var(--bg);color:var(--text);width:120px}
+.m-tag-add{font-size:10px;padding:4px 10px;border-radius:6px;background:var(--surface);border:1px solid var(--sep);color:var(--text3);cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .12s}
+.m-tag-add:hover{border-color:var(--purple);color:var(--purple);background:var(--purple-bg)}
+/* Session link */
+.m-session-link{font-family:'DM Mono',monospace;font-size:11px;color:var(--purple);text-decoration:none;padding:4px 8px;background:var(--purple-bg);border-radius:6px;display:inline-block}
+.m-session-link:hover{background:rgba(139,92,246,0.12)}
+/* Dates */
+.m-dates{font-family:'DM Mono',monospace;font-size:10px;color:var(--text3);display:flex;flex-direction:column;gap:2px}
+/* Actions */
+.m-actions{display:flex;gap:8px;padding:16px 28px;border-top:1px solid var(--sep);flex-shrink:0;background:var(--bg)}
+.m-btn{padding:9px 18px;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:600;cursor:pointer;transition:all .12s;border:1px solid var(--sep);background:var(--bg);color:var(--text2)}
+.m-btn:hover{background:var(--surface)}
+.m-btn.primary{background:var(--purple);color:#fff;border:none}
+.m-btn.primary:hover{background:#7c3aed}
+.m-btn.danger{color:var(--rose);border-color:transparent}
+.m-btn.danger:hover{background:var(--rose-bg)}
+.m-btn-group{margin-left:auto;display:flex;gap:8px}
 
-  /* Status checkbox */
-  .status-check {
-    width:15px; height:15px; border-radius:50%; border:1.5px solid var(--sep);
-    display:flex; align-items:center; justify-content:center; flex-shrink:0;
-    cursor:pointer; transition:all .15s; font-size:8px; color:transparent;
-  }
-  .status-check:hover { border-color:var(--green); color:var(--green) }
-  .status-check.checked { border-color:var(--green); background:var(--green); color:#fff }
+/* Priority / status badges */
+.badge{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;padding:3px 9px;border-radius:100px;display:inline-flex;align-items:center}
+.badge.p0{background:var(--rose-bg);color:#dc2626}
+.badge.p1{background:var(--amber-bg);color:#92400e}
+.badge.p2{background:var(--blue-bg);color:#1d4ed8}
+.badge.p3{background:var(--surface);color:var(--text3)}
+.badge.status{background:var(--surface);color:var(--text3)}
+.badge-ws{display:inline-flex;align-items:center;gap:5px;font-size:11px;color:var(--text3)}
+.badge-ws .dot{width:6px;height:6px;border-radius:50%}
+.badge-time{font-family:'DM Mono',monospace;font-size:10px;color:var(--text3)}
 
-  /* Add form */
-  .add-form-overlay {
-    display:none; position:fixed; inset:0; background:rgba(0,0,0,0.3);
-    z-index:100; backdrop-filter:blur(4px);
-    justify-content:center; align-items:center;
-  }
-  .add-form-overlay.visible { display:flex }
-  .add-form {
-    background:var(--bg); border-radius:16px; padding:32px;
-    width:90%; max-width:520px;
-    box-shadow:0 20px 60px rgba(0,0,0,0.15);
-  }
-  .add-form h2 {
-    font-family:'Plus Jakarta Sans',sans-serif; font-size:20px; font-weight:700;
-    letter-spacing:-0.03em; margin-bottom:20px;
-  }
-  .form-group { margin-bottom:14px }
-  .form-group label {
-    display:block; font-size:12px; font-weight:600; color:var(--text3);
-    text-transform:uppercase; letter-spacing:0.06em; margin-bottom:4px;
-  }
-  .form-group input, .form-group textarea, .form-group select {
-    width:100%; padding:10px 14px; border:1px solid var(--sep); border-radius:10px;
-    font-family:'DM Sans',sans-serif; font-size:14px; color:var(--text);
-    background:var(--bg-page); outline:none; transition:border-color .15s;
-  }
-  .form-group input:focus, .form-group textarea:focus, .form-group select:focus {
-    border-color:var(--purple);
-  }
-  .form-group textarea { resize:vertical; min-height:60px }
-  .form-row { display:flex; gap:12px }
-  .form-row .form-group { flex:1 }
-  .form-actions { display:flex; gap:10px; margin-top:20px }
-  .form-actions button {
-    padding:10px 20px; border-radius:10px; font-family:'DM Sans',sans-serif;
-    font-size:14px; font-weight:600; cursor:pointer; transition:all .15s;
-  }
-  .btn-save { background:var(--purple); color:#fff; border:none }
-  .btn-save:hover { background:#7c3aed }
-  .btn-cancel { background:var(--surface); color:var(--text2); border:1px solid var(--sep) }
-  .btn-cancel:hover { background:var(--surface2) }
+/* ── Form Modal ── */
+.form-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.25);backdrop-filter:blur(8px);z-index:200;justify-content:center;align-items:center;padding:24px}
+.form-bg.open{display:flex}
+.form-card{background:var(--bg);border-radius:16px;width:90%;max-width:480px;box-shadow:0 24px 80px rgba(0,0,0,.12);animation:modalIn .2s ease;overflow:hidden}
+.form-header{padding:20px 24px 14px;border-bottom:1px solid var(--sep)}
+.form-header h2{font-family:'Plus Jakarta Sans',sans-serif;font-size:17px;font-weight:800;letter-spacing:-0.03em}
+.form-header p{font-size:12px;color:var(--text3);margin-top:2px}
+.form-body{padding:16px 24px 20px}
+.fg{margin-bottom:12px}
+.fg label{display:block;font-family:'Plus Jakarta Sans',sans-serif;font-size:12px;font-weight:600;color:var(--text);margin-bottom:4px}
+.fg input,.fg textarea,.fg select{width:100%;padding:9px 12px;border:1px solid var(--sep);border-radius:8px;font-family:'DM Sans',sans-serif;font-size:13px;color:var(--text);background:var(--bg);outline:none;transition:all .15s}
+.fg input:focus,.fg textarea:focus,.fg select:focus{border-color:var(--purple);box-shadow:0 0 0 3px rgba(139,92,246,.08)}
+.fg input::placeholder,.fg textarea::placeholder{color:var(--text3)}
+.fg textarea{resize:vertical;min-height:80px;line-height:1.6}
+.fg-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.form-footer{padding:0 24px 20px;display:flex;gap:8px}
 
-  /* Workstream management */
-  .ws-manage-btn {
-    font-size:12px; color:var(--text3); background:none; border:none;
-    cursor:pointer; padding:4px 8px; transition:color .15s;
-  }
-  .ws-manage-btn:hover { color:var(--purple) }
+/* ── Search Dropdown ── */
+.search-drop{display:none;position:fixed;top:56px;right:20px;width:380px;max-height:340px;overflow-y:auto;background:var(--bg);border:1px solid var(--sep);border-radius:12px;box-shadow:0 12px 40px rgba(0,0,0,.1);z-index:60}
+.search-drop.visible{display:block}
+.sr{display:block;padding:10px 14px;border-bottom:1px solid var(--sep);text-decoration:none;color:inherit;font-size:12px}
+.sr:last-child{border-bottom:none}
+.sr:hover{background:var(--bg2)}
+.sr-top{display:flex;align-items:center;gap:6px;margin-bottom:2px}
+.sr-hex{font-family:'DM Mono',monospace;font-size:10px;color:var(--purple)}
+.sr-mission{font-size:11px;color:var(--text2);font-weight:500}
+.sr-time{margin-left:auto;font-family:'DM Mono',monospace;font-size:9px;color:var(--text3)}
+.sr-text{font-size:12px;color:var(--text2);line-height:1.4}
+.sr-text mark{background:rgba(139,92,246,.2);border-radius:2px;padding:0 2px}
+.sr-empty{padding:16px;text-align:center;color:var(--text3);font-size:12px}
 
-  /* Empty state */
-  .empty-state { text-align:center; padding:60px 20px; color:var(--text3) }
-  .empty-state .empty-icon { font-size:32px; margin-bottom:12px; opacity:.5 }
-  .empty-state p { font-size:14px }
+@media(max-width:1000px){
+  .kanban{gap:8px}
+  .column.backlog-col{width:140px}
+}
+@media(max-width:800px){
+  .kanban{grid-template-columns:auto 1fr 1fr;gap:8px}
+  .column[data-status="done"]{display:none}
+}
+@media(max-width:600px){
+  .kanban{grid-template-columns:1fr;gap:6px}
+  .column.backlog-col{width:100%}
+  .column.backlog-col.collapsed{width:100%;height:40px;min-height:40px}
+  .column.backlog-col.collapsed .col-header{flex-direction:row}
+  .column.backlog-col.collapsed .col-name{writing-mode:horizontal-tb;transform:none}
+}
 
-  /* Responsive */
-  @media (max-width:800px) {
-    .shell { padding:20px 16px }
-    .page-title { font-size:24px }
-    .summary-strip { flex-wrap:wrap; gap:12px 20px }
-    .filter-row { gap:6px }
-    .ws-pill { font-size:12px; padding:5px 12px }
-    .form-row { flex-direction:column; gap:0 }
-    .item-actions { opacity:1 }
-  }
+/* ── Workstream Settings Modal ── */
+.ws-settings-btn{position:fixed;bottom:24px;right:24px;width:40px;height:40px;border-radius:50%;background:var(--bg);border:1px solid var(--sep);box-shadow:0 2px 8px rgba(0,0,0,.1);cursor:pointer;display:flex;align-items:center;justify-content:center;z-index:60;transition:all .2s;color:var(--text3)}
+.ws-settings-btn:hover{background:var(--surface);color:var(--text);box-shadow:0 4px 16px rgba(0,0,0,.15);transform:scale(1.05)}
+.ws-settings-btn svg{width:18px;height:18px}
+.ws-modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.25);z-index:70;opacity:0;pointer-events:none;transition:opacity .2s;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(2px)}
+.ws-modal-bg.open{opacity:1;pointer-events:all}
+.ws-modal{width:520px;max-height:80vh;background:var(--bg);border-radius:16px;box-shadow:0 20px 60px rgba(0,0,0,.15);display:flex;flex-direction:column;transform:scale(.95);opacity:0;transition:all .25s cubic-bezier(.4,0,.2,1)}
+.ws-modal-bg.open .ws-modal{transform:scale(1);opacity:1}
+.ws-modal-header{display:flex;align-items:center;justify-content:space-between;padding:20px 24px 16px}
+.ws-modal-title{font-family:'Plus Jakarta Sans',sans-serif;font-size:18px;font-weight:700;letter-spacing:-0.03em}
+.ws-modal-sub{font-size:12px;color:var(--text3);font-weight:400;margin-left:8px}
+.ws-modal-close{width:30px;height:30px;border-radius:8px;border:none;background:none;cursor:pointer;color:var(--text3);display:flex;align-items:center;justify-content:center;font-size:18px;transition:all .15s}
+.ws-modal-close:hover{background:var(--surface);color:var(--text)}
+.ws-modal-body{overflow-y:auto;padding:0 24px 16px;flex:1}
+.ws-section-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text3);padding:8px 0 6px;margin-top:4px}
+.ws-row{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:10px;transition:background .15s;margin-bottom:2px}
+.ws-row:hover{background:var(--surface)}
+.ws-color-swatch{width:28px;height:28px;border-radius:8px;border:2px solid rgba(0,0,0,.06);cursor:pointer;flex-shrink:0;position:relative;transition:transform .15s}
+.ws-color-swatch:hover{transform:scale(1.1);border-color:rgba(0,0,0,.15)}
+.ws-color-swatch input[type="color"]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
+.ws-name-input{border:none;background:none;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:600;color:var(--text);flex:1;min-width:0;padding:4px 8px;border-radius:6px;transition:all .15s}
+.ws-name-input:focus{outline:none;background:var(--surface);box-shadow:0 0 0 2px rgba(139,92,246,.15)}
+.ws-ctx-badge{font-size:10px;font-weight:600;padding:3px 10px;border-radius:6px;text-transform:uppercase;letter-spacing:.04em;flex-shrink:0;cursor:pointer;transition:all .15s;border:1px solid transparent;min-width:52px;text-align:center}
+.ws-ctx-badge:hover{border-color:rgba(0,0,0,.12);transform:scale(1.03)}
+.ws-ctx-home{background:rgba(34,197,94,.1);color:#16a34a}
+.ws-ctx-work{background:rgba(59,130,246,.1);color:#2563eb}
+.ws-ctx-shared{background:rgba(139,92,246,.1);color:#7c3aed}
+.ws-delete-btn{width:28px;height:28px;border-radius:6px;border:none;background:none;cursor:pointer;color:var(--text3);display:flex;align-items:center;justify-content:center;font-size:15px;transition:all .15s;flex-shrink:0;opacity:0}
+.ws-row:hover .ws-delete-btn{opacity:1}
+.ws-delete-btn:hover{background:rgba(239,68,68,.1);color:var(--rose)}
+.ws-add-row{display:flex;align-items:center;justify-content:center;gap:6px;padding:12px;border-radius:10px;border:1px dashed var(--sep);cursor:pointer;color:var(--text3);font-size:13px;font-weight:500;transition:all .15s;margin-top:10px}
+.ws-add-row:hover{border-color:var(--purple);color:var(--purple);background:rgba(139,92,246,.03)}
+.ws-modal-footer{padding:12px 24px;border-top:1px solid var(--sep);font-size:11px;color:var(--text3);text-align:center}
 </style>
 </head>
 <body>
 
 <header>
-  <div class="logo">
-    <div class="logo-dot"></div>
-    <div class="logo-text">Mission Control</div>
-  </div>
+  <div class="logo"><div class="logo-dot"></div><div class="logo-text">Mission Control</div></div>
   <nav class="header-nav">
     <a href="/" class="nav-link">Dashboard</a>
     <a href="/dispatch" class="nav-link active">Dispatch</a>
     <a href="/findings" class="nav-link">Findings</a>
+    <a href="/workflow" class="nav-link">Workflow</a>
+    <a href="/postmortems" class="nav-link">Post-Mortems</a>
     <a href="/tools" class="nav-link">Toolbox</a>
     <a href="/logic" class="nav-link">Logic</a>
     <a href="/radar" class="nav-link">Radar</a>
   </nav>
-  <div class="header-right"></div>
+  <div class="header-right">
+    <input type="text" class="h-search" id="searchInput" placeholder="Search prompts..." autocomplete="off">
+  </div>
 </header>
 
-<div class="shell">
-  <h1 class="page-title">Dispatch</h1>
-  <p class="page-sub">Your work queue &mdash; ideas, tasks, and priorities</p>
-
-  <!-- Prompt search bar -->
-  <div class="search-wrap">
-    <span class="search-icon">&#8981;</span>
-    <input type="text" class="search-input" id="searchInput" placeholder="Search all prompts across sessions..." autocomplete="off">
-    <div class="search-results" id="searchResults"></div>
-  </div>
-
-  <div id="main"><div style="padding:60px;text-align:center;color:#999">Loading...</div></div>
+<div class="page-header" id="pageHeader">
+  <div class="page-title-row" id="titleRow"></div>
+  <div class="filter-bar" id="filterBar"></div>
 </div>
+<div class="kanban" id="kanban"></div>
 
-<!-- Add Item Form -->
-<div class="add-form-overlay" id="addOverlay">
-  <div class="add-form">
-    <h2 id="formTitle">Add Item</h2>
-    <div class="form-group">
-      <label>Title</label>
-      <input type="text" id="f-title" placeholder="e.g. Add keyboard shortcuts to dashboard">
-    </div>
-    <div class="form-group">
-      <label>Description</label>
-      <textarea id="f-desc" placeholder="Details, acceptance criteria..."></textarea>
-    </div>
-    <div class="form-row">
-      <div class="form-group">
-        <label>Priority</label>
-        <select id="f-priority">
-          <option value="p1">P1 &mdash; High</option>
-          <option value="p2" selected>P2 &mdash; Medium</option>
-          <option value="p3">P3 &mdash; Low</option>
-          <option value="p0">P0 &mdash; Critical</option>
-        </select>
-      </div>
-      <div class="form-group">
-        <label>Workstream</label>
-        <select id="f-workstream"></select>
-      </div>
-    </div>
-    <div class="form-group">
-      <label>Tags (comma-separated)</label>
-      <input type="text" id="f-tags" placeholder="ux, api, bug">
-    </div>
-    <div class="form-group">
-      <label>Linked Session (hex ID, optional)</label>
-      <input type="text" id="f-session" placeholder="e.g. a1b2c3">
-    </div>
-    <input type="hidden" id="f-edit-id" value="">
-    <div class="form-actions">
-      <button class="btn-save" onclick="saveItem()">Save</button>
-      <button class="btn-cancel" onclick="closeForm()">Cancel</button>
-    </div>
+<div class="search-drop" id="searchDrop"></div>
+
+<!-- Detail Modal -->
+<div class="modal-bg" id="detailModal">
+  <div class="modal-box">
+    <button class="modal-close" id="detailClose">&times;</button>
+    <div id="modalBar" class="modal-bar"></div>
+    <div class="modal-top" id="modalTop"></div>
+    <div class="modal-scroll" id="modalBody"></div>
+    <div class="m-actions" id="modalActions"></div>
   </div>
 </div>
 
-<!-- Workstream Management Form -->
-<div class="add-form-overlay" id="wsOverlay">
-  <div class="add-form">
-    <h2>Manage Workstreams</h2>
-    <div id="ws-list"></div>
-    <div style="margin-top:16px; border-top:1px solid var(--sep); padding-top:16px">
-      <div class="form-group">
-        <label>New Workstream</label>
-        <div style="display:flex; gap:8px">
-          <input type="text" id="ws-new-name" placeholder="Name" style="flex:1">
-          <input type="color" id="ws-new-color" value="#8b5cf6" style="width:44px; padding:4px; border-radius:8px; border:1px solid var(--sep)">
-          <button class="btn-save" onclick="addWorkstream()" style="padding:8px 16px">Add</button>
+<!-- Add/Edit Form -->
+<div class="form-bg" id="formBg">
+  <div class="form-card">
+    <div class="form-header">
+      <h2 id="formTitle">New Work Item</h2>
+      <p id="formSub">Add a task, idea, or priority</p>
+    </div>
+    <div class="form-body">
+      <div class="fg">
+        <label>Title</label>
+        <input type="text" id="f-title" placeholder="What needs to be done?">
+      </div>
+      <div class="fg">
+        <label>Description</label>
+        <textarea id="f-desc" placeholder="Context, details..."></textarea>
+      </div>
+      <div class="fg-row">
+        <div class="fg">
+          <label>Priority</label>
+          <select id="f-priority">
+            <option value="p0">P0 Critical</option>
+            <option value="p1">P1 High</option>
+            <option value="p2" selected>P2 Medium</option>
+            <option value="p3">P3 Low</option>
+          </select>
+        </div>
+        <div class="fg">
+          <label>Workstream</label>
+          <select id="f-workstream"></select>
+        </div>
+      </div>
+      <div class="fg-row">
+        <div class="fg">
+          <label>Tags</label>
+          <input type="text" id="f-tags" placeholder="comma-separated">
+        </div>
+        <div class="fg">
+          <label>Linked Session</label>
+          <input type="text" id="f-session" placeholder="session ID">
         </div>
       </div>
     </div>
-    <div class="form-actions">
-      <button class="btn-cancel" onclick="closeWsForm()" style="margin-left:auto">Done</button>
+    <input type="hidden" id="f-edit-id" value="">
+    <div class="form-footer">
+      <button class="m-btn primary" id="saveBtn">Save</button>
+      <button class="m-btn" id="cancelBtn">Cancel</button>
     </div>
+  </div>
+</div>
+
+<!-- Workstream Settings Button -->
+<button class="ws-settings-btn" id="wsSettingsBtn" title="Manage workstreams">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 01-2.83 2.83l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
+</button>
+
+<!-- Workstream Settings Modal (centered) -->
+<div class="ws-modal-bg" id="wsPanelBg">
+  <div class="ws-modal">
+    <div class="ws-modal-header">
+      <div><span class="ws-modal-title">Workstreams</span><span class="ws-modal-sub">Manage across all pages</span></div>
+      <button class="ws-modal-close" id="wsPanelClose">&times;</button>
+    </div>
+    <div class="ws-modal-body" id="wsPanelBody"></div>
+    <div class="ws-modal-footer">Changes save instantly and sync to Dispatch + Dashboard.</div>
   </div>
 </div>
 
 <script>
-let items = [];
-let workstreams = [];
-let activeWsFilter = 'all';
-let activePriFilter = 'all';
-let collapsedSections = new Set();
-let searchTimeout = null;
+let items = [], workstreams = [], areasConfig = { home: [], work: [] }, activeWs = 'all', activePri = 'all', activeArea = 'all', searchTimeout = null;
+let activeDescEditor = null; // Custom editor textarea reference
+function destroyDescEditor() { activeDescEditor = null; }
+function currentMode() { return (window.__getMode && window.__getMode()) || localStorage.getItem('mc-mode') || 'home'; }
 
-function esc(s) {
-  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+const STATUSES = ['backlog', 'todo', 'in-progress', 'done'];
+const STATUS_LABELS = { 'in-progress': 'In Progress', todo: 'Todo', backlog: 'Backlog', done: 'Done' };
+const STATUS_DOTS = { 'in-progress': 'ip', todo: 'todo', backlog: 'backlog', done: 'done' };
+let backlogCollapsed = false, doneCollapsed = false;
+
+function esc(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function wsColor(id) { const w = workstreams.find(w => w.id === id); return w ? w.color : '#9ca3af'; }
+function wsName(id) { const w = workstreams.find(w => w.id === id); return w ? w.name : ''; }
+
+// Resolve workstream — from workstream field, then try matching tags to workstream IDs
+function resolveWs(item) {
+  if (item.workstream) {
+    const ws = workstreams.find(w => w.id === item.workstream);
+    if (ws) return { name: ws.name, color: ws.color, tint: colorToTint(ws.color) };
+    // Workstream field set but not in our list — show the raw value
+    return { name: item.workstream, color: '#9ca3af', tint: 'ws-other' };
+  }
+  // Try matching tags to workstream IDs (e.g., tag "cares" → CARES workstream)
+  const tags = (item.tags || []).map(t => t.toLowerCase());
+  for (const ws of workstreams) {
+    if (tags.includes(ws.id)) return { name: ws.name, color: ws.color, tint: colorToTint(ws.color) };
+  }
+  return { name: '', color: '#9ca3af', tint: 'ws-other' };
 }
 
-function timeAgo(ts) {
-  const d = Date.now() - new Date(ts).getTime();
-  if (d < 60000) return 'just now';
-  if (d < 3600000) return Math.floor(d/60000) + 'm ago';
-  if (d < 86400000) return Math.floor(d/3600000) + 'h ago';
-  return Math.floor(d/86400000) + 'd ago';
-}
+// Auto-detect which area a dispatch item relates to — config-driven per mode
+function inferAreas(item) {
+  const text = (item.title || '') + ' ' + ((item.tags || []).join(' '));
+  const areas = [];
+  const seen = new Set();
+  function add(id, name, icon, color) { if (!seen.has(id)) { seen.add(id); areas.push({ id, name, icon: icon || '', color: color || '#71717a', cls: 'area-' + id }); } }
 
-function getWsColor(wsId) {
-  const ws = workstreams.find(w => w.id === wsId);
-  return ws ? ws.color : '#9ca3af';
-}
+  // Use both home and work areas for inference (items may match either)
+  const allAreas = [...(areasConfig.home || []), ...(areasConfig.work || [])];
+  const uniqueAreas = [];
+  const seenIds = new Set();
+  allAreas.forEach(a => { if (!seenIds.has(a.id)) { seenIds.add(a.id); uniqueAreas.push(a); } });
 
-function getWsName(wsId) {
-  const ws = workstreams.find(w => w.id === wsId);
-  return ws ? ws.name : wsId || 'None';
-}
-
-// ── Render ───────────────────────────────────────────────────────────────────
-
-function renderItem(item) {
-  const priClass = item.priority || 'p2';
-  const wsColor = getWsColor(item.workstream);
-  const wsName = getWsName(item.workstream);
-  const isDone = item.status === 'done';
-
-  let tagsHtml = '';
-  (item.tags || []).forEach(t => {
-    tagsHtml += '<span class="item-tag">' + esc(t) + '</span>';
+  uniqueAreas.forEach(a => {
+    if (a.pattern) {
+      try { if (new RegExp(a.pattern, 'i').test(text)) add(a.id, a.name, a.icon, a.color); } catch {}
+    }
   });
 
-  let sessionHtml = '';
-  if (item.linkedSession) {
-    sessionHtml = '<a class="item-session-badge" href="/session/' + esc(item.linkedSession) + '" title="Linked session">' + esc(item.linkedSession.slice(-6)) + '</a>';
+  return areas.slice(0, 3); // max 3 tags per card
+}
+
+// Generate inline style for area tags using color from config
+function areaStyle(color) {
+  const c = color || '#71717a';
+  // Parse hex to rgb for alpha background
+  const r = parseInt(c.slice(1,3),16), g = parseInt(c.slice(3,5),16), b = parseInt(c.slice(5,7),16);
+  return 'background:rgba('+r+','+g+','+b+',0.1);color:'+c;
+}
+
+// Get areas for an item — use saved areas field if set, otherwise auto-detect
+function getItemAreas(item) {
+  if (item.areas && item.areas.length > 0) {
+    const allA = [...(areasConfig.home || []), ...(areasConfig.work || [])];
+    const lookup = {}; allA.forEach(a => { if (!lookup[a.id]) lookup[a.id] = a; });
+    return item.areas.map(id => lookup[id]).filter(Boolean).map(a => ({ id: a.id, name: a.name, icon: a.icon || '', color: a.color || '#71717a', cls: 'area-' + a.id }));
+  }
+  return inferAreas(item);
+}
+
+// Get areas for current mode (for filter bar display)
+function modeAreas() {
+  const mode = currentMode();
+  // Show areas from current mode. Shared (MC) items use home areas.
+  return areasConfig[mode] || areasConfig.home || [];
+}
+
+// Collapsed workstream groups (persisted in sessionStorage)
+const collapsedWsGroups = new Set(JSON.parse(sessionStorage.getItem('mc-collapsed-ws') || '[]'));
+function toggleWsGroup(e, key) {
+  e.stopPropagation();
+  const group = document.querySelector(`.ws-group[data-ws-key="${key}"]`);
+  if (!group) return;
+  if (collapsedWsGroups.has(key)) {
+    collapsedWsGroups.delete(key);
+    group.classList.remove('collapsed');
+  } else {
+    collapsedWsGroups.add(key);
+    group.classList.add('collapsed');
+  }
+  sessionStorage.setItem('mc-collapsed-ws', JSON.stringify([...collapsedWsGroups]));
+}
+
+// ── Workstream group reorder (grip handle custom drag) ──────────────────
+let gripDragState = null;
+
+function startGripDrag(e) {
+  e.stopPropagation();
+  e.preventDefault();
+  const grip = e.currentTarget;
+  const label = grip.closest('.ws-group-label');
+  const group = grip.closest('.ws-group');
+  if (!group || !label) return;
+
+  const colBody = group.closest('.col-body');
+  const siblings = Array.from(colBody.querySelectorAll('.ws-group[data-ws-name]'));
+  if (siblings.length < 2) return;
+
+  const labelRect = label.getBoundingClientRect();
+  const offsetY = e.clientY - labelRect.top;
+
+  gripDragState = {
+    group, colBody, siblings, offsetY, startY: e.clientY, moved: false, ghost: null, dropLine: null
+  };
+
+  document.addEventListener('mousemove', onGripMove);
+  document.addEventListener('mouseup', onGripUp);
+  document.addEventListener('keydown', onGripEscape);
+}
+
+function onGripMove(e) {
+  const s = gripDragState;
+  if (!s) return;
+
+  // Deadzone — 4px before starting
+  if (!s.moved && Math.abs(e.clientY - s.startY) < 4) return;
+
+  if (!s.moved) {
+    s.moved = true;
+    s.group.classList.add('ws-custom-dragging');
+
+    // Create ghost from label
+    const label = s.group.querySelector('.ws-group-label');
+    const rect = label.getBoundingClientRect();
+    const ghost = document.createElement('div');
+    ghost.className = 'ws-drag-ghost';
+    const tint = s.group.classList.contains('ws-purple') ? 'rgba(139,92,246,0.12)' :
+                 s.group.classList.contains('ws-amber') ? 'rgba(245,158,11,0.12)' :
+                 s.group.classList.contains('ws-green') ? 'rgba(34,197,94,0.12)' :
+                 s.group.classList.contains('ws-blue') ? 'rgba(59,130,246,0.12)' : 'rgba(0,0,0,0.06)';
+    const dot = label.querySelector('.dot');
+    const dotColor = dot ? dot.style.background : '#999';
+    ghost.innerHTML = `<span style="width:7px;height:7px;border-radius:50%;background:${dotColor};flex-shrink:0"></span>${s.group.dataset.wsName === '_other' ? 'Other' : s.group.dataset.wsName}`;
+    ghost.style.background = `linear-gradient(135deg, #fff, ${tint})`;
+    ghost.style.border = '1px solid rgba(0,0,0,0.08)';
+    ghost.style.width = rect.width + 'px';
+    ghost.style.color = 'var(--text)';
+    ghost.style.fontFamily = "'DM Sans', sans-serif";
+    ghost.style.opacity = '0';
+    document.body.appendChild(ghost);
+    requestAnimationFrame(() => { ghost.style.opacity = '0.95'; });
+    s.ghost = ghost;
   }
 
-  const checkClass = isDone ? 'status-check checked' : 'status-check';
-  const checkContent = isDone ? '&#10003;' : '&#10003;';
+  // Move ghost — pinned right at cursor (account for html zoom)
+  if (s.ghost) {
+    const z = parseFloat(getComputedStyle(document.documentElement).zoom) || 1;
+    s.ghost.style.left = (e.clientX / z + 12) + 'px';
+    s.ghost.style.top = (e.clientY / z - 14) + 'px';
+  }
 
-  // Next status on click
-  let nextStatus = 'done';
-  if (item.status === 'todo') nextStatus = 'in-progress';
-  if (item.status === 'in-progress') nextStatus = 'done';
-  if (item.status === 'done') nextStatus = 'todo';
+  // Find drop position + highlight target
+  if (s.dropLine) { s.dropLine.remove(); s.dropLine = null; }
+  s.colBody.querySelectorAll('.ws-drop-target').forEach(g => g.classList.remove('ws-drop-target'));
 
-  return '<div class="item-card" data-id="' + esc(item.id) + '">'
-    + '<div class="item-top">'
-    + '<div class="' + checkClass + '" onclick="cycleStatus(\'' + esc(item.id) + '\',\'' + nextStatus + '\')" title="Click to change status">' + checkContent + '</div>'
-    + '<span class="item-priority ' + priClass + '">' + priClass.toUpperCase() + '</span>'
-    + '<span class="item-ws"><span class="ws-dot" style="background:' + wsColor + '"></span>' + esc(wsName) + '</span>'
-    + '<div class="item-tags">' + tagsHtml + '</div>'
-    + '<span class="item-time">' + timeAgo(item.created) + '</span>'
-    + '</div>'
-    + '<div class="item-title">' + esc(item.title) + '</div>'
-    + (item.description ? '<div class="item-desc">' + esc(item.description) + '</div>' : '')
-    + '<div class="item-footer">'
-    + sessionHtml
-    + '<div class="item-actions">'
-    + '<button class="item-action act-progress" onclick="editItem(\'' + esc(item.id) + '\')" title="Edit">&#9998;</button>'
-    + '<button class="item-action act-delete" onclick="deleteItem(\'' + esc(item.id) + '\')" title="Delete">&#10005;</button>'
-    + '</div>'
-    + '</div>'
-    + '</div>';
+  const otherGroups = s.siblings.filter(g => g !== s.group);
+  let insertBefore = null;
+  let hoverTarget = null;
+  for (const g of otherGroups) {
+    const gLabel = g.querySelector('.ws-group-label');
+    if (!gLabel) continue;
+    const r = gLabel.getBoundingClientRect();
+    const mid = r.top + r.height / 2;
+    if (e.clientY >= r.top && e.clientY <= r.bottom) hoverTarget = g;
+    if (e.clientY < mid) { insertBefore = g; break; }
+  }
+
+  // Highlight the group you're hovering over
+  if (hoverTarget) hoverTarget.classList.add('ws-drop-target');
+
+  // Show drop line
+  const line = document.createElement('div');
+  line.className = 'ws-drop-line';
+  if (insertBefore) {
+    s.colBody.insertBefore(line, insertBefore);
+  } else {
+    const last = otherGroups[otherGroups.length - 1];
+    if (last && last.nextSibling) s.colBody.insertBefore(line, last.nextSibling);
+    else s.colBody.appendChild(line);
+  }
+  s.dropLine = line;
+  s.insertBefore = insertBefore;
+}
+
+function onGripUp(e) {
+  const s = gripDragState;
+  cleanup();
+  if (!s || !s.moved) return;
+
+  // Perform reorder
+  if (s.insertBefore) {
+    s.colBody.insertBefore(s.group, s.insertBefore);
+  } else {
+    s.colBody.appendChild(s.group);
+  }
+
+  // Save order
+  const status = s.group.dataset.wsStatus;
+  const newGroups = s.colBody.querySelectorAll('.ws-group[data-ws-name]');
+  const order = Array.from(newGroups).map(g => g.dataset.wsName);
+  sessionStorage.setItem('mc-ws-order-' + status, JSON.stringify(order));
+}
+
+function onGripEscape(e) {
+  if (e.key === 'Escape') cleanup();
+}
+
+function cleanup() {
+  const s = gripDragState;
+  if (!s) return;
+  s.group.classList.remove('ws-custom-dragging');
+  s.colBody.querySelectorAll('.ws-drop-target').forEach(g => g.classList.remove('ws-drop-target'));
+  if (s.ghost) { s.ghost.style.opacity = '0'; setTimeout(() => s.ghost?.remove(), 100); }
+  if (s.dropLine) s.dropLine.remove();
+  document.removeEventListener('mousemove', onGripMove);
+  document.removeEventListener('mouseup', onGripUp);
+  document.removeEventListener('keydown', onGripEscape);
+  gripDragState = null;
+}
+
+// Map color to tint class — generate dynamic tint from any hex color
+function colorToTint(c) {
+  if (!c || c === '#9ca3af') return 'ws-other';
+  if (c.includes('8b5cf6')) return 'ws-purple';
+  if (c.includes('3b82f6')) return 'ws-blue';
+  if (c.includes('22c55e')) return 'ws-green';
+  if (c.includes('f59e0b')) return 'ws-amber';
+  return 'ws-dynamic';
+}
+
+// Generate inline styles for ws-group containers with custom colors
+function wsDynamicStyle(hex) {
+  if (!hex || !hex.startsWith('#')) return '';
+  const r = parseInt(hex.slice(1,3),16), g = parseInt(hex.slice(3,5),16), b = parseInt(hex.slice(5,7),16);
+  return 'background:rgba('+r+','+g+','+b+',0.04);border:1px solid rgba('+r+','+g+','+b+',0.08)';
+}
+
+// Generate inline styles for ws pill badges with any color
+function wsPillStyle(hex) {
+  if (!hex || !hex.startsWith('#')) return '';
+  const r = parseInt(hex.slice(1,3),16), g = parseInt(hex.slice(3,5),16), b = parseInt(hex.slice(5,7),16);
+  return 'background:rgba('+r+','+g+','+b+',0.12);color:'+hex;
 }
 
 function render() {
-  let filtered = items.filter(i => i.status !== 'archived');
-  if (activeWsFilter !== 'all') filtered = filtered.filter(i => i.workstream === activeWsFilter);
-  if (activePriFilter !== 'all') filtered = filtered.filter(i => i.priority === activePriFilter);
+  const mode = currentMode();
+  // Filter by context: check item context AND workstream context
+  let filtered = items.filter(i => {
+    if (i.status === 'archived') return false;
+    // If item has explicit context, respect it
+    if (i.context !== null && i.context !== undefined) return i.context === mode;
+    // Item context is null/shared — check if its workstream locks it to a mode
+    if (i.workstream) {
+      const ws = workstreams.find(w => w.id === i.workstream);
+      if (ws && ws.context !== null && ws.context !== undefined) return ws.context === mode;
+    }
+    // Also check tag-based workstream resolution
+    const tags = (i.tags || []).map(t => t.toLowerCase());
+    for (const ws of workstreams) {
+      if (tags.includes(ws.id) && ws.context !== null && ws.context !== undefined) return ws.context === mode;
+    }
+    // Truly shared — show in both modes
+    return true;
+  });
+  // Filter workstreams to current mode + shared (null context)
+  const modeWorkstreams = workstreams.filter(ws => ws.context === null || ws.context === undefined || ws.context === mode);
+  if (activeWs !== 'all') filtered = filtered.filter(i => i.workstream === activeWs);
+  if (activePri !== 'all') filtered = filtered.filter(i => (i.priority || 'p2') === activePri);
+  if (activeArea !== 'all') filtered = filtered.filter(i => getItemAreas(i).some(a => a.id === activeArea));
 
-  const inProgress = filtered.filter(i => i.status === 'in-progress');
-  const todo = filtered.filter(i => i.status === 'todo');
-  const done = filtered.filter(i => i.status === 'done');
+  const total = filtered.length;
+  const p0c = filtered.filter(i => i.priority === 'p0' && i.status !== 'done').length;
+  const ipc = filtered.filter(i => i.status === 'in-progress').length;
+  const donec = filtered.filter(i => i.status === 'done').length;
 
-  // Sort: p0 first within each group
-  const priOrder = { p0: 0, p1: 1, p2: 2, p3: 3 };
-  const sortByPri = (a, b) => (priOrder[a.priority] || 2) - (priOrder[b.priority] || 2);
-  inProgress.sort(sortByPri);
-  todo.sort(sortByPri);
-  done.sort((a, b) => new Date(b.updated) - new Date(a.updated));
+  // Title row with meaningful stats
+  const todoc = filtered.filter(i => i.status === 'todo').length;
+  const blc = filtered.filter(i => i.status === 'backlog').length;
+  let tr = `<h1>Dispatch</h1>`;
+  if (p0c > 0) tr += `<span class="t-stat"><strong class="rose">${p0c} critical</strong></span>`;
+  tr += `<span class="t-stat"><strong class="blue">${ipc}</strong> in progress</span>`;
+  tr += `<span class="t-stat"><strong>${todoc}</strong> to do</span>`;
+  tr += `<span class="t-stat"><strong class="green">${donec}</strong> done</span>`;
+  document.getElementById('titleRow').innerHTML = tr;
 
-  // Summary
-  const totalItems = items.filter(i => i.status !== 'archived').length;
-  const ipCount = items.filter(i => i.status === 'in-progress').length;
-  const doneCount = items.filter(i => i.status === 'done').length;
+  // Filter bar — show workstreams for current mode
+  let fb = `<span class="filter-label">Workstream</span>`;
+  fb += `<div class="f-pill${activeWs === 'all' ? ' active' : ''}" data-ws="all">All</div>`;
+  modeWorkstreams.forEach(ws => {
+    fb += `<div class="f-pill${activeWs === ws.id ? ' active' : ''}" data-ws="${esc(ws.id)}"><span class="dot" style="background:${esc(ws.color)}"></span>${esc(ws.name)}</div>`;
+  });
+  fb += `<span class="filter-label" style="margin-left:12px">Priority</span>`;
+  fb += `<div class="f-pill${activePri === 'all' ? ' active' : ''}" data-pri="all">All</div>`;
+  fb += `<div class="f-pill${activePri === 'p0' ? ' active' : ''}" data-pri="p0"><span class="dot" style="background:var(--rose)"></span>P0</div>`;
+  fb += `<div class="f-pill${activePri === 'p1' ? ' active' : ''}" data-pri="p1"><span class="dot" style="background:var(--amber)"></span>P1</div>`;
+  fb += `<div class="f-pill${activePri === 'p2' ? ' active' : ''}" data-pri="p2"><span class="dot" style="background:var(--blue)"></span>P2</div>`;
+  // Area filter — only show areas from current mode's config that have matching items
+  const modeAreaList = areasConfig[mode] || [];
+  const modeAreaIds = new Set(modeAreaList.map(a => a.id));
+  const presentAreas = new Map();
+  filtered.forEach(i => { getItemAreas(i).forEach(a => { if (modeAreaIds.has(a.id) && !presentAreas.has(a.id)) presentAreas.set(a.id, a); }); });
+  if (presentAreas.size > 0) {
+    fb += `<span class="filter-label" style="margin-left:12px">Area</span>`;
+    fb += `<div class="f-pill${activeArea === 'all' ? ' active' : ''}" data-area="all">All</div>`;
+    for (const [id, a] of presentAreas) {
+      fb += `<div class="f-pill${activeArea === id ? ' active' : ''}" data-area="${esc(id)}"><span style="font-size:11px">${a.icon}</span>${esc(a.name)}</div>`;
+    }
+  }
+  if (activeWs !== 'all' || activePri !== 'all' || activeArea !== 'all') {
+    fb += `<div class="f-pill" data-clear="1" style="color:var(--rose);border-color:var(--rose);margin-left:6px">Clear</div>`;
+  }
+  fb += `<button class="add-btn" id="addBtn">+ Add</button>`;
+  document.getElementById('filterBar').innerHTML = fb;
 
+  // Bind filter clicks
+  document.querySelectorAll('.f-pill[data-ws]').forEach(el => {
+    el.addEventListener('click', () => { activeWs = el.dataset.ws; render(); });
+  });
+  document.querySelectorAll('.f-pill[data-pri]').forEach(el => {
+    el.addEventListener('click', () => { activePri = el.dataset.pri; render(); });
+  });
+  document.querySelectorAll('.f-pill[data-area]').forEach(el => {
+    el.addEventListener('click', () => { activeArea = el.dataset.area; render(); });
+  });
+  document.querySelectorAll('.f-pill[data-clear]').forEach(el => {
+    el.addEventListener('click', () => { activeWs = 'all'; activePri = 'all'; activeArea = 'all'; render(); });
+  });
+  const addBtn = document.getElementById('addBtn');
+  if (addBtn) addBtn.addEventListener('click', () => openForm());
+
+  // Kanban columns
   let h = '';
+  STATUSES.forEach(status => {
+    const colItems = filtered.filter(i => i.status === status);
+    const isBacklog = status === 'backlog';
+    const isDone = status === 'done';
+    let colCls = 'column';
+    if (isBacklog) colCls = 'column backlog-col' + (backlogCollapsed ? ' collapsed' : '');
+    else if (isDone) colCls = 'column done-col' + (doneCollapsed ? ' collapsed' : '');
+    const toggleAttr = isBacklog ? ' data-toggle="backlog"' : isDone ? ' data-toggle="done"' : '';
+    const chevron = (isBacklog || isDone) ? '<span class="chevron">&#9660;</span>' : '';
+    h += `<div class="${colCls}" data-status="${status}">`;
+    h += `<div class="col-header"${toggleAttr}><span class="col-dot ${STATUS_DOTS[status]}"></span><span class="col-name">${STATUS_LABELS[status]}</span>${chevron}<span class="col-count">${colItems.length}</span></div>`;
+    h += `<div class="col-body" data-status="${status}">`;
 
-  // Summary strip
-  h += '<div class="summary-strip">';
-  h += '<div class="summary-stat"><span class="summary-num">' + totalItems + '</span><span class="summary-label">items</span></div>';
-  h += '<div class="summary-sep"></div>';
-  h += '<div class="summary-stat"><span class="summary-num' + (ipCount === 0 ? ' zero' : '') + '">' + ipCount + '</span><span class="summary-label">in progress</span></div>';
-  h += '<div class="summary-sep"></div>';
-  h += '<div class="summary-stat"><span class="summary-num' + (doneCount === 0 ? ' zero' : '') + '">' + doneCount + '</span><span class="summary-label">done</span></div>';
-  h += '</div>';
+    // Sort by sortOrder (if set), then by created date
+    colItems.sort((a, b) => {
+      const ao = a.sortOrder != null ? a.sortOrder : 9999;
+      const bo = b.sortOrder != null ? b.sortOrder : 9999;
+      if (ao !== bo) return ao - bo;
+      return new Date(a.created || 0) - new Date(b.created || 0);
+    });
 
-  // Workstream filter pills + priority + add button
-  h += '<div class="filter-row">';
-  h += '<div class="ws-pill' + (activeWsFilter === 'all' ? ' active' : '') + '" onclick="setWsFilter(\'all\')">All<span class="ws-count">' + totalItems + '</span></div>';
-  workstreams.forEach(ws => {
-    const count = items.filter(i => i.workstream === ws.id && i.status !== 'archived').length;
-    h += '<div class="ws-pill' + (activeWsFilter === ws.id ? ' active' : '') + '" onclick="setWsFilter(\'' + esc(ws.id) + '\')">'
-      + '<span class="ws-dot" style="background:' + esc(ws.color) + '"></span>'
-      + esc(ws.name)
-      + '<span class="ws-count">' + count + '</span></div>';
+    if (colItems.length === 0) {
+      h += `<div class="col-empty">No items</div>`;
+    } else {
+      // Only group by workstream in Todo and Backlog columns
+      const useGroups = (status === 'todo' || status === 'backlog');
+
+      function renderCard(item) {
+        const pri = item.priority || 'p2';
+        const priCls = ` ${pri}`;
+        const ws = resolveWs(item);
+        const dateStr = item.created ? new Date(item.created).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) : '';
+        const areas = getItemAreas(item);
+        let c = `<div class="k-card${priCls}" draggable="true" data-id="${esc(item.id)}">`;
+        c += `<div class="k-bar"></div><div class="k-inner"><div class="k-labels">`;
+        c += `<span class="k-ws-pill" style="${wsPillStyle(ws.color)}"><span class="dot" style="background:${ws.color}"></span>${esc(ws.name || 'Other')}</span>`;
+        if (dateStr) c += `<span class="k-date">${esc(dateStr)}</span>`;
+        c += `</div><div class="k-title">${esc(item.title)}</div>`;
+        if (areas.length > 0) {
+          c += `<div class="k-areas">`;
+          areas.forEach(a => { c += `<span class="k-area-tag" style="${areaStyle(a.color)}"><span class="area-icon">${a.icon}</span>${esc(a.name)}</span>`; });
+          c += `</div>`;
+        }
+        c += `</div></div>`;
+        return c;
+      }
+
+      if (useGroups) {
+        const groups = {};
+        colItems.forEach(item => {
+          const ws = resolveWs(item);
+          const key = ws.name || '_other';
+          if (!groups[key]) groups[key] = { name: ws.name, color: ws.color, tint: ws.tint, items: [] };
+          groups[key].items.push(item);
+        });
+        const orderKey = 'mc-ws-order-' + status;
+        const savedOrder = JSON.parse(sessionStorage.getItem(orderKey) || '[]');
+        const sorted = Object.entries(groups).sort((a, b) => {
+          const ai = savedOrder.indexOf(a[0]);
+          const bi = savedOrder.indexOf(b[0]);
+          if (ai !== -1 && bi !== -1) return ai - bi;
+          if (ai !== -1) return -1;
+          if (bi !== -1) return 1;
+          if (a[0] === '_other') return 1;
+          if (b[0] === '_other') return -1;
+          return a[0].localeCompare(b[0]);
+        });
+        for (const [key, group] of sorted) {
+          const showLabel = sorted.length > 1 || key !== '_other';
+          const colWsKey = status + '__' + key;
+          const isCollapsed = collapsedWsGroups.has(colWsKey);
+          const groupStyle = group.tint === 'ws-dynamic' ? wsDynamicStyle(group.color) : '';
+          h += `<div class="ws-group ${group.tint}${isCollapsed ? ' collapsed' : ''}" data-ws-key="${esc(colWsKey)}" data-ws-name="${esc(key)}" data-ws-status="${esc(status)}"${groupStyle ? ' style="'+groupStyle+'"' : ''}>`;
+          if (showLabel && sorted.length > 1) {
+            h += `<div class="ws-group-label" onclick="toggleWsGroup(event,'${esc(colWsKey)}')">`;
+            h += `<span class="ws-grip" onmousedown="startGripDrag(event)" title="Drag to reorder"><svg width="6" height="10" viewBox="0 0 6 10" fill="currentColor"><circle cx="1.5" cy="1.5" r="1"/><circle cx="4.5" cy="1.5" r="1"/><circle cx="1.5" cy="5" r="1"/><circle cx="4.5" cy="5" r="1"/><circle cx="1.5" cy="8.5" r="1"/><circle cx="4.5" cy="8.5" r="1"/></svg></span>`;
+            h += `<span class="dot" style="background:${group.color}"></span>${esc(group.name || 'Other')}<span class="ws-group-count">${group.items.length}</span>`;
+            h += `<span class="ws-chevron">\u25BC</span></div>`;
+          } else if (showLabel) {
+            h += `<div class="ws-group-label" onclick="toggleWsGroup(event,'${esc(colWsKey)}')"><span class="dot" style="background:${group.color}"></span>${esc(group.name || 'Other')}<span class="ws-group-count">${group.items.length}</span><span class="ws-chevron">\u25BC</span></div>`;
+          }
+          h += `<div class="ws-group-cards">`;
+          // Sort items within group: P0 first, then P1, P2, P3
+          const priOrder = { p0: 0, p1: 1, p2: 2, p3: 3 };
+          group.items.sort((a, b) => (priOrder[a.priority] || 2) - (priOrder[b.priority] || 2));
+          group.items.forEach(item => { h += renderCard(item); });
+          h += `</div></div>`;
+        }
+      } else {
+        // Flat list — no workstream grouping
+        h += `<div class="ws-group-cards">`;
+        colItems.forEach(item => { h += renderCard(item); });
+        h += `</div>`;
+      }
+    }
+    h += `</div></div>`;
   });
-  h += '<div class="filter-sep"></div>';
-  h += '<div class="priority-pills">';
-  ['all','p0','p1','p2','p3'].forEach(p => {
-    const label = p === 'all' ? 'Any' : p.toUpperCase();
-    h += '<div class="pri-pill' + (activePriFilter === p ? ' active' : '') + '" onclick="setPriFilter(\'' + p + '\')">' + label + '</div>';
+  document.getElementById('kanban').innerHTML = h;
+
+  // Bind card events
+  document.querySelectorAll('.k-card').forEach(card => {
+    card.addEventListener('click', () => openDetail(card.dataset.id));
+    card.addEventListener('dragstart', onDragStart);
+    card.addEventListener('dragend', onDragEnd);
+    // Dragover on cards for indicator positioning (but drop only on col-body to avoid double-fire)
+    card.addEventListener('dragover', (e) => {
+      e.preventDefault();
+      e.dataTransfer.dropEffect = 'move';
+      const colBody = getColBodyFromEvent(e);
+      if (colBody) {
+        colBody.classList.add('drag-over');
+        showDropIndicator(colBody, e.clientY);
+      }
+    });
   });
-  h += '</div>';
-  h += '<button class="ws-manage-btn" onclick="openWsForm()" title="Manage workstreams">&#9881;</button>';
-  h += '<button class="add-btn" onclick="openForm()">+ Add Item</button>';
-  h += '</div>';
 
-  // Sections
-  if (inProgress.length) {
-    const collapsed = collapsedSections.has('in-progress');
-    h += '<div class="section-head" onclick="toggleSection(\'in-progress\')">'
-      + '<span class="section-label">In Progress</span>'
-      + '<span class="section-count">' + inProgress.length + '</span>'
-      + '<span class="section-chevron' + (collapsed ? ' collapsed' : '') + '">&#9660;</span>'
-      + '</div>';
-    if (!collapsed) {
-      h += '<div class="item-list">' + inProgress.map(renderItem).join('') + '</div>';
-    }
+  // Bind drop zones
+  document.querySelectorAll('.col-body').forEach(zone => {
+    zone.addEventListener('dragover', onDragOver);
+    zone.addEventListener('dragleave', onDragLeave);
+    zone.addEventListener('drop', onDrop);
+  });
+
+  // Group reorder is handled by grip handle custom drag (startGripDrag)
+
+  // Collapse toggles — toggle both-collapsed when both side columns are collapsed
+  const kanbanEl = document.getElementById('kanban');
+  function updateBothCollapsed() {
+    if (kanbanEl) kanbanEl.classList.toggle('both-collapsed', backlogCollapsed && doneCollapsed);
   }
-
-  if (todo.length) {
-    const collapsed = collapsedSections.has('todo');
-    h += '<div class="section-head" onclick="toggleSection(\'todo\')">'
-      + '<span class="section-label">Todo</span>'
-      + '<span class="section-count">' + todo.length + '</span>'
-      + '<span class="section-chevron' + (collapsed ? ' collapsed' : '') + '">&#9660;</span>'
-      + '</div>';
-    if (!collapsed) {
-      h += '<div class="item-list">' + todo.map(renderItem).join('') + '</div>';
-    }
+  const blToggle = document.querySelector('[data-toggle="backlog"]');
+  if (blToggle) {
+    blToggle.addEventListener('click', () => {
+      backlogCollapsed = !backlogCollapsed;
+      const col = document.querySelector('.backlog-col');
+      if (col) col.classList.toggle('collapsed', backlogCollapsed);
+      updateBothCollapsed();
+    });
   }
-
-  if (done.length) {
-    const collapsed = collapsedSections.has('done');
-    h += '<div class="section-head" onclick="toggleSection(\'done\')">'
-      + '<span class="section-label">Done</span>'
-      + '<span class="section-count">' + done.length + '</span>'
-      + '<span class="section-chevron' + (collapsed ? ' collapsed' : '') + '">&#9660;</span>'
-      + '</div>';
-    if (!collapsed) {
-      h += '<div class="item-list">' + done.map(renderItem).join('') + '</div>';
-    }
+  const doneToggle = document.querySelector('[data-toggle="done"]');
+  if (doneToggle) {
+    doneToggle.addEventListener('click', () => {
+      doneCollapsed = !doneCollapsed;
+      const col = document.querySelector('.done-col');
+      if (col) col.classList.toggle('collapsed', doneCollapsed);
+      updateBothCollapsed();
+    });
   }
-
-  if (!inProgress.length && !todo.length && !done.length) {
-    h += '<div class="empty-state"><div class="empty-icon">&#9744;</div><p>No items yet. Add your first work item to get started.</p></div>';
-  }
-
-  document.getElementById('main').innerHTML = h;
 }
 
-function toggleSection(name) {
-  if (collapsedSections.has(name)) collapsedSections.delete(name);
-  else collapsedSections.add(name);
-  render();
+// ── Drag & Drop (cross-column + intra-column reorder) ──
+let draggedId = null;
+function onDragStart(e) {
+  draggedId = e.currentTarget.dataset.id;
+  e.currentTarget.classList.add('dragging');
+  e.dataTransfer.effectAllowed = 'move';
+  e.dataTransfer.setData('text/plain', draggedId);
 }
-
-function setWsFilter(ws) { activeWsFilter = ws; render(); }
-function setPriFilter(p) { activePriFilter = p; render(); }
-
-// ── CRUD ─────────────────────────────────────────────────────────────────────
-
-function openForm(editId) {
-  const overlay = document.getElementById('addOverlay');
-  const titleEl = document.getElementById('formTitle');
-  document.getElementById('f-edit-id').value = editId || '';
-
-  // Populate workstream dropdown
-  const wsSel = document.getElementById('f-workstream');
-  wsSel.innerHTML = '<option value="">None</option>' + workstreams.map(ws =>
-    '<option value="' + esc(ws.id) + '">' + esc(ws.name) + '</option>'
-  ).join('');
-
-  if (editId) {
-    const item = items.find(i => i.id === editId);
-    if (!item) return;
-    titleEl.textContent = 'Edit Item';
-    document.getElementById('f-title').value = item.title;
-    document.getElementById('f-desc').value = item.description || '';
-    document.getElementById('f-priority').value = item.priority || 'p2';
-    document.getElementById('f-workstream').value = item.workstream || '';
-    document.getElementById('f-tags').value = (item.tags || []).join(', ');
-    document.getElementById('f-session').value = item.linkedSession || '';
+function onDragEnd(e) {
+  e.currentTarget.classList.remove('dragging');
+  draggedId = null;
+  document.querySelectorAll('.col-body').forEach(el => el.classList.remove('drag-over'));
+  document.querySelectorAll('.drop-indicator').forEach(el => el.remove());
+}
+function getColBodyFromEvent(e) {
+  // Walk up from target to find the col-body
+  let el = e.target;
+  while (el && !el.classList.contains('col-body')) el = el.parentElement;
+  return el;
+}
+function showDropIndicator(colBody, clientY) {
+  document.querySelectorAll('.drop-indicator').forEach(el => el.remove());
+  if (!colBody) return;
+  const cards = [...colBody.querySelectorAll('.k-card:not(.dragging)')];
+  let insertBefore = null;
+  for (const card of cards) {
+    const rect = card.getBoundingClientRect();
+    if (clientY < rect.top + rect.height / 2) { insertBefore = card; break; }
+  }
+  const indicator = document.createElement('div');
+  indicator.className = 'drop-indicator';
+  if (insertBefore) {
+    insertBefore.parentNode.insertBefore(indicator, insertBefore);
+  } else if (cards.length > 0) {
+    cards[cards.length - 1].after(indicator);
   } else {
-    titleEl.textContent = 'Add Item';
-    document.getElementById('f-title').value = '';
-    document.getElementById('f-desc').value = '';
-    document.getElementById('f-priority').value = 'p2';
-    document.getElementById('f-workstream').value = activeWsFilter !== 'all' ? activeWsFilter : '';
-    document.getElementById('f-tags').value = '';
-    document.getElementById('f-session').value = '';
+    colBody.appendChild(indicator);
+  }
+}
+function onDragOver(e) {
+  e.preventDefault();
+  e.dataTransfer.dropEffect = 'move';
+  const colBody = e.currentTarget.classList.contains('col-body') ? e.currentTarget : getColBodyFromEvent(e);
+  if (colBody) {
+    colBody.classList.add('drag-over');
+    showDropIndicator(colBody, e.clientY);
+  }
+}
+function onDragLeave(e) {
+  if (!e.currentTarget.contains(e.relatedTarget)) {
+    e.currentTarget.classList.remove('drag-over');
+    e.currentTarget.querySelectorAll('.drop-indicator').forEach(el => el.remove());
+  }
+}
+function onDrop(e) {
+  e.preventDefault();
+  const colBody = e.currentTarget.classList.contains('col-body') ? e.currentTarget : getColBodyFromEvent(e);
+  if (!colBody) return;
+  colBody.classList.remove('drag-over');
+  document.querySelectorAll('.drop-indicator').forEach(el => el.remove());
+  const newStatus = colBody.dataset.status;
+  if (!draggedId || !newStatus) return;
+
+  const cards = [...colBody.querySelectorAll('.k-card:not(.dragging)')];
+  let insertIdx = cards.length;
+  for (let i = 0; i < cards.length; i++) {
+    const rect = cards[i].getBoundingClientRect();
+    if (e.clientY < rect.top + rect.height / 2) { insertIdx = i; break; }
   }
 
-  overlay.classList.add('visible');
-  document.getElementById('f-title').focus();
+  const cardIds = cards.map(c => c.dataset.id);
+  const existIdx = cardIds.indexOf(draggedId);
+  if (existIdx !== -1) {
+    cardIds.splice(existIdx, 1);
+    if (insertIdx > existIdx) insertIdx--;
+  }
+  cardIds.splice(insertIdx, 0, draggedId);
+
+  const draggedItem = items.find(i => i.id === draggedId);
+  const statusChanged = draggedItem && draggedItem.status !== newStatus;
+
+  if (statusChanged) {
+    updateItem(draggedId, { status: newStatus }).then(() => {
+      fetch('/api/dispatch/reorder', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ orderedIds: cardIds })
+      }).then(() => loadItems());
+    });
+  } else {
+    fetch('/api/dispatch/reorder', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ orderedIds: cardIds })
+    }).then(() => loadItems());
+  }
 }
 
-function editItem(id) { openForm(id); }
+// ── Detail Modal ──
+let currentDetailId = null;
+function renderDesc(text) {
+  let h = esc(text);
+  h = h.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+  h = h.replace(/`([^`]+)`/g, '<code>$1</code>');
+  h = h.replace(/^## (.+)$/gm, '<div style="font-weight:700;font-size:14px;margin:12px 0 4px;color:var(--text)">$1</div>');
+  h = h.replace(/^(\d+)\. (.+)$/gm, '<div style="padding-left:12px;margin:2px 0">$1. $2</div>');
+  h = h.replace(/^- (.+)$/gm, '<div style="padding-left:12px;margin:2px 0">&bull; $1</div>');
+  return h;
+}
+// Richer markdown preview for the editor preview pane
+function renderDescPreview(text) {
+  let h = esc(text);
+  // Headings
+  h = h.replace(/^### (.+)$/gm, '<h3>$1</h3>');
+  h = h.replace(/^## (.+)$/gm, '<h2>$1</h2>');
+  h = h.replace(/^# (.+)$/gm, '<h1>$1</h1>');
+  // Code blocks
+  h = h.replace(/```(\w*)\n([\s\S]*?)```/g, '<pre><code>$2</code></pre>');
+  // Inline
+  h = h.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+  h = h.replace(/_(.+?)_/g, '<em>$1</em>');
+  h = h.replace(/`([^`]+)`/g, '<code>$1</code>');
+  // Blockquotes
+  h = h.replace(/^&gt; (.+)$/gm, '<blockquote>$1</blockquote>');
+  // Lists
+  h = h.replace(/^- (.+)$/gm, '<li>$1</li>');
+  h = h.replace(/^(\d+)\. (.+)$/gm, '<li>$1. $2</li>');
+  // Paragraphs (double newline)
+  h = h.replace(/\n\n/g, '</p><p>');
+  h = '<p>' + h + '</p>';
+  h = h.replace(/<p><\/p>/g, '');
+  // Single newlines to <br>
+  h = h.replace(/\n/g, '<br>');
+  return h;
+}
 
-function closeForm() {
-  document.getElementById('addOverlay').classList.remove('visible');
+function makeDropdown(id, fieldName, currentVal, options) {
+  // options: [{value, label, color?}]
+  const cur = options.find(o => o.value === currentVal) || options[0];
+  let h = `<div class="m-dropdown" data-dropdown="${fieldName}" data-id="${esc(id)}">`;
+  h += `<div class="m-dropdown-trigger">`;
+  if (cur.color) h += `<span class="dot" style="background:${cur.color}"></span>`;
+  h += `${esc(cur.label)}<span class="arrow">&#9660;</span></div>`;
+  h += `<div class="m-dropdown-menu">`;
+  options.forEach(o => {
+    h += `<div class="m-dropdown-item${o.value === currentVal ? ' selected' : ''}" data-value="${esc(o.value)}">`;
+    if (o.color) h += `<span class="dot" style="background:${o.color}"></span>`;
+    h += `${esc(o.label)}</div>`;
+  });
+  h += `</div></div>`;
+  return h;
+}
+
+function openDetail(id) {
+  const item = items.find(i => i.id === id);
+  if (!item) return;
+  currentDetailId = id;
+  const pri = item.priority || 'p2';
+  const ws = resolveWs(item);
+
+  // Priority color bar
+  document.getElementById('modalBar').className = 'modal-bar ' + pri;
+
+  // Editable title (click to edit)
+  document.getElementById('modalTop').innerHTML = `<div class="m-title" data-edit="title">${esc(item.title)}</div>`;
+
+  // Body
+  let body = '<div class="modal-layout"><div class="modal-main">';
+
+  // Editable description (click to edit)
+  body += '<div class="m-desc-section"><div class="m-desc-label">Description</div>';
+  body += `<div class="m-desc-box" data-edit="description">`;
+  if (item.description) {
+    body += `<div class="m-desc">${renderDesc(item.description)}</div>`;
+  } else {
+    body += '<div class="m-desc-empty">Click to add a description...</div>';
+  }
+  body += '</div></div>';
+
+  // Area tags — editable (use saved areas or fall back to auto-detected)
+  const itemAreas = item.areas || inferAreas(item).map(a => a.id);
+  const allAvailableAreas = [...(areasConfig.home || []), ...(areasConfig.work || [])];
+  const uniqueAvail = []; const seenAvailIds = new Set();
+  allAvailableAreas.forEach(a => { if (!seenAvailIds.has(a.id)) { seenAvailIds.add(a.id); uniqueAvail.push(a); } });
+
+  body += '<div class="m-desc-section"><div class="m-desc-label">Areas</div><div class="m-areas" id="modalAreasWrap">';
+  itemAreas.forEach(areaId => {
+    const cfg = uniqueAvail.find(a => a.id === areaId);
+    if (!cfg) return;
+    body += `<span class="k-area-tag" style="${areaStyle(cfg.color)};font-size:11px;padding:4px 10px 4px 7px;gap:5px;cursor:pointer" data-remove-area="${esc(areaId)}" title="Click to remove"><span class="area-icon" style="font-size:12px">${cfg.icon}</span>${esc(cfg.name)}<span style="margin-left:4px;opacity:.5;font-size:10px">&times;</span></span>`;
+  });
+  // Add button
+  const unusedAreas = uniqueAvail.filter(a => !itemAreas.includes(a.id));
+  if (unusedAreas.length > 0) {
+    body += `<span class="k-area-tag" style="background:var(--surface);color:var(--text3);font-size:11px;padding:4px 10px;cursor:pointer;border:1px dashed var(--sep)" id="addAreaBtn">+</span>`;
+  }
+  body += '</div></div>';
+
+  body += '</div>'; // end main
+
+  // Sidebar with custom dropdowns
+  body += '<div class="modal-sidebar">';
+
+  // Status dropdown
+  const statusOpts = STATUSES.map(s => ({
+    value: s,
+    label: STATUS_LABELS[s],
+    color: s === 'in-progress' ? 'var(--blue)' : s === 'todo' ? 'var(--amber)' : s === 'done' ? 'var(--green)' : 'var(--text3)'
+  }));
+  body += '<div class="m-field"><div class="m-field-label">Status</div>';
+  body += makeDropdown(item.id, 'status', item.status, statusOpts);
+  body += '</div>';
+
+  // Priority dropdown
+  const priOpts = [
+    { value: 'p0', label: 'P0 Critical', color: 'var(--rose)' },
+    { value: 'p1', label: 'P1 High', color: 'var(--amber)' },
+    { value: 'p2', label: 'P2 Medium', color: 'var(--blue)' },
+    { value: 'p3', label: 'P3 Low', color: 'var(--text3)' }
+  ];
+  body += '<div class="m-field"><div class="m-field-label">Priority</div>';
+  body += makeDropdown(item.id, 'priority', pri, priOpts);
+  body += '</div>';
+
+  // Workstream dropdown — show mode-appropriate workstreams
+  const mode = currentMode();
+  const modalWsList = workstreams.filter(ws => ws.context === null || ws.context === undefined || ws.context === mode);
+  const wsOpts = [{ value: '', label: 'None', color: '#9ca3af' }];
+  modalWsList.forEach(w => wsOpts.push({ value: w.id, label: w.name, color: w.color }));
+  body += '<div class="m-field"><div class="m-field-label">Workstream</div>';
+  body += makeDropdown(item.id, 'workstream', item.workstream || '', wsOpts);
+  body += '</div>';
+
+  // Linked Session
+  if (item.linkedSession) {
+    body += '<div class="m-field"><div class="m-field-label">Session</div><div class="m-field-value">';
+    body += `<a class="m-session-link" href="/session/${esc(item.linkedSession)}">${esc(item.linkedSession.slice(-8))}</a>`;
+    body += '</div></div>';
+  }
+
+  // Dates
+  body += '<div class="m-field"><div class="m-field-label">Dates</div><div class="m-dates">';
+  if (item.created) body += `<span>Created ${new Date(item.created).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</span>`;
+  if (item.updated) body += `<span>Updated ${new Date(item.updated).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</span>`;
+  body += '</div></div>';
+
+  body += '</div></div>'; // end sidebar + layout
+  document.getElementById('modalBody').innerHTML = body;
+
+  // Action bar
+  const nextMap = { 'backlog': { label: 'Move to Todo', st: 'todo' }, 'todo': { label: 'Start', st: 'in-progress' }, 'in-progress': { label: 'Complete', st: 'done' }, 'done': { label: 'Reopen', st: 'todo' } };
+  const next = nextMap[item.status] || { label: 'Move', st: 'todo' };
+  let acts = `<button class="m-btn primary" data-action="advance" data-id="${esc(item.id)}" data-status="${next.st}">${next.label}</button>`;
+  acts += `<div class="m-btn-group"><button class="m-btn danger" data-action="delete" data-id="${esc(item.id)}">Delete</button></div>`;
+  document.getElementById('modalActions').innerHTML = acts;
+
+  // ── Bind all interactions ──
+
+  // Custom dropdowns
+  document.querySelectorAll('.m-dropdown').forEach(dd => {
+    const trigger = dd.querySelector('.m-dropdown-trigger');
+    trigger.addEventListener('click', (e) => {
+      e.stopPropagation();
+      // Close other open dropdowns
+      document.querySelectorAll('.m-dropdown.open').forEach(d => { if (d !== dd) d.classList.remove('open'); });
+      dd.classList.toggle('open');
+    });
+    dd.querySelectorAll('.m-dropdown-item').forEach(opt => {
+      opt.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const field = dd.dataset.dropdown;
+        const value = opt.dataset.value;
+        dd.classList.remove('open');
+        // Save any unsaved description editor content alongside the dropdown change
+        const updates = { [field]: value };
+        const editorTa = document.getElementById('desc-editor-ta');
+        if (editorTa) updates.description = editorTa.value;
+        updateItem(dd.dataset.id, updates);
+        // Reopen with updated data after save
+        setTimeout(() => { const fresh = items.find(i => i.id === dd.dataset.id); if (fresh) openDetail(fresh.id); }, 150);
+      });
+    });
+  });
+  // Close dropdowns on outside click
+  const closeDropdowns = () => document.querySelectorAll('.m-dropdown.open').forEach(d => d.classList.remove('open'));
+  document.getElementById('modalBody').addEventListener('click', closeDropdowns);
+
+  // Inline title editing
+  const titleEl = document.querySelector('[data-edit="title"]');
+  if (titleEl) {
+    titleEl.addEventListener('click', () => {
+      const input = document.createElement('input');
+      input.className = 'm-title-input';
+      input.value = item.title;
+      titleEl.replaceWith(input);
+      input.focus();
+      input.select();
+      const save = () => {
+        const v = input.value.trim();
+        if (v && v !== item.title) { updateItem(id, { title: v }); }
+        setTimeout(() => openDetail(id), 100);
+      };
+      input.addEventListener('blur', save);
+      input.addEventListener('keydown', (e) => { if (e.key === 'Enter') input.blur(); if (e.key === 'Escape') { input.value = item.title; input.blur(); } });
+    });
+  }
+
+  // Inline description editing — native textarea + markdown toolbar
+  const descBox = document.querySelector('[data-edit="description"]');
+  if (descBox) {
+    descBox.addEventListener('click', () => {
+      destroyDescEditor();
+      const wrap = document.createElement('div');
+      wrap.className = 'm-editor-wrap';
+      // Toolbar
+      const toolbar = document.createElement('div');
+      toolbar.className = 'm-editor-toolbar';
+      toolbar.innerHTML = `
+        <button data-md="bold" title="Bold (Ctrl+B)"><b>B</b></button>
+        <button data-md="italic" title="Italic (Ctrl+I)"><i>I</i></button>
+        <button data-md="heading" title="Heading">H</button>
+        <div class="tb-sep"></div>
+        <button data-md="ul" title="Bullet list">&bull;</button>
+        <button data-md="ol" title="Numbered list">1.</button>
+        <div class="tb-sep"></div>
+        <button data-md="code" title="Code">&lt;/&gt;</button>
+        <button data-md="quote" title="Quote">&ldquo;</button>
+        <div class="tb-sep"></div>
+        <button data-md="preview" title="Toggle preview" id="previewToggle">&#9673;</button>`;
+      wrap.appendChild(toolbar);
+      // Textarea
+      const ta = document.createElement('textarea');
+      ta.className = 'm-editor-ta';
+      ta.id = 'desc-editor-ta';
+      ta.value = item.description || '';
+      ta.placeholder = 'Write a description... (markdown supported)';
+      wrap.appendChild(ta);
+      // Preview pane (hidden by default)
+      const preview = document.createElement('div');
+      preview.className = 'm-editor-preview';
+      preview.style.display = 'none';
+      preview.id = 'desc-preview';
+      wrap.appendChild(preview);
+      // Actions
+      const actions = document.createElement('div');
+      actions.className = 'm-editor-actions';
+      actions.innerHTML = '<button class="m-btn" id="descCancel">Cancel</button><button class="m-btn primary" id="descSave">Save</button>';
+      wrap.appendChild(actions);
+      descBox.replaceWith(wrap);
+      activeDescEditor = ta;
+      // Auto-resize textarea
+      function autoResize() { ta.style.height = 'auto'; ta.style.height = Math.min(ta.scrollHeight, 300) + 'px'; }
+      ta.addEventListener('input', autoResize);
+      autoResize();
+      ta.focus();
+      ta.setSelectionRange(0, 0);
+      // Toolbar actions — wrap selection or insert at cursor
+      function mdAction(type) {
+        const start = ta.selectionStart, end = ta.selectionEnd;
+        const sel = ta.value.substring(start, end);
+        let before = '', after = '', insert = '';
+        if (type === 'bold') { before = '**'; after = '**'; insert = sel || 'bold text'; }
+        else if (type === 'italic') { before = '_'; after = '_'; insert = sel || 'italic text'; }
+        else if (type === 'heading') { before = '## '; insert = sel || 'Heading'; }
+        else if (type === 'ul') { before = '- '; insert = sel || 'List item'; }
+        else if (type === 'ol') { before = '1. '; insert = sel || 'List item'; }
+        else if (type === 'code') { before = '\`'; after = '\`'; insert = sel || 'code'; }
+        else if (type === 'quote') { before = '> '; insert = sel || 'Quote'; }
+        else if (type === 'preview') {
+          const pv = document.getElementById('desc-preview');
+          const isVisible = pv.style.display !== 'none';
+          pv.style.display = isVisible ? 'none' : 'block';
+          ta.style.display = isVisible ? '' : 'none';
+          document.getElementById('previewToggle').classList.toggle('active', !isVisible);
+          if (!isVisible) pv.innerHTML = renderDescPreview(ta.value);
+          return;
+        }
+        const newText = ta.value.substring(0, start) + before + insert + (after || '') + ta.value.substring(end);
+        ta.value = newText;
+        const cursorPos = start + before.length + insert.length;
+        ta.setSelectionRange(start + before.length, cursorPos);
+        ta.focus();
+        autoResize();
+      }
+      toolbar.addEventListener('click', (e) => {
+        const btn = e.target.closest('[data-md]');
+        if (btn) mdAction(btn.dataset.md);
+      });
+      // Keyboard shortcuts
+      ta.addEventListener('keydown', (e) => {
+        if (e.ctrlKey && e.key === 'b') { e.preventDefault(); mdAction('bold'); }
+        if (e.ctrlKey && e.key === 'i') { e.preventDefault(); mdAction('italic'); }
+      });
+      // Save / Cancel
+      document.getElementById('descSave').addEventListener('click', () => {
+        const v = ta.value.trim();
+        if (v !== (item.description || '')) { updateItem(id, { description: v }); }
+        destroyDescEditor();
+        setTimeout(() => openDetail(id), 150);
+      });
+      document.getElementById('descCancel').addEventListener('click', () => {
+        destroyDescEditor();
+        setTimeout(() => openDetail(id), 100);
+      });
+    });
+  }
+
+
+  // Area tag editing — remove on click
+  document.querySelectorAll('[data-remove-area]').forEach(el => {
+    el.addEventListener('click', async () => {
+      const areaId = el.dataset.removeArea;
+      const curAreas = item.areas || inferAreas(item).map(a => a.id);
+      const newAreas = curAreas.filter(a => a !== areaId);
+      await updateItem(item.id, { areas: newAreas });
+      setTimeout(() => openDetail(item.id), 100);
+    });
+  });
+  // Area tag editing — add via dropdown
+  const addAreaBtn = document.getElementById('addAreaBtn');
+  if (addAreaBtn) {
+    addAreaBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      // Build a small dropdown of available areas
+      const existing = document.getElementById('areaDropdown');
+      if (existing) { existing.remove(); return; }
+      const curAreas = item.areas || inferAreas(item).map(a => a.id);
+      const allA = [...(areasConfig.home || []), ...(areasConfig.work || [])];
+      const uniq = []; const seen = new Set();
+      allA.forEach(a => { if (!seen.has(a.id) && !curAreas.includes(a.id)) { seen.add(a.id); uniq.push(a); } });
+      if (uniq.length === 0) return;
+      const dd = document.createElement('div');
+      dd.id = 'areaDropdown';
+      dd.style.cssText = 'position:absolute;background:var(--bg);border:1px solid var(--sep);border-radius:10px;box-shadow:0 8px 24px rgba(0,0,0,.12);padding:6px;z-index:80;max-height:200px;overflow-y:auto;min-width:160px';
+      uniq.forEach(a => {
+        const opt = document.createElement('div');
+        opt.style.cssText = 'display:flex;align-items:center;gap:6px;padding:6px 10px;border-radius:6px;cursor:pointer;font-size:12px;font-weight:500;transition:background .1s';
+        opt.innerHTML = `<span style="font-size:13px">${a.icon}</span><span>${esc(a.name)}</span>`;
+        opt.addEventListener('mouseenter', () => opt.style.background = 'var(--surface)');
+        opt.addEventListener('mouseleave', () => opt.style.background = 'none');
+        opt.addEventListener('click', async (ev) => {
+          ev.stopPropagation();
+          const cur = item.areas || inferAreas(item).map(x => x.id);
+          await updateItem(item.id, { areas: [...cur, a.id] });
+          dd.remove();
+          setTimeout(() => openDetail(item.id), 100);
+        });
+        dd.appendChild(opt);
+      });
+      const wrap = document.getElementById('modalAreasWrap');
+      wrap.style.position = 'relative';
+      wrap.appendChild(dd);
+      // Close on outside click
+      const closer = (ev) => { if (!dd.contains(ev.target)) { dd.remove(); document.removeEventListener('click', closer); } };
+      setTimeout(() => document.addEventListener('click', closer), 10);
+    });
+  }
+
+  // Action buttons
+  document.querySelectorAll('[data-action="advance"]').forEach(btn => {
+    btn.addEventListener('click', () => { updateItem(btn.dataset.id, { status: btn.dataset.status }); closeDetail(); });
+  });
+  document.querySelectorAll('[data-action="delete"]').forEach(btn => {
+    btn.addEventListener('click', () => { deleteItem(btn.dataset.id); closeDetail(); });
+  });
+
+  document.getElementById('detailModal').classList.add('open');
+}
+
+function closeDetail() {
+  destroyDescEditor();
+  document.getElementById('detailModal').classList.remove('open');
+}
+
+// ── Form ──
+async function openForm() {
+  // Create a blank item via API, then open it in the detail modal for inline editing
+  try {
+    const ws = activeWs !== 'all' ? activeWs : '';
+    // Auto-tag context: MC workstream = shared (null), otherwise current mode
+    const ctx = ws === 'mission-control' ? null : currentMode();
+    const res = await fetch('/api/dispatch', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ title: 'Untitled', description: '', priority: 'p2', workstream: ws, tags: [], status: 'todo', context: ctx })
+    });
+    if (!res.ok) throw new Error('Failed to create');
+    const data = await res.json();
+    await loadItems();
+    // Open the new item in detail modal, auto-focus title for editing
+    openDetail(data.id);
+    // Auto-click the title to start editing immediately
+    setTimeout(() => {
+      const titleEl = document.querySelector('[data-edit="title"]');
+      if (titleEl) titleEl.click();
+    }, 250);
+  } catch (e) { alert('Failed to create item: ' + e.message); }
+}
+function closeForm() { document.getElementById('formBg').classList.remove('open'); }
+
+// ── CRUD ──
+async function loadItems() {
+  try {
+    const [dr, wr, ar] = await Promise.all([fetch('/api/dispatch'), fetch('/api/workstreams'), fetch('/api/areas')]);
+    items = await dr.json();
+    workstreams = await wr.json();
+    areasConfig = await ar.json();
+    render();
+  } catch (e) {
+    document.getElementById('kanban').innerHTML = `<div style="grid-column:1/-1;padding:60px;text-align:center;color:var(--rose)">Failed to load: ${esc(e.message)}</div>`;
+  }
 }
 
 async function saveItem() {
@@ -610,210 +1494,243 @@ async function saveItem() {
   const workstream = document.getElementById('f-workstream').value;
   const tags = document.getElementById('f-tags').value.split(',').map(t => t.trim()).filter(Boolean);
   const linkedSession = document.getElementById('f-session').value.trim() || null;
-
-  if (!title) return alert('Title is required');
+  if (!title) return;
 
   try {
-    if (editId) {
-      const res = await fetch('/api/dispatch/' + encodeURIComponent(editId), {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ title, description, priority, workstream, tags, linkedSession })
-      });
-      if (!res.ok) throw new Error('Failed to update');
-      items = await res.json();
-    } else {
-      const res = await fetch('/api/dispatch', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ title, description, priority, workstream, tags, linkedSession })
-      });
-      if (!res.ok) throw new Error('Failed to save');
-      items = await res.json();
-    }
+    const url = editId ? '/api/dispatch/' + encodeURIComponent(editId) : '/api/dispatch';
+    // Auto-tag new items with current mode context; MC workstream items are shared (null)
+    const context = editId ? undefined : (workstream === 'mission-control' ? null : currentMode());
+    const payload = { title, description, priority, workstream, tags, linkedSession };
+    if (context !== undefined) payload.context = context;
+    const res = await fetch(url, {
+      method: editId ? 'PUT' : 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+    if (!res.ok) throw new Error('Failed');
     closeForm();
-    render();
-  } catch (e) {
-    alert('Error: ' + e.message);
-  }
+    await loadItems();
+  } catch (e) { alert(e.message); }
+}
+
+async function updateItem(id, updates) {
+  try {
+    const res = await fetch('/api/dispatch/' + encodeURIComponent(id), {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(updates)
+    });
+    if (!res.ok) throw new Error('Failed');
+    await loadItems();
+  } catch (e) { alert(e.message); }
 }
 
 async function deleteItem(id) {
   if (!confirm('Delete this item?')) return;
   try {
     const res = await fetch('/api/dispatch/' + encodeURIComponent(id), { method: 'DELETE' });
-    if (!res.ok) throw new Error('Failed to delete');
-    items = await res.json();
-    render();
-  } catch (e) {
-    alert('Error: ' + e.message);
-  }
+    if (!res.ok) throw new Error('Failed');
+    await loadItems();
+  } catch (e) { alert(e.message); }
 }
 
-async function cycleStatus(id, newStatus) {
-  try {
-    const res = await fetch('/api/dispatch/' + encodeURIComponent(id), {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ status: newStatus })
-    });
-    if (!res.ok) throw new Error('Failed to update');
-    items = await res.json();
-    render();
-  } catch (e) {
-    alert('Error: ' + e.message);
-  }
-}
-
-// ── Workstream Management ────────────────────────────────────────────────────
-
-function openWsForm() {
-  renderWsList();
-  document.getElementById('wsOverlay').classList.add('visible');
-}
-
-function closeWsForm() {
-  document.getElementById('wsOverlay').classList.remove('visible');
-}
-
-function renderWsList() {
-  let h = '';
-  workstreams.forEach(ws => {
-    h += '<div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--sep)">'
-      + '<span class="ws-dot" style="background:' + esc(ws.color) + ';width:10px;height:10px;border-radius:50%;flex-shrink:0"></span>'
-      + '<span style="flex:1;font-size:14px;font-weight:500">' + esc(ws.name) + '</span>'
-      + '<button class="item-action act-delete" onclick="deleteWorkstream(\'' + esc(ws.id) + '\')" title="Delete" style="opacity:1">&#10005;</button>'
-      + '</div>';
-  });
-  if (!workstreams.length) h = '<div style="padding:12px 0;color:var(--text3);font-size:13px">No workstreams yet</div>';
-  document.getElementById('ws-list').innerHTML = h;
-}
-
-async function addWorkstream() {
-  const name = document.getElementById('ws-new-name').value.trim();
-  const color = document.getElementById('ws-new-color').value;
-  if (!name) return;
-  try {
-    const res = await fetch('/api/workstreams', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ name, color })
-    });
-    if (!res.ok) throw new Error('Failed to add');
-    workstreams = await res.json();
-    document.getElementById('ws-new-name').value = '';
-    renderWsList();
-    render();
-  } catch (e) { alert('Error: ' + e.message); }
-}
-
-async function deleteWorkstream(id) {
-  if (!confirm('Delete this workstream?')) return;
-  try {
-    const res = await fetch('/api/workstreams/' + encodeURIComponent(id), { method: 'DELETE' });
-    if (!res.ok) throw new Error('Failed to delete');
-    workstreams = await res.json();
-    renderWsList();
-    if (activeWsFilter === id) activeWsFilter = 'all';
-    render();
-  } catch (e) { alert('Error: ' + e.message); }
-}
-
-// ── Prompt Search ────────────────────────────────────────────────────────────
-
+// ── Search ──
 const searchInput = document.getElementById('searchInput');
-const searchResults = document.getElementById('searchResults');
-
+const searchDrop = document.getElementById('searchDrop');
 searchInput.addEventListener('input', function() {
   clearTimeout(searchTimeout);
   const q = this.value.trim();
-  if (q.length < 2) {
-    searchResults.classList.remove('visible');
-    return;
-  }
-  searchTimeout = setTimeout(() => searchPrompts(q), 250);
+  if (q.length < 2) { searchDrop.classList.remove('visible'); return; }
+  searchTimeout = setTimeout(() => doSearch(q), 250);
 });
-
 searchInput.addEventListener('focus', function() {
-  if (searchResults.children.length > 0 && this.value.trim().length >= 2) {
-    searchResults.classList.add('visible');
-  }
+  if (searchDrop.children.length && this.value.trim().length >= 2) searchDrop.classList.add('visible');
 });
-
 document.addEventListener('click', function(e) {
-  if (!e.target.closest('.search-wrap')) {
-    searchResults.classList.remove('visible');
-  }
+  if (!e.target.closest('.header-right') && !e.target.closest('.search-drop')) searchDrop.classList.remove('visible');
 });
 
-async function searchPrompts(q) {
+async function doSearch(q) {
   try {
-    const res = await fetch('/api/search/prompts?q=' + encodeURIComponent(q) + '&limit=20');
+    const res = await fetch('/api/search/prompts?q=' + encodeURIComponent(q) + '&limit=15');
     const data = await res.json();
     let h = '';
-    if (!data.results || !data.results.length) {
-      h = '<div class="sr-empty">No results for "' + esc(q) + '"</div>';
+    if (!data.results?.length) {
+      h = '<div class="sr-empty">No results</div>';
     } else {
       data.results.forEach(r => {
-        const highlighted = highlightMatch(r.prompt, q);
-        const time = new Date(r.ts).toLocaleString([], { month:'short', day:'numeric', hour:'2-digit', minute:'2-digit' });
-        h += '<a class="search-result" href="/session/' + esc(r.sessionId) + '">'
-          + '<div class="sr-top">'
-          + '<span class="sr-hex">' + esc(r.sessionId.slice(-6)) + '</span>'
-          + (r.mission ? '<span class="sr-mission">' + esc(r.mission) + '</span>' : '')
-          + '<span class="sr-time">' + esc(time) + '</span>'
-          + '</div>'
-          + '<div class="sr-text">' + highlighted + '</div>'
-          + '</a>';
+        const hl = hlMatch(r.prompt, q);
+        const time = new Date(r.ts).toLocaleString([], { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+        h += `<a class="sr" href="/session/${esc(r.sessionId)}"><div class="sr-top"><span class="sr-hex">${esc(r.sessionId.slice(-6))}</span>${r.mission ? '<span class="sr-mission">' + esc(r.mission) + '</span>' : ''}<span class="sr-time">${esc(time)}</span></div><div class="sr-text">${hl}</div></a>`;
       });
-      if (data.total > data.results.length) {
-        h += '<div class="sr-empty">' + (data.total - data.results.length) + ' more results</div>';
-      }
     }
-    searchResults.innerHTML = h;
-    searchResults.classList.add('visible');
-  } catch (e) {
-    searchResults.innerHTML = '<div class="sr-empty">Search error</div>';
-    searchResults.classList.add('visible');
+    searchDrop.innerHTML = h;
+    searchDrop.classList.add('visible');
+  } catch {
+    searchDrop.innerHTML = '<div class="sr-empty">Error</div>';
+    searchDrop.classList.add('visible');
   }
 }
-
-function highlightMatch(text, query) {
-  const escaped = esc(text.slice(0, 200));
-  const qEsc = esc(query);
-  const idx = escaped.toLowerCase().indexOf(qEsc.toLowerCase());
-  if (idx === -1) return escaped;
-  return escaped.slice(0, idx) + '<mark>' + escaped.slice(idx, idx + qEsc.length) + '</mark>' + escaped.slice(idx + qEsc.length);
+function hlMatch(t, q) {
+  const e = esc(t.slice(0, 200)), qe = esc(q);
+  const i = e.toLowerCase().indexOf(qe.toLowerCase());
+  if (i === -1) return e;
+  return e.slice(0, i) + '<mark>' + e.slice(i, i + qe.length) + '</mark>' + e.slice(i + qe.length);
 }
 
-// ── Close overlays ───────────────────────────────────────────────────────────
+// ── Modal dismiss ──
+document.getElementById('detailModal').addEventListener('click', function(e) { if (e.target === this) closeDetail(); });
+document.getElementById('detailClose').addEventListener('click', closeDetail);
+document.getElementById('formBg').addEventListener('click', function(e) { if (e.target === this) closeForm(); });
+document.getElementById('saveBtn').addEventListener('click', saveItem);
+document.getElementById('cancelBtn').addEventListener('click', closeForm);
 
-document.getElementById('addOverlay').addEventListener('click', function(e) {
-  if (e.target === this) closeForm();
-});
-document.getElementById('wsOverlay').addEventListener('click', function(e) {
-  if (e.target === this) closeWsForm();
-});
+// ── Keyboard Shortcuts ──
 document.addEventListener('keydown', function(e) {
-  if (e.key === 'Escape') { closeForm(); closeWsForm(); searchResults.classList.remove('visible'); }
+  if (e.key === 'Escape') { closeDetail(); closeForm(); searchDrop.classList.remove('visible'); }
+  if (e.target.closest('input,textarea,select')) return;
+  if (e.key === '/') { e.preventDefault(); searchInput.focus(); }
+  if (e.key === 'n') { e.preventDefault(); openForm(); }
 });
 
-// ── Initial Load ─────────────────────────────────────────────────────────────
+// ── Mode toggle listener — re-render when mode changes ──
+window.addEventListener('modechange', function() {
+  activeWs = 'all'; activeArea = 'all'; // reset filters on mode switch
+  render();
+});
 
-async function load() {
-  try {
-    const [dispatchRes, wsRes] = await Promise.all([
-      fetch('/api/dispatch'),
-      fetch('/api/workstreams'),
-    ]);
-    items = await dispatchRes.json();
-    workstreams = await wsRes.json();
-    render();
-  } catch (e) {
-    document.getElementById('main').innerHTML = '<div style="padding:60px;text-align:center;color:#ef4444">Failed to load: ' + e.message + '</div>';
-  }
+// ── Workstream Settings Panel ──
+const wsPanelBg = document.getElementById('wsPanelBg');
+const wsPanelBody = document.getElementById('wsPanelBody');
+document.getElementById('wsSettingsBtn').addEventListener('click', openWsPanel);
+document.getElementById('wsPanelClose').addEventListener('click', closeWsPanel);
+wsPanelBg.addEventListener('click', function(e) { if (e.target === this) closeWsPanel(); });
+
+function openWsPanel() {
+  renderWsPanel();
+  wsPanelBg.classList.add('open');
 }
-load();
+function closeWsPanel() {
+  wsPanelBg.classList.remove('open');
+}
+
+const CTX_CYCLE = [null, 'home', 'work'];
+const CTX_LABELS = { null: 'Shared', home: 'Home', work: 'Work' };
+const CTX_CLASS = { null: 'ws-ctx-shared', home: 'ws-ctx-home', work: 'ws-ctx-work' };
+
+function renderWsPanel() {
+  let h = '';
+  const sorted = [...workstreams].sort((a, b) => (a.order || 0) - (b.order || 0));
+
+  // Group by context
+  const shared = sorted.filter(ws => ws.context === null || ws.context === undefined);
+  const home = sorted.filter(ws => ws.context === 'home');
+  const work = sorted.filter(ws => ws.context === 'work');
+
+  function renderGroup(label, list) {
+    if (list.length === 0 && label !== 'Shared') return '';
+    let g = `<div class="ws-section-label">${label}</div>`;
+    list.forEach(ws => {
+      const ctx = ws.context === undefined ? null : ws.context;
+      const ctxLabel = CTX_LABELS[ctx] || 'Shared';
+      const ctxCls = CTX_CLASS[ctx] || 'ws-ctx-shared';
+      g += `<div class="ws-row" data-ws-id="${esc(ws.id)}">`;
+      g += `<div class="ws-color-swatch" style="background:${esc(ws.color)}"><input type="color" value="${esc(ws.color)}" data-ws-color="${esc(ws.id)}"></div>`;
+      g += `<input class="ws-name-input" type="text" value="${esc(ws.name)}" data-ws-name="${esc(ws.id)}" spellcheck="false">`;
+      g += `<span class="ws-ctx-badge ${ctxCls}" data-ws-ctx="${esc(ws.id)}" title="Click to cycle: Shared / Home / Work">${ctxLabel}</span>`;
+      g += `<button class="ws-delete-btn" data-ws-del="${esc(ws.id)}" title="Delete">&times;</button>`;
+      g += `</div>`;
+    });
+    return g;
+  }
+
+  h += renderGroup('Shared (visible everywhere)', shared);
+  h += renderGroup('Home', home);
+  h += renderGroup('Work', work);
+  h += `<div class="ws-add-row" id="wsAddBtn">+ Add workstream</div>`;
+  wsPanelBody.innerHTML = h;
+
+  // Bind events
+  wsPanelBody.querySelectorAll('[data-ws-color]').forEach(el => {
+    el.addEventListener('input', async function() {
+      const id = this.dataset.wsColor;
+      this.parentElement.style.background = this.value;
+      await wsUpdate(id, { color: this.value });
+    });
+  });
+  wsPanelBody.querySelectorAll('[data-ws-name]').forEach(el => {
+    let timeout;
+    el.addEventListener('input', function() {
+      clearTimeout(timeout);
+      const id = this.dataset.wsName;
+      const val = this.value.trim();
+      timeout = setTimeout(() => { if (val) wsUpdate(id, { name: val }); }, 400);
+    });
+  });
+  wsPanelBody.querySelectorAll('[data-ws-ctx]').forEach(el => {
+    el.addEventListener('click', async function() {
+      const id = this.dataset.wsCtx;
+      const ws = workstreams.find(w => w.id === id);
+      if (!ws) return;
+      const cur = ws.context === undefined ? null : ws.context;
+      const nextIdx = (CTX_CYCLE.indexOf(cur) + 1) % CTX_CYCLE.length;
+      const next = CTX_CYCLE[nextIdx];
+      await wsUpdate(id, { context: next });
+    });
+  });
+  wsPanelBody.querySelectorAll('[data-ws-del]').forEach(el => {
+    el.addEventListener('click', async function() {
+      const id = this.dataset.wsDel;
+      const ws = workstreams.find(w => w.id === id);
+      if (!ws || !confirm('Delete workstream "' + ws.name + '"?')) return;
+      await wsDelete(id);
+    });
+  });
+  document.getElementById('wsAddBtn').addEventListener('click', async function() {
+    const name = prompt('New workstream name:');
+    if (!name || !name.trim()) return;
+    const color = '#' + Math.floor(Math.random()*0xffffff).toString(16).padStart(6,'0');
+    await wsAdd(name.trim(), color, currentMode() === 'work' ? 'work' : null);
+  });
+}
+
+async function wsUpdate(id, updates) {
+  try {
+    const res = await fetch('/api/workstreams/' + encodeURIComponent(id), {
+      method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(updates)
+    });
+    if (!res.ok) throw new Error('Failed');
+    workstreams = await res.json();
+    renderWsPanel();
+    render();
+  } catch (e) { alert(e.message); }
+}
+
+async function wsDelete(id) {
+  try {
+    const res = await fetch('/api/workstreams/' + encodeURIComponent(id), { method: 'DELETE' });
+    if (!res.ok) throw new Error('Failed');
+    workstreams = await res.json();
+    renderWsPanel();
+    render();
+  } catch (e) { alert(e.message); }
+}
+
+async function wsAdd(name, color, context) {
+  try {
+    const res = await fetch('/api/workstreams', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name, color, context })
+    });
+    if (!res.ok) throw new Error('Failed');
+    workstreams = await res.json();
+    renderWsPanel();
+    render();
+  } catch (e) { alert(e.message); }
+}
+
+// ── Init ──
+loadItems();
 </script>
 </body>
 </html>

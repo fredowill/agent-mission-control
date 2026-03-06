@@ -1,0 +1,58 @@
+[
+  {
+    "id": "mission-control",
+    "name": "Mission Control",
+    "color": "#8b5cf6",
+    "order": 0,
+    "context": null,
+    "created": "2026-03-03"
+  },
+  {
+    "id": "portfolio-site",
+    "name": "Portfolio Site",
+    "color": "#3b82f6",
+    "order": 1,
+    "context": "home",
+    "created": "2026-03-03"
+  },
+  {
+    "id": "personal",
+    "name": "Personal",
+    "color": "#22c55e",
+    "order": 2,
+    "context": "home",
+    "created": "2026-03-03"
+  },
+  {
+    "id": "aqg",
+    "name": "AQG",
+    "color": "#f59e0b",
+    "order": 10,
+    "context": "work",
+    "created": "2026-03-06"
+  },
+  {
+    "id": "cares",
+    "name": "CARES",
+    "color": "#14b8a6",
+    "order": 11,
+    "context": "work",
+    "created": "2026-03-06"
+  },
+  {
+    "id": "matching",
+    "name": "Matching",
+    "color": "#f43f5e",
+    "order": 12,
+    "context": "work",
+    "created": "2026-03-06"
+  },
+  {
+    "id": "api",
+    "name": "API",
+    "color": "#06b6d4",
+    "order": 13,
+    "context": "work",
+    "created": "2026-03-06"
+  }
+]

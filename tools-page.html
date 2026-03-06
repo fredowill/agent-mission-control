@@ -18,6 +18,7 @@
     --purple:#8b5cf6; --purple-bg:rgba(139,92,246,0.08);
     --rose:#ef4444; --rose-bg:rgba(239,68,68,0.06);
     --gray:#9ca3af;
+    --cyan:#06b6d4; --cyan-bg:rgba(6,182,212,0.08);
   }
   body { background:var(--bg-page); color:var(--text); font-family:'DM Sans',-apple-system,system-ui,sans-serif; min-height:100vh; -webkit-font-smoothing:antialiased }
 
@@ -68,7 +69,7 @@
   .cat-pill.active .cat-count { background:rgba(139,92,246,0.15); color:#7c3aed }
 
   /* Category sections */
-  .cat-section { margin-bottom:48px }
+  .cat-section { margin-bottom:40px }
   .cat-section.hidden { display:none }
   .cat-header {
     display:flex; align-items:center; gap:10px;
@@ -80,24 +81,13 @@
     display:flex; align-items:center; justify-content:center;
     font-size:15px; flex-shrink:0;
   }
-  .cat-title {
-    font-family:'Plus Jakarta Sans',sans-serif;
-    font-size:17px; font-weight:700; letter-spacing:-0.02em; color:var(--text);
-  }
+  .cat-title { font-family:'Plus Jakarta Sans',sans-serif; font-size:17px; font-weight:700; letter-spacing:-0.02em; color:var(--text) }
   .cat-subtitle { font-size:12px; color:var(--text3); margin-left:auto; font-weight:500 }
 
-  /* Sub-labels for agents vs commands within a section */
-  .sub-label {
-    font-family:'DM Mono',monospace; font-size:10px; font-weight:600;
-    text-transform:uppercase; letter-spacing:0.06em;
-    color:var(--text3); margin:16px 0 8px; padding-left:2px;
-  }
-  .sub-label:first-child { margin-top:0 }
-
   /* Agent card grid */
-  .agent-grid {
-    display:grid; grid-template-columns:repeat(auto-fill, minmax(240px, 1fr)); gap:10px;
-  }
+  .agent-list { display:grid; grid-template-columns:repeat(auto-fill, minmax(220px, 1fr)); gap:10px }
+
+  /* Agent card */
   .agent-row {
     background:var(--bg); border:1px solid var(--sep); border-radius:14px;
     padding:16px; position:relative;
@@ -131,44 +121,50 @@
   .perm-badge.ro { background:var(--surface); color:var(--text3) }
 
   .agent-when {
-    font-size:12px; color:var(--text2); line-height:1.4; flex:1;
-    display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden;
+    font-size:12px; color:var(--text2); line-height:1.4;
+    flex:1;
+    display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical;
+    overflow:hidden;
   }
-
-  .agent-tools { display:flex; flex-wrap:wrap; gap:3px; margin-top:10px; padding-top:8px; border-top:1px solid var(--sep) }
-  .tool-pill { font-family:'DM Mono',monospace; font-size:9px; font-weight:500; padding:1px 6px; border-radius:100px; background:var(--surface); color:var(--text3) }
+  /* Tools row */
+  .agent-tools {
+    display:flex; flex-wrap:wrap; gap:3px;
+    margin-top:10px; padding-top:8px;
+    border-top:1px solid var(--sep);
+  }
+  .tool-pill {
+    font-family:'DM Mono',monospace; font-size:9px; font-weight:500;
+    padding:1px 6px; border-radius:100px;
+    background:var(--surface); color:var(--text3);
+  }
   .tool-pill.t-edit { background:var(--green-bg); color:#166534 }
   .tool-pill.t-bash { background:var(--amber-bg); color:#92400e }
   .tool-pill.t-web { background:var(--blue-bg); color:#1d4ed8 }
 
-  /* Command chips — compact inline row, visually distinct from agent cards */
-  .cmd-row {
-    display:flex; flex-wrap:wrap; gap:6px;
+  /* Command cards */
+  .cmd-card {
+    background:var(--bg); border:1px solid var(--sep); border-radius:14px;
+    padding:16px; position:relative;
+    transition:transform .15s ease, box-shadow .15s ease;
+    overflow:hidden; display:flex; flex-direction:column;
   }
-  .cmd-chip {
-    display:inline-flex; align-items:center; gap:6px;
-    padding:6px 12px; border-radius:8px;
-    background:var(--bg); border:1px solid var(--sep);
-    transition:all .15s; cursor:default;
-    border-top:2px solid var(--cmd-accent, var(--gray));
+  .cmd-card:hover { transform:translateY(-2px); box-shadow:0 6px 20px rgba(0,0,0,0.05) }
+  .cmd-card::before {
+    content:''; position:absolute; left:0; top:0; bottom:0; width:3px;
+    background:var(--purple); border-radius:3px 0 0 3px; opacity:.5;
   }
-  .cmd-chip:hover {
-    border-color:var(--cmd-accent, var(--text3));
-    box-shadow:0 2px 8px rgba(0,0,0,0.04);
-  }
-  .cmd-chip-name {
-    font-family:'DM Mono',monospace; font-size:12px; font-weight:600;
-    color:var(--cmd-accent, var(--text));
-  }
-  .cmd-chip-desc {
-    font-size:11px; color:var(--text3); max-width:220px;
-    white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
-  }
-  .cmd-chip-sep {
-    width:1px; height:12px; background:var(--sep);
+  .cmd-card:hover::before { opacity:1 }
+  .cmd-card-name { font-family:'DM Mono',monospace; font-size:14px; font-weight:600; color:var(--purple); margin-bottom:6px }
+  .cmd-card-desc { font-size:12px; color:var(--text2); line-height:1.4; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; flex:1 }
+  .cmd-card-type {
+    font-family:'DM Mono',monospace; font-size:9px; font-weight:500;
+    padding:1px 6px; border-radius:100px;
+    background:var(--purple-bg); color:#6d28d9;
+    text-transform:uppercase; letter-spacing:0.03em;
+    align-self:flex-start; margin-top:10px;
   }
 
-  /* Secondary sections (builtins) */
+  /* Collapsible sections */
   .secondary-section { margin-top:48px }
   .collapsible-header {
     display:flex; align-items:center; gap:12px;
@@ -190,6 +186,141 @@
   .builtin-desc { font-size:13px; color:var(--text2); flex:1 }
   .builtin-model { font-family:'DM Mono',monospace; font-size:10px; padding:2px 8px; border-radius:100px; background:var(--surface); color:var(--text3) }
 
+  /* MCP Server cards */
+  .mcp-grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(280px, 1fr)); gap:10px }
+  .mcp-card {
+    background:var(--bg); border:1px solid var(--sep); border-radius:14px;
+    padding:16px; position:relative; cursor:pointer;
+    transition:transform .15s ease, box-shadow .15s ease;
+    overflow:hidden;
+  }
+  .mcp-card:hover { transform:translateY(-2px); box-shadow:0 6px 20px rgba(0,0,0,0.05) }
+  .mcp-card::before {
+    content:''; position:absolute; left:0; top:0; bottom:0; width:3px;
+    background:var(--cyan); border-radius:3px 0 0 3px; opacity:.5;
+  }
+  .mcp-card:hover::before { opacity:1 }
+  .mcp-card-top { display:flex; align-items:center; gap:8px; margin-bottom:6px }
+  .mcp-card-name {
+    font-family:'Plus Jakarta Sans',sans-serif; font-size:15px; font-weight:700;
+    letter-spacing:-0.01em; color:var(--text);
+  }
+  .mcp-card-badge {
+    font-family:'DM Mono',monospace; font-size:9px; font-weight:600;
+    padding:2px 8px; border-radius:100px;
+    background:var(--cyan-bg); color:#0e7490;
+    text-transform:uppercase; letter-spacing:0.03em;
+  }
+  .mcp-card-scope {
+    font-size:9px; font-weight:600; padding:1px 6px; border-radius:100px;
+    text-transform:uppercase; letter-spacing:0.03em;
+    background:var(--surface); color:var(--text3);
+  }
+  .mcp-card-desc { font-size:12px; color:var(--text2); line-height:1.4; margin-bottom:8px }
+  .mcp-card-cmd {
+    font-family:'DM Mono',monospace; font-size:10px; color:var(--text3);
+    background:var(--surface); padding:4px 8px; border-radius:6px;
+    overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
+  }
+
+  /* Sub-labels (AGENTS, SKILLS) */
+  .sub-label {
+    font-size:11px; font-weight:600; text-transform:uppercase;
+    letter-spacing:0.08em; color:var(--text3); margin-bottom:10px;
+  }
+
+  /* Skill pill row */
+  .skills-pill-row {
+    display:flex; flex-wrap:wrap; gap:6px;
+  }
+  .skill-pill-card {
+    display:flex; align-items:center; gap:6px;
+    background:var(--bg); border:1px solid var(--sep); border-radius:8px;
+    padding:5px 10px; cursor:pointer;
+    transition:all .12s;
+  }
+  .skill-pill-card:hover { background:#f0f0f0; border-color:var(--text3); transform:translateY(-1px) }
+  .skill-pill-name {
+    font-family:'DM Mono',monospace; font-size:11px; font-weight:600;
+    white-space:nowrap;
+  }
+  .skill-pill-desc {
+    font-size:11px; color:var(--text3);
+    white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:180px;
+  }
+
+  /* Detail modal overlay */
+  .detail-overlay {
+    display:none; position:fixed; inset:0; z-index:100;
+    background:rgba(0,0,0,0.4); backdrop-filter:blur(4px);
+    align-items:center; justify-content:center;
+  }
+  .detail-overlay.open { display:flex }
+  .detail-panel {
+    background:var(--bg); border-radius:16px; width:min(680px,90vw);
+    max-height:70vh; overflow-y:auto; padding:32px;
+    box-shadow:0 20px 60px rgba(0,0,0,0.15);
+    position:relative;
+    margin:48px 0;
+  }
+  .detail-close {
+    position:absolute; top:16px; right:16px;
+    width:28px; height:28px; border-radius:8px;
+    border:none; background:var(--surface); color:var(--text3);
+    font-size:14px; cursor:pointer; display:flex; align-items:center; justify-content:center;
+    transition:all .12s;
+  }
+  .detail-close:hover { background:var(--surface2); color:var(--text) }
+  .detail-title {
+    font-family:'Plus Jakarta Sans',sans-serif; font-size:22px; font-weight:700;
+    letter-spacing:-0.03em; margin-bottom:6px;
+    display:flex; align-items:center; gap:10px;
+  }
+  .detail-type-badge {
+    font-family:'DM Mono',monospace; font-size:10px; font-weight:700;
+    padding:3px 10px; border-radius:100px;
+    text-transform:uppercase; letter-spacing:0.05em;
+    flex-shrink:0;
+  }
+  .detail-type-badge.skill { background:var(--green-bg); color:#166534 }
+  .detail-type-badge.agent { background:var(--purple-bg); color:#6d28d9 }
+  .detail-source {
+    font-family:'DM Mono',monospace; font-size:11px; color:var(--text3);
+    margin-bottom:16px;
+  }
+  .detail-body {
+    font-size:14px; color:var(--text2); line-height:1.7;
+  }
+  .detail-body h1,.detail-body h2,.detail-body h3 {
+    font-family:'Plus Jakarta Sans',sans-serif; color:var(--text);
+    margin:20px 0 8px; letter-spacing:-0.02em;
+  }
+  .detail-body h1 { font-size:20px; font-weight:700 }
+  .detail-body h2 { font-size:16px; font-weight:700 }
+  .detail-body h3 { font-size:14px; font-weight:600 }
+  .detail-body p { margin:6px 0 }
+  .detail-body ul,.detail-body ol { padding-left:20px; margin:6px 0 }
+  .detail-body li { margin:3px 0 }
+  .detail-body code {
+    font-family:'DM Mono',monospace; font-size:12px;
+    background:var(--surface); padding:1px 5px; border-radius:4px;
+  }
+  .detail-body pre {
+    background:var(--surface); border-radius:8px; padding:12px 16px;
+    overflow-x:auto; margin:8px 0; font-family:'DM Mono',monospace; font-size:12px;
+    line-height:1.5;
+  }
+  .detail-body pre code { background:none; padding:0 }
+  .detail-body blockquote {
+    border-left:3px solid var(--purple); padding-left:12px; margin:8px 0;
+    color:var(--text3); font-style:italic;
+  }
+  .detail-body strong { color:var(--text); font-weight:600 }
+  .detail-body hr { border:none; border-top:1px solid var(--sep); margin:16px 0 }
+  .detail-body table { border-collapse:collapse; width:100%; margin:8px 0 }
+  .detail-body th,.detail-body td { border:1px solid var(--sep); padding:6px 10px; font-size:12px; text-align:left }
+  .detail-body th { background:var(--surface); font-weight:600 }
+
   /* Responsive */
   @media (max-width:800px) {
     .shell { padding:20px 16px }
@@ -197,9 +328,9 @@
     .summary-strip { flex-wrap:wrap; gap:12px 20px }
     .cat-nav { gap:6px }
     .cat-pill { font-size:12px; padding:5px 12px }
-    .agent-grid { grid-template-columns:repeat(auto-fill, minmax(180px, 1fr)); gap:8px }
+    .agent-list { grid-template-columns:repeat(auto-fill, minmax(160px, 1fr)); gap:8px }
     .agent-row { padding:12px }
-    .cmd-chip-desc { max-width:140px }
+    .skills-grid { grid-template-columns:1fr }
   }
 </style>
 </head>
@@ -214,6 +345,8 @@
     <a href="/" class="nav-link">Dashboard</a>
     <a href="/dispatch" class="nav-link">Dispatch</a>
     <a href="/findings" class="nav-link">Findings</a>
+    <a href="/workflow" class="nav-link">Workflow</a>
+    <a href="/postmortems" class="nav-link">Post-Mortems</a>
     <a href="/tools" class="nav-link active">Toolbox</a>
     <a href="/logic" class="nav-link">Logic</a>
     <a href="/radar" class="nav-link">Radar</a>
@@ -223,87 +356,143 @@
 
 <div class="shell">
   <h1 class="page-title">Toolbox</h1>
-  <p class="page-sub">Your agent team, commands, and built-in tools</p>
+  <p class="page-sub">Your agent team, skills, commands, and built-in tools</p>
   <div id="main"><div style="padding:60px;text-align:center;color:#999">Loading...</div></div>
 </div>
 
+<!-- Detail modal -->
+<div class="detail-overlay" id="detail-overlay" onclick="if(event.target===this)closeDetail()">
+  <div class="detail-panel">
+    <button class="detail-close" onclick="closeDetail()">&times;</button>
+    <div class="detail-title" id="detail-title"></div>
+    <div class="detail-source" id="detail-source"></div>
+    <div class="detail-body" id="detail-body"></div>
+  </div>
+</div>
+
 <script>
-// ── Unified categories: agents + commands share sections ───────────────────
+// ── Category definitions ────────────────────────────────────────────────────
 const CATEGORIES = {
   planning: {
     label: 'Planning & Architecture',
     subtitle: 'Design, plan, and make decisions',
-    icon: '\u25C9', color: 'var(--purple)', colorBg: 'var(--purple-bg)',
-    agents: ['planner', 'architect', 'orchestrator', 'agent-expert', 'configurator'],
-    commands: ['plan', 'orchestrate'],
+    icon: '\u25C9',
+    color: 'var(--purple)',
+    colorBg: 'var(--purple-bg)',
+    agents: ['orchestrator', 'agent-expert', 'configurator', 'planner', 'architect'],
   },
   quality: {
     label: 'Quality & Security',
     subtitle: 'Review, audit, test, and secure',
-    icon: '\u25A0', color: 'var(--rose)', colorBg: 'var(--rose-bg)',
-    agents: ['code-reviewer', 'security-reviewer', 'tdd-guide', 'e2e-runner', 'critic', 'guard', 'qa'],
-    commands: ['code-review', 'verify', 'test-coverage', 'refactor-clean', 'tdd', 'e2e'],
+    icon: '\u25A0',
+    color: 'var(--rose)',
+    colorBg: 'var(--rose-bg)',
+    agents: ['critic', 'guard', 'qa', 'code-reviewer', 'security-reviewer', 'tdd-guide', 'e2e-runner'],
   },
   development: {
     label: 'Development & Build',
     subtitle: 'Build, fix, refactor, and document',
-    icon: '\u25B6', color: 'var(--green)', colorBg: 'var(--green-bg)',
-    agents: ['build-error-resolver', 'refactor-cleaner', 'doc-updater', 'design', 'perf', 'a11y'],
-    commands: ['build-fix', 'checkpoint', 'pm2', 'update-codemaps', 'update-docs'],
+    icon: '\u25B6',
+    color: 'var(--green)',
+    colorBg: 'var(--green-bg)',
+    agents: ['a11y', 'design', 'perf', 'build-error-resolver', 'refactor-cleaner', 'doc-updater'],
   },
-  language: {
+  research: {
+    label: 'Learning & Skills',
+    subtitle: 'Extract patterns, analyze interfaces',
+    icon: '\u25CB',
+    color: 'var(--blue)',
+    colorBg: 'var(--blue-bg)',
+    agents: ['competitive-analyst', 'scientist', 'scout'],
+  },
+  languages: {
     label: 'Language Specialists',
     subtitle: 'Go, Python, SQL, and more',
-    icon: '\u25B7', color: 'var(--amber)', colorBg: 'var(--amber-bg)',
+    icon: '\u25B7',
+    color: 'var(--amber)',
+    colorBg: 'var(--amber-bg)',
     agents: ['go-build-resolver', 'go-reviewer', 'python-reviewer', 'database-reviewer'],
-    commands: ['go-build', 'go-review', 'go-test', 'python-review'],
-  },
-  multi: {
-    label: 'Multi-Agent Workflows',
-    subtitle: 'Coordinate multiple agents in parallel',
-    icon: '\u229A', color: 'var(--blue)', colorBg: 'var(--blue-bg)',
-    agents: [],
-    commands: ['multi-backend', 'multi-frontend', 'multi-execute', 'multi-plan', 'multi-workflow'],
-  },
-  learning: {
-    label: 'Learning & Skills',
-    subtitle: 'Extract patterns, evolve instincts',
-    icon: '\u2605', color: '#8b5cf6', colorBg: 'rgba(139,92,246,0.08)',
-    agents: ['scout', 'scientist', 'competitive-analyst'],
-    commands: ['learn', 'skill-create', 'evolve', 'instinct-status', 'instinct-export', 'instinct-import', 'sessions'],
   },
   utilities: {
-    label: 'Utilities',
+    label: 'Utilities & Scraping',
     subtitle: 'Misc tools and helpers',
-    icon: '\u2026', color: 'var(--gray)', colorBg: 'var(--surface)',
-    agents: [],
-    commands: ['scrape-cares', 'dissect-video', 'eval', 'setup-pm'],
+    icon: '\u2699',
+    color: 'var(--gray)',
+    colorBg: 'var(--surface)',
+    agents: ['skills-guide'],
   },
 };
 
-// Build reverse lookups
+// ── Skill-to-CATEGORY mapping (skills live alongside agents, not inside them) ──
+const SKILL_CAT_MAP = {
+  // Design skills → development
+  'impeccable-adapt': 'development', 'impeccable-animate': 'development', 'impeccable-audit': 'development',
+  'impeccable-bolder': 'development', 'impeccable-clarify': 'development', 'impeccable-colorize': 'development',
+  'impeccable-critique': 'development', 'impeccable-delight': 'development', 'impeccable-distill': 'development',
+  'impeccable-extract': 'development', 'impeccable-frontend-design': 'development', 'impeccable-harden': 'development',
+  'impeccable-normalize': 'development', 'impeccable-onboard': 'development', 'impeccable-optimize': 'development',
+  'impeccable-polish': 'development', 'impeccable-quieter': 'development', 'impeccable-teach-impeccable': 'development',
+  'frontend-design': 'development', 'enhance-prompt': 'development', 'design-md': 'development',
+  // Planning skills → planning
+  'brainstorming': 'planning', 'writing-plans': 'planning', 'executing-plans': 'planning',
+  'dispatching-parallel-agents': 'planning', 'subagent-driven-development': 'planning',
+  'agent-development': 'planning', 'skill-creator': 'planning', 'writing-hookify-rules': 'planning',
+  'agent-skill-creator': 'planning', 'skill-builder': 'planning',
+  // Quality skills → quality
+  'test-driven-development': 'quality', 'verification-before-completion': 'quality',
+  // Research skills → research
+  'systematic-debugging': 'research',
+  // Work: language/framework skills → languages
+  'golang-patterns': 'languages', 'golang-testing': 'languages',
+  'python-patterns': 'languages', 'python-testing': 'languages',
+  'django-patterns': 'languages', 'django-security': 'languages', 'django-tdd': 'languages', 'django-verification': 'languages',
+  'springboot-patterns': 'languages', 'springboot-security': 'languages', 'springboot-tdd': 'languages', 'springboot-verification': 'languages',
+  'java-coding-standards': 'languages', 'jpa-patterns': 'languages', 'postgres-patterns': 'languages',
+  'clickhouse-io': 'languages',
+  // Work: development skills → development
+  'backend-patterns': 'development', 'frontend-patterns': 'development', 'coding-standards': 'development',
+  'project-guidelines-example': 'development', 'configure-ecc': 'development',
+  // Work: quality skills → quality
+  'tdd-workflow': 'quality', 'verification-loop': 'quality', 'eval-harness': 'quality', 'security-review': 'quality',
+  // Work: research/learning skills → research
+  'continuous-learning': 'research', 'continuous-learning-v2': 'research',
+  'iterative-retrieval': 'research', 'strategic-compact': 'research',
+};
+
+// ── Command-to-category mapping ──
+const CMD_CAT_MAP = {
+  // Planning
+  'plan': 'planning', 'orchestrate': 'planning',
+  // Quality
+  'code-review': 'quality', 'verify': 'quality', 'test-coverage': 'quality',
+  'refactor-clean': 'quality', 'tdd': 'quality', 'e2e': 'quality', 'eval': 'quality',
+  // Development
+  'build-fix': 'development', 'checkpoint': 'development', 'update-codemaps': 'development',
+  'update-docs': 'development', 'pm2': 'development', 'setup-pm': 'development',
+  'dissect-video': 'development', 'dissect-update': 'development',
+  // Languages
+  'go-build': 'languages', 'go-review': 'languages', 'go-test': 'languages',
+  'python-review': 'languages', 'scrape-cares': 'languages',
+  // Learning
+  'learn': 'research', 'skill-create': 'research', 'evolve': 'research',
+  'instinct-status': 'research', 'instinct-export': 'research', 'instinct-import': 'research',
+  'sessions': 'research',
+  // Multi-agent
+  'multi-backend': 'planning', 'multi-frontend': 'planning',
+  'multi-execute': 'planning', 'multi-plan': 'planning', 'multi-workflow': 'planning',
+  // Home commands
+  'build': 'development', 'localtest': 'quality',
+  'deep-scrape': 'utilities', 'flight-search': 'utilities',
+};
+
+// Reverse lookup
 const AGENT_CAT = {};
-const CMD_CAT = {};
 for (const [key, cat] of Object.entries(CATEGORIES)) {
-  (cat.agents || []).forEach(a => AGENT_CAT[a] = key);
-  (cat.commands || []).forEach(c => CMD_CAT[c] = key);
+  cat.agents.forEach(a => AGENT_CAT[a] = key);
 }
 
 // Agent descriptions
 const AGENT_WHEN = {
-  planner: 'Complex features, refactoring \u2014 creates step-by-step implementation plans.',
-  architect: 'System design, scalability decisions, and technical architecture.',
-  'code-reviewer': 'Immediately after writing or modifying code. Reviews quality and maintainability.',
-  'security-reviewer': 'After code handling user input, auth, APIs, or sensitive data.',
-  'build-error-resolver': 'When build fails or type errors occur. Minimal fixes to get green.',
-  'refactor-cleaner': 'Dead code cleanup, removing duplicates, consolidating modules.',
-  'doc-updater': 'Updating codemaps, READMEs, and project documentation.',
-  'tdd-guide': 'New features and bug fixes \u2014 enforces write-tests-first methodology.',
-  'e2e-runner': 'Critical user flows \u2014 generates and runs Playwright E2E tests.',
-  'go-build-resolver': 'Go build errors, go vet issues, and linter warnings.',
-  'go-reviewer': 'Idiomatic Go patterns, concurrency safety, error handling.',
-  'python-reviewer': 'PEP 8 compliance, Pythonic idioms, type hints, and security.',
-  'database-reviewer': 'SQL optimization, schema design, security, and Supabase patterns.',
   orchestrator: 'Break down complex multi-step tasks across several agents.',
   'agent-expert': 'Build, improve, or debug agent configurations and prompts.',
   configurator: 'Design the optimal agent team for a new task or workflow.',
@@ -316,6 +505,30 @@ const AGENT_WHEN = {
   scout: 'Explore the codebase, trace data flow, investigate bugs fast.',
   scientist: 'Evidence-based research from academic and technical sources.',
   'competitive-analyst': 'Market research, competitor analysis, and benchmarking.',
+  'skills-guide': 'Interactive guide for building custom Claude Skills.',
+};
+
+// Accent colors — each agent matches its CATEGORY color
+const AGENT_ACCENTS = {
+  orchestrator: 'var(--purple)', 'agent-expert': 'var(--purple)', configurator: 'var(--purple)',
+  critic: 'var(--rose)', guard: 'var(--rose)', qa: 'var(--rose)',
+  design: 'var(--green)', perf: 'var(--green)', a11y: 'var(--green)',
+  scout: 'var(--blue)', scientist: 'var(--blue)', 'competitive-analyst': 'var(--blue)',
+  'skills-guide': 'var(--amber)',
+};
+
+// ── MCP Server metadata ──────────────────────────────────────────────────────
+const MCP_META = {
+  'context7': {
+    desc: 'Fetches real-time, version-specific library documentation. Prevents hallucinated APIs by injecting current docs into context.',
+    tools: ['resolve-library-id', 'query-docs'],
+    detail: 'Developed by Upstash. Supports 1000+ libraries including React, Next.js, Three.js, GSAP, Tailwind, and more. Add "use context7" to prompts or it activates automatically when Claude needs docs.\n\nTools:\n- resolve-library-id: Converts library name to Context7 ID\n- query-docs: Fetches current documentation for a library\n\nRate limits: 1000 req/month free tier, 60/hour\nInstall: claude mcp add context7 -- npx -y @upstash/context7-mcp@latest',
+  },
+  'cclsp': {
+    desc: 'Language Server Protocol bridge — gives Claude Go-to-Definition, Find References, Rename Symbol, and Diagnostics.',
+    tools: ['find_definition', 'find_references', 'rename_symbol', 'get_diagnostics'],
+    detail: 'Exposes LSP capabilities as MCP tools. Supports TypeScript/JavaScript, Python, Go, Rust, and more. Handles Claude\'s off-by-one line counting with intelligent position fuzzing.\n\nTools:\n- find_definition: Locate where symbols are defined\n- find_references: Find all usages across codebase\n- rename_symbol: Refactor identifiers safely (with dry-run)\n- get_diagnostics: Access code analysis and error reporting\n\nRequires language servers installed (typescript-language-server for TS/JS).\nInstall: npx cclsp@latest setup',
+  },
 };
 
 function esc(s) {
@@ -329,8 +542,15 @@ function toolPillClass(t) {
   return 'tool-pill';
 }
 
-function renderAgentCard(a, catColor) {
-  const accent = catColor || 'var(--gray)';
+function shortSkillName(source) {
+  if (source.startsWith('impeccable-')) return '/' + source.replace('impeccable-', '');
+  return source;
+}
+
+function renderAgentRow(a) {
+  // Derive accent from category, fall back to AGENT_ACCENTS, then gray
+  const catKey = AGENT_CAT[a.name];
+  const accent = catKey ? CATEGORIES[catKey].color : (AGENT_ACCENTS[a.name] || 'var(--gray)');
   const when = AGENT_WHEN[a.name] || a.description || '';
   const permClass = a.canEdit ? 'perm-badge rw' : 'perm-badge ro';
   const permLabel = a.canEdit ? 'read/write' : 'read-only';
@@ -340,7 +560,7 @@ function renderAgentCard(a, catColor) {
     toolsHtml += '<span class="' + toolPillClass(t) + '">' + esc(t) + '</span>';
   });
 
-  return '<div class="agent-row" style="--row-accent:' + accent + '">'
+  return '<div class="agent-row" style="--row-accent:' + accent + ';cursor:pointer" onclick="openAgentDetail(\'' + esc(a.name) + '\')">'
     + '<div class="agent-top">'
     + '<span class="agent-name">' + esc(a.name) + '</span>'
     + '<span class="model-badge">' + esc(a.model) + '</span>'
@@ -351,13 +571,101 @@ function renderAgentCard(a, catColor) {
     + '</div>';
 }
 
-function renderCmdChip(c, catColor) {
-  const accent = catColor || 'var(--gray)';
-  return '<div class="cmd-chip" style="--cmd-accent:' + accent + '">'
-    + '<span class="cmd-chip-name">/' + esc(c.name) + '</span>'
-    + (c.description ? '<span class="cmd-chip-sep"></span><span class="cmd-chip-desc" title="' + esc(c.description) + '">' + esc(c.description) + '</span>' : '')
+function renderSkillPill(s, catColor) {
+  const name = shortSkillName(s.source);
+  return '<div class="skill-pill-card" style="border-left:3px solid ' + catColor + '" onclick="openSkillDetail(\'' + esc(s.source) + '\')">'
+    + '<span class="skill-pill-name" style="color:' + catColor + '">' + esc(name) + '</span>'
     + '</div>';
 }
+
+// ── Markdown renderer (simple) ──
+function renderMd(md) {
+  // Strip frontmatter
+  md = md.replace(/^---\n[\s\S]*?\n---\n?/, '');
+  // Code blocks
+  md = md.replace(/```(\w*)\n([\s\S]*?)```/g, '<pre><code>$2</code></pre>');
+  // Inline code
+  md = md.replace(/`([^`]+)`/g, '<code>$1</code>');
+  // Headers
+  md = md.replace(/^### (.+)$/gm, '<h3>$1</h3>');
+  md = md.replace(/^## (.+)$/gm, '<h2>$1</h2>');
+  md = md.replace(/^# (.+)$/gm, '<h1>$1</h1>');
+  // Bold / italic
+  md = md.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
+  md = md.replace(/\*([^*]+)\*/g, '<em>$1</em>');
+  // Blockquotes
+  md = md.replace(/^> (.+)$/gm, '<blockquote>$1</blockquote>');
+  // Unordered lists
+  md = md.replace(/^- (.+)$/gm, '<li>$1</li>');
+  md = md.replace(/(<li>[\s\S]*?<\/li>)/g, '<ul>$1</ul>');
+  md = md.replace(/<\/ul>\s*<ul>/g, '');
+  // Horizontal rules
+  md = md.replace(/^---$/gm, '<hr>');
+  // Tables (basic)
+  md = md.replace(/^\|(.+)\|\s*\n\|[-| ]+\|\s*\n((?:\|.+\|\s*\n?)*)/gm, (_, hdr, body) => {
+    const ths = hdr.split('|').filter(Boolean).map(c => '<th>' + c.trim() + '</th>').join('');
+    const rows = body.trim().split('\n').map(r => {
+      const tds = r.split('|').filter(Boolean).map(c => '<td>' + c.trim() + '</td>').join('');
+      return '<tr>' + tds + '</tr>';
+    }).join('');
+    return '<table><thead><tr>' + ths + '</tr></thead><tbody>' + rows + '</tbody></table>';
+  });
+  // Paragraphs
+  md = md.replace(/\n{2,}/g, '</p><p>');
+  md = '<p>' + md + '</p>';
+  md = md.replace(/<p>\s*(<h[123]|<pre|<ul|<blockquote|<hr|<table)/g, '$1');
+  md = md.replace(/(<\/h[123]>|<\/pre>|<\/ul>|<\/blockquote>|<hr>|<\/table>)\s*<\/p>/g, '$1');
+  return md;
+}
+
+// ── Detail modal ──
+async function openSkillDetail(source) {
+  document.getElementById('detail-title').innerHTML = esc(source) + ' <span class="detail-type-badge skill">Skill</span>';
+  document.getElementById('detail-source').textContent = 'Loading...';
+  document.getElementById('detail-body').innerHTML = '';
+  document.getElementById('detail-overlay').classList.add('open');
+  try {
+    const r = await fetch('/api/skill/' + encodeURIComponent(source));
+    const d = await r.json();
+    if (d.error) throw new Error(d.error);
+    document.getElementById('detail-title').innerHTML = esc(shortSkillName(d.source)) + ' <span class="detail-type-badge skill">Skill</span>';
+    document.getElementById('detail-source').textContent = '.claude/skills/' + d.source + '/SKILL.md';
+    document.getElementById('detail-body').innerHTML = renderMd(d.content);
+  } catch (e) {
+    document.getElementById('detail-body').innerHTML = '<p style="color:var(--rose)">Could not load: ' + esc(e.message) + '</p>';
+  }
+}
+
+async function openAgentDetail(name) {
+  document.getElementById('detail-title').innerHTML = esc(name) + ' <span class="detail-type-badge agent">Agent</span>';
+  document.getElementById('detail-source').textContent = 'Loading...';
+  document.getElementById('detail-body').innerHTML = '';
+  document.getElementById('detail-overlay').classList.add('open');
+  try {
+    const r = await fetch('/api/agent/' + encodeURIComponent(name));
+    const d = await r.json();
+    if (d.error) throw new Error(d.error);
+    document.getElementById('detail-title').innerHTML = esc(d.name) + ' <span class="detail-type-badge agent">Agent</span>';
+    document.getElementById('detail-source').textContent = '.claude/agents/' + d.name + '.md';
+    document.getElementById('detail-body').innerHTML = renderMd(d.content);
+  } catch (e) {
+    document.getElementById('detail-body').innerHTML = '<p style="color:var(--rose)">Could not load: ' + esc(e.message) + '</p>';
+  }
+}
+
+function openMcpDetail(name) {
+  const meta = MCP_META[name] || { desc: 'No details available', detail: '' };
+  document.getElementById('detail-title').innerHTML = esc(name) + ' <span class="detail-type-badge" style="background:var(--cyan-bg);color:#0e7490">MCP</span>';
+  document.getElementById('detail-source').textContent = 'MCP Server';
+  document.getElementById('detail-body').innerHTML = renderMd('# ' + name + '\n\n' + meta.detail);
+  document.getElementById('detail-overlay').classList.add('open');
+}
+
+function closeDetail() {
+  document.getElementById('detail-overlay').classList.remove('open');
+}
+
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeDetail(); });
 
 // ── Filter state ────────────────────────────────────────────────────────────
 let activeFilter = 'all';
@@ -373,31 +681,61 @@ function setFilter(key) {
   });
 }
 
-function toggleCollapsible(el) { el.classList.toggle('open') }
+function toggleCollapsible(el) {
+  el.classList.toggle('open');
+}
+
+function currentMode() { return (window.__getMode && window.__getMode()) || localStorage.getItem('mc-mode') || 'home'; }
+
+// Filter tools by mode context — tools not in context map show in both modes
+function filterByMode(items, nameKey, ctxMap) {
+  const mode = currentMode();
+  return items.filter(item => {
+    const name = item[nameKey] || '';
+    const ctx = ctxMap[name];
+    return ctx === null || ctx === undefined || ctx === mode;
+  });
+}
 
 async function load() {
   try {
-    const data = await fetch('/api/tools').then(r => r.json());
-    const agents = data.agents || [];
-    const commands = data.commands || [];
+    const [data, ctxMap] = await Promise.all([
+      fetch('/api/tools').then(r => r.json()),
+      fetch('/api/toolbox-context').then(r => r.json()),
+    ]);
+    const agents = filterByMode(data.agents || [], 'name', ctxMap);
+    const commands = filterByMode(data.commands || [], 'name', ctxMap);
+    const skills = filterByMode(data.skills || [], 'source', ctxMap);
     const builtins = data.builtins || [];
 
-    // Group agents and commands by category
-    const groupedAgents = {};
-    const groupedCmds = {};
-    for (const key of Object.keys(CATEGORIES)) { groupedAgents[key] = []; groupedCmds[key] = []; }
-    const uncatAgents = [];
-    const uncatCmds = [];
-
+    // Group agents by category
+    const grouped = {};
+    for (const key of Object.keys(CATEGORIES)) grouped[key] = [];
+    const uncategorized = [];
     agents.forEach(a => {
       const cat = AGENT_CAT[a.name];
-      if (cat) groupedAgents[cat].push(a);
-      else uncatAgents.push(a);
+      if (cat && grouped[cat]) grouped[cat].push(a);
+      else uncategorized.push(a);
     });
+
+    // Group skills by category
+    const skillsByCat = {};
+    for (const key of Object.keys(CATEGORIES)) skillsByCat[key] = [];
+    const unmappedSkills = [];
+    skills.forEach(s => {
+      const cat = SKILL_CAT_MAP[s.source];
+      if (cat) skillsByCat[cat].push(s);
+      else unmappedSkills.push(s);
+    });
+
+    // Group commands by category
+    const cmdsByCat = {};
+    for (const key of Object.keys(CATEGORIES)) cmdsByCat[key] = [];
+    const unmappedCmds = [];
     commands.forEach(c => {
-      const cat = CMD_CAT[c.name];
-      if (cat) groupedCmds[cat].push(c);
-      else uncatCmds.push(c);
+      const cat = CMD_CAT_MAP[c.name];
+      if (cat && cmdsByCat[cat]) cmdsByCat[cat].push(c);
+      else unmappedCmds.push(c);
     });
 
     let h = '';
@@ -406,29 +744,36 @@ async function load() {
     h += '<div class="summary-strip">';
     h += '<div class="summary-stat"><span class="summary-num">' + agents.length + '</span><span class="summary-label">agents</span></div>';
     h += '<div class="summary-sep"></div>';
+    h += '<div class="summary-stat"><span class="summary-num">' + skills.length + '</span><span class="summary-label">skills</span></div>';
+    h += '<div class="summary-sep"></div>';
     h += '<div class="summary-stat"><span class="summary-num">' + commands.length + '</span><span class="summary-label">commands</span></div>';
     h += '<div class="summary-sep"></div>';
     h += '<div class="summary-stat"><span class="summary-num">' + builtins.length + '</span><span class="summary-label">built-in</span></div>';
-    h += '</div>';
-
-    // Category filter pills
-    h += '<div class="cat-nav">';
-    const totalItems = agents.length + commands.length;
-    h += '<div class="cat-pill active" data-cat="all" onclick="setFilter(\'all\')">All<span class="cat-count">' + totalItems + '</span></div>';
-    for (const [key, cat] of Object.entries(CATEGORIES)) {
-      const count = groupedAgents[key].length + groupedCmds[key].length;
-      if (count === 0) continue;
-      h += '<div class="cat-pill" data-cat="' + key + '" onclick="setFilter(\'' + key + '\')">'
-        + esc(cat.label)
-        + '<span class="cat-count">' + count + '</span></div>';
+    const mcpCount = (data.mcpServers || []).length;
+    if (mcpCount > 0) {
+      h += '<div class="summary-sep"></div>';
+      h += '<div class="summary-stat"><span class="summary-num">' + mcpCount + '</span><span class="summary-label">MCP</span></div>';
     }
     h += '</div>';
 
-    // Unified category sections — agents as cards, commands as chips
+    // Category filter pills
+    const totalItems = agents.length + skills.length + commands.length;
+    h += '<div class="cat-nav">';
+    h += '<div class="cat-pill active" data-cat="all" onclick="setFilter(\'all\')">All<span class="cat-count">' + totalItems + '</span></div>';
     for (const [key, cat] of Object.entries(CATEGORIES)) {
-      const catAgents = groupedAgents[key];
-      const catCmds = groupedCmds[key];
-      if (catAgents.length === 0 && catCmds.length === 0) continue;
+      const count = grouped[key].length + (skillsByCat[key] || []).length + (cmdsByCat[key] || []).length;
+      if (count === 0) continue;
+      h += '<div class="cat-pill" data-cat="' + key + '" onclick="setFilter(\'' + key + '\')">'
+        + esc(cat.label) + '<span class="cat-count">' + count + '</span></div>';
+    }
+    h += '</div>';
+
+    // Category sections: AGENTS grid, then SKILLS pills below
+    for (const [key, cat] of Object.entries(CATEGORIES)) {
+      const catAgents = grouped[key];
+      const catSkills = skillsByCat[key] || [];
+      const catCmds = cmdsByCat[key] || [];
+      if (catAgents.length === 0 && catSkills.length === 0 && catCmds.length === 0) continue;
 
       h += '<div class="cat-section" data-cat="' + key + '">';
       h += '<div class="cat-header">';
@@ -437,19 +782,32 @@ async function load() {
       h += '<div class="cat-subtitle">' + esc(cat.subtitle) + '</div>';
       h += '</div>';
 
-      // Agents (cards)
+      // AGENTS subsection
       if (catAgents.length > 0) {
-        if (catCmds.length > 0) h += '<div class="sub-label">Agents</div>';
-        h += '<div class="agent-grid">';
-        catAgents.forEach(a => { h += renderAgentCard(a, cat.color); });
+        h += '<div class="sub-label">AGENTS</div>';
+        h += '<div class="agent-list">';
+        catAgents.forEach(a => { h += renderAgentRow(a); });
         h += '</div>';
       }
 
-      // Commands (chips)
+      // SKILLS subsection
+      if (catSkills.length > 0) {
+        h += '<div class="sub-label" style="margin-top:20px">SKILLS</div>';
+        h += '<div class="skills-pill-row">';
+        catSkills.forEach(s => { h += renderSkillPill(s, cat.color); });
+        h += '</div>';
+      }
+
+      // COMMANDS subsection
       if (catCmds.length > 0) {
-        if (catAgents.length > 0) h += '<div class="sub-label">Commands</div>';
-        h += '<div class="cmd-row">';
-        catCmds.forEach(c => { h += renderCmdChip(c, cat.color); });
+        h += '<div class="sub-label" style="margin-top:20px">COMMANDS</div>';
+        h += '<div class="skills-pill-row">';
+        catCmds.forEach(c => {
+          h += '<div class="skill-pill-card" style="border-left:3px solid ' + cat.color + '">'
+            + '<span class="skill-pill-name" style="color:' + cat.color + '">/' + esc(c.name) + '</span>'
+            + '<span class="skill-pill-desc">' + esc(c.description).substring(0, 60) + '</span>'
+            + '</div>';
+        });
         h += '</div>';
       }
 
@@ -457,35 +815,79 @@ async function load() {
     }
 
     // Uncategorized agents
-    if (uncatAgents.length > 0) {
+    if (uncategorized.length > 0) {
       h += '<div class="cat-section" data-cat="other">';
       h += '<div class="cat-header">';
       h += '<div class="cat-icon" style="background:var(--surface);color:var(--text3)">\u2026</div>';
       h += '<div class="cat-title">Other</div>';
       h += '<div class="cat-subtitle">Uncategorized</div>';
       h += '</div>';
-      h += '<div class="agent-grid">';
-      uncatAgents.forEach(a => { h += renderAgentCard(a, 'var(--gray)'); });
-      h += '</div>';
-      h += '</div>';
+      h += '<div class="sub-label">AGENTS</div>';
+      h += '<div class="agent-list">';
+      uncategorized.forEach(a => { h += renderAgentRow(a); });
+      h += '</div></div>';
     }
 
-    // Uncategorized commands
-    if (uncatCmds.length > 0) {
-      const inOther = document.querySelector ? uncatAgents.length > 0 : false;
-      h += '<div class="cat-section" data-cat="other-cmds">';
+    // Unmapped skills
+    if (unmappedSkills.length > 0) {
+      h += '<div class="cat-section" data-cat="other-skills">';
+      h += '<div class="cat-header">';
+      h += '<div class="cat-icon" style="background:var(--surface);color:var(--text3)">\u2726</div>';
+      h += '<div class="cat-title">Other Skills</div>';
+      h += '<div class="cat-subtitle">' + unmappedSkills.length + ' uncategorized</div>';
+      h += '</div>';
+      h += '<div class="skills-pill-row">';
+      unmappedSkills.forEach(s => { h += renderSkillPill(s, 'var(--gray)'); });
+      h += '</div></div>';
+    }
+
+    // Unmapped commands
+    if (unmappedCmds.length > 0) {
+      h += '<div class="cat-section" data-cat="other-commands">';
       h += '<div class="cat-header">';
       h += '<div class="cat-icon" style="background:var(--surface);color:var(--text3)">/</div>';
       h += '<div class="cat-title">Other Commands</div>';
-      h += '<div class="cat-subtitle">' + uncatCmds.length + ' commands</div>';
+      h += '<div class="cat-subtitle">' + unmappedCmds.length + ' uncategorized</div>';
       h += '</div>';
-      h += '<div class="cmd-row">';
-      uncatCmds.forEach(c => { h += renderCmdChip(c, 'var(--gray)'); });
-      h += '</div>';
-      h += '</div>';
+      h += '<div class="skills-pill-row">';
+      unmappedCmds.forEach(c => {
+        h += '<div class="skill-pill-card" style="border-left:3px solid var(--gray)">'
+          + '<span class="skill-pill-name" style="color:var(--text3)">/' + esc(c.name) + '</span>'
+          + '<span class="skill-pill-desc">' + esc(c.description).substring(0, 60) + '</span>'
+          + '</div>';
+      });
+      h += '</div></div>';
     }
 
-    // Built-ins — collapsible
+    // MCP Servers
+    const mcpServers = data.mcpServers || [];
+    if (mcpServers.length > 0) {
+      h += '<div class="cat-section" data-cat="mcp">';
+      h += '<div class="cat-header">';
+      h += '<div class="cat-icon" style="background:var(--cyan-bg);color:var(--cyan)">\u2B21</div>';
+      h += '<div class="cat-title">MCP Servers</div>';
+      h += '<div class="cat-subtitle">' + mcpServers.length + ' connected</div>';
+      h += '</div>';
+      h += '<div class="mcp-grid">';
+      mcpServers.forEach(m => {
+        const meta = MCP_META[m.name] || { desc: 'MCP server', tools: [], detail: '' };
+        const toolsHtml = meta.tools.map(t => '<span class="tool-pill">' + esc(t) + '</span>').join('');
+        const cmdStr = m.command + ' ' + m.args.join(' ');
+        h += '<div class="mcp-card" onclick="openMcpDetail(\'' + esc(m.name) + '\')">';
+        h += '<div class="mcp-card-top">';
+        h += '<span class="mcp-card-name">' + esc(m.name) + '</span>';
+        h += '<span class="mcp-card-badge">MCP</span>';
+        h += '<span class="mcp-card-scope">' + esc(m.scope) + '</span>';
+        h += '</div>';
+        h += '<div class="mcp-card-desc">' + esc(meta.desc) + '</div>';
+        h += '<div style="display:flex;flex-wrap:wrap;gap:3px;margin-bottom:8px">' + toolsHtml + '</div>';
+        h += '<div class="mcp-card-cmd">' + esc(cmdStr) + '</div>';
+        h += '</div>';
+      });
+      h += '</div></div>';
+    }
+
+    // Built-ins
     if (builtins.length > 0) {
       h += '<div class="secondary-section" style="margin-top:12px">';
       h += '<div class="collapsible-header" onclick="toggleCollapsible(this)">';
@@ -512,6 +914,7 @@ async function load() {
 }
 
 load();
+window.addEventListener('modechange', load);
 </script>
 </body>
 </html>

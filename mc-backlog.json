@@ -7,7 +7,9 @@
       "status": "done",
       "priority": "p0",
       "created": "2026-03-04",
-      "machine": "work"
+      "machine": "work",
+      "workstream": "mission-control",
+      "context": null
     },
     {
       "id": "mc-002",
@@ -16,7 +18,11 @@
       "status": "in-progress",
       "priority": "p1",
       "created": "2026-03-04",
-      "machine": "work"
+      "machine": "work",
+      "updated": "2026-03-06T06:44:46.808Z",
+      "sortOrder": 1,
+      "workstream": "mission-control",
+      "context": null
     },
     {
       "id": "mc-003",
@@ -25,7 +31,10 @@
       "status": "todo",
       "priority": "p0",
       "created": "2026-03-04",
-      "machine": "home"
+      "machine": "home",
+      "sortOrder": 15,
+      "workstream": "mission-control",
+      "context": null
     },
     {
       "id": "mc-004",
@@ -34,7 +43,10 @@
       "status": "todo",
       "priority": "p1",
       "created": "2026-03-04",
-      "machine": "work"
+      "machine": "work",
+      "sortOrder": 16,
+      "workstream": "mission-control",
+      "context": null
     },
     {
       "id": "mc-8m1ilw2w",
@@ -42,70 +54,80 @@
       "description": "Teammate request: The CARES dashboard currently uses a Kusto query against TuringBotTraceMDS to find exceptions (MimirServeIndexException) filtered by AgentQueryGateway|QmsSearchProvider|ScopedSearchContentProvider scopes. We should come up with some version of that query that shows us availability over time.\n\nOriginal exception query (mangled version provided):\n\nset query_results_cache_max_age = time(1h);\nset truncationmaxsize=10048576000;\nset maxmemoryconsumptionperiterator=68719476736;\nset max_memory_consumption_per_query_per_node=68719476736;\nset truncationmaxrecords=110000005;\nset servertimeout=50m;\nset query_timeout = 60m;\nTuringBotTraceMDS\n| where TIMESTAMP >= ago(2d)\n| where CosmicPartition in ('sdf-master')\n| where IsTestTraffic in ('0','1')\n| where LogLevel in (\"Error\")\n| where ScopeName matches regex \"AgentQueryGateway|QmsSearchProvider|ScopedSearchContentProvider\" and ScopeName !contains \"Warmup\"\n| where Exception contains \"MimirServeIndexException\"\n| extend ExceptionShort = substring(Exception, 0, 600)\n| summarize Count = dcount(RequestId) by bin(TIMESTAMP, 30m)\n| render timechart\n\nGoal: Derive an availability metric from this — e.g. success rate, uptime percentage, or error-free intervals over time.",
       "status": "todo",
       "priority": "p0",
-      "workstream": "",
+      "workstream": "cares",
       "tags": [
         "cares",
         "mapi"
       ],
       "linkedSession": null,
       "created": "2026-03-04T22:42:03.611Z",
-      "updated": "2026-03-04T22:42:03.611Z"
+      "updated": "2026-03-04T22:42:03.611Z",
+      "sortOrder": 5,
+      "context": "work"
     },
     {
       "id": "mc-ck5ornpp",
-      "title": "Redesign CARES Guide � overhaul information architecture and presentation",
+      "title": "Redesign CARES Guide  overhaul information architecture and presentation",
       "description": "Rethink how information is structured and presented in the CARES Guide app. Current sections have grown organically and need a cohesive redesign � better hierarchy, clearer navigation, improved content flow. Evaluate what is essential vs cluttered, and make the guide easier to consume for new team members and daily reference.",
       "status": "todo",
       "priority": "p1",
-      "workstream": "",
+      "workstream": "cares",
       "tags": [
         "cares"
       ],
       "linkedSession": null,
       "created": "2026-03-04T23:01:34.010Z",
-      "updated": "2026-03-04T23:01:34.010Z"
+      "updated": "2026-03-06T06:30:51.140Z",
+      "sortOrder": 1,
+      "context": "work"
     },
     {
       "id": "mc-xlyq25js",
       "title": "Redesign Dispatch page UI",
       "description": "Visual and UX overhaul of the Mission Control Dispatch page (dispatch-page.html). Improve layout, card design, filtering experience, and overall polish. Make it more scannable and pleasant to use as a daily work queue.",
-      "status": "todo",
+      "status": "done",
       "priority": "p1",
-      "workstream": "",
+      "workstream": "mission-control",
       "tags": [
         "mission-control"
       ],
       "linkedSession": null,
       "created": "2026-03-04T23:01:35.646Z",
-      "updated": "2026-03-04T23:01:35.646Z"
+      "updated": "2026-03-06T08:52:28.098Z",
+      "sortOrder": 0,
+      "context": null
     },
     {
       "id": "mc-p9n1unw1",
       "title": "Allow bypass permissions in Claude Code with adequate guardrails",
       "description": "Set up Claude Code permission config to allow auto-accepting certain tool calls without manual approval on every invocation. Needs proper guardrails first � define which tools are safe to auto-approve (e.g. Read, Grep, Glob), which always require confirmation (e.g. Bash with destructive commands, Write to sensitive paths), and document the risk model. Configure allowedTools in ~/.claude/settings.json accordingly.",
-      "status": "todo",
+      "status": "in-progress",
       "priority": "p1",
-      "workstream": "",
+      "workstream": "mission-control",
       "tags": [
         "mission-control"
       ],
       "linkedSession": null,
       "created": "2026-03-04T23:01:40.194Z",
-      "updated": "2026-03-04T23:01:40.194Z"
+      "updated": "2026-03-06T06:32:22.638Z",
+      "sortOrder": 0,
+      "context": null
     },
     {
       "id": "mc-ulfp2h1u",
-      "title": "Fix user prompt detection � capture all prompt types on dashboard",
+      "title": "Fix user prompt detection capture all prompt types on dashboard",
       "description": "Currently only one type of user prompt is detected and shown on the Mission Control dashboard. Simple permission prompts (e.g. tool approval dialogs) do not get captured by prompt-hook.js, so the agent card does not reflect that the session is waiting for input. Need to investigate all prompt types Claude CLI can emit (tool permission, AskUserQuestion, plan approval, etc.) and ensure prompt-hook.js captures them all so the dashboard accurately shows when any session needs user input.",
       "status": "todo",
       "priority": "p1",
-      "workstream": "",
+      "workstream": "mission-control",
       "tags": [
         "mission-control"
       ],
       "linkedSession": null,
       "created": "2026-03-05T00:02:14.924Z",
-      "updated": "2026-03-05T00:02:14.924Z"
+      "updated": "2026-03-06T06:30:43.600Z",
+      "sortOrder": 4,
+      "context": null
     }
   ]
 }

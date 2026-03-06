@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Icon Preview &mdash; Mission Control</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=DM+Sans:wght@400;500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { margin:0; padding:0; box-sizing:border-box }
+  :root {
+    --bg:#ffffff; --bg-page:#f8f8f8; --surface:#f2f2f2; --surface2:#e8e8e8;
+    --text:#1a1a1a; --text2:#555; --text3:#999; --sep:#e5e5e5;
+    --green:#22c55e; --amber:#f59e0b; --gray:#9ca3af; --red:#ef4444;
+  }
+  body { background:var(--bg-page); color:var(--text); font-family:'DM Sans',-apple-system,system-ui,sans-serif; min-height:100vh; -webkit-font-smoothing:antialiased }
+
+  header { display:flex; align-items:center; padding:0 clamp(24px,4vw,48px); height:64px; background:var(--bg); border-bottom:1px solid var(--sep); position:sticky; top:0; z-index:10; gap:16px }
+  .back-link { display:flex; align-items:center; gap:8px; text-decoration:none; color:var(--text2); font-size:14px; font-weight:500; transition:color .15s }
+  .back-link:hover { color:var(--text) }
+  .header-nav { display:flex; gap:4px; padding:3px; background:#f2f2f2; border-radius:8px; position:absolute; left:50%; transform:translateX(-50%) }
+  .nav-link { padding:5px 14px; border-radius:6px; font-family:'DM Sans',sans-serif; font-size:13px; font-weight:500; color:#999; text-decoration:none; transition:all .15s }
+  .nav-link:hover { color:#555 }
+  .nav-link.active { background:#fff; color:#1a1a1a; box-shadow:0 1px 3px rgba(0,0,0,.06) }
+
+  .shell { max-width:1200px; margin:0 auto; padding:clamp(24px,4vw,48px) }
+  .page-title { font-family:'Plus Jakarta Sans',sans-serif; font-size:clamp(28px,4vw,38px); font-weight:700; letter-spacing:-0.035em; margin-bottom:4px; line-height:1.1 }
+  .page-sub { font-size:15px; color:var(--text3); margin-bottom:40px }
+
+  .section { margin-bottom:56px }
+  .section-label { font-size:11px; font-weight:600; text-transform:uppercase; letter-spacing:0.08em; color:var(--text3); margin-bottom:20px }
+
+  .compare-row { display:grid; grid-template-columns:1fr 1fr; gap:32px; margin-bottom:56px }
+  .version-col { display:flex; flex-direction:column; gap:24px }
+  .version-header {
+    font-family:'Plus Jakarta Sans',sans-serif; font-size:20px; font-weight:700;
+    letter-spacing:-0.02em; padding-bottom:12px; border-bottom:2px solid var(--sep);
+  }
+  .version-header span { font-size:12px; font-weight:500; color:var(--text3); margin-left:8px; text-transform:uppercase; letter-spacing:0.06em }
+
+  .icon-card {
+    display:flex; flex-direction:column; align-items:center; gap:16px;
+    padding:32px; background:var(--bg); border:1px solid var(--sep); border-radius:16px;
+    transition:border-color .2s;
+  }
+  .icon-card:hover { border-color:var(--surface2) }
+  .icon-card.dark { background:#060a0f; border-color:#1a2030 }
+  .icon-card.dark .card-label { color:rgba(255,255,255,0.4) }
+
+  .card-label { font-size:13px; font-weight:500; color:var(--text3) }
+
+  .header-preview {
+    display:flex; align-items:center; gap:12px; padding:16px 24px;
+    background:var(--bg); border:1px solid var(--sep); border-radius:12px; width:fit-content;
+  }
+  .header-preview .logo-text {
+    font-family:'Plus Jakarta Sans',sans-serif; font-size:15px; font-weight:600;
+    letter-spacing:-0.02em; color:var(--text);
+  }
+
+  .tab-bar { background:#c8ccd1; padding:8px 8px 0; border-radius:10px 10px 0 0; display:inline-block }
+  .tab-sim {
+    display:inline-flex; align-items:center; gap:8px; padding:8px 16px 8px 10px;
+    background:#dee1e6; border-radius:8px 8px 0 0; font-size:12px; font-weight:500;
+    color:#5f6368; max-width:240px;
+  }
+  .tab-sim .tab-icon { width:16px; height:16px; flex-shrink:0 }
+  .tab-sim .tab-title { white-space:nowrap; overflow:hidden; text-overflow:ellipsis }
+  .tab-sim .tab-x { margin-left:8px; font-size:14px; color:#999 }
+
+  .controls {
+    display:flex; gap:8px; margin-bottom:32px; padding:4px; background:var(--surface);
+    border-radius:10px; width:fit-content;
+  }
+  .ctrl-btn {
+    padding:8px 20px; border-radius:8px; border:none; background:transparent;
+    font-family:'DM Sans',sans-serif; font-size:13px; font-weight:500;
+    color:var(--text3); cursor:pointer; transition:all .15s;
+  }
+  .ctrl-btn:hover { color:var(--text2) }
+  .ctrl-btn.active { background:var(--bg); color:var(--text); box-shadow:0 1px 3px rgba(0,0,0,0.06) }
+
+  .notes {
+    font-size:13px; color:var(--text3); line-height:1.6; padding:16px 20px;
+    background:var(--surface); border-radius:10px; margin-top:8px;
+  }
+  .notes strong { color:var(--text2); font-weight:600 }
+
+  /* ===== V1: Radar ===== */
+  .logo-icon { width:28px; height:28px; flex-shrink:0; color:var(--text) }
+  .logo-icon svg { display:block }
+  .mc-dot { fill:var(--gray); transition:fill 0.4s ease }
+  .logo-icon.active .mc-dot { fill:var(--green) }
+  .logo-icon.waiting .mc-dot { fill:var(--amber) }
+  .mc-sweep { transform-origin:16px 16px; opacity:0; transition:opacity 0.4s ease }
+  .logo-icon.active .mc-sweep { opacity:0.1; animation:v1-sweep 3s linear infinite }
+  .logo-icon.waiting .mc-sweep { opacity:0.06; animation:v1-sweep 4s linear infinite }
+
+  .big-v1 { color:var(--text) }
+  .big-v1 svg { display:block }
+  .big-v1 .mc-dot { fill:var(--gray); transition:fill 0.4s ease }
+  .big-v1.active .mc-dot { fill:var(--green) }
+  .big-v1.waiting .mc-dot { fill:var(--amber) }
+  .big-v1 .mc-sweep { transform-origin:16px 16px; opacity:0; transition:opacity 0.4s ease }
+  .big-v1.active .mc-sweep { opacity:0.1; animation:v1-sweep 3s linear infinite }
+  .big-v1.waiting .mc-sweep { opacity:0.06; animation:v1-sweep 4s linear infinite }
+
+  @keyframes v1-sweep { from{transform:rotate(0deg)} to{transform:rotate(360deg)} }
+
+  /* ===== V2: Sonar ===== */
+  .ping-ring { transform-origin:16px 16px; opacity:0 }
+  .sonar.active .ping-ring { animation:ping-expand 6s ease-out infinite }
+  .sonar.waiting .ping-ring { animation:ping-expand 8s ease-out infinite }
+
+  @keyframes ping-expand {
+    0%   { transform:scale(0); opacity:0.55; stroke-width:2.5 }
+    8%   { opacity:0.4 }
+    50%  { transform:scale(1); opacity:0; stroke-width:0.5 }
+    50.1%, 100% { transform:scale(0); opacity:0 }
+  }
+
+  .ping-flash { opacity:0 }
+  .sonar.active .ping-flash { animation:ping-center 6s ease-out infinite }
+  .sonar.waiting .ping-flash { animation:ping-center 8s ease-out infinite }
+
+  @keyframes ping-center {
+    0%   { opacity:0.25 }
+    5%   { opacity:0.06 }
+    10%, 100% { opacity:0 }
+  }
+
+  /* Blips: managed by JS for random positions. These just handle the fade animation. */
+  .blip-inner { opacity:0 }
+  .sonar.active .blip-inner { animation:hit-inner 6s ease-out infinite }
+  .sonar.waiting .blip-inner { animation:hit-inner 8s ease-out infinite }
+
+  @keyframes hit-inner {
+    0%, 22%  { opacity:0 }
+    25%      { opacity:1 }
+    35%      { opacity:0.65 }
+    60%      { opacity:0.15 }
+    90%      { opacity:0.04 }
+    100%     { opacity:0 }
+  }
+
+  .blip-outer { opacity:0 }
+  .sonar.active .blip-outer { animation:hit-outer 6s ease-out infinite }
+  .sonar.waiting .blip-outer { animation:hit-outer 8s ease-out infinite }
+
+  @keyframes hit-outer {
+    0%, 40%  { opacity:0 }
+    43%      { opacity:1 }
+    52%      { opacity:0.65 }
+    75%      { opacity:0.15 }
+    95%      { opacity:0.04 }
+    100%     { opacity:0 }
+  }
+
+  .sonar-dot { transition:fill 0.4s ease }
+  .sonar .sonar-dot { fill:var(--gray) }
+  .sonar.active .sonar-dot { fill:var(--green) }
+  .sonar.waiting .sonar-dot { fill:var(--amber) }
+
+  .sonar-sm { width:28px; height:28px; flex-shrink:0 }
+  .sonar-sm svg { display:block }
+
+  @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
+</style>
+</head>
+<body>
+
+<header>
+  <a href="/" class="back-link"><span>&#8592;</span> Dashboard</a>
+  <nav class="header-nav">
+    <a href="/" class="nav-link">Dashboard</a>
+    <a href="/dispatch" class="nav-link">Dispatch</a>
+    <a href="/findings" class="nav-link">Findings</a>
+    <a href="/workflow" class="nav-link">Workflow</a>
+    <a href="/postmortems" class="nav-link">Post-Mortems</a>
+    <a href="/tools" class="nav-link">Toolbox</a>
+    <a href="/logic" class="nav-link">Logic</a>
+    <a href="/radar" class="nav-link">Radar</a>
+  </nav>
+</header>
+
+<div class="shell">
+  <h1 class="page-title">Icon Preview</h1>
+  <p class="page-sub">V1 (radar &mdash; rotating sweep) vs V2 (sonar &mdash; expanding ping, randomized contacts)</p>
+
+  <div class="controls" id="state-toggle">
+    <button class="ctrl-btn" data-state="idle">Idle</button>
+    <button class="ctrl-btn active" data-state="active">Active</button>
+    <button class="ctrl-btn" data-state="waiting">Waiting</button>
+  </div>
+
+  <div class="compare-row">
+
+    <!-- ===== V1: RADAR ===== -->
+    <div class="version-col">
+      <div class="version-header">V1 &mdash; Radar <span>Rotating sweep</span></div>
+
+      <div>
+        <div class="section-label">Header</div>
+        <div class="header-preview">
+          <div class="logo-icon active" id="v1-header">
+            <svg viewBox="0 0 32 32" width="28" height="28" fill="none">
+              <circle cx="16" cy="16" r="14" stroke="currentColor" stroke-width="1.4" opacity="0.3"/>
+              <circle cx="16" cy="16" r="8" stroke="currentColor" stroke-width="1.2" opacity="0.2"/>
+              <line x1="16" y1="1" x2="16" y2="6.5" stroke="currentColor" stroke-width="1" opacity="0.3" stroke-linecap="round"/>
+              <line x1="16" y1="25.5" x2="16" y2="31" stroke="currentColor" stroke-width="1" opacity="0.3" stroke-linecap="round"/>
+              <line x1="1" y1="16" x2="6.5" y2="16" stroke="currentColor" stroke-width="1" opacity="0.3" stroke-linecap="round"/>
+              <line x1="25.5" y1="16" x2="31" y2="16" stroke="currentColor" stroke-width="1" opacity="0.3" stroke-linecap="round"/>
+              <path class="mc-sweep" d="M16 16 L16 2 A14 14 0 0 1 29.8 13.2 Z" fill="currentColor"/>
+              <circle class="mc-dot" cx="16" cy="16" r="4"/>
+            </svg>
+          </div>
+          <div class="logo-text">Mission Control</div>
+        </div>
+      </div>
+
+      <div>
+        <div class="section-label">256px</div>
+        <div class="icon-card">
+          <div class="big-v1 active" id="v1-big">
+            <svg viewBox="0 0 32 32" width="256" height="256" fill="none">
+              <circle cx="16" cy="16" r="14" stroke="currentColor" stroke-width="1.4" opacity="0.3"/>
+              <circle cx="16" cy="16" r="8" stroke="currentColor" stroke-width="1.2" opacity="0.2"/>
+              <line x1="16" y1="1" x2="16" y2="6.5" stroke="currentColor" stroke-width="1" opacity="0.3" stroke-linecap="round"/>
+              <line x1="16" y1="25.5" x2="16" y2="31" stroke="currentColor" stroke-width="1" opacity="0.3" stroke-linecap="round"/>
+              <line x1="1" y1="16" x2="6.5" y2="16" stroke="currentColor" stroke-width="1" opacity="0.3" stroke-linecap="round"/>
+              <line x1="25.5" y1="16" x2="31" y2="16" stroke="currentColor" stroke-width="1" opacity="0.3" stroke-linecap="round"/>
+              <path class="mc-sweep" d="M16 16 L16 2 A14 14 0 0 1 29.8 13.2 Z" fill="currentColor"/>
+              <circle class="mc-dot" cx="16" cy="16" r="4"/>
+            </svg>
+          </div>
+        </div>
+        <div class="notes">
+          <strong>Behavior:</strong> Constant rotating sweep. Contacts always visible. Clean, minimal.
+        </div>
+      </div>
+
+      <div>
+        <div class="section-label">Browser Tab</div>
+        <div class="tab-bar">
+          <div class="tab-sim">
+            <svg class="tab-icon" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="16" cy="16" r="15" fill="#1a1a1a"/>
+              <circle cx="16" cy="16" r="9" fill="none" stroke="rgba(255,255,255,0.2)" stroke-width="1.2"/>
+              <line x1="16" y1="1" x2="16" y2="7" stroke="rgba(255,255,255,0.15)" stroke-width="1" stroke-linecap="round"/>
+              <line x1="16" y1="25" x2="16" y2="31" stroke="rgba(255,255,255,0.15)" stroke-width="1" stroke-linecap="round"/>
+              <line x1="1" y1="16" x2="7" y2="16" stroke="rgba(255,255,255,0.15)" stroke-width="1" stroke-linecap="round"/>
+              <line x1="25" y1="16" x2="31" y2="16" stroke="rgba(255,255,255,0.15)" stroke-width="1" stroke-linecap="round"/>
+              <circle class="v1-fav" cx="16" cy="16" r="3.5" fill="#22c55e"/>
+            </svg>
+            <span class="tab-title v1-tab">Mission Control &bull; 3 active</span>
+            <span class="tab-x">&times;</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== V2: SONAR ===== -->
+    <div class="version-col">
+      <div class="version-header">V2 &mdash; Sonar <span>Ping + randomized contacts</span></div>
+
+      <div>
+        <div class="section-label">Header</div>
+        <div class="header-preview">
+          <div class="sonar-sm sonar active" id="v2-header">
+            <svg viewBox="0 0 32 32" width="28" height="28" fill="none">
+              <circle cx="16" cy="16" r="14" stroke="currentColor" stroke-width="1.4" opacity="0.28"/>
+              <circle cx="16" cy="16" r="8" stroke="currentColor" stroke-width="1.2" opacity="0.18"/>
+              <line x1="16" y1="1" x2="16" y2="6.5" stroke="currentColor" stroke-width="1" opacity="0.28" stroke-linecap="round"/>
+              <line x1="16" y1="25.5" x2="16" y2="31" stroke="currentColor" stroke-width="1" opacity="0.28" stroke-linecap="round"/>
+              <line x1="1" y1="16" x2="6.5" y2="16" stroke="currentColor" stroke-width="1" opacity="0.28" stroke-linecap="round"/>
+              <line x1="25.5" y1="16" x2="31" y2="16" stroke="currentColor" stroke-width="1" opacity="0.28" stroke-linecap="round"/>
+              <circle class="ping-ring" cx="16" cy="16" r="14" fill="none" stroke="#22c55e"/>
+              <circle class="ping-flash" cx="16" cy="16" r="6" fill="#22c55e"/>
+              <circle class="blip-outer sm-blip" cx="0" cy="0" r="1.2" fill="#ef4444"/>
+              <circle class="blip-inner sm-blip" cx="0" cy="0" r="1.2" fill="#ef4444"/>
+              <circle class="blip-outer sm-blip" cx="0" cy="0" r="1.2" fill="#ef4444"/>
+              <circle class="sonar-dot" cx="16" cy="16" r="4" fill="var(--green)"/>
+            </svg>
+          </div>
+          <div class="logo-text">Mission Control</div>
+        </div>
+      </div>
+
+      <div>
+        <div class="section-label">256px</div>
+        <div class="icon-card">
+          <div class="sonar active" id="v2-big">
+            <svg viewBox="0 0 32 32" width="256" height="256" fill="none" style="color:#1a1a1a">
+              <circle cx="16" cy="16" r="14" stroke="currentColor" stroke-width="1.4" opacity="0.28"/>
+              <circle cx="16" cy="16" r="8" stroke="currentColor" stroke-width="1.2" opacity="0.18"/>
+              <line x1="16" y1="1" x2="16" y2="6.5" stroke="currentColor" stroke-width="1" opacity="0.28" stroke-linecap="round"/>
+              <line x1="16" y1="25.5" x2="16" y2="31" stroke="currentColor" stroke-width="1" opacity="0.28" stroke-linecap="round"/>
+              <line x1="1" y1="16" x2="6.5" y2="16" stroke="currentColor" stroke-width="1" opacity="0.28" stroke-linecap="round"/>
+              <line x1="25.5" y1="16" x2="31" y2="16" stroke="currentColor" stroke-width="1" opacity="0.28" stroke-linecap="round"/>
+              <circle class="ping-ring" cx="16" cy="16" r="14" fill="none" stroke="#22c55e"/>
+              <circle class="ping-flash" cx="16" cy="16" r="6" fill="#22c55e"/>
+              <!-- 3 blips: smart-randomized by JS (one per quadrant) -->
+              <circle class="blip-outer big-blip" cx="0" cy="0" r="1.2" fill="#ef4444"/>
+              <circle class="blip-inner big-blip" cx="0" cy="0" r="1.2" fill="#ef4444"/>
+              <circle class="blip-outer big-blip" cx="0" cy="0" r="1.2" fill="#ef4444"/>
+              <circle class="sonar-dot" cx="16" cy="16" r="4" fill="var(--green)"/>
+            </svg>
+          </div>
+        </div>
+        <div class="notes">
+          <strong>Behavior:</strong> Periodic ping &mdash; expanding ring radiates outward.
+          3 contacts flash as the ring reaches them, then fade (phosphor afterglow).
+          Contacts appear in <em>random positions</em> each ping cycle.
+        </div>
+      </div>
+
+      <div>
+        <div class="section-label">Browser Tab</div>
+        <div class="tab-bar">
+          <div class="tab-sim">
+            <svg class="tab-icon" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="16" cy="16" r="15" fill="#060a0f"/>
+              <circle cx="16" cy="16" r="9" fill="none" stroke="rgba(34,197,94,0.18)" stroke-width="1.2"/>
+              <circle class="fav-blip" cx="22" cy="6" r="1.2" fill="#ef4444" opacity="0.7"/>
+              <circle class="fav-blip" cx="7" cy="21" r="1.2" fill="#ef4444" opacity="0.35"/>
+              <circle class="fav-blip" cx="24" cy="22" r="1.2" fill="#ef4444" opacity="0.5"/>
+              <circle class="v2-fav" cx="16" cy="16" r="3.5" fill="#22c55e"/>
+            </svg>
+            <span class="tab-title v2-tab">Mission Control &bull; 3 active</span>
+            <span class="tab-x">&times;</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ===== FAVICON ZOOMED ===== -->
+  <div class="section">
+    <div class="section-label">Favicon Zoomed (256px)</div>
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:32px">
+      <div class="icon-card dark">
+        <svg viewBox="0 0 32 32" width="256" height="256" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="16" cy="16" r="15" fill="#1a1a1a"/>
+          <circle cx="16" cy="16" r="9" fill="none" stroke="rgba(255,255,255,0.2)" stroke-width="1.2"/>
+          <line x1="16" y1="1" x2="16" y2="7" stroke="rgba(255,255,255,0.15)" stroke-width="1" stroke-linecap="round"/>
+          <line x1="16" y1="25" x2="16" y2="31" stroke="rgba(255,255,255,0.15)" stroke-width="1" stroke-linecap="round"/>
+          <line x1="1" y1="16" x2="7" y2="16" stroke="rgba(255,255,255,0.15)" stroke-width="1" stroke-linecap="round"/>
+          <line x1="25" y1="16" x2="31" y2="16" stroke="rgba(255,255,255,0.15)" stroke-width="1" stroke-linecap="round"/>
+          <circle class="v1-fav" cx="16" cy="16" r="3.5" fill="#22c55e"/>
+        </svg>
+        <div class="card-label">V1 &mdash; Radar</div>
+      </div>
+      <div class="icon-card dark">
+        <svg viewBox="0 0 32 32" width="256" height="256" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="16" cy="16" r="15" fill="#060a0f"/>
+          <circle cx="16" cy="16" r="9" fill="none" stroke="rgba(34,197,94,0.18)" stroke-width="1.2"/>
+          <circle class="fav-blip" cx="0" cy="0" r="1.2" fill="#ef4444" opacity="0.7"/>
+          <circle class="fav-blip" cx="0" cy="0" r="1.2" fill="#ef4444" opacity="0.35"/>
+          <circle class="fav-blip" cx="0" cy="0" r="1.2" fill="#ef4444" opacity="0.5"/>
+          <circle class="v2-fav" cx="16" cy="16" r="3.5" fill="#22c55e"/>
+        </svg>
+        <div class="card-label">V2 &mdash; Sonar</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+var colors = { idle: '#9ca3af', active: '#22c55e', waiting: '#f59e0b' };
+var titles = { idle: 'Mission Control', active: 'Mission Control \u2022 3 active', waiting: '(1) Mission Control' };
+var currentState = 'active';
+var CYCLE_ACTIVE = 6000;
+var CYCLE_WAITING = 8000;
+
+// Smart randomization: assign each blip to a different quadrant so they spread out.
+// Quadrants: 0=top-right (0-90°), 1=bottom-right (90-180°), 2=bottom-left (180-270°), 3=top-left (270-360°)
+function randPointInQuadrant(r, quadrant) {
+  // Random angle within the quadrant (in radians), with 15° padding from edges to avoid axis lines
+  var pad = 15 * Math.PI / 180;
+  var qStart = quadrant * Math.PI / 2 + pad;
+  var qEnd = (quadrant + 1) * Math.PI / 2 - pad;
+  var angle = qStart + Math.random() * (qEnd - qStart);
+  return { x: 16 + r * Math.sin(angle), y: 16 - r * Math.cos(angle) };
+}
+
+function randomizeBlips(blips) {
+  // Shuffle quadrant assignments so each blip gets a unique quadrant
+  var quads = [0, 1, 2, 3];
+  for (var i = quads.length - 1; i > 0; i--) {
+    var j = Math.floor(Math.random() * (i + 1));
+    var tmp = quads[i]; quads[i] = quads[j]; quads[j] = tmp;
+  }
+  blips.forEach(function(el, idx) {
+    var isInner = el.classList.contains('blip-inner');
+    var r = isInner ? 6 + Math.random() * 2.5 : 10 + Math.random() * 2.5;
+    var pt = randPointInQuadrant(r, quads[idx % 4]);
+    el.setAttribute('cx', pt.x.toFixed(1));
+    el.setAttribute('cy', pt.y.toFixed(1));
+  });
+}
+
+function randomizeFavBlips() {
+  var quads = [0, 1, 2, 3];
+  for (var i = quads.length - 1; i > 0; i--) {
+    var j = Math.floor(Math.random() * (i + 1));
+    var tmp = quads[i]; quads[i] = quads[j]; quads[j] = tmp;
+  }
+  var favBlips = document.querySelectorAll('.fav-blip');
+  favBlips.forEach(function(el, idx) {
+    var r = 7 + Math.random() * 5;
+    var pt = randPointInQuadrant(r, quads[idx % 4]);
+    el.setAttribute('cx', pt.x.toFixed(1));
+    el.setAttribute('cy', pt.y.toFixed(1));
+  });
+}
+
+// Restart CSS animations by briefly removing and re-adding the class
+function restartAnimations() {
+  if (currentState === 'idle') return;
+  var cls = currentState;
+  var targets = [
+    document.getElementById('v2-header'),
+    document.getElementById('v2-big')
+  ];
+  targets.forEach(function(el) {
+    if (!el) return;
+    // Remove state class, randomize, re-add to restart animations
+    el.classList.remove(cls);
+    // Force reflow
+    void el.offsetWidth;
+    // Randomize blips inside this element
+    randomizeBlips(el.querySelectorAll('.blip-inner, .blip-outer'));
+    el.classList.add(cls);
+  });
+  randomizeFavBlips();
+}
+
+// Initial randomization
+restartAnimations();
+
+// Re-randomize every ping cycle
+var cycleTimer = null;
+function startCycleTimer() {
+  if (cycleTimer) clearInterval(cycleTimer);
+  if (currentState === 'idle') return;
+  var ms = currentState === 'active' ? CYCLE_ACTIVE : CYCLE_WAITING;
+  cycleTimer = setInterval(restartAnimations, ms);
+}
+startCycleTimer();
+
+// State toggle
+document.getElementById('state-toggle').addEventListener('click', function(e) {
+  var btn = e.target.closest('.ctrl-btn');
+  if (!btn) return;
+  var state = btn.dataset.state;
+  currentState = state;
+  var cls = state === 'idle' ? '' : state;
+
+  document.querySelectorAll('.ctrl-btn').forEach(function(b) { b.classList.remove('active') });
+  btn.classList.add('active');
+
+  // V1
+  document.getElementById('v1-header').className = 'logo-icon ' + cls;
+  document.getElementById('v1-big').className = 'big-v1 ' + cls;
+  document.querySelectorAll('.v1-fav').forEach(function(d) { d.setAttribute('fill', colors[state]) });
+  document.querySelectorAll('.v1-tab').forEach(function(t) { t.textContent = titles[state] });
+
+  // V2
+  document.getElementById('v2-header').className = 'sonar-sm sonar ' + cls;
+  document.getElementById('v2-big').className = 'sonar ' + cls;
+  document.querySelectorAll('.v2-fav').forEach(function(d) { d.setAttribute('fill', colors[state]) });
+  document.querySelectorAll('.v2-tab').forEach(function(t) { t.textContent = titles[state] });
+
+  restartAnimations();
+  startCycleTimer();
+});
+</script>
+</body>
+</html>
