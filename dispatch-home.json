@@ -16,7 +16,12 @@
     "linkedSession": "57008b53-4e56-4b12-b713-0eedd5e6e65a",
     "created": "2026-03-05T23:45:00.000Z",
     "updated": "2026-03-06T03:43:23.107Z",
-    "context": null
+    "context": null,
+    "areas": [
+      "hooks",
+      "workflow",
+      "dashboard"
+    ]
   },
   {
     "id": "pm002",
@@ -35,7 +40,12 @@
     "linkedSession": "a7d75b0b-a7a4-477e-93c2-cd0c7e4fe890",
     "created": "2026-03-06T00:20:00.000Z",
     "updated": "2026-03-06T03:43:23.132Z",
-    "context": null
+    "context": null,
+    "areas": [
+      "hooks",
+      "workflow",
+      "findings"
+    ]
   },
   {
     "id": "dispatch-redesign",
@@ -53,7 +63,11 @@
     "created": "2026-03-06T00:05:00.000Z",
     "updated": "2026-03-06T06:29:59.284Z",
     "sortOrder": 6,
-    "context": null
+    "context": null,
+    "areas": [
+      "dashboard",
+      "dispatch"
+    ]
   },
   {
     "id": "pm-agent",
@@ -71,7 +85,12 @@
     "created": "2026-03-05T23:55:00.000Z",
     "updated": "2026-03-06T08:44:55.547Z",
     "sortOrder": 2,
-    "context": null
+    "context": null,
+    "areas": [
+      "workflow",
+      "postmortems",
+      "infra"
+    ]
   },
   {
     "id": "agwf001",
@@ -91,7 +110,12 @@
     "created": "2026-03-05T22:15:00.000Z",
     "updated": "2026-03-06T09:07:04.207Z",
     "sortOrder": 1,
-    "context": null
+    "context": null,
+    "areas": [
+      "hooks",
+      "workflow",
+      "dashboard"
+    ]
   },
   {
     "id": "backlog001",
@@ -108,7 +132,11 @@
     "created": "2026-03-05T22:30:00.000Z",
     "updated": "2026-03-05T22:30:00.000Z",
     "sortOrder": 0,
-    "context": null
+    "context": null,
+    "areas": [
+      "workflow",
+      "infra"
+    ]
   },
   {
     "id": "ls1ipf9q",
@@ -125,7 +153,12 @@
     "created": "2026-03-04T08:05:00.172Z",
     "updated": "2026-03-06T06:58:11.821Z",
     "sortOrder": 2,
-    "context": null
+    "context": null,
+    "areas": [
+      "dashboard",
+      "dispatch",
+      "prompts"
+    ]
   },
   {
     "id": "lvna4pkg",
@@ -141,7 +174,10 @@
     "linkedSession": null,
     "created": "2026-03-04T08:05:07.785Z",
     "updated": "2026-03-04T08:13:10.443Z",
-    "context": null
+    "context": null,
+    "areas": [
+      "dispatch"
+    ]
   },
   {
     "id": "kp76zshh",
@@ -157,7 +193,10 @@
     "linkedSession": null,
     "created": "2026-03-04T08:05:17.985Z",
     "updated": "2026-03-04T08:13:08.554Z",
-    "context": null
+    "context": null,
+    "areas": [
+      "dashboard"
+    ]
   },
   {
     "id": "o0d56z0j",
@@ -175,7 +214,12 @@
     "created": "2026-03-04T08:05:24.778Z",
     "updated": "2026-03-04T08:05:24.778Z",
     "sortOrder": 0,
-    "context": null
+    "context": null,
+    "areas": [
+      "hooks",
+      "prompts",
+      "dashboard"
+    ]
   },
   {
     "id": "hb125ey0",
@@ -193,7 +237,11 @@
     "created": "2026-03-06T03:27:34.280Z",
     "updated": "2026-03-06T03:27:34.280Z",
     "sortOrder": 3,
-    "context": null
+    "context": null,
+    "areas": [
+      "dashboard",
+      "prompts"
+    ]
   },
   {
     "id": "lfvhu9oo",
@@ -207,7 +255,10 @@
     "created": "2026-03-06T06:38:59.016Z",
     "updated": "2026-03-06T06:40:12.049Z",
     "sortOrder": 9,
-    "context": null
+    "context": null,
+    "areas": [
+      "prompts"
+    ]
   },
   {
     "id": "sonxcgqw",
@@ -226,7 +277,12 @@
     "created": "2026-03-06T07:13:21.325Z",
     "updated": "2026-03-06T07:13:21.325Z",
     "sortOrder": 10,
-    "context": null
+    "context": null,
+    "areas": [
+      "dashboard",
+      "dispatch",
+      "findings"
+    ]
   },
   {
     "id": "aglp45t4",
@@ -244,7 +300,11 @@
     "created": "2026-03-06T07:13:28.624Z",
     "updated": "2026-03-06T07:13:28.624Z",
     "sortOrder": 11,
-    "context": null
+    "context": null,
+    "areas": [
+      "dashboard",
+      "notifications"
+    ]
   },
   {
     "id": "7m0q030o",
@@ -263,7 +323,12 @@
     "created": "2026-03-06T07:19:29.699Z",
     "updated": "2026-03-06T07:19:29.699Z",
     "sortOrder": 0,
-    "context": null
+    "context": null,
+    "areas": [
+      "dashboard",
+      "dispatch",
+      "prompts"
+    ]
   },
   {
     "id": "23j3qgw3",
@@ -281,7 +346,12 @@
     "created": "2026-03-06T08:19:53.788Z",
     "updated": "2026-03-06T08:22:26.077Z",
     "sortOrder": 4,
-    "context": null
+    "context": null,
+    "areas": [
+      "workflow",
+      "dispatch",
+      "search"
+    ]
   },
   {
     "id": "ulz7ddsz",
@@ -298,7 +368,12 @@
     "created": "2026-03-06T08:25:59.290Z",
     "updated": "2026-03-06T08:26:31.465Z",
     "sortOrder": 14,
-    "context": null
+    "context": null,
+    "areas": [
+      "workflow",
+      "dashboard",
+      "dispatch"
+    ]
   },
   {
     "id": "pm003",
@@ -316,7 +391,12 @@
     "linkedSession": null,
     "created": "2026-03-06T08:29:12.242Z",
     "updated": "2026-03-06T08:44:41.928Z",
-    "context": null
+    "context": null,
+    "areas": [
+      "workflow",
+      "dispatch",
+      "toolbox"
+    ]
   },
   {
     "id": "04k20mz2",
@@ -335,7 +415,12 @@
     "created": "2026-03-06T09:19:06.574Z",
     "updated": "2026-03-06T09:22:43.187Z",
     "sortOrder": 1,
-    "context": null
+    "context": null,
+    "areas": [
+      "hooks",
+      "dashboard",
+      "findings"
+    ]
   },
   {
     "id": "k5vh3ftx",
@@ -353,7 +438,12 @@
     "linkedSession": null,
     "created": "2026-03-06T09:32:03.448Z",
     "updated": "2026-03-06T09:32:03.448Z",
-    "context": null
+    "context": null,
+    "areas": [
+      "workflow",
+      "postmortems",
+      "prompts"
+    ]
   },
   {
     "id": "ioc25cj2",
@@ -372,7 +462,12 @@
     "created": "2026-03-06T09:37:04.591Z",
     "updated": "2026-03-06T09:37:04.591Z",
     "sortOrder": 2,
-    "context": null
+    "context": null,
+    "areas": [
+      "hooks",
+      "workflow",
+      "dashboard"
+    ]
   },
   {
     "id": "finww80y",
@@ -390,7 +485,12 @@
     "linkedSession": null,
     "created": "2026-03-06T10:01:22.428Z",
     "updated": "2026-03-06T10:01:22.428Z",
-    "context": null
+    "context": null,
+    "areas": [
+      "dashboard",
+      "dispatch",
+      "findings"
+    ]
   },
   {
     "id": "rqepouyk",
@@ -426,7 +526,12 @@
     "linkedSession": null,
     "created": "2026-03-06T20:36:37.831Z",
     "updated": "2026-03-06T20:36:37.832Z",
-    "context": null
+    "context": null,
+    "areas": [
+      "hooks",
+      "workflow",
+      "dispatch"
+    ]
   },
   {
     "id": "8o7k1ia3",
@@ -439,7 +544,10 @@
     "linkedSession": null,
     "created": "2026-03-04T23:18:00.868Z",
     "updated": "2026-03-04T23:18:00.868Z",
-    "context": "work"
+    "context": "work",
+    "areas": [
+      "prompts"
+    ]
   },
   {
     "id": "pm005",
@@ -458,7 +566,12 @@
     "linkedSession": null,
     "created": "2026-03-06T21:46:18.172Z",
     "updated": "2026-03-06T21:46:18.172Z",
-    "context": null
+    "context": null,
+    "areas": [
+      "workflow",
+      "findings",
+      "toolbox"
+    ]
   },
   {
     "id": "pm007",
@@ -477,6 +590,33 @@
     "linkedSession": null,
     "created": "2026-03-06T22:37:14.037Z",
     "updated": "2026-03-06T22:37:14.037Z",
+    "context": null,
+    "areas": [
+      "workflow",
+      "toolbox",
+      "postmortems"
+    ]
+  },
+  {
+    "id": "sync-audit-hook",
+    "title": "Pre-push sync audit hook: summarize changes and catch gaps before handoff",
+    "description": "Build a git pre-push hook (or Claude Stop hook) that runs automatically before any push to the Mission Control repo. The hook should:\n\n## What it does\n\n1. **Summarize what changed** -- diff the staged/committed files and produce a human-readable summary: which pages were modified, how many dispatch items added/removed, toolbox changes, config changes. This becomes the handoff note for the other machine.\n\n2. **Audit sync completeness** -- check for common gaps:\n   - Are there tools in toolbox-context.json that have no matching files in toolbox/?\n   - Does toolbox/ have files from BOTH machines (check for home AND work agents)?\n   - Are dispatch-home.json and dispatch-work.json both present?\n   - Does any PM lack a machine: tag?\n   - Are there modified HTML pages that reference APIs that dont exist in server.js?\n   - Is findings.json present and valid JSON?\n\n3. **Block or warn on gaps** -- if any audit check fails, print a clear warning with what is missing and ask the user to confirm before pushing.\n\n4. **Generate handoff summary** -- write a HANDOFF.md or print to console a structured summary like:\n   \n\n## Why this is P0\n\nEvery infrastructure failure this session would have been caught by this hook:\n- PM004 (git tracking): hook would have shown 0 toolbox files being committed\n- PM005 (repo confusion): hook would have flagged phredomade files in MC repo\n- PM006 (unidirectional sync): hook would have detected 0 home agents in toolbox/\n- PM007 (bidirectional gap): hook would have compared toolbox-context.json counts vs actual file counts\n\nThis is the systemic fix for ALL sync-related post-mortems. One hook eliminates the entire class of error.\n\n## Implementation options\n\n1. **Git pre-push hook** -- runs on git push, blocks if gaps found. Put in .claude/agent-hub/.git/hooks/pre-push\n2. **Claude Stop hook** -- runs when a Claude session ends, generates the summary. Add to settings.json\n3. **MC server endpoint** -- /api/sync-audit that the push prompt calls before committing\n4. **Hybrid** -- Stop hook generates the summary, pre-push hook validates it\n\nOption 4 is strongest: the Stop hook captures WHAT was done (it has session context), the pre-push hook verifies COMPLETENESS (it has git context).\n\n## Definition of done\n- Hook runs automatically before push\n- Produces readable summary of all changes\n- Catches missing files, untagged PMs, context mismatches\n- Blocks push on critical gaps (missing toolbox files, broken JSON)\n- Warns on non-critical gaps (missing machine tags, stale data)",
+    "status": "todo",
+    "priority": "p0",
+    "workstream": "mission-control",
+    "tags": [
+      "hooks",
+      "sync",
+      "infrastructure",
+      "agent-workflow"
+    ],
+    "areas": [
+      "hooks",
+      "workflow"
+    ],
+    "linkedSession": null,
+    "created": "2026-03-06T22:59:44.206Z",
+    "updated": "2026-03-06T22:59:44.207Z",
     "context": null
   }
 ]
