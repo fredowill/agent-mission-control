@@ -10,7 +10,8 @@
       "post-mortem",
       "agent-safety",
       "cross-agent",
-      "principles"
+      "principles",
+      "machine:home"
     ],
     "linkedSession": "57008b53-4e56-4b12-b713-0eedd5e6e65a",
     "created": "2026-03-05T23:45:00.000Z",
@@ -28,7 +29,8 @@
       "post-mortem",
       "agent-safety",
       "playwright",
-      "visual-testing"
+      "visual-testing",
+      "machine:home"
     ],
     "linkedSession": "a7d75b0b-a7a4-477e-93c2-cd0c7e4fe890",
     "created": "2026-03-06T00:20:00.000Z",
@@ -308,7 +310,8 @@
     "tags": [
       "post-mortem",
       "agent-workflow",
-      "infrastructure"
+      "infrastructure",
+      "machine:home"
     ],
     "linkedSession": null,
     "created": "2026-03-06T08:29:12.242Z",
@@ -417,7 +420,8 @@
       "agent-safety",
       "infrastructure",
       "git",
-      "sync"
+      "sync",
+      "machine:home"
     ],
     "linkedSession": null,
     "created": "2026-03-06T20:36:37.831Z",
@@ -448,11 +452,31 @@
       "post-mortem",
       "agent-safety",
       "git",
-      "infrastructure"
+      "infrastructure",
+      "machine:home"
     ],
     "linkedSession": null,
     "created": "2026-03-06T21:46:18.172Z",
     "updated": "2026-03-06T21:46:18.172Z",
+    "context": null
+  },
+  {
+    "id": "pm007",
+    "title": "Post-Mortem: Bidirectional toolbox sync was never designed — only one direction was considered",
+    "description": "## Incident (2026-03-06)\nAgent built an entire multi-machine sync system but only considered ONE direction: work laptop exports tools into toolbox/. The reverse direction (home PC exports tools into toolbox/) was never implemented. Result: work laptop pulled, toggled to Home mode, saw 0 tools. The toolbox-context.json correctly mapped 51 home tools but the actual files were never exported.\n\n## What actually happened\nThe sync protocol had a fundamental design gap. The agent designed toolbox/ as a directory where the work laptop puts its tools. But both machines need to put their tools there -- it is a SHARED directory, not a one-way export. The agent only thought about 'how does the work laptop get its data to the home PC' and never asked 'how does the home PC get its data to the work laptop.'\n\n## Failure: Unidirectional thinking in a bidirectional problem\n- The sync prompt (SYNC-WORK-LAPTOP.md) only covered work laptop -> git -> home PC\n- The home PC push included toolbox-context.json (the MAP of tools) but not the actual tool FILES\n- The agent created a metadata layer (context tags) without the data layer (tool files)\n- When the work laptop pulled and toggled to Home mode, the context map said '51 home tools' but there were 0 files to serve\n- **Lesson: Any sync system between N machines must be bidirectional by design. Every machine that has unique data must export it, not just the one you happen to be thinking about.**\n- **Systemic fix: Whenever building sync between machines, draw the data flow diagram for BOTH directions before writing code. Verify each direction has both metadata AND data.**\n\n## Why this keeps happening\nThis is the third infrastructure oversight in this session (PM004: git tracking, PM005: repo confusion, PM007: unidirectional sync). The pattern: agent focuses on the feature logic (toggle, filtering, context tags) and treats the transport layer as an afterthought. Transport is verified last instead of first.\n\n## Prevention rules\n1. Both machines must export their tools into toolbox/ (bidirectional)\n2. After any push, verify the OTHER machine will see non-zero data in BOTH modes\n3. Before declaring sync complete, simulate: 'Machine B pulls. What does it see in Home mode? What does it see in Work mode? Are there actual FILES, not just metadata?'\n\n## Action items\n1. Home tools exported to toolbox/ (done in commit 93c9950)\n2. Workflow config files (CLAUDE.md, memory files, project settings) to be exported to toolbox/config/\n3. Add to sync checklist: verify both directions before pushing",
+    "status": "done",
+    "priority": "p0",
+    "workstream": "mission-control",
+    "tags": [
+      "post-mortem",
+      "agent-safety",
+      "sync",
+      "infrastructure",
+      "machine:home"
+    ],
+    "linkedSession": null,
+    "created": "2026-03-06T22:37:14.037Z",
+    "updated": "2026-03-06T22:37:14.037Z",
     "context": null
   }
 ]

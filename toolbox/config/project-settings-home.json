@@ -1,0 +1,81 @@
+{
+  "enabledPlugins": {
+    "frontend-design@claude-plugins-official": true
+  },
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash /c/Users/ephra/phredomade/.claude/scripts/check-code-change.sh"
+          },
+          {
+            "type": "command",
+            "command": "node /c/Users/ephra/phredomade/.claude/scripts/check-file-conflict.js"
+          }
+        ]
+      },
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash /c/Users/ephra/phredomade/.claude/scripts/check-server.sh"
+          },
+          {
+            "type": "command",
+            "command": "bash /c/Users/ephra/phredomade/.claude/scripts/verify-deploy.sh"
+          }
+        ]
+      },
+      {
+        "matcher": ".*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node /c/Users/ephra/phredomade/.claude/agent-hub/hook.js"
+          }
+        ]
+      }
+    ],
+    "UserPromptSubmit": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node /c/Users/ephra/phredomade/.claude/agent-hub/prompt-hook.js"
+          }
+        ]
+      }
+    ],
+    "SessionStart": [
+      {
+        "matcher": "compact",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node /c/Users/ephra/phredomade/.claude/scripts/session-start-compact.js"
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node /c/Users/ephra/phredomade/.claude/agent-hub/hook.js"
+          },
+          {
+            "type": "command",
+            "command": "echo '' && echo '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━' && echo '  VERIFY BEFORE DONE — Did you actually confirm this works?' && echo '  - Run tests or Playwright spot-check' && echo '  - Screenshot + visually evaluate if UI change' && echo '  - If you skipped verification, say so honestly' && echo '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━'"
+          }
+        ]
+      }
+    ]
+  }
+}
