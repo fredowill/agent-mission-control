@@ -1,0 +1,24 @@
+{
+  "themes": [
+    {
+      "theme": "Mission Control integration",
+      "count": 1
+    },
+    {
+      "theme": "Git workflow & permissions",
+      "count": 1
+    },
+    {
+      "theme": "Workflow & performance improvements",
+      "count": 2
+    }
+  ],
+  "topOfMind": "The team is finalizing the {laptop data export|0} to the Mission Control repository while setting up the {shared Git workflow|1} with appropriate CLI permissions. Concurrently, they are refining the {video dissection workflow|2} for the CARES guide and implementing {UI scaling optimization|3} to boost performance.",
+  "agents": [
+    "199076",
+    "97a2bc",
+    "72666a",
+    "95ca16"
+  ],
+  "ts": 1772830979872
+}
