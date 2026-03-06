@@ -50,6 +50,8 @@ const POSTMORTEM_HTML_F = path.join(__dirname, 'postmortem-page.html');
 const WORKSTREAMS_F   = path.join(__dirname, 'workstreams.json');
 const AGENT_WS_F      = path.join(__dirname, 'agent-workstreams.json');
 const DISPATCH_F      = path.join(__dirname, 'dispatch.json');
+const DISPATCH_HOME_F = path.join(__dirname, 'dispatch-home.json');
+const DISPATCH_WORK_F = path.join(__dirname, 'dispatch-work.json');
 const AREAS_F         = path.join(__dirname, 'areas.json');
 const MODE_F          = path.join(__dirname, 'mode.json');
 const FINDINGS_F      = path.join(__dirname, 'findings.json');
@@ -3041,14 +3043,43 @@ const server = http.createServer((req, res) => {
   }
 
   // ── Dispatch CRUD API ───────────────────────────────────────────────────────
-  if (url === '/api/dispatch' && req.method === 'GET') {
-    // Merge local dispatch + shared MC backlog (mc-backlog.json tracked in git)
-    const local = readJSON(DISPATCH_F, []).map(i => ({ ...i, _source: 'local' }));
+  // Dispatch items come from 3 sources merged at runtime:
+  //   mc-backlog.json  — shared tasks (git-tracked, both machines)
+  //   dispatch-home.json — home PC items (machine-local)
+  //   dispatch-work.json — work laptop items (machine-local)
+  //   dispatch.json — legacy single file (read-only fallback for migration)
+  // New items route to dispatch-home or dispatch-work based on current mode.
+
+  function _currentMode() { return readJSON(MODE_F, { mode: 'home' }).mode; }
+
+  function _allDispatchItems() {
     const mcFile = path.join(__dirname, 'mc-backlog.json');
     const mcData = readJSON(mcFile, { tasks: [] });
     const shared = (mcData.tasks || []).map(i => ({ ...i, _source: 'mc' }));
+    const home = readJSON(DISPATCH_HOME_F, []).map(i => ({ ...i, _source: 'home' }));
+    const work = readJSON(DISPATCH_WORK_F, []).map(i => ({ ...i, _source: 'work' }));
+    // Legacy fallback: read dispatch.json for items not yet migrated
+    const legacy = readJSON(DISPATCH_F, []).map(i => ({ ...i, _source: 'legacy' }));
+    const seenIds = new Set([...shared, ...home, ...work].map(i => i.id));
+    const unseenLegacy = legacy.filter(i => !seenIds.has(i.id));
+    return [...shared, ...home, ...work, ...unseenLegacy];
+  }
+
+  function _findItemFile(id) {
+    if (id.startsWith('mc-')) return { type: 'mc', file: path.join(__dirname, 'mc-backlog.json') };
+    // Check home first, then work, then legacy
+    const home = readJSON(DISPATCH_HOME_F, []);
+    if (home.some(i => i.id === id)) return { type: 'array', file: DISPATCH_HOME_F };
+    const work = readJSON(DISPATCH_WORK_F, []);
+    if (work.some(i => i.id === id)) return { type: 'array', file: DISPATCH_WORK_F };
+    const legacy = readJSON(DISPATCH_F, []);
+    if (legacy.some(i => i.id === id)) return { type: 'array', file: DISPATCH_F };
+    return null;
+  }
+
+  if (url === '/api/dispatch' && req.method === 'GET') {
     res.writeHead(200, { 'Content-Type': 'application/json', 'Cache-Control': 'no-store' });
-    return res.end(JSON.stringify([...shared, ...local]));
+    return res.end(JSON.stringify(_allDispatchItems()));
   }
   if (url === '/api/dispatch' && req.method === 'POST') {
     let body = '';
@@ -3057,7 +3088,9 @@ const server = http.createServer((req, res) => {
       try {
         const { title, description, status, priority, workstream, tags, linkedSession, context, _source } = JSON.parse(body);
         if (!title) { res.writeHead(400, { 'Content-Type': 'application/json' }); return res.end(JSON.stringify({ error: 'title required' })); }
-        const id = (_source === 'mc' ? 'mc-' : '') + Math.random().toString(36).slice(2, 10);
+        const mode = _currentMode();
+        const prefix = _source === 'mc' ? 'mc-' : '';
+        const id = prefix + Math.random().toString(36).slice(2, 10);
         const now = new Date().toISOString();
         const item = { id, title, description: description || '', status: status || 'todo', priority: priority || 'p2', workstream: workstream || '', tags: tags || [], linkedSession: linkedSession || null, context: context !== undefined ? context : null, created: now, updated: now };
         if (_source === 'mc') {
@@ -3066,9 +3099,10 @@ const server = http.createServer((req, res) => {
           mcData.tasks.push(item);
           writeJSON(mcFile, mcData);
         } else {
-          const items = readJSON(DISPATCH_F, []);
+          const targetFile = mode === 'work' ? DISPATCH_WORK_F : DISPATCH_HOME_F;
+          const items = readJSON(targetFile, []);
           items.push(item);
-          writeJSON(DISPATCH_F, items);
+          writeJSON(targetFile, items);
         }
         res.writeHead(200, { 'Content-Type': 'application/json' });
         res.end(JSON.stringify({ ok: true, id }));
@@ -3083,26 +3117,26 @@ const server = http.createServer((req, res) => {
     req.on('end', () => {
       try {
         const updates = JSON.parse(body);
-        // Route to correct file based on id prefix
-        if (id.startsWith('mc-')) {
-          const mcFile = path.join(__dirname, 'mc-backlog.json');
-          const mcData = readJSON(mcFile, { tasks: [] });
+        const loc = _findItemFile(id);
+        if (!loc) { res.writeHead(404, { 'Content-Type': 'application/json' }); return res.end(JSON.stringify({ error: 'not found' })); }
+        if (loc.type === 'mc') {
+          const mcData = readJSON(loc.file, { tasks: [] });
           const idx = mcData.tasks.findIndex(i => i.id === id);
           if (idx === -1) { res.writeHead(404, { 'Content-Type': 'application/json' }); return res.end(JSON.stringify({ error: 'not found' })); }
           for (const key of ['title', 'description', 'status', 'priority', 'workstream', 'tags', 'linkedSession', 'sortOrder', 'context', 'areas']) {
             if (updates[key] !== undefined) mcData.tasks[idx][key] = updates[key];
           }
           mcData.tasks[idx].updated = new Date().toISOString();
-          writeJSON(mcFile, mcData);
+          writeJSON(loc.file, mcData);
         } else {
-          const items = readJSON(DISPATCH_F, []);
+          const items = readJSON(loc.file, []);
           const idx = items.findIndex(i => i.id === id);
           if (idx === -1) { res.writeHead(404, { 'Content-Type': 'application/json' }); return res.end(JSON.stringify({ error: 'not found' })); }
           for (const key of ['title', 'description', 'status', 'priority', 'workstream', 'tags', 'linkedSession', 'sortOrder', 'context', 'areas']) {
             if (updates[key] !== undefined) items[idx][key] = updates[key];
           }
           items[idx].updated = new Date().toISOString();
-          writeJSON(DISPATCH_F, items);
+          writeJSON(loc.file, items);
         }
         res.writeHead(200, { 'Content-Type': 'application/json' });
         res.end(JSON.stringify({ ok: true }));
@@ -3112,15 +3146,16 @@ const server = http.createServer((req, res) => {
   }
   if (url.startsWith('/api/dispatch/') && req.method === 'DELETE') {
     const id = decodeURIComponent(url.slice('/api/dispatch/'.length));
-    if (id.startsWith('mc-')) {
-      const mcFile = path.join(__dirname, 'mc-backlog.json');
-      const mcData = readJSON(mcFile, { tasks: [] });
+    const loc = _findItemFile(id);
+    if (!loc) { res.writeHead(404, { 'Content-Type': 'application/json' }); return res.end(JSON.stringify({ error: 'not found' })); }
+    if (loc.type === 'mc') {
+      const mcData = readJSON(loc.file, { tasks: [] });
       mcData.tasks = mcData.tasks.filter(i => i.id !== id);
-      writeJSON(mcFile, mcData);
+      writeJSON(loc.file, mcData);
     } else {
-      let items = readJSON(DISPATCH_F, []);
+      let items = readJSON(loc.file, []);
       items = items.filter(i => i.id !== id);
-      writeJSON(DISPATCH_F, items);
+      writeJSON(loc.file, items);
     }
     res.writeHead(200, { 'Content-Type': 'application/json' });
     return res.end(JSON.stringify({ ok: true }));
@@ -3134,19 +3169,29 @@ const server = http.createServer((req, res) => {
       try {
         const { orderedIds } = JSON.parse(body);
         if (!Array.isArray(orderedIds)) { res.writeHead(400, { 'Content-Type': 'application/json' }); return res.end(JSON.stringify({ error: 'orderedIds required' })); }
-        // Update sortOrder in both local dispatch and mc-backlog
-        const localItems = readJSON(DISPATCH_F, []);
+        // Update sortOrder across all dispatch files
+        const files = [
+          { type: 'array', file: DISPATCH_HOME_F },
+          { type: 'array', file: DISPATCH_WORK_F },
+          { type: 'array', file: DISPATCH_F },
+        ];
         const mcFile = path.join(__dirname, 'mc-backlog.json');
         const mcData = readJSON(mcFile, { tasks: [] });
-        let localChanged = false, mcChanged = false;
+        let mcChanged = false;
         orderedIds.forEach((id, idx) => {
-          const local = localItems.find(i => i.id === id);
-          if (local) { local.sortOrder = idx; localChanged = true; }
           const mc = mcData.tasks.find(i => i.id === id);
           if (mc) { mc.sortOrder = idx; mcChanged = true; }
         });
-        if (localChanged) writeJSON(DISPATCH_F, localItems);
         if (mcChanged) writeJSON(mcFile, mcData);
+        for (const f of files) {
+          const items = readJSON(f.file, []);
+          let changed = false;
+          orderedIds.forEach((id, idx) => {
+            const item = items.find(i => i.id === id);
+            if (item) { item.sortOrder = idx; changed = true; }
+          });
+          if (changed) writeJSON(f.file, items);
+        }
         res.writeHead(200, { 'Content-Type': 'application/json' });
         res.end(JSON.stringify({ ok: true }));
       } catch (e) { res.writeHead(400, { 'Content-Type': 'application/json' }); res.end(JSON.stringify({ error: e.message })); }

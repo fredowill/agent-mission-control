@@ -1,0 +1,482 @@
+[
+  {
+    "id": "pm001",
+    "title": "Post-Mortem: Agent nearly killed active session during misdiagnosed investigation",
+    "description": "## Incident (2026-03-05)\nUser reported 'workflow tab missing, only 1 active tab showing.' A second agent (session 57008b53) was dispatched to investigate. It concluded the issue was zombie PIDs and offered to kill 2 processes — one of which was PID 11692, the ACTIVE agent session that had been building the workflow overhaul for 2+ hours.\n\n## What actually happened\nThe MC server was serving stale code. The workflow nav link was missing from the served HTML because a background server restart didn't fully pick up the latest edits. A simple `curl localhost:3033 | grep workflow` would have found the real issue instantly.\n\n## Two distinct failures\n\n### Failure 1: Wrong root cause diagnosis\n- Agent jumped straight to PID forensics instead of checking the simplest thing first\n- Never verified if the server was serving the latest code\n- The actual fix was just restarting the server properly\n- **Lesson: When the dashboard shows wrong data, check the server code/restart FIRST, not the data pipeline. Start at the serving layer.**\n- **Systemic fix: Add debugging principle to CLAUDE.md — 'For MC issues, verify server is serving latest code before investigating data'**\n\n### Failure 2: Nearly killed an active agent\n- Saw 4 PIDs, decided 2 were 'stale' based on process start time heuristics\n- PID 11692 had its state file being updated every few seconds by hook.js (strongest signal of an active session)\n- Agent never checked state file modification time — relied on process start time alone\n- If user had said 'yes, kill them', it would have terminated a 2-hour active session, causing significant work loss and frustration\n- **Lesson: Before recommending killing ANY claude.exe PID, check if its state file was updated in the last 5 minutes. Recent state file = alive, do NOT touch.**\n- **Systemic fix: Add hard rule to CLAUDE.md about PID kills. Add code comment on state files directory. Consider adding a 'last_updated' visible indicator on dashboard cards.**\n\n## Why the workflow page matters\nIf the investigating agent had access to the Workflow page, it would have understood:\n- hook.js fires on every PostToolUse and updates state files\n- State file recency = definitive proof of an active session\n- The full lifecycle of how MC tracks sessions\n\n## Action items\n1. Add CLAUDE.md rule: 'Never kill a claude.exe PID without checking state file recency'\n2. Add CLAUDE.md rule: 'For MC debugging, verify server code freshness before investigating data'\n3. Add code comment on states directory explaining recency = liveness\n4. Add this as a Finding on the Findings page\n5. Consider: dashboard warning if an agent runs taskkill on a PID that MC tracks as active",
+    "status": "done",
+    "priority": "p0",
+    "workstream": "mission-control",
+    "tags": [
+      "post-mortem",
+      "agent-safety",
+      "cross-agent",
+      "principles",
+      "machine:home"
+    ],
+    "linkedSession": "57008b53-4e56-4b12-b713-0eedd5e6e65a",
+    "created": "2026-03-05T23:45:00.000Z",
+    "updated": "2026-03-06T03:43:23.107Z",
+    "context": null
+  },
+  {
+    "id": "pm002",
+    "title": "Post-Mortem: Agent built 3 UI pages without a single Playwright screenshot",
+    "description": "## Incident (2026-03-05)\nDuring the Agent Workflow Overhaul session, the agent built/redesigned 3 Mission Control pages (Findings, Workflow, Post-Mortems) across 5+ iterations without ever taking a Playwright screenshot to verify them. The user had to provide every screenshot manually and point out visual bugs (strikethrough in pipeline, whitespace issues, flat design, wrong items showing).\n\n## The irony\nThe agent literally built Finding #2 on the Findings page — 'Playwright verification is mandatory' — extracting the lesson from past sessions where the user said 'THIS LOOKS LIKE DOGSHIT. Did you even Playwright test?' Then proceeded to not do it for the entire rest of the session. The lesson was documented but not applied.\n\n## What actually happened\nThe agent fell into a 'write code, restart server, tell user to check' loop. It treated MC pages (port 3033) as separate from the portfolio site (port 3002), mentally skipping the visual verification that's mandatory for portfolio work. The rules in MEMORY.md and CLAUDE.md frame Playwright testing around the portfolio site specifically, creating a gap for MC UI work.\n\n## Two distinct failures\n\n### Failure 1: No self-testing despite clear rules\n- MEMORY.md says 'After every UI change, take a Playwright screenshot and critically evaluate'\n- The agent read this file, quoted it in findings, and then ignored it for 3+ hours of UI work\n- **Lesson: Rules that are read but not applied are useless. The testing requirement must be enforced, not just documented.**\n- **Systemic fix: Consider a hook that fires after Write/Edit on HTML files and reminds about Playwright verification. Or make the localtest workflow apply to MC pages too, not just port 3002.**\n\n### Failure 2: Rules scoped too narrowly\n- MEMORY.md's testing rules reference port 3002 and gallery/portraits specifically\n- MC pages on port 3033 fell outside the explicit scope\n- The agent used this gap to skip verification entirely\n- **Lesson: Visual testing rules must apply to ALL UI work regardless of which project or port. If you're changing HTML/CSS, you screenshot it.**\n- **Systemic fix: Update CLAUDE.md to make Playwright verification universal — any HTML/CSS change, any port, any project.**\n\n## Action items\n1. Update CLAUDE.md to make Playwright testing universal (not just port 3002)\n2. Consider a PostToolUse hook on Write/Edit of .html files that reminds about Playwright\n3. Add this as a Finding\n4. The agent should auto-screenshot after every page build, not just when told to",
+    "status": "done",
+    "priority": "p0",
+    "workstream": "mission-control",
+    "tags": [
+      "post-mortem",
+      "agent-safety",
+      "playwright",
+      "visual-testing",
+      "machine:home"
+    ],
+    "linkedSession": "a7d75b0b-a7a4-477e-93c2-cd0c7e4fe890",
+    "created": "2026-03-06T00:20:00.000Z",
+    "updated": "2026-03-06T03:43:23.132Z",
+    "context": null
+  },
+  {
+    "id": "dispatch-redesign",
+    "title": "Redesign the Dispatch page",
+    "description": "V1 card grid is done. Next iteration (V2) needs:\n\n1. **Kanban columns** — full-width left-to-right drag-and-drop (In Progress | Todo | Done columns)\n2. **Title only on cards** — no description text visible until you click into it. Less clutter.\n3. **Color-coded tags by category** — workstream dot colors on tags, similar to dashboard cards. Visually organize by cares/mission-control/personal at a glance.\n4. **Keep agent session linking** — this feature is good, keep it.\n5. **Full-width layout** — edge to edge, not constrained to 1200px max-width.\n\nReference: 21st.dev components, Apple design principles. The current V1 is functional but still too dense.",
+    "status": "todo",
+    "priority": "p1",
+    "workstream": "mission-control",
+    "tags": [
+      "design",
+      "ux",
+      "mission-control"
+    ],
+    "linkedSession": null,
+    "created": "2026-03-06T00:05:00.000Z",
+    "updated": "2026-03-06T06:29:59.284Z",
+    "sortOrder": 6,
+    "context": null
+  },
+  {
+    "id": "pm-agent",
+    "title": "Create a Post-Mortem agent or skill",
+    "description": "Build a Post-Mortem agent or skill that produces structured incident reports.\n\nMust include:\n1. The format convention baked into the template (Incident, What Actually Happened, numbered Failures with Lessons and Systemic Fixes, Action Items)\n2. Reads existing postmortems first to match the established convention\n3. Uses ## for section headers (the parser does not render ###)\n4. Avoids special characters (em dashes, arrows) that get mangled in JSON encoding\n5. Before creating content in any system with existing examples, the agent must read those examples first to match convention\n\nContext: pm003 was created with wrong format (arbitrary headers, diamond characters from encoding issues) despite pm001 and pm002 being right there as examples. Root cause was rushing without checking conventions.",
+    "status": "todo",
+    "priority": "p0",
+    "workstream": "mission-control",
+    "tags": [
+      "agent-workflow",
+      "post-mortem",
+      "agent-creation"
+    ],
+    "linkedSession": null,
+    "created": "2026-03-05T23:55:00.000Z",
+    "updated": "2026-03-06T08:44:55.547Z",
+    "sortOrder": 2,
+    "context": null
+  },
+  {
+    "id": "agwf001",
+    "title": "[WORKFLOW] Agent Workflow Overhaul: Principles, Post-Mortems, Workflow Visibility",
+    "description": "Big-picture overhaul of how agents learn, enforce design principles, and provide workflow transparency. Encompasses principles system, findings, post-mortem pipeline, MC workflow page, and hook categorization.\n\n## Task 1: CLAUDE.md Behavioral Rules (P0)\nAdd 2-3 universal rules that govern agent behavior across ALL sessions:\n- Investigate root cause before writing workarounds\n- When user states a design truth, treat it as immutable; add code comment at relevant location\n- Before changing existing behavior, ask \"is this by design?\" — never silently override\nIMPACT: Immediate. Prevents the next mistake. 5 minutes.\n\n## Task 2: Code Comments at Decision Points\nWherever user has stated an absolute truth about how something works, add a comment encoding it. The agent sees it at the moment of editing — highest signal, lowest cost. Start with Mission Control liveness logic, expand from there.\n\n## Task 3: Findings Tab Overhaul\n- Clear stale content from Findings, preserve structure\n- Repurpose as 'Agent Workflow Findings' — tips, retrospective insights, what makes the workflow better\n- Review old agent cards/prompts to mine for postmortem moments (user corrections, course changes)\n- Ongoing: distilled findings land here after each retrospective\n\n## Task 4: MC Workflow Page (Eureka)\nNew Mission Control sub-page that visualizes the fresh-agent initialization pipeline:\n- Hooks: listed and categorized (MC telemetry, design enforcement, code quality, etc.)\n- Memory files: what gets loaded (CLAUDE.md, MEMORY.md, principles.md), clickable to view contents\n- Settings: permissions, model, etc.\n- Flowchart: visual agent lifecycle from terminal open → first tool call\n- Purpose: understand and optimize the agent workflow at a glance\n\n## Task 5: Post-Mortem Pipeline\n- Create postmortem staging area (queue file or MC sub-page section)\n- Build visibility into MC dashboard — not buried in markdown\n- Pipeline: incident → staging → distill into principle/finding → delete incident\n- Could live on the Workflow page or as its own MC tab\n\n## Task 6: Hook Gap Analysis\nCurrent hooks are 100% MC telemetry. Zero hooks for design enforcement or principles.\n- Evaluate adding a lightweight 'read principles before modifying critical files' hook\n- Consider latency tradeoffs (hooks fire on every tool call)\n- Could use the idle-to-thinking timing gap for principles enforcement (low overhead)\n- Categorize all hooks: MC telemetry, system maintenance, design enforcement, code quality\n\n## Task 7: Principles.md Refactor\n- Strip domain-specific knowledge (PID alive = active belongs as code comment, not principle)\n- Keep only engineering/behavioral principles (how to think, not what to think about)\n- Lightweight, universal, worth reading for any task\n\n## Task 8: MEMORY.md Audit\n- Review for clutter and outdated entries\n- Ensure principles.md link is prominent\n- Keep lean — every line should earn its place",
+    "status": "todo",
+    "priority": "p0",
+    "workstream": "mission-control",
+    "tags": [
+      "agent-workflow",
+      "principles",
+      "post-mortem",
+      "hooks",
+      "retrospective"
+    ],
+    "linkedSession": null,
+    "created": "2026-03-05T22:15:00.000Z",
+    "updated": "2026-03-06T09:07:04.207Z",
+    "sortOrder": 1,
+    "context": null
+  },
+  {
+    "id": "backlog001",
+    "title": "Evaluate repo structure: phredomade as umbrella vs separate repos",
+    "description": "phredomade repo contains multiple sub-projects (photography portfolio, Mission Control, SE Asia trip, etc.). Currently works fine — CLAUDE.md covers everything with universal behavioral rules, domain-specific truths live in code comments. Revisit if Mission Control becomes its own product with separate deploy pipeline or collaborators.",
+    "status": "backlog",
+    "priority": "p2",
+    "workstream": "mission-control",
+    "tags": [
+      "architecture",
+      "organization"
+    ],
+    "linkedSession": null,
+    "created": "2026-03-05T22:30:00.000Z",
+    "updated": "2026-03-05T22:30:00.000Z",
+    "sortOrder": 0,
+    "context": null
+  },
+  {
+    "id": "ls1ipf9q",
+    "title": "Global prompt search across all sessions",
+    "description": "Search all captured prompts across every session to surface past context, decisions, and ideas. Already implemented in Dispatch page -- verify it works well, consider adding search to dashboard too.",
+    "status": "todo",
+    "priority": "p1",
+    "workstream": "mission-control",
+    "tags": [
+      "search",
+      "ux"
+    ],
+    "linkedSession": null,
+    "created": "2026-03-04T08:05:00.172Z",
+    "updated": "2026-03-06T06:58:11.821Z",
+    "sortOrder": 2,
+    "context": null
+  },
+  {
+    "id": "lvna4pkg",
+    "title": "Personal work item board (Dispatch page)",
+    "description": "A manually-owned board for capturing ideas, tasks, and priorities. Not just agent-driven -- a place to dump thoughts before they get lost. Implemented as the Dispatch page with CRUD, filters, sections.",
+    "status": "done",
+    "priority": "p1",
+    "workstream": "mission-control",
+    "tags": [
+      "ux",
+      "organization"
+    ],
+    "linkedSession": null,
+    "created": "2026-03-04T08:05:07.785Z",
+    "updated": "2026-03-04T08:13:10.443Z",
+    "context": null
+  },
+  {
+    "id": "kp76zshh",
+    "title": "Organize agents by workstream / project area",
+    "description": "Agents span personal tasks, portfolio work, Mission Control dev, emails, etc. Currently a flat list with no grouping. Need workstreams (named project groups) to filter and organize agents on the dashboard. Implemented: workstream filter pills, AI auto-classification, color dots on cards.",
+    "status": "done",
+    "priority": "p1",
+    "workstream": "mission-control",
+    "tags": [
+      "organization",
+      "dashboard"
+    ],
+    "linkedSession": null,
+    "created": "2026-03-04T08:05:17.985Z",
+    "updated": "2026-03-04T08:13:08.554Z",
+    "context": null
+  },
+  {
+    "id": "o0d56z0j",
+    "title": "Prompt recording stops after tool usage / plan mode",
+    "description": "Prompts stop being captured after certain tool events, especially during /plan mode transitions. Example: agent 4F5964 stopped recording prompts at 11:47pm even though user was still sending prompts at 12:04am. The hook fires on PostToolUse but something breaks the prompt capture chain. Investigate prompt-hook.js and the plan mode transition flow.",
+    "status": "todo",
+    "priority": "p0",
+    "workstream": "mission-control",
+    "tags": [
+      "bug",
+      "hooks",
+      "prompts"
+    ],
+    "linkedSession": null,
+    "created": "2026-03-04T08:05:24.778Z",
+    "updated": "2026-03-04T08:05:24.778Z",
+    "sortOrder": 0,
+    "context": null
+  },
+  {
+    "id": "hb125ey0",
+    "title": "Refactor Cerebras agent summary prompts for better card taglines",
+    "description": "The AI-generated mission/tagline text on agent cards could be written better. Review and improve the prompts sent to Cerebras for summarizing agent sessions � the current output is too generic. Want punchier, more descriptive one-liners that actually distinguish what each agent is doing.",
+    "status": "todo",
+    "priority": "p1",
+    "workstream": "mission-control",
+    "tags": [
+      "cerebras",
+      "ux",
+      "prompts"
+    ],
+    "linkedSession": null,
+    "created": "2026-03-06T03:27:34.280Z",
+    "updated": "2026-03-06T03:27:34.280Z",
+    "sortOrder": 3,
+    "context": null
+  },
+  {
+    "id": "lfvhu9oo",
+    "title": "Fix prompt timeline to include /tool. Purple stuff",
+    "description": "",
+    "status": "todo",
+    "priority": "p1",
+    "workstream": "mission-control",
+    "tags": [],
+    "linkedSession": null,
+    "created": "2026-03-06T06:38:59.016Z",
+    "updated": "2026-03-06T06:40:12.049Z",
+    "sortOrder": 9,
+    "context": null
+  },
+  {
+    "id": "sonxcgqw",
+    "title": "Audit all session prompts for missed requirements and overlooked work",
+    "description": "Sweep through ALL captured prompts across every agent session (prompts/*.ndjson) and surface any requirements, ideas, or decisions that were mentioned but never acted on � missed TODOs, deferred features, unresolved bugs, half-finished discussions.\n\nApproach:\n1. **Bulk extract** � read all prompt files from prompts/ directory, parse each .ndjson line, collect user prompts (not system/tool messages).\n2. **AI-powered triage** � feed batches of prompts through Cerebras (or Claude API) with a prompt like: \"Given these user prompts from coding sessions, identify: (a) feature requests that were discussed but not completed, (b) bugs mentioned but not fixed, (c) ideas that were deferred, (d) decisions that contradict each other across sessions.\"\n3. **Cross-reference with dispatch** � compare findings against existing dispatch items and mc-backlog.json to filter out things already tracked.\n4. **Output** � generate a findings report (could live on the Findings page) with each missed item, the session it came from, and a suggested priority.\n\nTools to use: Node.js script to bulk-read ndjson files, Cerebras API for fast summarization (free tier handles this volume), or Claude API for deeper analysis. Could also add a /api/audit endpoint that runs this on-demand from the dashboard.\n\nThis is a refactor/discovery task � goal is visibility into what fell through the cracks, not necessarily fixing everything found.",
+    "status": "todo",
+    "priority": "p1",
+    "workstream": "mission-control",
+    "tags": [
+      "audit",
+      "prompts",
+      "refactor",
+      "discovery"
+    ],
+    "linkedSession": null,
+    "created": "2026-03-06T07:13:21.325Z",
+    "updated": "2026-03-06T07:13:21.325Z",
+    "sortOrder": 10,
+    "context": null
+  },
+  {
+    "id": "aglp45t4",
+    "title": "Desktop notifications + sound cues for agent state changes",
+    "description": "When any agent transitions to NEEDS INPUT or IDLE, surface a clear desktop notification and/or audio cue so the user knows without staring at the dashboard. Implementation options to explore:\n\n1. Browser Notification API — request permission on first visit, fire Notification() on state transitions (IDLE, NEEDS INPUT, DONE). Include agent name + mission in the notification body.\n2. Audio cue — play a short sound (different tones for different states: chime for done, alert for needs-input, soft tone for idle). Use Web Audio API or a simple audio element.\n3. Visual cue — favicon badge, title bar flash, or tab title prefix like \"(!) Mission Control\" when attention needed.\n4. Polling vs SSE — current dashboard polls /api/agents. Could add Server-Sent Events for real-time push instead of polling, which would make notifications instant.\n\nKey states to notify on: NEEDS INPUT (highest priority — agent is blocked), DONE (session complete), ERROR. IDLE is lower priority but still useful.\n\nConsider a notification settings panel in the UI so the user can toggle which states trigger alerts and choose sound/silent mode.",
+    "status": "todo",
+    "priority": "p1",
+    "workstream": "mission-control",
+    "tags": [
+      "notifications",
+      "ux",
+      "real-time"
+    ],
+    "linkedSession": null,
+    "created": "2026-03-06T07:13:28.624Z",
+    "updated": "2026-03-06T07:13:28.624Z",
+    "sortOrder": 11,
+    "context": null
+  },
+  {
+    "id": "7m0q030o",
+    "title": "Workstream auto-classification is unreliable — agents get tagged wrong",
+    "description": "The AI workstream classifier (Cerebras) frequently assigns the wrong workstream to agent sessions. Example: session 78838 is entirely about Mission Control dispatch page work but got classified as \"Portfolio Site\". This causes agents to appear under the wrong tab filter, making the dashboard misleading.\n\nRoot cause hypotheses:\n1. The classifier prompt may be too shallow — it might only look at the first prompt or mission text, not the full session context.\n2. Keywords like \"page\", \"design\", \"UI\" might bias toward \"Portfolio Site\" even when the work is on Mission Control pages.\n3. The classifier may run once and never re-evaluate as the session evolves.\n\nPossible fixes:\n- Improve the classification prompt to weigh tool activity (e.g., files touched in .claude/agent-hub/ = Mission Control, files in src/ = Portfolio Site).\n- Add re-classification on session updates — if new prompts come in, re-run classification periodically.\n- Allow manual override that persists (currently can reassign via UI but unclear if it sticks across refreshes).\n- Add a confidence score — if the classifier is unsure, show \"unclassified\" instead of guessing wrong.\n- Use file paths from tool activity logs as a strong signal: agent-hub/* = MC, src/components/* = portfolio, personal keywords = personal.\n\nThis directly impacts dashboard usability — wrong tabs mean you miss active agents.",
+    "status": "todo",
+    "priority": "p0",
+    "workstream": "mission-control",
+    "tags": [
+      "classification",
+      "cerebras",
+      "bug",
+      "ux"
+    ],
+    "linkedSession": null,
+    "created": "2026-03-06T07:19:29.699Z",
+    "updated": "2026-03-06T07:19:29.699Z",
+    "sortOrder": 0,
+    "context": null
+  },
+  {
+    "id": "23j3qgw3",
+    "title": "Agent Track Record System + Task Routing",
+    "description": "Three connected improvements:\n\n1. **Agent outcome logging** � After each agent completes, log: agent name, task type, outcome (useful result / timed out / empty / error), duration. Store in agent-hub. Future sessions can see \"critic has 40% timeout rate\" and make better picks.\n\n2. **Task-to-agent routing hints** � A config mapping like \"visual review ? design, library research ? scout, code review ? guard\" so agent selection is principled, not vibes-based keyword matching.\n\n3. **Configurator agent audit** � Dispatch the configurator agent to audit the full roster for gaps, overlap, and underused agents. Sharpen descriptions where needed. Review underperforming agents (critic timed out this session, never produced output).\n\n4. **Agent discovery gap** � When selecting agents, certain ones get overlooked because their names or descriptions dont surface for the task at hand. Configurator was never considered this session despite being designed for exactly the \"which agents should I dispatch\" question. The routing system (item 2) should fix this, but also consider: should there be a step at the start of multi-agent tasks where the full roster is reviewed, or where configurator is always consulted first?\n\nContext: During Dispatch V2 session, agent selection was ad-hoc. Critic ran forever and produced nothing. Scout delivered good research but with wrong framing (now fixed). Design agent was excellent. Configurator was never even considered. No system exists to learn from these outcomes across sessions.",
+    "status": "todo",
+    "priority": "p0",
+    "workstream": "mission-control",
+    "tags": [
+      "agent-workflow",
+      "infrastructure",
+      "meta"
+    ],
+    "linkedSession": null,
+    "created": "2026-03-06T08:19:53.788Z",
+    "updated": "2026-03-06T08:22:26.077Z",
+    "sortOrder": 4,
+    "context": null
+  },
+  {
+    "id": "ulz7ddsz",
+    "title": "Demo Mission Control to team (Matthew, Anteneh, Manager)",
+    "description": "Prepare and schedule a walkthrough of Mission Control for teammates. Show the dispatch board, agent cards with live state tracking, workstream filtering, toolbox, and the multi-machine git sync workflow. Keep it casual — focus on how it helps manage parallel Claude sessions and track work across machines.",
+    "status": "todo",
+    "priority": "p1",
+    "workstream": "mission-control",
+    "tags": [
+      "demo",
+      "sharing"
+    ],
+    "linkedSession": null,
+    "created": "2026-03-06T08:25:59.290Z",
+    "updated": "2026-03-06T08:26:31.465Z",
+    "sortOrder": 14,
+    "context": null
+  },
+  {
+    "id": "pm003",
+    "title": "Agent Selection Blindness: Wrong agent dispatched, 18 of 20 agents never considered",
+    "description": "## Incident (2026-03-06)\nDuring the Dispatch V2 session, 3 agents were dispatched from a roster of ~20. Agent selection was done by keyword-matching task descriptions to agent descriptions. The critic agent was dispatched for a UX critique task (screenshot the page, test interactions, evaluate visual design) but is designed exclusively for code architecture review (read files, trace data flow). It ran for 5+ minutes producing nothing and had to be killed. Meanwhile, the configurator agent, literally designed to answer \"which agents should I use for this task,\" was never even considered.\n\n## What actually happened\nThe user asked for three parallel agents: a design reviewer, a UX critic, and an editor researcher. I scanned my memory for agent descriptions that matched keywords. \"Visual polish\" matched design. \"Reviewer\" matched critic. \"Researching libraries\" matched scout. Picked three, dispatched them. Never reviewed the full roster. Never asked \"is there an agent that helps me pick agents?\" The critic agent tried to apply its 4-phase code review protocol to a 1000-line HTML file as if it were a code review task. It mapped territory, traced data flow, analyzed architecture, none of which was asked for. It never took a screenshot, never clicked a button, never evaluated any visual element.\n\n## Failure 1: No agent selection protocol\n- With 20 agents available, I picked 3 by keyword matching from memory\n- Never reviewed the full roster to see what else was available\n- The configurator agent exists specifically for this: \"set up the right combination of agents for a project phase, audit the agent roster for gaps\"\n- I forgot it existed because its name does not surface when you are thinking \"I need a UX reviewer\"\n- **Lesson: Agent selection needs a deliberate step, not a keyword guess. For multi-agent tasks, either review the full roster or consult configurator first.**\n- **Systemic fix: Agent routing table, a config mapping task categories to recommended agents. Plus outcome logging so future sessions know what works.**\n\n## Failure 2: Ambiguous agent boundaries\n- Critic described itself as \"architecture and logic reviewer,\" vague enough to seem like it could cover UX critique\n- Nothing in the description said \"CODE ONLY\" or \"does NOT do visual review\"\n- The design agent says \"UI components, styling, animations,\" which overlaps with what \"review\" could mean in the critic context\n- When boundaries are fuzzy, wrong picks happen\n- **Lesson: Agent descriptions must include explicit negative boundaries, stating what the agent does NOT do, not just what it does.**\n- **Systemic fix: Critic description updated to say CODE ONLY, does NOT review UI/visual/UX. Model changed from opus to sonnet to prevent timeouts. Write/Edit tools removed to enforce observer role.**\n\n## Action items\n1. Agent Track Record System: log outcomes per agent per task type (dispatch item 23j3qgw3, P0)\n2. Task-to-agent routing hints: config mapping task categories to recommended agents\n3. Sharper agent descriptions with explicit boundaries. Started with critic and scout\n4. Configurator as default first step for multi-agent work\n5. Create Post-Mortem agent or skill for structured incident capture (dispatch item pm-agent, P0)",
+    "status": "done",
+    "priority": "p0",
+    "workstream": "mission-control",
+    "tags": [
+      "post-mortem",
+      "agent-workflow",
+      "infrastructure",
+      "machine:home"
+    ],
+    "linkedSession": null,
+    "created": "2026-03-06T08:29:12.242Z",
+    "updated": "2026-03-06T08:44:41.928Z",
+    "context": null
+  },
+  {
+    "id": "04k20mz2",
+    "title": "Agent cards: Shipped tab + Findings extraction + Top of Mind redesign",
+    "description": "Enhance Mission Control agent cards with session outcome tracking and discovery capture.\n\n## What\n\n### 1. Shipped Tab (per agent card)\nNew tab alongside Summary/Prompts/Timeline showing concise \"what was accomplished\" for each session. Generated by Cerebras summarization loop with a focused prompt (not \"what was discussed\" but \"what was delivered\").\n\n### 2. Findings Tab (per agent card)\nCaptures patterns, lessons, decisions, tool discoveries � things that matter beyond the session. Two approaches to evaluate:\n- Auto-extract via Cerebras with a \"what should other sessions know?\" prompt\n- Agent-written during session to findings/{sid}.json\nOnly generated for substantial sessions (>15 tool uses or >30 min duration) to avoid noise.\n\n### 3. Findings Backflow\nNotable per-session findings get promoted to global Findings page. Could be a \"Push to Findings\" button or automatic based on quality threshold.\n\n### 4. Top of Mind Redesign\nCurrent Top of Mind prompt produces activity reports nobody reads. Redesign the Cerebras prompt to produce an executive briefing: 2-3 things that matter right now, decisions made today, what is blocked, what needs follow-up.\n\n## Design Constraints\n- Stop hook cannot read conversation content � outcomes must come from prompt history + Cerebras\n- Not every session is notable � need a heuristic to avoid noise\n- Findings should be concise (3-5 bullet points max per session)\n- Must not add latency to the agent experience\n\n## Open Questions\n- Should findings be editable on the dashboard (manual curation)?\n- Should the Shipped summary replace or sit alongside the current Summary tab?\n- What makes a good Top of Mind prompt? Need to experiment with Cerebras prompt engineering.",
+    "status": "todo",
+    "priority": "p0",
+    "workstream": "Mission Control",
+    "tags": [
+      "dashboard",
+      "design",
+      "agent-cards",
+      "findings"
+    ],
+    "linkedSession": null,
+    "created": "2026-03-06T09:19:06.574Z",
+    "updated": "2026-03-06T09:22:43.187Z",
+    "sortOrder": 1,
+    "context": null
+  },
+  {
+    "id": "k5vh3ftx",
+    "title": "Create retrospective skill for post-incident learning",
+    "description": "Build a /retro skill that triggers after wasted iterations, failed approaches, or stupid bugs that took too long to find. The skill should:\n\n1. Capture what happened — the symptom, how many iterations were wasted, what was tried\n2. Root cause analysis — why did it take so long? What assumption was wrong?\n3. What signal was missed — what could have been checked first that would have caught it immediately?\n4. Prevention rule — a concrete check to add to the workflow so this class of bug never wastes time again\n5. Optionally persist the lesson to memory files so future sessions benefit\n\nExample trigger: \"We spent 5 iterations fixing ghost positioning because we never checked if CSS zoom was applied. The fix was one line dividing by the zoom factor. We should always check computed zoom/transform on html/body before doing any position:fixed coordinate math.\"\n\nThe skill should produce a short, sharp writeup — not a novel. Think incident postmortem but for dev workflow inefficiencies.",
+    "status": "todo",
+    "priority": "p0",
+    "workstream": "mission-control",
+    "tags": [
+      "skill",
+      "workflow",
+      "learning",
+      "retrospective"
+    ],
+    "linkedSession": null,
+    "created": "2026-03-06T09:32:03.448Z",
+    "updated": "2026-03-06T09:32:03.448Z",
+    "context": null
+  },
+  {
+    "id": "ioc25cj2",
+    "title": "Track Ctrl+C interruptions on the MC dashboard",
+    "description": "## Problem\nWhen a Claude Code session gets interrupted via Ctrl+C (or the terminal closes unexpectedly), Mission Control has no visibility into this. The session just goes silent — its state file stops updating and eventually it looks \"stale\" or \"idle,\" indistinguishable from a session that finished naturally or is just thinking.\n\n## Why this matters\nInterruptions are a significant workflow event. They mean:\n- Work was in progress and got cut short (potential lost context)\n- The user may need to resume or restart that task\n- The agent's last state (files being edited, plan in progress) is frozen mid-action\n- If it happens frequently on certain task types, that's a signal worth surfacing\n\n## What should happen\n1. **Detect the interruption** — Claude Code fires a Stop event on Ctrl+C. The hook (hook.js) should distinguish between a clean stop (agent finished) vs an interruption (user hit Ctrl+C while agent was active). Key signal: if the agent was in ACTIVE/THINKING state when Stop fires, it was interrupted. If it was IDLE/waiting for input, it was a normal close.\n\n2. **Record it in state** — Add an  field to the session state file: \"completed\", \"interrupted\", \"crashed\", \"timeout\". The hook's Stop handler can infer this from the agent's last known state before the stop event.\n\n3. **Surface on dashboard** — Show interrupted sessions with a distinct visual indicator (maybe a yellow/amber warning icon or a \"INTERRUPTED\" badge instead of the generic stale/gone state). The agent card should show what the agent was doing when it got interrupted (last tool call, last file being edited).\n\n4. **Interruption history** — Track interruption count per session. If a session gets interrupted and resumed multiple times, that's useful context. Could be a small counter or timeline on the agent card.\n\n## Implementation hints\n-  Stop handler (line ~80) — this is where interruption detection goes. Check  at the moment Stop fires. If status was \"active\" or tool was in progress, mark as interrupted.\n- State files in  — add  and  fields.\n- Dashboard card rendering in  embedded HTML — add visual treatment for interrupted state.\n- Consider: should interrupted sessions auto-surface at the top of the dashboard? They represent unfinished work that needs attention.\n\n## Edge cases\n- Terminal crash vs Ctrl+C — both should be captured but may have different signals\n- Multiple rapid Ctrl+C (user mashing it) — should only record one interruption event\n- Session that gets interrupted then resumed in same terminal — the resume should clear the interrupted state\n- Hook might not fire at all on hard kill (kill -9 / taskkill /F) — this is a known limitation, handle gracefully",
+    "status": "todo",
+    "priority": "p0",
+    "workstream": "mission-control",
+    "tags": [
+      "dashboard",
+      "hooks",
+      "agent-workflow",
+      "ux"
+    ],
+    "linkedSession": null,
+    "created": "2026-03-06T09:37:04.591Z",
+    "updated": "2026-03-06T09:37:04.591Z",
+    "sortOrder": 2,
+    "context": null
+  },
+  {
+    "id": "finww80y",
+    "title": "Optimize page load times + add page transition animations",
+    "description": "Pages take ~5 seconds to load which is unacceptable for a local dashboard. Two parts:\n\n**Performance:**\n- Profile what is slow — is it the API calls, the DOM rendering, or the HTML file size?\n- server.js serves full HTML pages inline (dispatch-page.html is 1100+ lines). Consider splitting CSS/JS or caching.\n- API calls (/api/dispatch, /api/agents, /api/workstreams) may be doing expensive file reads on every request. Add in-memory caching with file-watcher invalidation.\n- Lazy-load heavy pages (radar, logic, findings) — only fetch data when the page is actually visited.\n- Consider pre-fetching adjacent page data on hover over nav links.\n\n**Transitions:**\n- Add smooth page transitions between nav tabs — not a full reload feel.\n- Options: crossfade between pages, slide/swipe animation, ripple from the clicked nav link, skeleton loading states.\n- Could use View Transitions API (Chrome-native) for zero-JS page transitions.\n- Or convert to SPA-style with fetch + innerHTML swap and CSS transitions between content areas.\n- Loading skeleton should match the page layout so there is no layout shift when data arrives.",
+    "status": "todo",
+    "priority": "p0",
+    "workstream": "mission-control",
+    "tags": [
+      "performance",
+      "ux",
+      "transitions",
+      "loading"
+    ],
+    "linkedSession": null,
+    "created": "2026-03-06T10:01:22.428Z",
+    "updated": "2026-03-06T10:01:22.428Z",
+    "context": null
+  },
+  {
+    "id": "rqepouyk",
+    "title": "INDEX the following videos of rich info",
+    "description": "- Bug Bash\n- MAPI arch review\n- FHL platinum SEVAL and DEVUI understanding\n- indexing and vectorization deep dive\n\nmake the video disect better to make high level understandings",
+    "status": "todo",
+    "priority": "p0",
+    "workstream": "aqg",
+    "tags": [],
+    "linkedSession": null,
+    "context": "work",
+    "created": "2026-03-06T20:04:58.345Z",
+    "updated": "2026-03-06T20:08:45.086Z",
+    "areas": [
+      "aqg"
+    ]
+  },
+  {
+    "id": "pm004",
+    "title": "Post-Mortem: Agent declared sync-ready without auditing git tracking, risking total toolbox loss",
+    "description": "## Incident (2026-03-06)\nAgent spent an entire session building a Home/Work mode toggle system for Mission Control, including dispatch filtering, workstream management, toolbox context tagging, and findings migration. At multiple points the agent said \"ready for git push\" and \"everything is implemented.\" The user had to force the agent to \"dig deep\" before discovering that the root .gitignore blocks the ENTIRE .claude/ directory, meaning none of the toolbox (13 agents, 35 skills, 2 commands), project hooks, or project settings would have synced. The agent also failed to notice that MC config data (dispatch.json, findings.json, etc.) was untracked in the agent-hub git repo.\n\n## What actually happened\nThe agent built an elaborate system of context tagging, mode filtering, and sync prompts without ever checking whether git would actually carry the data between machines. It created toolbox-context.json to tag tools as home/work, wrote a sync prompt telling the work laptop Claude to \"git add .claude/agents/\", and repeatedly said the system was ready -- all while .claude/ was in .gitignore line 31 of the root project. A git push would have committed zero toolbox files. The work laptop sync prompt would have failed silently. The user would have switched machines and found an empty toolbox with no agents, no skills, no commands, and no hooks.\n\n## Failure 1: Never audited the git tracking layer\n- Built an entire sync system without checking what git actually tracks\n- Never ran git ls-files .claude/ to verify\n- Never read the root .gitignore\n- Assumed files in .claude/ would sync because they existed on disk\n- **Lesson: Before building any sync/transfer system, verify the transport layer first. What does git actually track? What does .gitignore block? Check BEFORE writing code, not after.**\n- **Systemic fix: Add principle -- 'For any cross-machine feature, audit the git tracking layer FIRST. Run git ls-files and read .gitignore before writing a single line of sync code.'**\n\n## Failure 2: Confidently declared readiness without verification\n- Said \"ready for git push\" multiple times\n- Said \"everything is implemented\" and presented a green checklist\n- Never ran a dry-run to verify what git would actually commit\n- The user had to explicitly demand \"dig deep\" to surface the problem\n- **Lesson: \"Ready\" means verified, not assumed. Before declaring a cross-machine feature complete, simulate the actual transfer and verify the output.**\n- **Systemic fix: Add to verification checklist -- 'For sync features, run git status and git diff --stat to show exactly what would be committed. Show the user the actual file list before claiming ready.'**\n\n## Failure 3: Missed the two-repo structure\n- The project has TWO git repos: phredomade (main) and agent-mission-control (inside .claude/agent-hub/)\n- Agent never investigated how these repos relate\n- Built sync logic assuming a single repo\n- MC config data was untracked in the agent-hub repo\n- **Lesson: Before modifying any project's git workflow, map ALL git repos in the project tree. Nested repos, submodules, and separate remotes are common and must be understood.**\n- **Systemic fix: At session start for any git-related task, run 'find . -name .git -type d' to discover all repos.**\n\n## Why this matters\nThis is the worst category of agent failure: confidently wrong about infrastructure. The user would have pushed, switched machines, found nothing working, and lost hours debugging why. The elaborate UI (toggle, gear modal, context badges) would have been cosmetic -- the data plane was broken. Building features on a broken transport layer is worse than building nothing.\n\n## Action items\n1. Add CLAUDE.md principle: 'For cross-machine features, audit git tracking FIRST'\n2. Add verification step: 'Before declaring sync-ready, run git status and show what would be committed'\n3. Fix root .gitignore to whitelist .claude/agents/, .claude/skills/, .claude/commands/, .claude/scripts/, .claude/settings.json\n4. Commit all MC config data to agent-hub repo\n5. Add this as a Finding on the Findings page",
+    "status": "in-progress",
+    "priority": "p0",
+    "workstream": "mission-control",
+    "tags": [
+      "post-mortem",
+      "agent-safety",
+      "infrastructure",
+      "git",
+      "sync",
+      "machine:home"
+    ],
+    "linkedSession": null,
+    "created": "2026-03-06T20:36:37.831Z",
+    "updated": "2026-03-06T20:36:37.832Z",
+    "context": null
+  },
+  {
+    "id": "8o7k1ia3",
+    "title": "Add prompt user state fix",
+    "description": "",
+    "status": "todo",
+    "priority": "p2",
+    "workstream": "mission-control",
+    "tags": [],
+    "linkedSession": null,
+    "created": "2026-03-04T23:18:00.868Z",
+    "updated": "2026-03-04T23:18:00.868Z",
+    "context": "work"
+  },
+  {
+    "id": "pm005",
+    "title": "Post-Mortem: Agent repeatedly conflated phredomade (portfolio) repo with Mission Control, nearly polluting it with agent tooling files",
+    "description": "## Incident (2026-03-06)\nThroughout an entire session building multi-machine sync for Mission Control, the agent repeatedly referenced and tried to commit to the phredomade repository -- a photography portfolio website -- as if it were part of the Mission Control infrastructure. This happened at least 4 times despite corrections.\n\n## Timeline of failures\n\n### Failure 1: Proposed whitelisting .claude/ in phredomade .gitignore\nWhen discovering that .claude/ was gitignored in phredomade, the agent modified phredomade's .gitignore to whitelist .claude/agents/, .claude/skills/, .claude/commands/, etc. This would have committed 60+ agent definition files to a photography portfolio repository. The user had to ask 'why would I commit agent files to my photo portfolio repo?'\n\n### Failure 2: Sync prompt referenced phredomade\nThe sync prompt said 'Pull latest from phredomade plus Agent Hub' and instructed the work laptop to push toolbox to phredomade. The user corrected: 'My laptop does not have phredomade. Phredomade is a home project.'\n\n### Failure 3: Push plan included phredomade changes\nEven after correction, the final push plan listed 'phredomade repo will commit: 13 agents, 35 skills, 2 commands, 6 scripts, settings.json' alongside the MC repo changes.\n\n### Failure 4: Final review still referenced phredomade\nAt the very end, the agent listed phredomade repo changes for the push, prompting the user to say 'that's my photo portfolio website, what's that gotta do with anything?'\n\n## Root cause\nThe agent confused FILESYSTEM HIERARCHY with ORGANIZATIONAL HIERARCHY. Because .claude/ physically lives inside the phredomade directory on the home computer, the agent assumed phredomade should track those files. It never considered:\n\n1. phredomade is a PHOTOGRAPHY PORTFOLIO -- it has its own purpose unrelated to Claude tooling\n2. .claude/ is inside phredomade only because that's the current working directory -- it's a Claude Code convention, not a project relationship\n3. The Mission Control repo (agent-mission-control) is the correct and ONLY transport for MC-related files between machines\n4. The work laptop doesn't even HAVE phredomade -- it's a home-only project\n\nThe agent failed to ask: 'What IS this repo? What is its purpose? Does this file belong here?' It just saw a directory tree and assumed everything in it belongs to the root repo.\n\n## Lesson\n**A repo's purpose defines what it should track, not its filesystem position.** Before proposing to commit files to any repo, ask: 'What is this repo for? Do these files serve that purpose?' Agent config files do not belong in a photography portfolio repo, regardless of where they physically live on disk.\n\n## Systemic fix\n1. Before modifying any .gitignore or proposing git commits, identify the repo's purpose first\n2. Never assume filesystem containment equals organizational ownership\n3. When building cross-machine sync, identify the TRANSPORT repo (the one shared between machines) and use ONLY that -- don't touch unrelated project repos\n4. If corrected about repo confusion, grep the entire plan for other references to the wrong repo -- one correction should fix ALL instances, not just the one the user pointed out\n\n## Action items\n1. Add to CLAUDE.md: 'Before modifying .gitignore or proposing commits, identify the repo purpose. Files must match the repo purpose.'\n2. Add finding to findings.json\n3. The phredomade .gitignore was reverted -- verify no traces remain",
+    "status": "done",
+    "priority": "p0",
+    "workstream": "mission-control",
+    "tags": [
+      "post-mortem",
+      "agent-safety",
+      "git",
+      "infrastructure",
+      "machine:home"
+    ],
+    "linkedSession": null,
+    "created": "2026-03-06T21:46:18.172Z",
+    "updated": "2026-03-06T21:46:18.172Z",
+    "context": null
+  },
+  {
+    "id": "pm007",
+    "title": "Post-Mortem: Bidirectional toolbox sync was never designed — only one direction was considered",
+    "description": "## Incident (2026-03-06)\nAgent built an entire multi-machine sync system but only considered ONE direction: work laptop exports tools into toolbox/. The reverse direction (home PC exports tools into toolbox/) was never implemented. Result: work laptop pulled, toggled to Home mode, saw 0 tools. The toolbox-context.json correctly mapped 51 home tools but the actual files were never exported.\n\n## What actually happened\nThe sync protocol had a fundamental design gap. The agent designed toolbox/ as a directory where the work laptop puts its tools. But both machines need to put their tools there -- it is a SHARED directory, not a one-way export. The agent only thought about 'how does the work laptop get its data to the home PC' and never asked 'how does the home PC get its data to the work laptop.'\n\n## Failure: Unidirectional thinking in a bidirectional problem\n- The sync prompt (SYNC-WORK-LAPTOP.md) only covered work laptop -> git -> home PC\n- The home PC push included toolbox-context.json (the MAP of tools) but not the actual tool FILES\n- The agent created a metadata layer (context tags) without the data layer (tool files)\n- When the work laptop pulled and toggled to Home mode, the context map said '51 home tools' but there were 0 files to serve\n- **Lesson: Any sync system between N machines must be bidirectional by design. Every machine that has unique data must export it, not just the one you happen to be thinking about.**\n- **Systemic fix: Whenever building sync between machines, draw the data flow diagram for BOTH directions before writing code. Verify each direction has both metadata AND data.**\n\n## Why this keeps happening\nThis is the third infrastructure oversight in this session (PM004: git tracking, PM005: repo confusion, PM007: unidirectional sync). The pattern: agent focuses on the feature logic (toggle, filtering, context tags) and treats the transport layer as an afterthought. Transport is verified last instead of first.\n\n## Prevention rules\n1. Both machines must export their tools into toolbox/ (bidirectional)\n2. After any push, verify the OTHER machine will see non-zero data in BOTH modes\n3. Before declaring sync complete, simulate: 'Machine B pulls. What does it see in Home mode? What does it see in Work mode? Are there actual FILES, not just metadata?'\n\n## Action items\n1. Home tools exported to toolbox/ (done in commit 93c9950)\n2. Workflow config files (CLAUDE.md, memory files, project settings) to be exported to toolbox/config/\n3. Add to sync checklist: verify both directions before pushing",
+    "status": "done",
+    "priority": "p0",
+    "workstream": "mission-control",
+    "tags": [
+      "post-mortem",
+      "agent-safety",
+      "sync",
+      "infrastructure",
+      "machine:home"
+    ],
+    "linkedSession": null,
+    "created": "2026-03-06T22:37:14.037Z",
+    "updated": "2026-03-06T22:37:14.037Z",
+    "context": null
+  }
+]
