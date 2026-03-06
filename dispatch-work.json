@@ -17,5 +17,39 @@
     "created": "2026-03-06T22:32:01.629Z",
     "updated": "2026-03-06T22:32:01.630Z",
     "context": null
+  },
+  {
+    "id": "wk-u0nntf2o",
+    "title": "Workflow page: differentiate Home vs Work machine context",
+    "description": "The Workflow page should reflect machine-specific differences while sharing the core hook infrastructure.\n\nWhat should differ by machine:\n- Memory files loaded (e.g. cares-guide.md only on work, phredomade.md only on home)\n- CLAUDE.md content (work may need MAPI/CARES-specific rules, home has portfolio rules)\n- Project hooks that are machine-specific (e.g. deploy verifier only makes sense on home)\n\nWhat should stay the same:\n- MC telemetry hooks (hook.js, prompt-hook.js) — both machines\n- Anti-rationalization / verify-before-done Stop hook — both machines\n- Safety guards pattern (stale build, file conflict) — both machines, different scripts\n\nImplementation ideas:\n- Workflow page reads mode and labels sections that differ with a Home/Work badge\n- Shared hooks render normally, machine-specific hooks get a colored machine tag\n- Memory files section could show which files are home-only vs work-only vs shared\n- Consider a workflow-config.json that declares per-machine overrides",
+    "status": "todo",
+    "priority": "p1",
+    "workstream": "mission-control",
+    "tags": [
+      "workflow",
+      "sync",
+      "machine:work"
+    ],
+    "linkedSession": null,
+    "context": null,
+    "created": "2026-03-06T22:53:54.906Z",
+    "updated": "2026-03-06T22:53:54.906Z"
+  },
+  {
+    "id": "wk-skawsxpe",
+    "title": "Unify MC repo location and naming across machines",
+    "description": "The Mission Control repo has different names and locations on each machine:\n- Home PC: ~/.claude/agent-hub/ (aliased as agent-hub)\n- Work laptop: ~/Claude/projects/agent-mission-control/\n\nThis causes:\n- Sync prompts break because paths are hardcoded to the wrong location\n- server.js path resolution (../ for project root, ../../ for CLAUDE.md) assumes ~/.claude/agent-hub/ structure\n- Hook paths in settings.json reference machine-specific absolute paths\n- Handoff prompts between machines need \"check where the repo is cloned\" disclaimers\n\nProposed fix:\n1. Pick one canonical name and location (e.g. ~/.claude/agent-hub/ on both)\n2. Clone/move the repo on the work laptop to match\n3. Update settings.json hook paths on both machines\n4. server.js already handles path detection — just verify it works from the unified location\n5. Document the canonical path in README.md so future sessions know where to find it\n\nAlternative: make server.js fully path-agnostic (detect its own location for all relative paths, no assumptions about parent directory structure). This is partially done but the workflow API still assumes ../../ for CLAUDE.md.",
+    "status": "todo",
+    "priority": "p1",
+    "workstream": "mission-control",
+    "tags": [
+      "infrastructure",
+      "sync",
+      "machine:work"
+    ],
+    "linkedSession": null,
+    "context": null,
+    "created": "2026-03-06T22:53:54.906Z",
+    "updated": "2026-03-06T22:53:54.906Z"
   }
 ]
