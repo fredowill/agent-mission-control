@@ -86,6 +86,8 @@
   .pm-tag { font-size:8px; font-weight:700; text-transform:uppercase; letter-spacing:0.05em; padding:2px 6px; border-radius:4px; background:var(--surface); color:var(--text3) }
   .pm-tag.safety { background:var(--rose-bg); color:var(--rose) }
   .pm-tag.cross { background:var(--amber-bg); color:var(--amber) }
+  .pm-tag.machine-home { background:var(--blue-bg); color:var(--blue) }
+  .pm-tag.machine-work { background:var(--purple-bg); color:var(--purple) }
   .pm-status { font-size:8px; font-weight:700; text-transform:uppercase; letter-spacing:0.06em; padding:2px 6px; border-radius:4px }
   .pm-status.open { background:var(--rose); color:#fff }
   .pm-status.resolved { background:var(--green); color:#fff }
@@ -248,7 +250,7 @@ function renderPM(pm, idx) {
   const statusLabel = pm.status === 'done' ? 'Resolved' : 'Open';
 
   const tags = pm.tags.filter(t => t !== 'post-mortem').map(t => {
-    const cls = t === 'agent-safety' ? 'safety' : t === 'cross-agent' ? 'cross' : '';
+    const cls = t === 'agent-safety' ? 'safety' : t === 'cross-agent' ? 'cross' : t === 'machine:home' ? 'machine-home' : t === 'machine:work' ? 'machine-work' : '';
     return `<span class="pm-tag ${cls}">${esc(t)}</span>`;
   }).join('');
 
