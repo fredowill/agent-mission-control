@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>MC Demo Guide</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=DM+Sans:wght@400;500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#fff;--bg2:#fafafa;--surface:#f4f4f5;--surface2:#e4e4e7;
+  --text:#09090b;--text2:#3f3f46;--text3:#a1a1aa;--sep:#e4e4e7;
+  --purple:#8b5cf6;--purple-light:#a78bfa;--purple-bg:rgba(139,92,246,0.06);
+  --blue:#3b82f6;--blue-bg:rgba(59,130,246,0.06);
+  --green:#22c55e;--green-bg:rgba(34,197,94,0.06);
+  --amber:#f59e0b;--amber-bg:rgba(245,158,11,0.06);
+  --rose:#ef4444;--rose-bg:rgba(239,68,68,0.05);
+}
+body{background:var(--bg2);color:var(--text);font-family:'DM Sans',-apple-system,system-ui,sans-serif;-webkit-font-smoothing:antialiased;min-height:100vh}
+
+/* ── LAYOUT ── */
+.page{max-width:820px;margin:0 auto;padding:48px clamp(24px,4vw,48px) 80px}
+
+/* ── HEADER ── */
+.page-header{margin-bottom:48px;padding-bottom:32px;border-bottom:1px solid var(--sep)}
+.page-badge{display:inline-flex;align-items:center;gap:6px;font-family:'DM Mono',monospace;font-size:11px;text-transform:uppercase;letter-spacing:0.1em;color:var(--purple);background:var(--purple-bg);border:1px solid rgba(139,92,246,0.12);padding:4px 12px;border-radius:100px;margin-bottom:16px}
+.page-title{font-family:'Plus Jakarta Sans',sans-serif;font-size:clamp(28px,4vw,36px);font-weight:800;letter-spacing:-0.04em;line-height:1.15;margin-bottom:12px}
+.page-sub{font-size:16px;color:var(--text2);line-height:1.65;max-width:600px}
+
+/* ── SECTIONS ── */
+.guide-section{margin-bottom:48px}
+.guide-section-title{font-family:'Plus Jakarta Sans',sans-serif;font-size:22px;font-weight:700;letter-spacing:-0.03em;margin-bottom:6px;display:flex;align-items:center;gap:10px}
+.guide-section-title .num{font-family:'DM Mono',monospace;font-size:13px;color:var(--purple);background:var(--purple-bg);border:1px solid rgba(139,92,246,0.12);width:28px;height:28px;border-radius:8px;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0}
+.guide-section-sub{font-size:14px;color:var(--text3);margin-bottom:20px;margin-left:38px}
+
+/* ── CHECKLIST ── */
+.checklist{list-style:none;display:flex;flex-direction:column;gap:8px;margin-bottom:8px}
+.checklist li{display:grid;grid-template-columns:24px 1fr;gap:10px;align-items:start;padding:12px 16px;border-radius:10px;border:1px solid var(--sep);background:var(--bg);font-size:14px;color:var(--text2);line-height:1.55}
+.checklist li strong{color:var(--text);font-weight:600}
+.check-box{width:18px;height:18px;border:2px solid var(--sep);border-radius:4px;margin-top:1px;flex-shrink:0}
+.checklist li.critical{border-color:rgba(239,68,68,0.2);background:var(--rose-bg)}
+.checklist li.critical .check-box{border-color:var(--rose)}
+
+/* ── DEMO FLOW ── */
+.flow-steps{display:flex;flex-direction:column;gap:0}
+.flow-step{display:grid;grid-template-columns:72px 1fr;gap:20px;padding:24px 0;border-bottom:1px solid var(--sep);align-items:start}
+.flow-step:first-child{border-top:1px solid var(--sep)}
+.flow-timing{text-align:center}
+.flow-timing .mins{font-family:'Plus Jakarta Sans',sans-serif;font-size:24px;font-weight:800;letter-spacing:-0.03em;color:var(--purple)}
+.flow-timing .unit{font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:0.06em}
+.flow-title{font-family:'Plus Jakarta Sans',sans-serif;font-size:17px;font-weight:700;letter-spacing:-0.02em;margin-bottom:6px}
+.flow-page{font-family:'DM Mono',monospace;font-size:11px;color:var(--purple);background:var(--purple-bg);padding:2px 8px;border-radius:100px;display:inline-block;margin-bottom:8px;border:1px solid rgba(139,92,246,0.12)}
+.flow-body{font-size:14px;color:var(--text2);line-height:1.7}
+.flow-body strong{color:var(--text);font-weight:600}
+.flow-say{margin-top:10px;font-size:13px;padding:10px 14px;border-radius:8px;background:linear-gradient(135deg,var(--purple-bg),rgba(59,130,246,0.04));border:1px solid rgba(139,92,246,0.1);color:var(--text2);line-height:1.6;font-style:italic}
+
+/* ── PAGE CARDS ── */
+.page-cards{display:flex;flex-direction:column;gap:12px}
+.page-card{border:1px solid var(--sep);border-radius:12px;padding:20px 22px;background:var(--bg)}
+.page-card-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.page-card-name{font-family:'Plus Jakarta Sans',sans-serif;font-size:16px;font-weight:700;letter-spacing:-0.02em}
+.page-card-route{font-family:'DM Mono',monospace;font-size:11px;color:var(--text3);margin-left:8px}
+.page-card-status{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.06em;padding:3px 10px;border-radius:100px}
+.status-strong{background:var(--green-bg);color:var(--green);border:1px solid rgba(34,197,94,0.15)}
+.status-ok{background:var(--blue-bg);color:var(--blue);border:1px solid rgba(59,130,246,0.15)}
+.status-wip{background:var(--amber-bg);color:var(--amber);border:1px solid rgba(245,158,11,0.15)}
+.status-rough{background:var(--rose-bg);color:var(--rose);border:1px solid rgba(239,68,68,0.15)}
+.page-card-points{list-style:none;font-size:13px;color:var(--text2);line-height:1.6}
+.page-card-points li{padding:3px 0;padding-left:16px;position:relative}
+.page-card-points li::before{content:'';position:absolute;left:0;top:10px;width:6px;height:6px;border-radius:50%;background:var(--surface2)}
+.page-card-points li strong{color:var(--text);font-weight:600}
+.page-card-warn{font-size:12px;color:var(--rose);margin-top:8px;padding:8px 12px;border-radius:6px;background:var(--rose-bg);border:1px solid rgba(239,68,68,0.1)}
+
+/* ── KILLER MOMENTS ── */
+.killer-list{display:flex;flex-direction:column;gap:10px}
+.killer-item{display:grid;grid-template-columns:32px 1fr;gap:12px;padding:16px 18px;border-radius:10px;border:1px solid rgba(139,92,246,0.15);background:linear-gradient(135deg,var(--purple-bg),rgba(59,130,246,0.03));align-items:start}
+.killer-icon{font-size:20px;text-align:center;line-height:1.4}
+.killer-title{font-family:'Plus Jakarta Sans',sans-serif;font-size:15px;font-weight:700;letter-spacing:-0.01em;margin-bottom:3px}
+.killer-desc{font-size:13px;color:var(--text2);line-height:1.6}
+
+/* ── FAQ ── */
+.faq-list{display:flex;flex-direction:column;gap:0}
+.faq-item{padding:20px 0;border-bottom:1px solid var(--sep)}
+.faq-item:first-child{border-top:1px solid var(--sep)}
+.faq-q{font-family:'Plus Jakarta Sans',sans-serif;font-size:15px;font-weight:700;letter-spacing:-0.01em;margin-bottom:6px;color:var(--text)}
+.faq-a{font-size:14px;color:var(--text2);line-height:1.65}
+.faq-a strong{color:var(--text);font-weight:600}
+
+/* ── CLOSING ── */
+.closing{text-align:center;padding:40px 0 0;border-top:1px solid var(--sep)}
+.closing-text{font-family:'Plus Jakarta Sans',sans-serif;font-size:18px;font-weight:600;color:var(--text2);line-height:1.6}
+.closing-text strong{color:var(--purple)}
+
+@media(max-width:600px){
+  .flow-step{grid-template-columns:1fr;gap:8px}
+  .flow-timing{text-align:left;display:flex;gap:4px;align-items:baseline}
+}
+</style>
+</head>
+<body>
+
+<div class="page">
+
+  <!-- HEADER -->
+  <div class="page-header">
+    <div class="page-badge">Internal</div>
+    <h1 class="page-title">Demo Guide</h1>
+    <p class="page-sub">Reference this before showing Mission Control to someone. What to show, what to say, what to skip, and how to handle questions.</p>
+  </div>
+
+  <!-- PRE-DEMO CHECKLIST -->
+  <section class="guide-section">
+    <div class="guide-section-title"><span class="num">1</span> Pre-Demo Checklist</div>
+    <div class="guide-section-sub">Do these BEFORE sharing your screen.</div>
+    <ul class="checklist">
+      <li class="critical"><span class="check-box"></span><div><strong>MC server running:</strong> <code style="font-family:'DM Mono',monospace;font-size:12px;background:var(--surface);padding:1px 6px;border-radius:3px;color:var(--purple)">node .claude/agent-hub/server.js</code> on port 3033</div></li>
+      <li class="critical"><span class="check-box"></span><div><strong>At least 1-2 Claude Code sessions active</strong> so Dashboard shows live cards with pulsing indicators</div></li>
+      <li><span class="check-box"></span><div><strong>Dispatch has items</strong> &mdash; a mix of todo, in-progress, and done. Empty Dispatch kills the demo.</div></li>
+      <li><span class="check-box"></span><div><strong>Findings page has content</strong> &mdash; currently 34 findings. Spot-check it loads.</div></li>
+      <li><span class="check-box"></span><div><strong>Campaigns page shows Sprint 1</strong> &mdash; debrief with wins/losses populated.</div></li>
+      <li><span class="check-box"></span><div><strong>Browser zoom comfortable</strong> &mdash; MC has 1.3x zoom built in. Make sure text is readable on shared screen.</div></li>
+      <li><span class="check-box"></span><div><strong>Home/Work toggle set to Home</strong> &mdash; shows the personal project context (photography portfolio + MC). More relatable than "work."</div></li>
+      <li><span class="check-box"></span><div><strong>Close sensitive tabs</strong> &mdash; no email, Slack, or passwords visible in other browser tabs.</div></li>
+    </ul>
+  </section>
+
+  <!-- DEMO FLOW -->
+  <section class="guide-section">
+    <div class="guide-section-title"><span class="num">2</span> Demo Flow</div>
+    <div class="guide-section-sub">Recommended order. Adjust based on audience. Total: ~8 minutes.</div>
+
+    <div class="flow-steps">
+      <div class="flow-step">
+        <div class="flow-timing"><div class="mins">0:00</div><div class="unit">open</div></div>
+        <div>
+          <span class="flow-page">Dashboard /</span>
+          <div class="flow-title">Start with the live view</div>
+          <div class="flow-body">Open Dashboard. If agents are running, cards are live &mdash; show the <strong>pulsing green dot</strong>, the <strong>current tool/file</strong> being used, and the <strong>session age</strong>. If an agent needs input, the card highlights. <strong>This is the "oh shit" moment</strong> &mdash; they immediately see something they can't get from terminals alone.</div>
+          <div class="flow-say">"This is every agent I have running right now. I can see what each one is doing without opening a single terminal or file."</div>
+        </div>
+      </div>
+
+      <div class="flow-step">
+        <div class="flow-timing"><div class="mins">1:30</div><div class="unit">min</div></div>
+        <div>
+          <span class="flow-page">Findings /findings</span>
+          <div class="flow-title">Show the learning system</div>
+          <div class="flow-body">Navigate to Findings. Scroll through a few &mdash; pick <strong>visceral ones</strong> with real user quotes (f027: mispasted prompt, f005: "is this by design?", f021: git audit disaster). Explain the loop: <strong>mistake &rarr; finding &rarr; rule &rarr; prevention.</strong> Every new agent reads these on startup.</div>
+          <div class="flow-say">"Every mistake my agents make becomes a permanent lesson. This one? An agent nearly killed a 2-hour session. That can never happen again because every future agent reads this on startup."</div>
+        </div>
+      </div>
+
+      <div class="flow-step">
+        <div class="flow-timing"><div class="mins">3:30</div><div class="unit">min</div></div>
+        <div>
+          <span class="flow-page">Dispatch /dispatch</span>
+          <div class="flow-title">Show the task backlog</div>
+          <div class="flow-body">This is the "operations board." Show <strong>priority levels</strong>, the <strong>mix of statuses</strong>, and the <strong>Home/Work toggle</strong>. Mention that tasks get created from agent conversations and campaign reviews. It's not Linear &mdash; it's for you + your AI agents.</div>
+          <div class="flow-say">"This is my backlog. I create tasks, assign agents, track progress. I toggle between my personal project and work. Everything in one place."</div>
+        </div>
+      </div>
+
+      <div class="flow-step">
+        <div class="flow-timing"><div class="mins">5:00</div><div class="unit">min</div></div>
+        <div>
+          <span class="flow-page">Campaigns /campaigns</span>
+          <div class="flow-title">Show coordinated sprints</div>
+          <div class="flow-body">Open the Campaign view for Sprint 1. Show the <strong>4 agents</strong> that ran simultaneously, each with their own focus. Show <strong>wins and losses</strong>. "We ran our first coordinated 4-agent campaign. Here's what worked, what didn't, and what's next."</div>
+          <div class="flow-say">"I ran 4 agents in parallel on one sprint. This is the debrief &mdash; wins, losses, remaining work. The losses are just as valuable because they become findings."</div>
+        </div>
+      </div>
+
+      <div class="flow-step">
+        <div class="flow-timing"><div class="mins">7:00</div><div class="unit">min</div></div>
+        <div>
+          <span class="flow-page">Toolbox /tools</span>
+          <div class="flow-title">Show the agent ecosystem</div>
+          <div class="flow-body">Quick pass through Toolbox &mdash; show <strong>agents, skills, and commands</strong>. Mention that agents have specialized prompts, skills are reusable workflows, commands are one-liners. The system is composable.</div>
+          <div class="flow-say">"These are all the agents and skills I've built. Each one has a specific job. I compose them like building blocks."</div>
+        </div>
+      </div>
+
+      <div class="flow-step">
+        <div class="flow-timing"><div class="mins">8:00</div><div class="unit">min</div></div>
+        <div>
+          <span class="flow-page">/why</span>
+          <div class="flow-title">Close with the value prop (optional)</div>
+          <div class="flow-body">If they want the full picture or you need a strong closer, open <strong>/why</strong>. Polished narrative of what MC is and why it matters. Also works for async follow-up &mdash; send the URL after the call.</div>
+          <div class="flow-say">"If you want the full story of why I built this, it's all here."</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PAGE-BY-PAGE ASSESSMENT -->
+  <section class="guide-section">
+    <div class="guide-section-title"><span class="num">3</span> Page-by-Page: Impressive vs. Rough</div>
+    <div class="guide-section-sub">Know what's strong and what to gloss over.</div>
+
+    <div class="page-cards">
+      <div class="page-card">
+        <div class="page-card-header">
+          <div><span class="page-card-name">Dashboard</span><span class="page-card-route">/</span></div>
+          <span class="page-card-status status-strong">Strong</span>
+        </div>
+        <ul class="page-card-points">
+          <li><strong>Show:</strong> Live agent cards, pulsing indicators, tool/file display, session age</li>
+          <li><strong>Show:</strong> Favicon changes color based on agent state (green = working)</li>
+          <li><strong>Show:</strong> Click into a session card for detail view</li>
+          <li><strong>Skip:</strong> Empty state if no agents running &mdash; always have agents active for the demo</li>
+        </ul>
+      </div>
+
+      <div class="page-card">
+        <div class="page-card-header">
+          <div><span class="page-card-name">Findings</span><span class="page-card-route">/findings</span></div>
+          <span class="page-card-status status-strong">Strong</span>
+        </div>
+        <ul class="page-card-points">
+          <li><strong>Show:</strong> Tier system (tier1 = critical principles, tier5 = pain points)</li>
+          <li><strong>Show:</strong> Real user quotes &mdash; makes it visceral and authentic</li>
+          <li><strong>Show:</strong> The sheer volume (34 findings) &mdash; proves the system is actively used</li>
+          <li><strong>Emphasize:</strong> "These get loaded into every new agent session automatically"</li>
+        </ul>
+      </div>
+
+      <div class="page-card">
+        <div class="page-card-header">
+          <div><span class="page-card-name">Dispatch</span><span class="page-card-route">/dispatch</span></div>
+          <span class="page-card-status status-ok">Solid</span>
+        </div>
+        <ul class="page-card-points">
+          <li><strong>Show:</strong> Priority levels, status colors, task count</li>
+          <li><strong>Show:</strong> Home/Work mode toggle (relatable for anyone with side projects)</li>
+          <li><strong>Skip:</strong> Detailed task editing &mdash; it works but the UX isn't polished yet</li>
+        </ul>
+      </div>
+
+      <div class="page-card">
+        <div class="page-card-header">
+          <div><span class="page-card-name">Campaigns</span><span class="page-card-route">/campaigns</span></div>
+          <span class="page-card-status status-ok">Solid</span>
+        </div>
+        <ul class="page-card-points">
+          <li><strong>Show:</strong> Sprint 1 with 4 agents, wins/losses debrief</li>
+          <li><strong>Emphasize:</strong> "Losses are just as valuable &mdash; they become findings"</li>
+          <li><strong>Skip:</strong> The remaining items list can feel long &mdash; focus on wins/losses narrative</li>
+        </ul>
+      </div>
+
+      <div class="page-card">
+        <div class="page-card-header">
+          <div><span class="page-card-name">Toolbox</span><span class="page-card-route">/tools</span></div>
+          <span class="page-card-status status-ok">Solid</span>
+        </div>
+        <ul class="page-card-points">
+          <li><strong>Show:</strong> Agent roster, skill library, command catalog</li>
+          <li><strong>Emphasize:</strong> "Composable &mdash; agents can use skills, skills can chain"</li>
+          <li><strong>Skip:</strong> Individual agent details unless someone asks</li>
+        </ul>
+      </div>
+
+      <div class="page-card">
+        <div class="page-card-header">
+          <div><span class="page-card-name">Post-Mortems</span><span class="page-card-route">/postmortems</span></div>
+          <span class="page-card-status status-wip">WIP</span>
+        </div>
+        <ul class="page-card-points">
+          <li><strong>Show briefly:</strong> Structure of a post-mortem &mdash; timeline, root cause, prevention</li>
+          <li><strong>Skip:</strong> Don't dwell here unless they ask about the review process</li>
+        </ul>
+      </div>
+
+      <div class="page-card">
+        <div class="page-card-header">
+          <div><span class="page-card-name">Workflow / Logic / Radar</span><span class="page-card-route">/workflow /logic /radar</span></div>
+          <span class="page-card-status status-rough">Skip</span>
+        </div>
+        <ul class="page-card-points">
+          <li>These pages exist but aren't polished enough for a demo</li>
+          <li>Only mention if someone specifically asks about workflow automation or decision tracking</li>
+        </ul>
+        <div class="page-card-warn">Don't open these during a demo &mdash; they'll undercut the polish of everything else.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- KILLER MOMENTS -->
+  <section class="guide-section">
+    <div class="guide-section-title"><span class="num">4</span> Killer Moments to Hit</div>
+    <div class="guide-section-sub">These are the lines and visuals that make people go "oh."</div>
+
+    <div class="killer-list">
+      <div class="killer-item">
+        <div class="killer-icon">&#128161;</div>
+        <div>
+          <div class="killer-title">"Without opening a single file"</div>
+          <div class="killer-desc">When showing Dashboard: "I can see every agent, what they're working on, what they've learned, and what went wrong &mdash; without opening a single file." This is the hook. Land it early.</div>
+        </div>
+      </div>
+      <div class="killer-item">
+        <div class="killer-icon">&#128260;</div>
+        <div>
+          <div class="killer-title">The learning loop in action</div>
+          <div class="killer-desc">Pick a finding with a strong quote (f027: mispasted prompt is great). Read the quote out loud. Then: "This became a rule. Every future agent reads it. It can't happen again." Pause. Let it land.</div>
+        </div>
+      </div>
+      <div class="killer-item">
+        <div class="killer-icon">&#127919;</div>
+        <div>
+          <div class="killer-title">"Losses become findings"</div>
+          <div class="killer-desc">On Campaigns, show the losses. Then flip to Findings and find the corresponding entries. "See? The failure from last sprint is now a rule that prevents the same failure next sprint." The connection makes it real.</div>
+        </div>
+      </div>
+      <div class="killer-item">
+        <div class="killer-icon">&#9889;</div>
+        <div>
+          <div class="killer-title">The simplicity numbers</div>
+          <div class="killer-desc">"Zero npm dependencies. One server file. 34 findings captured. All local, all private." People don't expect this level of functionality from something so minimal.</div>
+        </div>
+      </div>
+      <div class="killer-item">
+        <div class="killer-icon">&#128640;</div>
+        <div>
+          <div class="killer-title">"I ran 4 agents simultaneously"</div>
+          <div class="killer-desc">On Campaigns: "I coordinated 4 agents in parallel, each with their own brief. One built the Campaigns page, one worked on terminal identity, one did strategic evaluation, one researched UX patterns." This sounds impressive because it IS impressive.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- HANDLING QUESTIONS -->
+  <section class="guide-section">
+    <div class="guide-section-title"><span class="num">5</span> Handling Questions</div>
+    <div class="guide-section-sub">Prepared answers for the questions people will actually ask.</div>
+
+    <div class="faq-list">
+      <div class="faq-item">
+        <div class="faq-q">"How is this different from just using Claude Code?"</div>
+        <div class="faq-a">Claude Code is the engine. MC is the cockpit. <strong>Claude Code has no visibility layer</strong> &mdash; you can't see across sessions, you can't capture institutional knowledge, you can't coordinate agents. MC adds the management layer that CLI doesn't have.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q">"Could this work with Cursor / Copilot / other AI tools?"</div>
+        <div class="faq-a">The architecture is hook-based &mdash; it observes events from the CLI. <strong>Right now it's built for Claude Code</strong> because that's what I use. But the concept (visibility + memory + coordination for AI agents) applies to any multi-agent workflow. The hooks would need adapting.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q">"Is this open source?"</div>
+        <div class="faq-a"><strong>Not yet, but heading that direction.</strong> It's a single server.js file with zero dependencies. The code is simple enough that anyone could read and modify it. Right now it's a personal tool that's becoming a product.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q">"How do the agents actually read the findings?"</div>
+        <div class="faq-a">Findings are stored as JSON. Key findings get promoted to <strong>CLAUDE.md</strong> (the project instructions file Claude Code reads on every session start) and to <strong>memory files</strong> that persist across conversations. Every new agent loads these automatically.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q">"How long did this take to build?"</div>
+        <div class="faq-a">MC is itself built with Claude Code agents. It's <strong>both the product and the proof of concept.</strong> The agents that build MC are managed by MC. That recursive loop is part of what makes it interesting &mdash; it's a self-improving system.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q">"Does this send any data externally?"</div>
+        <div class="faq-a"><strong>Nothing. Ever.</strong> Everything is local. Flat JSON files on disk. No analytics, no telemetry, no accounts, no cloud. Your data stays on your machine.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q">"What's the catch?"</div>
+        <div class="faq-a">It's early. Some pages are rough. The architecture is opinionated (flat files, no database, single server). <strong>But that's the point</strong> &mdash; it's simple enough to understand completely, and it evolves with every session. You need to be running Claude Code to get value from it.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CLOSING -->
+  <div class="closing">
+    <p class="closing-text">Remember: you're not selling software.<br>You're showing someone <strong>what's possible</strong> when you<br>treat AI agents as a team, not a chatbot.</p>
+  </div>
+
+</div>
+
+</body>
+</html>

@@ -70,6 +70,23 @@ function getDetail(toolName, input = {}) {
   return '';
 }
 
+// Human-readable status line for orchestrator visibility
+function getStatusLine(toolName, input = {}) {
+  const short = (s, n = 80) => String(s || '').slice(0, n);
+  // Bash: prefer description (human-written), fall back to command
+  if (toolName === 'Bash') return short(input.description || input.command || 'Running command');
+  if (toolName === 'Read') return 'Reading ' + short(path.basename(input.file_path || ''));
+  if (toolName === 'Write') return 'Writing ' + short(path.basename(input.file_path || ''));
+  if (toolName === 'Edit') return 'Editing ' + short(path.basename(input.file_path || ''));
+  if (toolName === 'Grep') return 'Searching: ' + short(input.pattern || '');
+  if (toolName === 'Glob') return 'Finding files: ' + short(input.pattern || '');
+  if (toolName === 'Agent') return 'Sub-agent: ' + short(input.description || '');
+  if (toolName === 'WebFetch') return 'Fetching URL';
+  if (toolName === 'WebSearch') return 'Searching web: ' + short(input.query || '');
+  if (toolName === 'AskUserQuestion') return 'Waiting for your input';
+  return toolName || 'Working';
+}
+
 let raw = '';
 process.stdin.on('data', c => raw += c);
 process.stdin.on('end', () => {
@@ -79,6 +96,7 @@ process.stdin.on('end', () => {
     const tool = data.tool_name;
     const info = tool ? (TOOL_MAP[tool] || IDLE_STATE) : IDLE_WAITING_STATE;
     const detail = tool ? getDetail(tool, data.tool_input || {}) : '';
+    const statusLine = tool ? getStatusLine(tool, data.tool_input || {}) : 'Idle';
     const now  = Date.now();
 
     // ── Ensure dirs ──
@@ -90,10 +108,12 @@ process.stdin.on('end', () => {
     const stateFile = path.join(STATES_DIR, `${sid}.json`);
     let claudePid = null;
     let resumeCount = 0;
+    let displayName = null;
     try {
       const prev = JSON.parse(fs.readFileSync(stateFile, 'utf8'));
       claudePid = prev.claudePid || null;
       resumeCount = prev.resumeCount || 0;
+      displayName = prev.displayName || null;
     } catch (_) { /* first fire — no state file yet */ }
 
     // If stored PID exists, check if it's still alive.
@@ -134,7 +154,7 @@ process.stdin.on('end', () => {
         }
       } catch (_) { /* no previous state — proceed normally */ }
     }
-    const stateData = { sessionId: sid, tool: tool || null, detail, ts: now, claudePid, resumeCount, ...info };
+    const stateData = { sessionId: sid, tool: tool || null, detail, statusLine, ts: now, claudePid, resumeCount, displayName, ...info };
     fs.writeFileSync(stateFile, JSON.stringify(stateData));
 
     // ── Append to activity log (only on state transitions) ──

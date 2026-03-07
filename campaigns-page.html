@@ -1,0 +1,1061 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Campaigns &mdash; Mission Control</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=DM+Sans:wght@400;500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#fff;--bg2:#fafafa;--surface:#f4f4f5;--surface2:#e4e4e7;
+  --text:#09090b;--text2:#52525b;--text3:#a1a1aa;--sep:#e4e4e7;
+  --purple:#8b5cf6;--purple-bg:rgba(139,92,246,0.06);
+  --blue:#3b82f6;--blue-bg:rgba(59,130,246,0.06);
+  --green:#22c55e;--green-bg:rgba(34,197,94,0.06);
+  --amber:#f59e0b;--amber-bg:rgba(245,158,11,0.06);
+  --rose:#ef4444;--rose-bg:rgba(239,68,68,0.05);
+  --cyan:#06b6d4;--cyan-bg:rgba(6,182,212,0.06);
+  --radius:12px;
+}
+body{background:var(--bg2);color:var(--text);font-family:'DM Sans',-apple-system,sans-serif;-webkit-font-smoothing:antialiased;min-height:100vh}
+
+/* Header */
+header{display:flex;align-items:center;justify-content:space-between;padding:0 clamp(24px,4vw,48px);height:64px;background:var(--bg);border-bottom:1px solid var(--sep);position:sticky;top:0;z-index:50}
+.logo{display:flex;align-items:center;gap:10px}
+.logo-dot{width:8px;height:8px;border-radius:50%;background:var(--purple)}
+.logo-text{font-family:'Plus Jakarta Sans',sans-serif;font-size:14px;font-weight:700;letter-spacing:-0.02em}
+.header-nav{display:flex;gap:2px;padding:3px;background:var(--surface);border-radius:8px;position:absolute;left:50%;transform:translateX(-50%)}
+.nav-link{padding:5px 14px;border-radius:6px;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;color:var(--text3);text-decoration:none;transition:all .15s;white-space:nowrap}
+.nav-link:hover{color:var(--text2)}
+.nav-link.active{background:var(--bg);color:var(--text);box-shadow:0 1px 3px rgba(0,0,0,.06)}
+.header-right{display:flex;align-items:center;gap:8px}
+
+/* Shell */
+.shell{max-width:1200px;margin:0 auto;padding:32px 20px 60px}
+
+/* Campaign Header */
+.campaign-hero{background:var(--bg);border:1px solid var(--sep);border-radius:16px;padding:32px 36px;margin-bottom:24px;position:relative;overflow:hidden}
+.campaign-hero::before{content:'';position:absolute;top:0;left:0;right:0;height:4px;background:linear-gradient(90deg,var(--purple),var(--blue),var(--cyan))}
+.campaign-status-row{display:flex;align-items:center;gap:10px;margin-bottom:14px}
+.campaign-status{display:inline-flex;align-items:center;gap:6px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;padding:4px 12px;border-radius:100px}
+.campaign-status.active{background:var(--green-bg);color:#16a34a}
+.campaign-status.active::before{content:'';width:6px;height:6px;border-radius:50%;background:#22c55e;animation:statusPulse 2s ease infinite}
+.campaign-status.completed{background:var(--blue-bg);color:var(--blue)}
+.campaign-status.paused{background:var(--amber-bg);color:#92400e}
+@keyframes statusPulse{0%,100%{opacity:1}50%{opacity:.4}}
+.campaign-date{font-family:'DM Mono',monospace;font-size:11px;color:var(--text3)}
+.campaign-name{font-family:'Plus Jakarta Sans',sans-serif;font-size:32px;font-weight:800;letter-spacing:-0.04em;line-height:1.2;margin-bottom:10px}
+.campaign-desc{font-size:14px;line-height:1.7;color:var(--text2);max-width:700px}
+
+/* Objectives */
+.objectives{margin-top:20px;display:flex;flex-direction:column;gap:6px}
+.obj-item{display:flex;align-items:flex-start;gap:8px;font-size:13px;line-height:1.5;color:var(--text)}
+.obj-check{width:16px;height:16px;border-radius:4px;border:1.5px solid var(--surface2);flex-shrink:0;margin-top:2px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .15s}
+.obj-check:hover{border-color:var(--purple)}
+.obj-check.done{background:var(--green);border-color:var(--green);color:#fff}
+.obj-check.done::after{content:'\\2713';font-size:10px;font-weight:700}
+
+/* Section headers */
+.section-title{font-family:'Plus Jakarta Sans',sans-serif;font-size:18px;font-weight:700;letter-spacing:-0.03em;margin-bottom:16px;display:flex;align-items:center;gap:8px}
+.section-title .count{font-family:'DM Mono',monospace;font-size:11px;color:var(--text3);background:var(--surface);padding:2px 8px;border-radius:100px}
+
+/* Agent Cards Grid */
+.agents-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px;margin-bottom:32px}
+.agent-card{background:var(--bg);border:1px solid var(--sep);border-radius:var(--radius);padding:0;transition:all .2s;position:relative;overflow:hidden}
+.agent-card:hover{box-shadow:0 4px 16px rgba(0,0,0,.06);transform:translateY(-1px)}
+.agent-bar{height:4px}
+.agent-bar.active{background:var(--green)}
+.agent-bar.pending{background:var(--surface2)}
+.agent-bar.completed{background:var(--blue)}
+.agent-card{box-shadow:0 2px 8px rgba(0,0,0,.04)}
+.agent-card:hover{box-shadow:0 8px 24px rgba(0,0,0,.08);transform:translateY(-2px)}
+/* Agent-specific color bars + subtle card tint */
+.agent-card.ag-orchestrator .agent-bar{background:linear-gradient(90deg,#a78bfa,#7c3aed)}
+.agent-card.ag-orchestrator{border-color:rgba(139,92,246,0.15)}
+.agent-card.ag-beacon .agent-bar{background:linear-gradient(90deg,#fbbf24,#d97706)}
+.agent-card.ag-beacon{border-color:rgba(245,158,11,0.15)}
+.agent-card.ag-compass .agent-bar{background:linear-gradient(90deg,#60a5fa,#2563eb)}
+.agent-card.ag-compass{border-color:rgba(59,130,246,0.15)}
+.agent-card.ag-overwatch .agent-bar{background:linear-gradient(90deg,#22d3ee,#0891b2)}
+.agent-card.ag-overwatch{border-color:rgba(6,182,212,0.15)}
+.agent-card.ag-polisher .agent-bar{background:linear-gradient(90deg,#f472b6,#db2777)}
+.agent-card.ag-polisher{border-color:rgba(236,72,153,0.15)}
+.agent-card.ag-retrospector .agent-bar{background:linear-gradient(90deg,#4ade80,#16a34a)}
+.agent-card.ag-retrospector{border-color:rgba(34,197,94,0.15)}
+.agent-card.ag-integrator .agent-bar{background:linear-gradient(90deg,#fbbf24,#ea580c)}
+.agent-card.ag-integrator{border-color:rgba(249,115,22,0.15)}
+/* Agent name color — vibrant, not muddy */
+.agent-card.ag-orchestrator .agent-name{color:#7c3aed}
+.agent-card.ag-beacon .agent-name{color:#d97706}
+.agent-card.ag-compass .agent-name{color:#2563eb}
+.agent-card.ag-overwatch .agent-name{color:#0891b2}
+.agent-card.ag-polisher .agent-name{color:#db2777}
+.agent-card.ag-retrospector .agent-name{color:#16a34a}
+.agent-card.ag-integrator .agent-name{color:#ea580c}
+.agent-card.ag-analyst .agent-bar{background:linear-gradient(90deg,#a78bfa,#6366f1)}
+.agent-card.ag-analyst{border-color:rgba(99,102,241,0.15)}
+.agent-card.ag-analyst .agent-name{color:#6366f1}
+.agent-card.ag-video .agent-bar{background:linear-gradient(90deg,#f97316,#dc2626)}
+.agent-card.ag-video{border-color:rgba(249,115,22,0.15)}
+.agent-card.ag-video .agent-name{color:#dc2626}
+.agent-card.ag-medic .agent-bar{background:linear-gradient(90deg,#34d399,#059669)}
+.agent-card.ag-medic{border-color:rgba(5,150,105,0.15)}
+.agent-card.ag-medic .agent-name{color:#059669}
+.agent-card.ag-findings-analyst .agent-bar{background:linear-gradient(90deg,#f472b6,#9333ea)}
+.agent-card.ag-findings-analyst{border-color:rgba(147,51,234,0.15)}
+.agent-card.ag-findings-analyst .agent-name{color:#9333ea}
+.agent-inner{padding:18px 20px}
+.agent-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.agent-name{font-family:'Plus Jakarta Sans',sans-serif;font-size:15px;font-weight:700;letter-spacing:-0.02em}
+.agent-status-badge{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;padding:3px 10px;border-radius:100px}
+.agent-status-badge.active{background:var(--green-bg);color:#16a34a}
+.agent-status-badge.pending{background:var(--surface);color:var(--text3)}
+.agent-status-badge.completed{background:var(--blue-bg);color:var(--blue)}
+.agent-focus{font-size:13px;color:var(--text2);line-height:1.5;margin-bottom:12px}
+
+/* Live status from session state */
+.agent-live{display:flex;flex-direction:column;gap:6px;padding:10px 12px;background:var(--bg2);border-radius:8px;margin-top:8px}
+.agent-live-row{display:flex;align-items:center;gap:6px;font-size:11px}
+.agent-live-label{color:var(--text3);font-family:'DM Mono',monospace;min-width:50px}
+.agent-live-value{color:var(--text);font-weight:500}
+.agent-live-state{display:inline-flex;align-items:center;gap:4px}
+.agent-live-dot{width:6px;height:6px;border-radius:50%}
+.agent-live-dot.investigating{background:var(--blue)}
+.agent-live-dot.developing{background:var(--purple)}
+.agent-live-dot.verifying{background:var(--amber)}
+.agent-live-dot.idle{background:var(--text3)}
+.agent-live-dot.thinking{background:var(--cyan)}
+.agent-live-dot.planning{background:var(--green)}
+
+/* Link session button */
+.agent-link-btn{display:flex;align-items:center;gap:4px;margin-top:10px;padding:6px 12px;border-radius:6px;font-size:11px;font-weight:600;color:var(--purple);background:var(--purple-bg);border:none;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .12s}
+.agent-link-btn:hover{background:rgba(139,92,246,0.12)}
+.agent-session-id{font-family:'DM Mono',monospace;font-size:10px;color:var(--text3);margin-top:6px;word-break:break-all}
+
+/* Link session modal */
+.link-modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.25);backdrop-filter:blur(6px);z-index:200;justify-content:center;align-items:center;padding:24px}
+.link-modal-bg.open{display:flex}
+.link-modal{background:var(--bg);border-radius:16px;width:90%;max-width:420px;padding:28px;box-shadow:0 24px 80px rgba(0,0,0,.12);animation:modalIn .2s ease}
+@keyframes modalIn{from{opacity:0;transform:translateY(12px) scale(0.97)}to{opacity:1;transform:none}}
+.link-modal h3{font-family:'Plus Jakarta Sans',sans-serif;font-size:18px;font-weight:700;letter-spacing:-0.02em;margin-bottom:6px}
+.link-modal p{font-size:13px;color:var(--text2);margin-bottom:16px;line-height:1.5}
+.link-modal label{display:block;font-size:11px;font-weight:600;color:var(--text3);margin-bottom:6px;text-transform:uppercase;letter-spacing:.04em}
+.link-modal select,.link-modal input{width:100%;padding:8px 12px;border:1px solid var(--sep);border-radius:8px;font-family:'DM Mono',monospace;font-size:12px;color:var(--text);background:var(--bg);outline:none;transition:border-color .12s;margin-bottom:14px}
+.link-modal select:focus,.link-modal input:focus{border-color:var(--purple)}
+.link-modal-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:6px}
+.link-modal-actions button{padding:8px 18px;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:600;cursor:pointer;transition:all .12s;border:1px solid var(--sep);background:var(--bg);color:var(--text2)}
+.link-modal-actions button:hover{background:var(--surface)}
+.link-modal-actions button.primary{background:var(--purple);color:#fff;border:none}
+.link-modal-actions button.primary:hover{background:#7c3aed}
+
+/* Debrief sections */
+.debrief{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:32px}
+@media(max-width:700px){.debrief{grid-template-columns:1fr}}
+.debrief-col{background:var(--bg);border:1px solid var(--sep);border-radius:var(--radius);overflow:hidden}
+.debrief-col-header{padding:14px 18px 10px;display:flex;align-items:center;gap:8px;border-bottom:1px solid var(--sep)}
+.debrief-col-header .col-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.debrief-col-header .col-dot.win{background:var(--green)}
+.debrief-col-header .col-dot.loss{background:var(--rose)}
+.debrief-col-header .col-dot.remain{background:var(--amber)}
+.debrief-col-header .col-label{font-family:'Plus Jakarta Sans',sans-serif;font-size:14px;font-weight:700;letter-spacing:-0.02em}
+.debrief-col-header .col-count{font-family:'DM Mono',monospace;font-size:10px;color:var(--text3);margin-left:auto;background:var(--surface);padding:1px 7px;border-radius:100px}
+.debrief-list{padding:10px 14px;display:flex;flex-direction:column;gap:2px;max-height:340px;overflow-y:auto}
+.debrief-list::-webkit-scrollbar{width:4px}
+.debrief-list::-webkit-scrollbar-thumb{background:var(--surface2);border-radius:2px}
+.d-item{display:flex;align-items:flex-start;gap:8px;padding:7px 8px;border-radius:8px;font-size:12.5px;line-height:1.5;color:var(--text);transition:background .12s}
+.d-item:hover{background:var(--surface)}
+.d-item .d-dot{width:5px;height:5px;border-radius:50%;flex-shrink:0;margin-top:6px}
+.d-item .d-dot.win{background:var(--green)}
+.d-item .d-dot.loss{background:var(--rose)}
+.d-item .d-dot.remain{background:var(--amber)}
+.d-item .d-agent{font-family:'DM Mono',monospace;font-size:9px;font-weight:600;padding:2px 7px;border-radius:4px;flex-shrink:0;margin-top:1px;letter-spacing:.02em}
+.d-item .d-agent.ag-orchestrator{background:rgba(139,92,246,0.1);color:#7c3aed}
+.d-item .d-agent.ag-beacon{background:rgba(245,158,11,0.1);color:#b45309}
+.d-item .d-agent.ag-compass{background:rgba(59,130,246,0.1);color:#2563eb}
+.d-item .d-agent.ag-overwatch{background:rgba(6,182,212,0.1);color:#0891b2}
+.d-item .d-agent.ag-polisher{background:rgba(236,72,153,0.1);color:#db2777}
+.d-item .d-agent.ag-retrospector{background:rgba(34,197,94,0.1);color:#16a34a}
+.d-item .d-agent.ag-integrator{background:rgba(249,115,22,0.1);color:#ea580c}
+.d-item .d-agent.ag-analyst{background:rgba(99,102,241,0.1);color:#6366f1}
+.d-item .d-text{color:var(--text)}
+.d-item .d-text strong{font-weight:700;color:var(--text)}
+.d-item .d-text .metric{font-family:'DM Mono',monospace;font-weight:700;color:var(--green);font-size:11px}
+.d-item .d-text .metric.bad{color:var(--rose)}
+.d-item a{color:var(--purple);text-decoration:none;font-weight:600;margin-left:4px;font-size:11px;padding:1px 6px;border-radius:4px;background:var(--purple-bg);transition:all .12s}
+.d-item a:hover{background:rgba(139,92,246,0.12)}
+.loss-item .d-text{color:var(--text2)}
+/* Active remaining items — agent is working on this */
+.d-item.active-remaining{background:rgba(245,158,11,0.04);border-radius:6px}
+.d-dot.pulsing{animation:remainPulse 1.5s ease-in-out infinite}
+@keyframes remainPulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(1.4)}}
+/* Remaining - full width */
+.debrief-full{grid-column:1/-1}
+
+/* Retrospective section */
+.retro-section{background:var(--bg);border:1px solid var(--sep);border-radius:var(--radius);margin-bottom:24px;overflow:hidden}
+.retro-header{padding:16px 20px;display:flex;align-items:center;gap:10px;border-bottom:1px solid var(--sep);cursor:pointer;user-select:none}
+.retro-header:hover{background:var(--bg2)}
+.retro-dot{width:8px;height:8px;border-radius:50%;background:var(--green)}
+.retro-title{font-family:'Plus Jakarta Sans',sans-serif;font-size:15px;font-weight:700;letter-spacing:-0.02em}
+.retro-badge{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;padding:3px 10px;border-radius:100px;margin-left:auto}
+.retro-badge.unreviewed{background:var(--amber-bg);color:#92400e}
+.retro-badge.reviewed{background:var(--green-bg);color:#16a34a}
+.retro-body{padding:0 20px 20px;display:none}
+.retro-body.open{display:block}
+.retro-content{font-size:13px;line-height:1.8;color:var(--text2);max-height:400px;overflow-y:auto;padding:16px 0}
+.retro-content::-webkit-scrollbar{width:4px}
+.retro-content::-webkit-scrollbar-thumb{background:var(--surface2);border-radius:2px}
+.retro-content h2{font-family:'Plus Jakarta Sans',sans-serif;font-size:16px;font-weight:700;color:var(--text);margin:20px 0 8px;letter-spacing:-0.02em}
+.retro-content h3{font-family:'Plus Jakarta Sans',sans-serif;font-size:14px;font-weight:700;color:var(--text);margin:14px 0 6px}
+.retro-content strong{color:var(--text);font-weight:700}
+.retro-content code{font-family:'DM Mono',monospace;font-size:11px;padding:2px 6px;border-radius:4px;background:rgba(139,92,246,0.08);color:#7c3aed}
+.retro-content pre{background:var(--surface);border-radius:8px;padding:12px;margin:8px 0;overflow-x:auto;font-family:'DM Mono',monospace;font-size:11px;line-height:1.6}
+.retro-content table{width:100%;border-collapse:collapse;margin:12px 0;font-size:12px}
+.retro-content th{text-align:left;padding:8px 10px;background:var(--surface);font-weight:700;border:1px solid var(--sep)}
+.retro-content td{padding:8px 10px;border:1px solid var(--sep)}
+.retro-content ul,.retro-content ol{padding-left:20px;margin:6px 0}
+.retro-content li{margin:3px 0}
+.retro-actions{display:flex;gap:8px;padding-top:12px;border-top:1px solid var(--sep)}
+.retro-review-btn{padding:8px 18px;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:600;cursor:pointer;transition:all .12s;border:none}
+.retro-review-btn.mark{background:var(--green);color:#fff}
+.retro-review-btn.mark:hover{background:#16a34a}
+.retro-review-btn.unmark{background:var(--surface);color:var(--text3)}
+.retro-review-btn.unmark:hover{background:var(--surface2)}
+
+/* Scorecard highlight */
+.retro-score{display:inline-flex;align-items:center;gap:4px;font-family:'Plus Jakarta Sans',sans-serif;font-size:20px;font-weight:800;color:var(--purple);letter-spacing:-0.02em}
+
+/* Campaign action buttons */
+.camp-action-btn{padding:8px 20px;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:600;cursor:pointer;transition:all .15s;border:none;background:var(--purple);color:#fff}
+.camp-action-btn:hover{background:#7c3aed;transform:scale(1.02)}
+.camp-action-btn.secondary{background:var(--surface);color:var(--text2);border:1px solid var(--sep)}
+.camp-action-btn.secondary:hover{background:var(--surface2)}
+
+/* Debrief filter buttons */
+.db-filter{padding:5px 12px;border-radius:6px;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:500;color:var(--text3);background:none;border:none;cursor:pointer;transition:all .12s}
+.db-filter:hover{color:var(--text2)}
+.db-filter.active{background:var(--bg);color:var(--text);box-shadow:0 1px 3px rgba(0,0,0,.06);font-weight:600}
+
+/* Empty state */
+.empty-state{text-align:center;padding:48px;color:var(--text3);font-size:14px}
+.empty-state strong{display:block;font-size:18px;color:var(--text2);margin-bottom:6px}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">
+    <div class="logo-dot"></div>
+    <div class="logo-text">Mission Control</div>
+  </div>
+  <nav class="header-nav">
+    <a href="/" class="nav-link">Dashboard</a>
+    <a href="/dispatch" class="nav-link">Dispatch</a>
+    <a href="/findings" class="nav-link">Findings</a>
+    <a href="/workflow" class="nav-link">Workflow</a>
+    <a href="/postmortems" class="nav-link">Post-Mortems</a>
+    <a href="/tools" class="nav-link">Toolbox</a>
+    <a href="/logic" class="nav-link">Logic</a>
+    <a href="/radar" class="nav-link">Radar</a>
+    <a href="/campaigns" class="nav-link active">Campaigns</a>
+  </nav>
+  <div class="header-right"></div>
+</header>
+
+<div class="shell" id="app">
+  <div class="empty-state">Loading campaigns...</div>
+</div>
+
+<!-- Link Session Modal -->
+<div class="link-modal-bg" id="linkModal">
+  <div class="link-modal">
+    <h3>Link Session</h3>
+    <p>Select an active session from the Dashboard to link to this agent slot.</p>
+    <label>Active Sessions</label>
+    <select id="linkSelect"><option value="">Loading sessions...</option></select>
+    <div class="link-modal-actions">
+      <button onclick="closeLinkModal()">Cancel</button>
+      <button class="primary" onclick="confirmLink()">Link</button>
+    </div>
+  </div>
+</div>
+
+<script>
+let campaigns = [];
+let sessions = [];
+let linkSlot = null;
+let linkCampaignId = null;
+
+async function load() {
+  try {
+    const [cRes, sRes] = await Promise.all([
+      fetch('/api/campaigns'),
+      fetch('/api/agents')
+    ]);
+    campaigns = await cRes.json();
+    sessions = await sRes.json();
+    render();
+  } catch (e) {
+    document.getElementById('app').innerHTML = '<div class="empty-state"><strong>Failed to load</strong>' + e.message + '</div>';
+  }
+}
+
+function esc(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+function agentCls(name) {
+  const n = (name || '').toLowerCase();
+  if (n.includes('orchestr')) return 'ag-orchestrator';
+  if (n.includes('beacon')) return 'ag-beacon';
+  if (n.includes('compass')) return 'ag-compass';
+  if (n.includes('overwatch')) return 'ag-overwatch';
+  if (n.includes('polisher')) return 'ag-polisher';
+  if (n.includes('retrospect')) return 'ag-retrospector';
+  if (n.includes('integrat')) return 'ag-integrator';
+  if (n.includes('analyst')) return 'ag-analyst';
+  if (n.includes('video')) return 'ag-video';
+  if (n.includes('medic')) return 'ag-medic';
+  if (n.includes('findings an')) return 'ag-findings-analyst';
+  return '';
+}
+
+// Smart formatting: bold text before colons/dashes, highlight metrics
+function smartFormat(text) {
+  // Bold text before first colon or em-dash
+  text = text.replace(/^([^:—]+)([::—])/, '<strong>$1</strong>$2');
+  // Highlight numbers with units (e.g., 18.5s, 1.4s, 13x, 15 items)
+  text = text.replace(/(\d+\.?\d*)(s|x|ms|%|MB)\b/g, '<span class="metric">$1$2</span>');
+  // Highlight standalone important numbers (like "7 prioritized", "4 new")
+  text = text.replace(/\b(\d+)\s+(new|prioritized|findings|principles?|recommendations?|items?|agents?|pages?|pain points?)/gi, '<span class="metric">$1</span> <strong>$2</strong>');
+  // Highlight down arrows / improvements
+  text = text.replace(/(down to|→)/g, '<span style="color:var(--green);font-weight:600">$1</span>');
+  // Highlight negative outcomes in losses
+  text = text.replace(/(wasted|falsely|missing|couldn.t|disaster|wrong|accidentally)/gi, '<span style="color:var(--rose);font-weight:600">$1</span>');
+  return text;
+}
+
+function renderAgentCard(campaign, agent) {
+  const live = getAgentLiveState(agent);
+  const effectiveStatus = live ? 'active' : agent.status;
+  let c = '<div class="agent-card ' + agentCls(agent.name) + '">';
+  c += '<div class="agent-bar ' + esc(effectiveStatus) + '"></div>';
+  c += '<div class="agent-inner">';
+  c += '<div class="agent-top">';
+  c += '<span class="agent-name">' + esc(agent.name) + '</span>';
+  c += '<span class="agent-status-badge ' + esc(effectiveStatus) + '">' + esc(effectiveStatus) + '</span>';
+  c += '</div>';
+  c += '<div class="agent-focus">' + esc(agent.focus) + '</div>';
+  if (live) {
+    c += '<div class="agent-live">';
+    // Status line: the human-readable "what it's doing right now"
+    if (live.statusLine) {
+      c += '<div class="agent-live-row"><span class="agent-live-dot ' + esc(live.state || '') + '" style="margin-top:1px"></span><span class="agent-live-value" style="font-size:12px">' + esc(live.statusLine) + '</span></div>';
+    } else {
+      c += '<div class="agent-live-row"><span class="agent-live-dot ' + esc(live.state || '') + '"></span><span class="agent-live-value"><span class="agent-live-state">' + esc(live.label || live.state || 'unknown') + '</span></span></div>';
+    }
+    if (live.elapsed) c += '<div class="agent-live-row" style="justify-content:flex-end"><span class="agent-live-value" style="font-size:10px;color:var(--text3)">' + esc(live.elapsed) + '</span></div>';
+    c += '</div>';
+  }
+  if (agent.sessionId) {
+    c += '<div class="agent-session-id">Session: ' + esc(agent.sessionId.slice(0, 8)) + '...</div>';
+  }
+  if (effectiveStatus === 'pending') {
+    c += '<button class="agent-link-btn" style="background:rgba(139,92,246,0.08);color:var(--purple)" onclick="copyAgentPrompt(\'' + esc(agent.slot) + '\', this)">Copy Prompt</button>';
+  } else if (effectiveStatus === 'active') {
+    c += '<button class="agent-link-btn" onclick="openLinkModal(\'' + esc(campaign.id) + '\',\'' + esc(agent.slot) + '\')">' + (agent.sessionId ? 'Re-link' : 'Link Session') + '</button>';
+  }
+  c += '</div></div>';
+  return c;
+}
+
+function render() {
+  const app = document.getElementById('app');
+  if (campaigns.length === 0) {
+    app.innerHTML = '<div class="empty-state"><strong>No campaigns yet</strong>Create a campaign to coordinate multi-agent efforts</div>';
+    return;
+  }
+
+  let h = '';
+  for (const c of campaigns) {
+    // Campaign hero
+    const dateStr = c.created ? new Date(c.created).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }) : '';
+    h += '<div class="campaign-hero">';
+    h += '<div class="campaign-status-row">';
+    h += '<span class="campaign-status ' + esc(c.status) + '">' + esc(c.status) + '</span>';
+    if (dateStr) h += '<span class="campaign-date">Started ' + esc(dateStr) + '</span>';
+    h += '</div>';
+    h += '<div class="campaign-name">' + esc(c.name) + '</div>';
+    h += '<div class="campaign-desc">' + smartFormat(esc(c.description)) + '</div>';
+    // Campaign status actions
+    h += '<div style="display:flex;gap:8px;margin-top:16px">';
+    if (c.status === 'active') {
+      h += '<button class="camp-action-btn" onclick="setCampaignStatus(\'' + esc(c.id) + '\',\'completed\')">Mark Campaign Done</button>';
+      h += '<button class="camp-action-btn secondary" onclick="setCampaignStatus(\'' + esc(c.id) + '\',\'paused\')">Pause</button>';
+    } else if (c.status === 'paused') {
+      h += '<button class="camp-action-btn" onclick="setCampaignStatus(\'' + esc(c.id) + '\',\'active\')">Resume</button>';
+      h += '<button class="camp-action-btn secondary" onclick="setCampaignStatus(\'' + esc(c.id) + '\',\'completed\')">Mark Done</button>';
+    } else if (c.status === 'completed') {
+      h += '<button class="camp-action-btn secondary" onclick="setCampaignStatus(\'' + esc(c.id) + '\',\'active\')">Reopen</button>';
+    }
+    h += '</div>';
+
+    // Objectives
+    if (c.objectives && c.objectives.length > 0) {
+      h += '<div class="section-title" style="margin-top:20px;font-size:13px;color:var(--text3);text-transform:uppercase;letter-spacing:.06em">What we set out to do</div>';
+      h += '<div class="objectives">';
+      c.objectives.forEach(obj => {
+        h += '<div class="obj-item"><span class="obj-check"></span><span>' + smartFormat(esc(obj)) + '</span></div>';
+      });
+      h += '</div>';
+    }
+    h += '</div>';
+
+    // Agent cards — split by sprint
+    if (c.agents && c.agents.length > 0) {
+      const sprint1 = c.agents.filter(a => !a.sprint || a.sprint === 1);
+      const sprint2 = c.agents.filter(a => a.sprint === 2);
+
+      if (sprint1.length > 0) {
+        h += '<div class="section-title">Initial Push <span class="count">' + sprint1.length + ' agents</span></div>';
+        h += '<div class="agents-grid">';
+        sprint1.forEach(agent => { h += renderAgentCard(c, agent); });
+        h += '</div>';
+      }
+
+      if (sprint2.length > 0) {
+        h += '<div class="section-title" style="margin-top:8px">Follow-Up <span class="count">' + sprint2.length + ' agents</span></div>';
+        h += '<div class="agents-grid">';
+        sprint2.forEach(agent => { h += renderAgentCard(c, agent); });
+        h += '</div>';
+      }
+    }
+
+    // Debrief: Wins, Losses, Remaining
+    const db = c.debrief;
+    if (db && (db.wins || db.losses || db.remaining)) {
+      h += '<div style="display:flex;align-items:center;gap:12px;margin-top:8px">';
+      h += '<div class="section-title" style="margin:0">Campaign Debrief</div>';
+      h += '<div style="display:flex;gap:2px;padding:3px;background:var(--surface);border-radius:8px">';
+      h += '<button class="db-filter' + (debriefFilter === 'all' ? ' active' : '') + '" onclick="setDebriefFilter(\'all\')">All</button>';
+      h += '<button class="db-filter' + (debriefFilter === 1 ? ' active' : '') + '" onclick="setDebriefFilter(1)">Initial Push</button>';
+      h += '<button class="db-filter' + (debriefFilter === 2 ? ' active' : '') + '" onclick="setDebriefFilter(2)">Follow-Up</button>';
+      h += '</div>';
+      // Agent filter pills
+      const allAgentNames = new Set();
+      (db.wins || []).forEach(w => { if (w.agent) allAgentNames.add(w.agent); });
+      (db.remaining || []).forEach(r => { if (r.agent) allAgentNames.add(r.agent); });
+      if (allAgentNames.size > 1) {
+        h += '<div style="display:flex;gap:2px;padding:3px;background:var(--surface);border-radius:8px;margin-left:8px">';
+        h += '<button class="db-filter' + (agentFilter === 'all' ? ' active' : '') + '" onclick="setAgentFilter(\'all\')" style="font-size:11px">All Agents</button>';
+        allAgentNames.forEach(name => {
+          h += '<button class="db-filter ' + agentCls(name) + (agentFilter === name ? ' active' : '') + '" onclick="setAgentFilter(\'' + esc(name) + '\')" style="font-size:11px">' + esc(name) + '</button>';
+        });
+        h += '</div>';
+      }
+      h += '</div>';
+      h += '<div class="debrief">';
+
+      // Wins column
+      const fWins = filterDebrief(db.wins || []);
+      const fLosses = filterDebrief(db.losses || []);
+      if (fWins.length) {
+        h += '<div class="debrief-col">';
+        h += '<div class="debrief-col-header"><span class="col-dot win"></span><span class="col-label">Wins</span><span class="col-count">' + fWins.length + '</span></div>';
+        h += '<div class="debrief-list">';
+        fWins.forEach(w => {
+          h += '<div class="d-item"><span class="d-dot win"></span>';
+          if (w.agent) h += '<span class="d-agent ' + agentCls(w.agent) + '">' + esc(w.agent) + '</span>';
+          h += '<span class="d-text">' + smartFormat(esc(w.text));
+          if (w.link) h += ' <a href="' + esc(w.link) + '">View</a>';
+          h += '</span></div>';
+        });
+        h += '</div></div>';
+      }
+
+      // Losses column
+      if (fLosses.length) {
+        h += '<div class="debrief-col">';
+        h += '<div class="debrief-col-header"><span class="col-dot loss"></span><span class="col-label">Losses</span><span class="col-count">' + fLosses.length + '</span></div>';
+        h += '<div class="debrief-list">';
+        fLosses.forEach(l => {
+          h += '<div class="d-item loss-item"><span class="d-dot loss"></span><span class="d-text">' + smartFormat(esc(l.text)) + '</span></div>';
+        });
+        h += '</div></div>';
+      }
+
+      // Remaining - full width, agent-assigned items first
+      if (db.remaining && db.remaining.length) {
+        const sorted = [...db.remaining].sort((a, b) => (b.agent ? 1 : 0) - (a.agent ? 1 : 0));
+        h += '<div class="debrief-col debrief-full">';
+        h += '<div class="debrief-col-header"><span class="col-dot remain"></span><span class="col-label">Remaining</span><span class="col-count">' + db.remaining.length + '</span></div>';
+        h += '<div class="debrief-list">';
+        sorted.forEach(r => {
+          const hasAgent = r.agent;
+          const pulseClass = hasAgent ? ' active-remaining' : '';
+          h += '<div class="d-item' + pulseClass + '"><span class="d-dot remain' + (hasAgent ? ' pulsing' : '') + '"></span>';
+          if (hasAgent) h += '<span class="d-agent ' + agentCls(r.agent) + '">' + esc(r.agent) + '</span>';
+          h += '<span class="d-text">' + smartFormat(esc(r.text)) + '</span></div>';
+        });
+        h += '</div></div>';
+      }
+
+      h += '</div>';
+    }
+
+    // Retrospective section
+    h += '<div id="retro-' + esc(c.id) + '"></div>';
+  }
+
+  const scrollY = window.scrollY;
+  app.innerHTML = h;
+  window.scrollTo(0, scrollY);
+
+  // Load retrospectives only on first render (not every poll)
+  if (!window._retroLoaded) {
+    window._retroLoaded = true;
+    for (const c of campaigns) {
+      renderRetro(c.id);
+    }
+  }
+}
+
+function getAgentLiveState(agent) {
+  if (!agent.sessionId) return null;
+  const s = sessions.find(s => s.sessionId === agent.sessionId || (s.chainedSessions && s.chainedSessions.includes(agent.sessionId)));
+  if (!s || !s.active) return null;
+  const elapsed = s.ts ? formatElapsed(Date.now() - s.ts) : null;
+  return {
+    state: s.state || 'idle',
+    label: s.label || s.state || 'idle',
+    lastTool: s.lastTool || null,
+    lastFile: s.lastFile || null,
+    statusLine: s.statusLine || null,
+    elapsed: elapsed
+  };
+}
+
+function formatElapsed(ms) {
+  if (ms < 60000) return Math.round(ms / 1000) + 's ago';
+  if (ms < 3600000) return Math.round(ms / 60000) + 'm ago';
+  return Math.round(ms / 3600000) + 'h ago';
+}
+
+function shortenPath(p) {
+  if (!p) return '';
+  // Show last 3 segments
+  const parts = p.replace(/\\/g, '/').split('/');
+  return parts.length > 3 ? '.../' + parts.slice(-3).join('/') : p;
+}
+
+// Link session modal
+function openLinkModal(campaignId, slot) {
+  linkCampaignId = campaignId;
+  linkSlot = slot;
+  const select = document.getElementById('linkSelect');
+  let opts = '<option value="">-- Select a session --</option>';
+  const alive = sessions.filter(s => s.alive);
+  if (alive.length === 0) {
+    opts = '<option value="">No active sessions found</option>';
+  } else {
+    alive.forEach(s => {
+      const label = s.mission || s.tagline || s.sessionId.slice(0, 8) + '...';
+      const stateLabel = s.label || s.state || 'unknown';
+      opts += '<option value="' + esc(s.sessionId) + '">' + esc(label) + ' (' + esc(stateLabel) + ')</option>';
+    });
+  }
+  select.innerHTML = opts;
+  document.getElementById('linkModal').classList.add('open');
+}
+
+function closeLinkModal() {
+  document.getElementById('linkModal').classList.remove('open');
+  linkSlot = null;
+  linkCampaignId = null;
+}
+
+async function confirmLink() {
+  const sid = document.getElementById('linkSelect').value;
+  if (!sid || !linkCampaignId || !linkSlot) return;
+  try {
+    await fetch('/api/campaigns/link', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ campaignId: linkCampaignId, slot: linkSlot, sessionId: sid })
+    });
+    closeLinkModal();
+    await load();
+  } catch (e) {
+    alert('Failed to link: ' + e.message);
+  }
+}
+
+// Agent prompts for one-click copy from campaign cards
+const agentPrompts = {
+  'polisher': `Hey, this is a follow-up sprint on Mission Control. You're the Polisher agent, working on 2 pages.
+
+Context: we just ran our first coordinated 4-agent campaign on MC. One agent (Compass) drafted a /why page at .claude/agent-hub/why-page.html, live at localhost:3033/why. It needs work.
+
+Your 2 tasks:
+
+1. Polish /why page. The script is decent but visually it needs to pop for screen-sharing. Make it color-friendly, rich, Apple keynote quality. But more importantly, reframe the VALUE PROPOSITION around these truths:
+
+- Target user: someone at a company like Microsoft who has Claude Code access and wants to be more productive with agents. They're not learning agents from scratch, they just can't surface what's happening across sessions.
+- MC is an interface layer on top of CLI. You don't need an IDE. You don't need to look at files. Your job is to create, not to read code. MC gives you command-level visibility without touching the code.
+- The "oh shit" moment: "I can see all my agents, what they're doing, what they learned, and what went wrong, without opening a single file."
+- MC is both a product AND a self-evolving research project. The more you use it, the better it gets. Findings from mistakes become rules that prevent future mistakes. That flywheel is the killer feature.
+- User stories matter. Write for the person thinking "would this make MY life easier?" not for someone evaluating architecture.
+
+2. Create /demo-guide page at .claude/agent-hub/demo-guide.html. Separate from /why. This is internal, for Ephratah to reference before showing MC to someone. Include: what to show first/second/third, talking points per MC page, what's impressive vs rough, pre-demo checklist, how to handle questions. Wire it as a route in server.js at /demo-guide (same pattern as /why).
+
+Read CLAUDE.md at C:\\Users\\ephra\\phredomade\\CLAUDE.md first.
+
+Key files:
+- .claude/agent-hub/why-page.html (existing, improve it)
+- .claude/agent-hub/server.js (add /demo-guide route)
+- .claude/agent-hub/campaigns.json (read debrief for context)
+- .claude/agent-hub/findings.json (read for learning loop narrative)
+
+DON'T touch dispatch-page.html, campaigns-page.html, hook.js, or prompt-hook.js.
+
+Design: Plus Jakarta Sans headings, DM Sans body, DM Mono data. Purple #8b5cf6. Apple-inspired. CLAUDE.md Rule #10: every UI must be human-centered and polished.
+
+Tell me your plan before building.`,
+
+  'findings-analyst': `Hey, you're the Findings Analyst agent. You have access to the richest data source Mission Control has ever had: a full transcript of a 2-hour demo session plus a first-pass analysis.
+
+Your job: deep data-analytics pass. Think like a data scientist, not a summarizer. The Video Analyzer already did a surface-level overview. You go deeper.
+
+Input files (read ALL of these first):
+- C:\\Users\\ephra\\phredomade\\.claude\\agent-hub\\coordinated-sprint\\demo-transcript.txt (80KB full transcript)
+- C:\\Users\\ephra\\phredomade\\.claude\\agent-hub\\coordinated-sprint\\demo-transcript-timestamped.txt (with timestamps)
+- C:\\Users\\ephra\\phredomade\\.claude\\agent-hub\\coordinated-sprint\\video-analysis.md (Video Analyzer's first pass)
+- C:\\Users\\ephra\\phredomade\\.claude\\agent-hub\\coordinated-sprint\\video-quotes.md (extracted quotes)
+- C:\\Users\\ephra\\phredomade\\.claude\\agent-hub\\findings.json (existing findings to cross-reference)
+- C:\\Users\\ephra\\phredomade\\.claude\\agent-hub\\dispatch-home.json (existing tasks to cross-reference)
+
+Your deliverables:
+
+1. Create a beautiful analytics page at .claude/agent-hub/video-findings-page.html. Model it after the /cost page style: clean data cards, KEY METRIC badges, color-coded sections, actionable insights. NOT a wall of text. This should be visually stunning.
+
+Sections for the page:
+- SESSION OVERVIEW: duration, word count, estimated talk time, topic count
+- TOP FINDINGS: things said that should become findings (cross-ref against findings.json, don't duplicate)
+- NEW DISPATCH ITEMS: ideas mentioned that don't have tasks yet (cross-ref against dispatch-home.json)
+- VALUE PROPOSITION GEMS: the strongest articulations of why MC matters, with direct quotes
+- FUTURE VISION: roadmap ideas stated or implied
+- AUDIENCE REACTIONS: where the friend reacted, what landed, what didn't
+- PAIN POINTS: friction mentioned during demo
+- TOPIC FLOW: timeline of what was discussed when (use timestamps)
+
+2. Wire it in server.js as /video-findings route (same pattern as /why and /health).
+
+3. Write new findings to .claude/agent-hub/coordinated-sprint/video-new-findings.json (array of finding objects matching the findings.json schema). Don't write directly to findings.json.
+
+4. Write new dispatch items to .claude/agent-hub/coordinated-sprint/video-new-tasks.json.
+
+Read CLAUDE.md at C:\\Users\\ephra\\phredomade\\CLAUDE.md first. Rule #10 is critical: every UI must be human-centered and polished.
+
+DON'T touch dispatch-page.html, campaigns-page.html, findings.json, dispatch-home.json, hook.js, or prompt-hook.js. Write your NEW data to separate files in coordinated-sprint/.
+
+Design: Plus Jakarta Sans headings, DM Sans body, DM Mono data. Purple #8b5cf6. Apple-inspired. Data cards with badges.
+
+Start by reading the transcript and cross-reference files. Then build.`,
+
+  'medic': `Hey, you're the Medic agent. Build a /health page for Mission Control that shows system integrity at a glance.
+
+This page should be the "is everything working?" dashboard. Model the visual style after the /cost page's data cards: clean sections, KEY METRIC badges, color-coded status, actionable insights. Not a wall of text.
+
+Build these sections:
+
+1. API Health: hit every MC API endpoint and show green/red status with response time. Endpoints: /api/agents, /api/campaigns, /api/dispatch, /api/findings, /api/areas, /api/workstreams, /api/mode, /api/toolbox-context, /api/northstar
+
+2. Data Integrity: count state files, log files, prompt files. Flag orphans (state without log, log without state). Check JSON validity of key files (campaigns.json, dispatch-home.json, dispatch-work.json, findings.json, workstreams.json). Show file sizes.
+
+3. Hook Health: check if hook.js and prompt-hook.js exist and are valid JS. Show last state file modification time (indicates hooks are firing). Count active vs stale vs archived sessions.
+
+4. Regression Detection: curl each MC page route (/, /dispatch, /findings, /campaigns, /workflow, /postmortems, /tools, /logic, /radar, /cost, /why, /prompts) and verify 200 status + check for key content markers (e.g., dispatch page should contain "Dispatch", campaigns should contain "Campaign Debrief"). Flag any page returning errors or missing expected content.
+
+5. Session Stats: active sessions count, total sessions, average session duration, most active session today.
+
+Create the page at .claude/agent-hub/health-page.html. Wire it in server.js as a route at /health (same pattern as /why — add the route near the other page routes).
+
+Read CLAUDE.md at C:\\Users\\ephra\\phredomade\\CLAUDE.md first.
+
+Key files:
+- .claude/agent-hub/server.js (add /health route, study existing API endpoints)
+- .claude/agent-hub/hook.js (understand what hooks write)
+- .claude/agent-hub/states/ (session state files)
+- .claude/agent-hub/logs/ (activity logs)
+- All JSON data files in .claude/agent-hub/
+
+The page should auto-refresh every 30 seconds. Use fetch() to hit the APIs from the browser. For regression detection, add a server-side API endpoint GET /api/health that runs the checks and returns JSON.
+
+DON'T touch dispatch-page.html, campaigns-page.html, findings.json, hook.js, or prompt-hook.js.
+
+Design: Plus Jakarta Sans headings, DM Sans body, DM Mono for data. Apple-inspired, clean cards. Green for healthy, red for broken, amber for warnings. CLAUDE.md Rule #10 applies.
+
+Tell me your plan before building.`,
+
+  'video-analyzer': `Hey, you're the Video Analyzer agent. I have a 2-hour screen recording of me demoing Mission Control to a friend on Discord. This is the richest data source MC has ever had. I need you to process it.
+
+The video is at: C:\\Users\\ephra\\Videos\\NVIDIA\\Desktop\\Desktop 2026.03.07 - 00.20.50.21.mp4
+It's 15GB (NVIDIA recording at full bitrate). You need to extract audio first.
+
+Step 1: Extract audio (don't touch the video directly)
+Run: ffmpeg -i "C:\\Users\\ephra\\Videos\\NVIDIA\\Desktop\\Desktop 2026.03.07 - 00.20.50.21.mp4" -vn -acodec libmp3lame -q:a 4 "C:\\Users\\ephra\\Videos\\demo-session-audio.mp3"
+This will take a few minutes. Wait for it.
+
+Step 2: Transcribe
+Use whisper or any available transcription tool. If whisper isn't installed, check if there's a Python whisper package available, or use the Bash tool to find what's available. Save transcript to: .claude/agent-hub/coordinated-sprint/demo-transcript.txt
+
+Step 3: First-pass analysis
+Read the full transcript and produce a structured analysis document. Model the output after the /cost page's "Prompt Engineering for Cost" style: clean data cards with KEY METRIC badges, INSIGHT badges, section headers, and actionable takeaways. NOT a wall of text.
+
+Structure your analysis as:
+
+OVERVIEW CARD: Session duration, estimated talk time, number of topics covered, key participants
+
+VALUE PROPOSITION GEMS: Direct quotes where Ephratah articulates why MC matters. These are gold. Tag each with context.
+
+FUTURE IDEAS: Things mentioned as "we should do X" or "imagine if Y." Each one becomes a potential dispatch item. Tag as [stated] vs [inferred].
+
+AUDIENCE REACTIONS: Where the friend reacted, asked questions, seemed confused or impressed. This tells us what lands and what doesn't.
+
+PAIN POINTS DISCUSSED: Friction points mentioned during the demo. Cross-reference with existing findings in .claude/agent-hub/findings.json.
+
+STRATEGIC INSIGHTS: High-level observations about MC's direction, identity, and positioning.
+
+KEY QUOTES: The 10-15 most important sentences from the entire recording. These feed into /why and the President's Report.
+
+Write your output to: .claude/agent-hub/coordinated-sprint/video-analysis.md
+Also write raw extracted quotes to: .claude/agent-hub/coordinated-sprint/video-quotes.md
+
+Read CLAUDE.md at C:\\Users\\ephra\\phredomade\\CLAUDE.md first.
+
+IMPORTANT: This will be a long-running task. The ffmpeg extraction alone may take 5+ minutes. The transcription may take longer. Be patient. Don't skip steps.
+
+DON'T touch any MC code files. You're analyzing, not building.
+
+Start with the ffmpeg extraction immediately.`,
+
+  'analyst': `Hey, you're the Analyst agent. I need you to build session analytics for Mission Control Dashboard agent cards.
+
+I interact with agents primarily through voice (Wispr Flow voice-to-text). I want to see metrics on each agent card that tell me things like: how long was I talking, how many prompts did I send, how long was the session, what tools were used most.
+
+Your task: build an Analytics tab on Dashboard agent cards with these metrics:
+
+1. Estimated talk time: prompt word count / 150 wpm (since I use voice-to-text)
+2. Total prompts sent + average prompt length
+3. Session duration (first prompt to last activity)
+4. Tool call breakdown (Read, Write, Edit, Bash, Agent, etc.)
+5. A mini summary line like: "45 min session, ~20 min talking, 47 prompts, 89 tool calls"
+
+Data sources (all already exist):
+- Prompt files: .claude/agent-hub/prompts/{sessionId}.ndjson (hook-captured prompts)
+- Transcript files: C:\\Users\\ephra\\.claude\\projects\\C--Users-ephra-phredomade\\{sessionId}.jsonl
+- State files: .claude/agent-hub/states/{sessionId}.json (timestamps, tool counts)
+- Activity logs: .claude/agent-hub/logs/{sessionId}.ndjson (timestamped tool events)
+
+Read CLAUDE.md at C:\\Users\\ephra\\phredomade\\CLAUDE.md first.
+
+Implementation:
+- Add GET /api/analytics/:sessionId endpoint to server.js that computes these metrics
+- Add an "Analytics" tab to the Dashboard agent card detail view (HTML is embedded in server.js, search for "Summary" and "Prompts" tabs)
+- Keep it lightweight: compute on demand, cache briefly
+- Design: clean numbers, maybe a small bar chart for tool breakdown. DM Mono for numbers. Color the talk time estimate in green.
+
+DON'T touch dispatch-page.html, campaigns-page.html, findings.json, hook.js, or prompt-hook.js.
+
+Tell me your plan before building.`,
+
+  'integrator': `Hey, you're the Integrator agent. I need you to add a Retrospective tab to the Dashboard agent cards in Mission Control.
+
+Context: we built an /end-session command (in .claude/commands/end-session.md) that writes structured retrospectives to .claude/agent-hub/retrospectives/{sessionId}.json. But the Dashboard doesn't show them yet. When an agent closes and has a retrospective, I want to see it.
+
+Your task:
+
+1. Add a "Retrospective" tab next to Summary/Prompts/Timeline on Dashboard agent cards. It should show the retrospective data if it exists: accomplishments, decisions, unfinished work, insights.
+
+2. The tab should only appear if a retrospective file exists for that session. If no retrospective, don't show the tab.
+
+3. Make it visually clean. Accomplishments in green, unfinished in amber, insights in blue. Keep it scannable, not a wall of text.
+
+4. Add an API endpoint GET /api/retrospectives/:sessionId that reads from the retrospectives directory.
+
+Read CLAUDE.md at C:\\Users\\ephra\\phredomade\\CLAUDE.md first.
+
+Key files:
+- .claude/agent-hub/server.js (Dashboard HTML is embedded here, search for "Summary" and "Prompts" tabs. Also add the API endpoint)
+- .claude/agent-hub/retrospectives/ (where /end-session writes JSON files)
+- .claude/commands/end-session.md (understand what data gets written)
+
+DON'T touch dispatch-page.html, campaigns-page.html, findings.json, hook.js, or prompt-hook.js.
+
+The Dashboard HTML is embedded in server.js, not a separate file. Search for the tab rendering code.
+
+Tell me your plan before building.`,
+
+  'retrospector': `Hey, I need you to write the campaign retrospective for the MC Evolution Sprint. You're the Retrospector agent. This is critically important.
+
+Context: we just ran our first ever coordinated 4-agent campaign on Mission Control. 4 agents (Orchestrator, Beacon, Compass, Overwatch) worked simultaneously. A lot went right, a lot went wrong, and we learned a ton. I need you to distill this into broadly applicable lessons.
+
+Your task: produce a retrospective that answers:
+1. What patterns made this campaign succeed? (What should we ALWAYS do in future campaigns?)
+2. What patterns caused failures? (What should we NEVER do again?)
+3. What was the single biggest insight from this entire sprint?
+4. How should the orchestrator role work differently next time?
+5. What should the campaign Setup phase look like to prevent missed items?
+6. Rate this campaign: was it worth running 4 agents simultaneously?
+
+Read these files to understand what happened:
+- C:\\Users\\ephra\\phredomade\\.claude\\agent-hub\\campaigns.json (wins, losses, remaining)
+- C:\\Users\\ephra\\phredomade\\.claude\\agent-hub\\findings.json (all findings, especially f023-f032)
+- C:\\Users\\ephra\\phredomade\\.claude\\agent-hub\\coordinated-sprint\\agent-b-output.md (Compass analysis)
+- C:\\Users\\ephra\\phredomade\\.claude\\agent-hub\\coordinated-sprint\\agent-c-output.md (Overwatch analysis)
+- C:\\Users\\ephra\\phredomade\\CLAUDE.md (behavioral rules)
+
+Your retrospective must be BROADLY APPLICABLE. Not "we should have wired the /why page" but "orchestrators must audit all agent output files for accessibility after a sprint." Think principles, not incidents.
+
+Write your output to: .claude/agent-hub/coordinated-sprint/retrospective.md
+
+DON'T modify any existing MC code or data files. You're analyzing and writing.
+
+Start by reading everything, then produce the retrospective.`
+};
+
+async function copyAgentPrompt(slot, btn) {
+  const prompt = agentPrompts[slot];
+  if (!prompt) { btn.textContent = 'No prompt'; return; }
+  try {
+    await navigator.clipboard.writeText(prompt);
+    btn.textContent = 'Copied!';
+    btn.style.background = 'rgba(34,197,94,0.12)';
+    btn.style.color = '#16a34a';
+    showToast('Copied ' + slot + ' prompt');
+    setTimeout(() => { btn.textContent = 'Copy Prompt'; btn.style.background = ''; btn.style.color = ''; }, 2000);
+  } catch(e) {
+    btn.textContent = 'Failed';
+  }
+}
+
+function showToast(msg) {
+  let t = document.getElementById('cToast');
+  if (!t) { t = document.createElement('div'); t.id = 'cToast'; t.style.cssText = 'position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);background:#1a1a1a;color:#fff;padding:10px 24px;border-radius:10px;font-size:13px;font-weight:600;opacity:0;transition:all .25s ease;pointer-events:none;z-index:100'; document.body.appendChild(t); }
+  t.textContent = msg;
+  t.style.opacity = '1'; t.style.transform = 'translateX(-50%) translateY(0)';
+  setTimeout(() => { t.style.opacity = '0'; t.style.transform = 'translateX(-50%) translateY(80px)'; }, 2000);
+}
+
+// ── Campaign status changes ──
+async function setCampaignStatus(campaignId, status) {
+  try {
+    await fetch('/api/campaigns/status', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ campaignId, status })
+    });
+    window._retroLoaded = false; // allow retro re-render
+    await load();
+    showToast('Campaign ' + status);
+  } catch(e) { showToast('Failed: ' + e.message); }
+}
+
+// ── Load and render retrospective ──
+let retroCache = {};
+async function loadRetro(campaignId) {
+  if (retroCache[campaignId]) return retroCache[campaignId];
+  try {
+    const res = await fetch('/api/retrospective/' + campaignId);
+    const data = await res.json();
+    retroCache[campaignId] = data.content;
+    return data.content;
+  } catch { return null; }
+}
+
+function parseMarkdownBasic(md) {
+  let html = md
+    .replace(/^### (.+)$/gm, '<h3>$1</h3>')
+    .replace(/^## (.+)$/gm, '<h2>$1</h2>')
+    .replace(/```[\s\S]*?```/g, function(m) {
+      return '<pre>' + m.replace(/```\w*\n?/g, '').replace(/```/g, '') + '</pre>';
+    })
+    .replace(/\*\*The principle:\*\*/g, '<strong style="color:#7c3aed">The principle:</strong>')
+    .replace(/\*\*Always do this:\*\*/g, '<strong style="color:#16a34a">Always do this:</strong>')
+    .replace(/\*\*Never do this again:\*\*/g, '<strong style="color:#dc2626">Never do this again:</strong>')
+    .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+    .replace(/`([^`]+)`/g, '<code>$1</code>')
+    .replace(/^- (.+)$/gm, '<li>$1</li>')
+    .replace(/^(\d+)\. (.+)$/gm, '<li>$1. $2</li>')
+    .replace(/(<li>.*<\/li>\n?)+/g, '<ul>$&</ul>')
+    .replace(/\n\n/g, '<br><br>')
+    .replace(/\|(.+)\|/g, function(match) {
+      const cells = match.split('|').filter(c => c.trim());
+      if (cells.every(c => c.trim().match(/^[-:]+$/))) return '';
+      const tag = match.includes('---') ? 'th' : 'td';
+      return '<tr>' + cells.map(c => '<' + tag + '>' + c.trim() + '</' + tag + '>').join('') + '</tr>';
+    })
+    .replace(/(<tr>.*<\/tr>\s*)+/g, '<table>$&</table>');
+  // Color-code agent names in text
+  html = html.replace(/\b(Orchestrator)\b/g, '<span style="color:#7c3aed;font-weight:600">$1</span>');
+  html = html.replace(/\b(Beacon)\b/g, '<span style="color:#d97706;font-weight:600">$1</span>');
+  html = html.replace(/\b(Compass)\b/g, '<span style="color:#2563eb;font-weight:600">$1</span>');
+  html = html.replace(/\b(Overwatch)\b/g, '<span style="color:#0891b2;font-weight:600">$1</span>');
+  html = html.replace(/\b(Polisher)\b/g, '<span style="color:#db2777;font-weight:600">$1</span>');
+  html = html.replace(/\b(Retrospector)\b/g, '<span style="color:#16a34a;font-weight:600">$1</span>');
+  html = html.replace(/\b(Integrator)\b/g, '<span style="color:#ea580c;font-weight:600">$1</span>');
+  // Highlight scores
+  html = html.replace(/(\d+)\/10/g, '<span style="font-family:\'Plus Jakarta Sans\',sans-serif;font-weight:800;color:var(--purple)">$1/10</span>');
+  return html;
+}
+
+// Split retrospective into named sections
+function splitRetroSections(md) {
+  const sections = [];
+  const lines = md.split('\n');
+  let current = null;
+  for (const line of lines) {
+    const h2 = line.match(/^## (.+)/);
+    if (h2) {
+      if (current) sections.push(current);
+      current = { title: h2[1].trim(), lines: [] };
+    } else if (current) {
+      current.lines.push(line);
+    }
+  }
+  if (current) sections.push(current);
+  return sections;
+}
+
+function getReviewState(campaignId) {
+  return JSON.parse(localStorage.getItem('mc-retro-reviewed-' + campaignId) || '{}');
+}
+function setReviewState(campaignId, sectionIdx, reviewed) {
+  const state = getReviewState(campaignId);
+  state[sectionIdx] = reviewed;
+  localStorage.setItem('mc-retro-reviewed-' + campaignId, JSON.stringify(state));
+}
+
+async function renderRetro(campaignId) {
+  const el = document.getElementById('retro-' + campaignId);
+  if (!el) return;
+  const md = await loadRetro(campaignId);
+  if (!md) { el.innerHTML = ''; return; }
+
+  const sections = splitRetroSections(md);
+  const reviewed = getReviewState(campaignId);
+  const totalSections = sections.length;
+  const reviewedCount = Object.values(reviewed).filter(Boolean).length;
+
+  let h = '<div class="section-title" style="margin-top:8px">Retrospective <span class="count">' + reviewedCount + '/' + totalSections + ' reviewed</span></div>';
+
+  sections.forEach((s, i) => {
+    const isReviewed = reviewed[i];
+    h += '<div class="retro-section">';
+    h += '<div class="retro-header" onclick="toggleRetro(\'' + campaignId + '\',' + i + ')">';
+    h += '<span class="retro-dot" style="background:' + (isReviewed ? 'var(--green)' : 'var(--amber)') + '"></span>';
+    h += '<span class="retro-title">' + esc(s.title) + '</span>';
+    h += '<span class="retro-badge ' + (isReviewed ? 'reviewed' : 'unreviewed') + '">' + (isReviewed ? 'Reviewed' : 'Unreviewed') + '</span>';
+    h += '</div>';
+    h += '<div class="retro-body" id="retro-body-' + campaignId + '-' + i + '">';
+    h += '<div class="retro-content">' + parseMarkdownBasic(s.lines.join('\n')) + '</div>';
+    h += '<div class="retro-actions">';
+    if (!isReviewed) {
+      h += '<button class="retro-review-btn mark" onclick="markRetroReviewed(\'' + campaignId + '\',' + i + ',true)">Mark as Reviewed</button>';
+    } else {
+      h += '<button class="retro-review-btn unmark" onclick="markRetroReviewed(\'' + campaignId + '\',' + i + ',false)">Unmark</button>';
+    }
+    h += '</div></div></div>';
+  });
+
+  el.innerHTML = h;
+}
+
+function toggleRetro(campaignId, idx) {
+  const body = document.getElementById('retro-body-' + campaignId + '-' + idx);
+  if (body) body.classList.toggle('open');
+}
+
+function markRetroReviewed(campaignId, idx, reviewed) {
+  setReviewState(campaignId, idx, reviewed);
+  renderRetro(campaignId);
+}
+
+// ── Agent state change notifications ──
+let prevAgentStates = {};
+const NOTIFY_SOUND = new Audio('data:audio/wav;base64,UklGRlYAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YTIAAABkZGRkZGRkZH9/f39/f39/ZGRkZGRkZGRJSUlJSUlJSWRkZGRkZGRkf39/f39/f38A');
+function checkAgentChanges() {
+  if (!campaigns.length) return;
+  for (const c of campaigns) {
+    if (!c.agents) continue;
+    for (const agent of c.agents) {
+      const live = getAgentLiveState(agent);
+      const key = agent.slot;
+      const prev = prevAgentStates[key];
+      const curr = live ? live.state : (agent.status === 'active' ? 'working' : agent.status);
+      if (prev && prev !== curr) {
+        // State changed
+        if (curr === 'waiting' || curr === 'idle') {
+          // Agent needs input or finished
+          const msg = curr === 'waiting'
+            ? agent.name + ' needs your input'
+            : agent.name + ' finished';
+          showToast(msg);
+          try { NOTIFY_SOUND.play(); } catch(e) {}
+          // Browser notification if permitted
+          if (Notification.permission === 'granted') {
+            new Notification('Mission Control', { body: msg, icon: '/favicon.ico' });
+          }
+        }
+      }
+      prevAgentStates[key] = curr;
+    }
+  }
+}
+
+// Request notification permission on first interaction
+document.addEventListener('click', function once() {
+  if (Notification.permission === 'default') Notification.requestPermission();
+  document.removeEventListener('click', once);
+}, { once: true });
+
+// ── Debrief sprint filter ──
+let debriefFilter = 'all'; // 'all', 1, 2
+let agentFilter = 'all'; // 'all' or agent name
+const sprint1Agents = new Set(['orchestrator', 'beacon', 'compass', 'overwatch']);
+
+function itemSprint(item) {
+  if (!item.agent) return 1;
+  const n = item.agent.toLowerCase();
+  return sprint1Agents.has(n) ? 1 : 2;
+}
+
+function filterDebrief(items) {
+  let result = items;
+  if (debriefFilter !== 'all') result = result.filter(i => itemSprint(i) === debriefFilter);
+  if (agentFilter !== 'all') result = result.filter(i => i.agent && i.agent.toLowerCase() === agentFilter.toLowerCase());
+  return result;
+}
+
+function setDebriefFilter(v) {
+  debriefFilter = v;
+  agentFilter = 'all';
+  render();
+}
+
+function setAgentFilter(v) {
+  agentFilter = v;
+  render();
+}
+
+// Auto-refresh every 5 seconds to pick up live state changes
+async function refreshLoop() {
+  await load();
+  checkAgentChanges();
+}
+refreshLoop();
+setInterval(refreshLoop, 5000);
+</script>
+</body>
+</html>

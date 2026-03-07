@@ -1,0 +1,691 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>System Health &mdash; Mission Control</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=DM+Sans:wght@400;500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#fff;--bg2:#fafafa;--surface:#f4f4f5;--surface2:#e4e4e7;
+  --text:#09090b;--text2:#52525b;--text3:#a1a1aa;--sep:#e4e4e7;
+  --purple:#8b5cf6;--purple-bg:rgba(139,92,246,0.06);
+  --blue:#3b82f6;--blue-bg:rgba(59,130,246,0.06);
+  --green:#22c55e;--green-bg:rgba(34,197,94,0.06);
+  --amber:#f59e0b;--amber-bg:rgba(245,158,11,0.06);
+  --rose:#ef4444;--rose-bg:rgba(239,68,68,0.05);
+  --radius:12px;
+}
+body{background:var(--bg2);color:var(--text);font-family:'DM Sans',-apple-system,sans-serif;-webkit-font-smoothing:antialiased;overflow-x:hidden;min-height:100vh}
+
+/* Header */
+header{display:flex;align-items:center;justify-content:space-between;padding:0 clamp(24px,4vw,48px);height:64px;background:var(--bg);border-bottom:1px solid var(--sep);position:sticky;top:0;z-index:50}
+.logo{display:flex;align-items:center;gap:10px}
+.logo-dot{width:8px;height:8px;border-radius:50%;background:var(--purple)}
+.logo-text{font-family:'Plus Jakarta Sans',sans-serif;font-size:14px;font-weight:700;letter-spacing:-0.02em}
+.header-nav{display:flex;gap:2px;padding:3px;background:var(--surface);border-radius:8px;position:absolute;left:50%;transform:translateX(-50%)}
+.nav-link{padding:5px 14px;border-radius:6px;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;color:var(--text3);text-decoration:none;transition:all .15s;white-space:nowrap}
+.nav-link:hover{color:var(--text2)}
+.nav-link.active{background:var(--bg);color:var(--text);box-shadow:0 1px 3px rgba(0,0,0,.06)}
+
+/* Content */
+.page-wrap{max-width:1200px;margin:0 auto;padding:32px 24px 60px}
+.page-header{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:4px}
+.page-title{font-family:'Plus Jakarta Sans',sans-serif;font-size:28px;font-weight:800;letter-spacing:-0.04em}
+.page-sub{font-size:13px;color:var(--text3);margin-bottom:28px}
+
+/* Summary cards */
+.cards{display:grid;grid-template-columns:repeat(5,1fr);gap:14px;margin-bottom:32px}
+.card{background:var(--bg);border:1px solid var(--sep);border-radius:var(--radius);padding:20px 22px}
+.card-label{font-size:11px;font-weight:500;color:var(--text3);text-transform:uppercase;letter-spacing:0.04em;margin-bottom:8px}
+.card-value{font-family:'Plus Jakarta Sans',sans-serif;font-size:32px;font-weight:800;letter-spacing:-0.04em;line-height:1}
+.card-value.green{color:var(--green)}
+.card-value.blue{color:var(--blue)}
+.card-value.purple{color:var(--purple)}
+.card-value.amber{color:var(--amber)}
+.card-value.rose{color:var(--rose)}
+.card-detail{font-family:'DM Mono',monospace;font-size:11px;color:var(--text3);margin-top:6px}
+
+/* Sections */
+.section{background:var(--bg);border:1px solid var(--sep);border-radius:var(--radius);padding:24px;margin-bottom:20px}
+.section-title{font-family:'Plus Jakarta Sans',sans-serif;font-size:16px;font-weight:700;letter-spacing:-0.02em;margin-bottom:16px;display:flex;align-items:center;gap:8px}
+.section-badge{font-family:'DM Mono',monospace;font-size:10px;padding:2px 8px;border-radius:100px}
+.badge-green{background:var(--green-bg);color:#059669}
+.badge-amber{background:var(--amber-bg);color:#d97706}
+.badge-rose{background:var(--rose-bg);color:var(--rose)}
+.badge-blue{background:var(--blue-bg);color:var(--blue)}
+
+/* Status rows */
+.check-grid{display:flex;flex-direction:column;gap:6px}
+.check-row{display:flex;align-items:center;gap:12px;padding:10px 14px;background:var(--surface);border-radius:8px;transition:background .15s}
+.check-row:hover{background:var(--surface2)}
+.status-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.dot-green{background:var(--green);box-shadow:0 0 6px rgba(34,197,94,0.4)}
+.dot-amber{background:var(--amber);box-shadow:0 0 6px rgba(245,158,11,0.4)}
+.dot-rose{background:var(--rose);box-shadow:0 0 6px rgba(239,68,68,0.4)}
+.dot-blue{background:var(--blue)}
+.check-name{font-family:'DM Mono',monospace;font-size:12px;font-weight:500;flex:1;min-width:0}
+.check-meta{font-family:'DM Mono',monospace;font-size:11px;color:var(--text3);white-space:nowrap}
+.check-tag{font-family:'DM Mono',monospace;font-size:10px;font-weight:600;padding:2px 8px;border-radius:100px;white-space:nowrap}
+.tag-ok{background:var(--green-bg);color:#059669}
+.tag-warn{background:var(--amber-bg);color:#d97706}
+.tag-fail{background:var(--rose-bg);color:var(--rose)}
+.tag-info{background:var(--blue-bg);color:var(--blue)}
+
+/* Data grid (for data integrity) */
+.data-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin-bottom:16px}
+.data-card{background:var(--surface);border-radius:10px;padding:14px 16px}
+.data-card-label{font-size:10px;font-weight:500;color:var(--text3);text-transform:uppercase;letter-spacing:0.04em;margin-bottom:4px}
+.data-card-value{font-family:'Plus Jakarta Sans',sans-serif;font-size:20px;font-weight:800;letter-spacing:-0.03em}
+.data-card-sub{font-family:'DM Mono',monospace;font-size:10px;color:var(--text3);margin-top:2px}
+
+/* Latency bar */
+.latency-bar-wrap{width:80px;height:6px;background:var(--surface2);border-radius:3px;overflow:hidden;flex-shrink:0}
+.latency-bar{height:100%;border-radius:3px;transition:width .4s ease}
+.latency-bar.fast{background:var(--green)}
+.latency-bar.medium{background:var(--amber)}
+.latency-bar.slow{background:var(--rose)}
+.latency-val{font-family:'DM Mono',monospace;font-size:11px;font-weight:500;min-width:48px;text-align:right}
+.latency-val.fast{color:#059669}
+.latency-val.medium{color:#d97706}
+.latency-val.slow{color:var(--rose)}
+.size-tag{font-family:'DM Mono',monospace;font-size:10px;color:var(--text3);min-width:56px;text-align:right}
+
+/* Latency summary mini-cards */
+.latency-summary{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px;margin-bottom:16px}
+.ls-card{background:var(--surface);border-radius:8px;padding:12px 14px}
+.ls-label{font-size:10px;font-weight:500;color:var(--text3);text-transform:uppercase;letter-spacing:0.04em;margin-bottom:4px}
+.ls-value{font-family:'Plus Jakarta Sans',sans-serif;font-size:20px;font-weight:800;letter-spacing:-0.03em}
+.ls-sub{font-family:'DM Mono',monospace;font-size:10px;color:var(--text3);margin-top:2px}
+
+/* Session stats grid */
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px}
+.stat-card{background:var(--surface);border-radius:10px;padding:16px 18px}
+.stat-label{font-size:10px;font-weight:500;color:var(--text3);text-transform:uppercase;letter-spacing:0.04em;margin-bottom:6px}
+.stat-value{font-family:'Plus Jakarta Sans',sans-serif;font-size:24px;font-weight:800;letter-spacing:-0.03em}
+.stat-sub{font-family:'DM Mono',monospace;font-size:10px;color:var(--text3);margin-top:4px;line-height:1.4}
+
+/* Refresh / countdown */
+.header-right{display:flex;align-items:center;gap:12px}
+.refresh-btn{padding:6px 14px;border-radius:6px;font-size:11px;font-weight:500;background:var(--surface);border:1px solid var(--sep);color:var(--text2);cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .12s}
+.refresh-btn:hover{border-color:var(--purple);color:var(--purple)}
+.refresh-btn.loading-btn{pointer-events:none;opacity:0.5}
+.countdown{font-family:'DM Mono',monospace;font-size:10px;color:var(--text3)}
+.pulse{animation:pulse 2s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.4}}
+
+/* Overall score ring */
+.score-ring{position:relative;width:56px;height:56px;flex-shrink:0}
+.score-ring svg{transform:rotate(-90deg)}
+.score-ring .ring-bg{fill:none;stroke:var(--surface2);stroke-width:5}
+.score-ring .ring-fg{fill:none;stroke-width:5;stroke-linecap:round;transition:stroke-dashoffset .6s ease,stroke .3s}
+.score-label{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:'Plus Jakarta Sans',sans-serif;font-size:14px;font-weight:800;letter-spacing:-0.02em}
+
+/* Loading */
+.loading{display:flex;align-items:center;justify-content:center;min-height:200px;color:var(--text3);font-size:13px}
+.loading::after{content:'';width:18px;height:18px;border:2px solid var(--surface2);border-top-color:var(--purple);border-radius:50%;animation:spin .6s linear infinite;margin-left:10px}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* Timestamp */
+.last-check{font-family:'DM Mono',monospace;font-size:11px;color:var(--text3);display:flex;align-items:center;gap:6px}
+.last-check .dot{width:6px;height:6px;border-radius:50%;background:var(--green)}
+
+@media(max-width:900px){
+  .cards{grid-template-columns:repeat(2,1fr)}
+  .header-nav{display:none}
+  .data-grid{grid-template-columns:1fr 1fr}
+  .stats-grid{grid-template-columns:1fr 1fr}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">
+    <div class="logo-dot"></div>
+    <div class="logo-text">Mission Control</div>
+  </div>
+  <nav class="header-nav">
+    <a href="/" class="nav-link">Dashboard</a>
+    <a href="/dispatch" class="nav-link">Dispatch</a>
+    <a href="/findings" class="nav-link">Findings</a>
+    <a href="/workflow" class="nav-link">Workflow</a>
+    <a href="/postmortems" class="nav-link">Post-Mortems</a>
+    <a href="/tools" class="nav-link">Toolbox</a>
+    <a href="/logic" class="nav-link">Logic</a>
+    <a href="/radar" class="nav-link">Radar</a>
+    <a href="/campaigns" class="nav-link">Campaigns</a>
+    <a href="/health" class="nav-link active">Health</a>
+  </nav>
+  <div class="header-right">
+    <span class="countdown" id="countdown"></span>
+    <button class="refresh-btn" id="refreshBtn" onclick="runAllChecks(true)">Refresh</button>
+  </div>
+</header>
+
+<div class="page-wrap">
+  <div class="page-header">
+    <h1 class="page-title">System Health</h1>
+    <div class="last-check" id="lastCheck"></div>
+  </div>
+  <p class="page-sub">Real-time integrity checks across APIs, data files, hooks, pages, and sessions.</p>
+
+  <!-- Summary Cards -->
+  <div class="cards" id="summaryCards">
+    <div class="loading">Running health checks</div>
+  </div>
+
+  <!-- API Health -->
+  <div class="section" id="apiSection" style="display:none">
+    <div class="section-title">API Health <span class="section-badge badge-green" id="apiBadge"></span></div>
+    <div class="check-grid" id="apiGrid"></div>
+  </div>
+
+  <!-- Data Integrity -->
+  <div class="section" id="dataSection" style="display:none">
+    <div class="section-title">Data Integrity <span class="section-badge badge-green" id="dataBadge"></span></div>
+    <div class="data-grid" id="dataGrid"></div>
+    <div id="dataDetails"></div>
+  </div>
+
+  <!-- Hook Health -->
+  <div class="section" id="hookSection" style="display:none">
+    <div class="section-title">Hook Health <span class="section-badge badge-green" id="hookBadge"></span></div>
+    <div class="data-grid" id="hookGrid"></div>
+    <div class="check-grid" id="hookDetails"></div>
+  </div>
+
+  <!-- Regression Detection -->
+  <div class="section" id="regressionSection" style="display:none">
+    <div class="section-title">Page Regression <span class="section-badge badge-green" id="regressionBadge"></span></div>
+    <div class="latency-summary" id="regressionSummary"></div>
+    <div class="check-grid" id="regressionGrid"></div>
+  </div>
+
+  <!-- Session Stats -->
+  <div class="section" id="sessionSection" style="display:none">
+    <div class="section-title">Session Stats <span class="section-badge badge-blue" id="sessionBadge"></span></div>
+    <div class="stats-grid" id="sessionGrid"></div>
+  </div>
+</div>
+
+<script>
+// ── State ────────────────────────────────────────────────────────────────────
+let refreshTimer = null;
+let countdown = 30;
+let lastResults = { api: null, server: null };
+
+// ── API Health Check (client-side) ───────────────────────────────────────────
+const API_ENDPOINTS = [
+  { path: '/api/agents',           name: '/api/agents' },
+  { path: '/api/campaigns',        name: '/api/campaigns' },
+  { path: '/api/dispatch',         name: '/api/dispatch' },
+  { path: '/api/findings',         name: '/api/findings' },
+  { path: '/api/areas',            name: '/api/areas' },
+  { path: '/api/workstreams',      name: '/api/workstreams' },
+  { path: '/api/mode',             name: '/api/mode' },
+  { path: '/api/toolbox-context',  name: '/api/toolbox-context' },
+  { path: '/api/northstar',        name: '/api/northstar' },
+];
+
+async function checkAPIs() {
+  const results = await Promise.all(API_ENDPOINTS.map(async (ep) => {
+    const t0 = performance.now();
+    try {
+      const r = await fetch(ep.path);
+      const ms = Math.round(performance.now() - t0);
+      let valid = r.ok;
+      let detail = `${r.status} ${r.statusText}`;
+      if (r.ok) {
+        try {
+          const json = await r.json();
+          detail = `${r.status} OK`;
+          // Extra: show item count if array
+          if (Array.isArray(json)) detail += ` (${json.length} items)`;
+          else if (json && typeof json === 'object') {
+            const keys = Object.keys(json);
+            if (keys.length <= 6) detail += ` {${keys.join(', ')}}`;
+          }
+        } catch {
+          detail = `${r.status} (invalid JSON)`;
+          valid = false;
+        }
+      }
+      return { ...ep, ok: valid, ms, detail };
+    } catch (err) {
+      const ms = Math.round(performance.now() - t0);
+      return { ...ep, ok: false, ms, detail: err.message };
+    }
+  }));
+  return results;
+}
+
+// ── Server Health Check ──────────────────────────────────────────────────────
+async function checkServer() {
+  try {
+    const r = await fetch('/api/health');
+    if (!r.ok) throw new Error(`HTTP ${r.status}`);
+    return await r.json();
+  } catch (err) {
+    return { error: err.message };
+  }
+}
+
+// ── Render ───────────────────────────────────────────────────────────────────
+function renderSummaryCards(apiResults, serverData) {
+  const el = document.getElementById('summaryCards');
+  if (!apiResults || !serverData) {
+    el.innerHTML = '<div class="loading">Running health checks</div>';
+    return;
+  }
+
+  const apiOk = apiResults.filter(r => r.ok).length;
+  const apiTotal = apiResults.length;
+  const avgMs = Math.round(apiResults.reduce((s, r) => s + r.ms, 0) / apiResults.length);
+
+  const dataIssues = serverData.error ? '?' : (serverData.dataIntegrity?.issues || 0);
+  const pagesFail = serverData.error ? '?' : (serverData.regression?.failed || 0);
+  const pagesTotal = serverData.error ? '?' : (serverData.regression?.total || 0);
+
+  const sessions = serverData.error ? {} : (serverData.sessions || {});
+  const activeSessions = sessions.active || 0;
+  const uptimeMs = serverData.error ? 0 : (serverData.server?.uptimeMs || 0);
+
+  // Overall score
+  let totalChecks = apiTotal;
+  let passedChecks = apiOk;
+  if (!serverData.error) {
+    const regTotal = serverData.regression?.total || 0;
+    const regPassed = regTotal - (serverData.regression?.failed || 0);
+    totalChecks += regTotal;
+    passedChecks += regPassed;
+    // Data integrity: each valid JSON file counts
+    const jsonFiles = serverData.dataIntegrity?.jsonFiles || [];
+    totalChecks += jsonFiles.length;
+    passedChecks += jsonFiles.filter(f => f.valid).length;
+    // Hooks
+    const hooks = serverData.hooks?.files || [];
+    totalChecks += hooks.length;
+    passedChecks += hooks.filter(h => h.exists).length;
+  }
+  const score = totalChecks > 0 ? Math.round((passedChecks / totalChecks) * 100) : 0;
+  const scoreColor = score >= 95 ? 'green' : score >= 75 ? 'amber' : 'rose';
+
+  const circumference = 2 * Math.PI * 23;
+  const offset = circumference - (score / 100) * circumference;
+  const strokeColor = score >= 95 ? 'var(--green)' : score >= 75 ? 'var(--amber)' : 'var(--rose)';
+
+  el.innerHTML = `
+    <div class="card" style="display:flex;align-items:center;gap:18px">
+      <div class="score-ring">
+        <svg width="56" height="56" viewBox="0 0 56 56">
+          <circle class="ring-bg" cx="28" cy="28" r="23"/>
+          <circle class="ring-fg" cx="28" cy="28" r="23"
+            stroke="${strokeColor}"
+            stroke-dasharray="${circumference}"
+            stroke-dashoffset="${offset}"/>
+        </svg>
+        <div class="score-label" style="color:${strokeColor}">${score}</div>
+      </div>
+      <div>
+        <div class="card-label">Overall Score</div>
+        <div class="card-detail">${passedChecks}/${totalChecks} checks passed</div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-label">APIs Online</div>
+      <div class="card-value ${apiOk === apiTotal ? 'green' : 'rose'}">${apiOk}/${apiTotal}</div>
+      <div class="card-detail">avg ${avgMs}ms response</div>
+    </div>
+    <div class="card">
+      <div class="card-label">Data Issues</div>
+      <div class="card-value ${dataIssues === 0 ? 'green' : dataIssues === '?' ? 'amber' : 'rose'}">${dataIssues}</div>
+      <div class="card-detail">${dataIssues === 0 ? 'all files valid' : dataIssues === '?' ? 'check failed' : 'needs attention'}</div>
+    </div>
+    <div class="card">
+      <div class="card-label">Active Sessions</div>
+      <div class="card-value purple">${activeSessions}</div>
+      <div class="card-detail">${sessions.total || 0} total tracked</div>
+    </div>
+    <div class="card">
+      <div class="card-label">Server Uptime</div>
+      <div class="card-value blue">${formatUptime(uptimeMs)}</div>
+      <div class="card-detail">PID ${serverData.server?.pid || '?'}</div>
+    </div>
+  `;
+}
+
+function renderAPIs(results) {
+  if (!results) return;
+  const grid = document.getElementById('apiGrid');
+  const badge = document.getElementById('apiBadge');
+  const section = document.getElementById('apiSection');
+  section.style.display = '';
+
+  const okCount = results.filter(r => r.ok).length;
+  const allOk = okCount === results.length;
+  badge.textContent = allOk ? 'ALL PASS' : `${results.length - okCount} FAILING`;
+  badge.className = `section-badge ${allOk ? 'badge-green' : 'badge-rose'}`;
+
+  grid.innerHTML = results.map(r => `
+    <div class="check-row">
+      <div class="status-dot ${r.ok ? 'dot-green' : 'dot-rose'}"></div>
+      <div class="check-name">${r.name}</div>
+      <div class="check-meta">${r.detail}</div>
+      <div class="check-tag ${r.ms < 200 ? 'tag-ok' : r.ms < 1000 ? 'tag-warn' : 'tag-fail'}">${r.ms}ms</div>
+      <div class="check-tag ${r.ok ? 'tag-ok' : 'tag-fail'}">${r.ok ? 'OK' : 'FAIL'}</div>
+    </div>
+  `).join('');
+}
+
+function renderDataIntegrity(data) {
+  if (!data || data.error) return;
+  const di = data.dataIntegrity;
+  if (!di) return;
+
+  const section = document.getElementById('dataSection');
+  section.style.display = '';
+
+  const badge = document.getElementById('dataBadge');
+  const issues = di.issues || 0;
+  badge.textContent = issues === 0 ? 'HEALTHY' : `${issues} ISSUE${issues > 1 ? 'S' : ''}`;
+  badge.className = `section-badge ${issues === 0 ? 'badge-green' : 'badge-amber'}`;
+
+  const grid = document.getElementById('dataGrid');
+  grid.innerHTML = `
+    <div class="data-card">
+      <div class="data-card-label">State Files</div>
+      <div class="data-card-value">${di.stateFiles}</div>
+      <div class="data-card-sub">in states/</div>
+    </div>
+    <div class="data-card">
+      <div class="data-card-label">Log Files</div>
+      <div class="data-card-value">${di.logFiles}</div>
+      <div class="data-card-sub">in logs/</div>
+    </div>
+    <div class="data-card">
+      <div class="data-card-label">Prompt Files</div>
+      <div class="data-card-value">${di.promptFiles}</div>
+      <div class="data-card-sub">in prompts/</div>
+    </div>
+    <div class="data-card">
+      <div class="data-card-label">Orphans</div>
+      <div class="data-card-value ${di.orphans.length > 0 ? 'amber' : 'green'}">${di.orphans.length}</div>
+      <div class="data-card-sub">${di.orphans.length > 0 ? 'mismatched state/log' : 'no orphans found'}</div>
+    </div>
+  `;
+
+  const details = document.getElementById('dataDetails');
+  let html = '<div class="check-grid" style="margin-top:16px">';
+
+  // JSON file validity
+  for (const f of di.jsonFiles) {
+    html += `
+      <div class="check-row">
+        <div class="status-dot ${f.valid ? 'dot-green' : 'dot-rose'}"></div>
+        <div class="check-name">${f.name}</div>
+        <div class="check-meta">${f.valid ? formatBytes(f.size) : f.error}</div>
+        <div class="check-tag ${f.valid ? 'tag-ok' : 'tag-fail'}">${f.valid ? 'VALID' : 'INVALID'}</div>
+      </div>
+    `;
+  }
+
+  // Orphans detail
+  if (di.orphans.length > 0) {
+    html += '<div style="margin-top:12px;font-family:\'Plus Jakarta Sans\',sans-serif;font-size:13px;font-weight:700;margin-bottom:8px">Orphans</div>';
+    for (const o of di.orphans) {
+      html += `
+        <div class="check-row">
+          <div class="status-dot dot-amber"></div>
+          <div class="check-name" style="font-size:11px">${o.id.slice(0, 8)}...</div>
+          <div class="check-meta">${o.type}</div>
+          <div class="check-tag tag-warn">ORPHAN</div>
+        </div>
+      `;
+    }
+  }
+  html += '</div>';
+  details.innerHTML = html;
+}
+
+function renderHooks(data) {
+  if (!data || data.error) return;
+  const h = data.hooks;
+  if (!h) return;
+
+  const section = document.getElementById('hookSection');
+  section.style.display = '';
+
+  const badge = document.getElementById('hookBadge');
+  const allOk = h.files.every(f => f.exists);
+  badge.textContent = allOk ? 'OPERATIONAL' : 'DEGRADED';
+  badge.className = `section-badge ${allOk ? 'badge-green' : 'badge-amber'}`;
+
+  const grid = document.getElementById('hookGrid');
+  grid.innerHTML = `
+    <div class="data-card">
+      <div class="data-card-label">Active Sessions</div>
+      <div class="data-card-value green">${h.activeSessions}</div>
+      <div class="data-card-sub">updated within 6h</div>
+    </div>
+    <div class="data-card">
+      <div class="data-card-label">Stale Sessions</div>
+      <div class="data-card-value ${h.staleSessions > 0 ? 'amber' : 'green'}">${h.staleSessions}</div>
+      <div class="data-card-sub">older than 6h</div>
+    </div>
+    <div class="data-card">
+      <div class="data-card-label">Last Hook Fire</div>
+      <div class="data-card-value" style="font-size:16px">${h.lastStateMod ? timeAgo(h.lastStateMod) : 'never'}</div>
+      <div class="data-card-sub">${h.lastStateMod ? new Date(h.lastStateMod).toLocaleTimeString() : 'no state files'}</div>
+    </div>
+    <div class="data-card">
+      <div class="data-card-label">Total Archived</div>
+      <div class="data-card-value blue">${h.totalSessions - h.activeSessions - h.staleSessions}</div>
+      <div class="data-card-sub">${h.totalSessions} total</div>
+    </div>
+  `;
+
+  const details = document.getElementById('hookDetails');
+  details.innerHTML = h.files.map(f => `
+    <div class="check-row">
+      <div class="status-dot ${f.exists ? 'dot-green' : 'dot-rose'}"></div>
+      <div class="check-name">${f.name}</div>
+      <div class="check-meta">${f.exists ? formatBytes(f.size) : 'not found'}</div>
+      <div class="check-tag ${f.exists ? 'tag-ok' : 'tag-fail'}">${f.exists ? 'EXISTS' : 'MISSING'}</div>
+    </div>
+  `).join('');
+}
+
+function renderRegression(data) {
+  if (!data || data.error) return;
+  const r = data.regression;
+  if (!r) return;
+
+  const section = document.getElementById('regressionSection');
+  section.style.display = '';
+
+  const badge = document.getElementById('regressionBadge');
+  const allOk = r.failed === 0;
+  badge.textContent = allOk ? `ALL ${r.total} PASS` : `${r.failed} FAILING`;
+  badge.className = `section-badge ${allOk ? 'badge-green' : 'badge-rose'}`;
+
+  // Latency summary
+  const times = r.pages.filter(p => p.ms).map(p => p.ms);
+  const avgMs = times.length ? Math.round(times.reduce((a, b) => a + b, 0) / times.length) : 0;
+  const maxMs = times.length ? Math.max(...times) : 0;
+  const minMs = times.length ? Math.min(...times) : 0;
+  const slowest = r.pages.reduce((a, b) => (b.ms || 0) > (a.ms || 0) ? b : a, r.pages[0]);
+  const sizes = r.pages.filter(p => p.size).map(p => p.size);
+  const totalSize = sizes.reduce((a, b) => a + b, 0);
+  const sorted = [...times].sort((a, b) => a - b);
+  const p95 = sorted.length ? sorted[Math.floor(sorted.length * 0.95)] : 0;
+
+  const summaryEl = document.getElementById('regressionSummary');
+  summaryEl.innerHTML = `
+    <div class="ls-card">
+      <div class="ls-label">Avg Latency</div>
+      <div class="ls-value ${latencyColor(avgMs)}">${avgMs}ms</div>
+      <div class="ls-sub">across ${times.length} pages</div>
+    </div>
+    <div class="ls-card">
+      <div class="ls-label">p95 Latency</div>
+      <div class="ls-value ${latencyColor(p95)}">${p95}ms</div>
+      <div class="ls-sub">95th percentile</div>
+    </div>
+    <div class="ls-card">
+      <div class="ls-label">Slowest Page</div>
+      <div class="ls-value ${latencyColor(maxMs)}">${maxMs}ms</div>
+      <div class="ls-sub">${slowest ? slowest.route : '--'}</div>
+    </div>
+    <div class="ls-card">
+      <div class="ls-label">Fastest Page</div>
+      <div class="ls-value fast">${minMs}ms</div>
+      <div class="ls-sub">total payload ${formatBytes(totalSize)}</div>
+    </div>
+  `;
+
+  // Max latency for bar scaling
+  const barMax = Math.max(maxMs, 1);
+
+  const grid = document.getElementById('regressionGrid');
+  grid.innerHTML = r.pages.map(p => {
+    const dotClass = p.ok ? (p.contentOk ? 'dot-green' : 'dot-amber') : 'dot-rose';
+    const tagClass = p.ok ? (p.contentOk ? 'tag-ok' : 'tag-warn') : 'tag-fail';
+    const tagText = p.ok ? (p.contentOk ? 'PASS' : 'NO MARKER') : `HTTP ${p.status}`;
+    const lc = latencyColor(p.ms || 0);
+    const barPct = Math.max(4, Math.round(((p.ms || 0) / barMax) * 100));
+    return `
+      <div class="check-row">
+        <div class="status-dot ${dotClass}"></div>
+        <div class="check-name">${p.route}</div>
+        <div class="size-tag">${p.size ? formatBytes(p.size) : ''}</div>
+        <div class="latency-bar-wrap"><div class="latency-bar ${lc}" style="width:${barPct}%"></div></div>
+        <div class="latency-val ${lc}">${p.ms || 0}ms</div>
+        <div class="check-tag ${tagClass}">${tagText}</div>
+      </div>
+    `;
+  }).join('');
+}
+
+function latencyColor(ms) {
+  if (ms < 50) return 'fast';
+  if (ms < 200) return 'medium';
+  return 'slow';
+}
+
+function renderSessions(data) {
+  if (!data || data.error) return;
+  const s = data.sessions;
+  if (!s) return;
+
+  const section = document.getElementById('sessionSection');
+  section.style.display = '';
+
+  const badge = document.getElementById('sessionBadge');
+  badge.textContent = `${s.total} TRACKED`;
+  badge.className = 'section-badge badge-blue';
+
+  const grid = document.getElementById('sessionGrid');
+  grid.innerHTML = `
+    <div class="stat-card">
+      <div class="stat-label">Active Sessions</div>
+      <div class="stat-value green">${s.active}</div>
+      <div class="stat-sub">updated within 6 hours</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Total Sessions</div>
+      <div class="stat-value blue">${s.total}</div>
+      <div class="stat-sub">${s.todayCount || 0} active today</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Avg Duration</div>
+      <div class="stat-value purple">${s.avgDuration || '--'}</div>
+      <div class="stat-sub">across all sessions with logs</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Most Active Today</div>
+      <div class="stat-value" style="font-size:14px;letter-spacing:0;word-break:break-all">${s.mostActiveToday?.id ? s.mostActiveToday.id.slice(0, 12) + '...' : 'none'}</div>
+      <div class="stat-sub">${s.mostActiveToday?.events ? s.mostActiveToday.events + ' events' : 'no activity today'}${s.mostActiveToday?.label ? ' &mdash; ' + escHtml(s.mostActiveToday.label) : ''}</div>
+    </div>
+  `;
+}
+
+// ── Helpers ──────────────────────────────────────────────────────────────────
+function formatBytes(b) {
+  if (b === 0) return '0 B';
+  if (b < 1024) return b + ' B';
+  if (b < 1048576) return (b / 1024).toFixed(1) + ' KB';
+  return (b / 1048576).toFixed(1) + ' MB';
+}
+
+function timeAgo(ts) {
+  const diff = Date.now() - ts;
+  if (diff < 60000) return 'just now';
+  if (diff < 3600000) return Math.floor(diff / 60000) + 'm ago';
+  if (diff < 86400000) return Math.floor(diff / 3600000) + 'h ago';
+  return Math.floor(diff / 86400000) + 'd ago';
+}
+
+function formatUptime(ms) {
+  if (ms < 60000) return Math.round(ms / 1000) + 's';
+  if (ms < 3600000) return Math.round(ms / 60000) + 'm';
+  if (ms < 86400000) return (ms / 3600000).toFixed(1) + 'h';
+  return (ms / 86400000).toFixed(1) + 'd';
+}
+
+function escHtml(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+// ── Main ─────────────────────────────────────────────────────────────────────
+async function runAllChecks(manual) {
+  if (manual) {
+    const btn = document.getElementById('refreshBtn');
+    btn.classList.add('loading-btn');
+    btn.textContent = 'Checking...';
+  }
+
+  const [apiResults, serverData] = await Promise.all([checkAPIs(), checkServer()]);
+  lastResults = { api: apiResults, server: serverData };
+
+  renderSummaryCards(apiResults, serverData);
+  renderAPIs(apiResults);
+  renderDataIntegrity(serverData);
+  renderHooks(serverData);
+  renderRegression(serverData);
+  renderSessions(serverData);
+
+  // Update timestamp
+  document.getElementById('lastCheck').innerHTML =
+    '<span class="dot"></span> Last checked ' + new Date().toLocaleTimeString();
+
+  if (manual) {
+    const btn = document.getElementById('refreshBtn');
+    btn.classList.remove('loading-btn');
+    btn.textContent = 'Refresh';
+  }
+
+  // Reset countdown
+  countdown = 30;
+}
+
+function startAutoRefresh() {
+  if (refreshTimer) clearInterval(refreshTimer);
+  refreshTimer = setInterval(() => {
+    countdown--;
+    document.getElementById('countdown').textContent = `next check in ${countdown}s`;
+    if (countdown <= 0) {
+      runAllChecks(false);
+    }
+  }, 1000);
+}
+
+// ── Init ─────────────────────────────────────────────────────────────────────
+runAllChecks(false);
+startAutoRefresh();
+</script>
+</body>
+</html>

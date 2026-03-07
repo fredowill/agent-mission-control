@@ -1,0 +1,1168 @@
+[00:00:00.00] Okay, perfect everything works so
+[00:00:03.52] Basically, I just like being able to record my sessions
+[00:00:08.64] I want to record my session and see if there's a benefit to doing it
+[00:00:13.52] currently though like
+[00:00:16.04] You know
+[00:00:18.40] I'm in the middle of doing some shit, and I just am I'm doing I'm witnessing so so many cool things
+[00:00:24.14] I'm like I want to share with someone and I can't right now even though I've tried actually
+[00:00:28.30] Like call a bunch of people which I'm recognizing. I'm just so excited about this shit that like it's um
+[00:00:34.74] It's kind of crazy, so I just want to be able to like you know work around
+[00:00:39.66] Maybe I work better like when I'm imaginary talking to myself trying to like show cases to a demo like or to end user
+[00:00:46.34] That doesn't exist
+[00:00:48.50] I'd like recording myself too because it's kind of fun looking back on because I
+[00:00:54.62] Am taking a piece of time
+[00:00:58.46] Saving it for eternity so I mean like no no distance of time, and I'm getting philosophical. I'm losing my plot, but
+[00:01:05.94] Okay
+[00:01:08.34] So I mean basically I don't want to think about explaining it to someone while I'm doing it, so I'm just kind of look around
+[00:01:15.26] It would be cool if I could share it if I could I also have this other screen that's going off, but yeah
+[00:01:21.78] Bobbing up and up and down
+[00:01:27.98] You
+[00:01:52.34] We're gonna stay in campaign review for now
+[00:01:57.98] You
+[00:02:27.98] You
+[00:02:47.98] I mean if I tell you would that be the case currently I have an unlimited a subscription on an enterprise and
+[00:02:53.70] We have a budget obviously
+[00:02:56.70] Like I don't know why it's not easy to assume what API list price like you don't know the exact cost
+[00:03:02.82] But you can I'm pretty sure you can estimate the exact cost like if I'm just on a unlimited like it tracks it
+[00:03:08.42] Like I don't know why you wouldn't I don't know why it's an assumption if they if Claude and throbbing has a good
+[00:03:14.10] Idea of how much things cost unless there's not a final amount like how much reasonable variability is there?
+[00:03:20.90] Is there
+[00:03:23.86] Between numbers in API responses like like
+[00:03:29.98] How much is there like a range in dollar amount that you can you can give like an estimate?
+[00:03:35.02] Instead of this because I swear there's like a pricing page right on on API usage
+[00:03:39.64] I mean I I guess it is different because this is not I'm not using this Claude code like on based on API to enterprise
+[00:03:44.80] Account that's bought on a budget right so I don't know I feel like you can make that assumption right
+[00:03:50.10] I
+[00:03:59.50] Know anything that's not able to be if it's on the page, and it's not true
+[00:04:04.14] I don't I don't want to put anything on our slash clash base. That's not true
+[00:04:08.18] Or at least highly suggested as being true
+[00:04:20.10] You
+[00:04:39.22] Wait did you change a slash why?
+[00:04:42.10] Did you change slash why to be better like I did not give you some suggestions about shading slash why also?
+[00:04:48.60] Or was it just a remaining feature?
+[00:05:08.84] Okay, can you work on that while I'm reading
+[00:05:11.00] The document or at least give it to someone else like give me a prompt that can allow it to be
+[00:05:16.96] given to someone else and then also you should probably make if you if you decide that that's a good idea, then you should
+[00:05:22.48] you should have it to be where campaigns now store like
+[00:05:27.08] like information about if it was dispatched on the first run of the of the campaign or the second or like a follow-up run that's
+[00:05:34.84] like
+[00:05:35.84] tackling and I should also it should also be apparent like on the
+[00:05:40.04] Agent if it's which of these remaining that it's working on right because this is still a sprint like I still want to be able
+[00:05:45.40] To you know like in sprint nature if something is remaining we this is like a first sprint
+[00:05:49.88] This is the first review first week of the sprint now. We're going to the second week. Not necessarily second week
+[00:05:54.16] It's not that big of a stage. This is the review process like a sprint finished
+[00:05:57.04] I'm like, okay wait, we need to close on this this and this like while we're in the meeting like imagine
+[00:06:01.48] I'm in a meeting. I'm like telling people like okay, let's do this. This is by today, you know, I guess basically what I'm doing
+[00:06:05.76] And
+[00:06:11.60] Also, it should just have like I should be easily trackable to know which agent like if like it should be linked or attached
+[00:06:19.36] or somehow like you know a very apparent what line in remaining is the agent working on and
+[00:06:27.08] Maybe like anything that's any agent that's working on a remaining
+[00:06:31.56] Should there should be like some color pulse that's happening in the remaining
+[00:06:34.84] Tab for orange and also over there like if they should like be syncing up or something like that
+[00:06:39.80] Like they're both blinking similarly or something, you know, I don't know
+[00:06:45.48] Sorry accidentally and you continue continue where you're going
+[00:06:48.20] Sorry accidentally and you continue continue where you're going
+[00:07:18.24] Also, you should also work on the retrospective thing
+[00:07:22.96] You should work on retrospectives the retrospective or maybe even give it to another agent dispatch another agent, you know, cuz I can
+[00:07:33.76] Give me to give me another agent that's gonna work on that
+[00:07:37.88] The retrospective kind of things because for me it's something that's the most important this instrument this session is so rich
+[00:07:43.68] So you being able to reason on it and tell me like what was very good to improve orchestrator
+[00:07:49.64] Because you're basically the orchestrator role, right?
+[00:07:52.52] Like what was what was the best findings the general findings, right?
+[00:07:56.12] Remember, you know
+[00:07:56.96] like when I say findings and retrospective retrospective cast to be broad in general and like broadly applicable to other sessions
+[00:08:13.52] Also, this is a miss how come I'm refreshing my screen and I don't see the agent card for the and and the thing isn't pulsing
+[00:08:19.98] Yeah, okay. I see publisher down here. They're not posting at the same time
+[00:08:24.70] Also, if it's something that's being worked on currently
+[00:08:27.84] Don't you think the publisher remaining tag should be up top?
+[00:08:30.76] I think it's something that's being worked on currently should be up top
+[00:08:34.88] Also, this is a miss how come I'm refreshing my screen and I don't see the agent card for the and and the thing isn't pulsing
+[00:08:41.08] Don't you think the publisher remaining tag should be up top?
+[00:08:45.04] But yeah, you're being kind of stupid for that. That's mad. That makes me mad but the agent card
+[00:08:50.54] Yeah, it should be very present. I don't know. I don't see it. I don't know why you did that also
+[00:08:54.72] I should be able to click into a modal
+[00:08:59.00] For to get the prompt on the agent
+[00:09:00.90] You don't have it embedded yet because we didn't need we didn't have this page yet
+[00:09:03.66] But for this like I don't want to have to talk about type slash prompt
+[00:09:06.64] I want to just click click and paste, you know, that's what I want to do implement that right now and then do the other things
+[00:09:36.64] I
+[00:09:47.76] Don't like how these are a
+[00:09:50.36] Look like they're the original agents like these were dispatched. These were not dispatched on the initial
+[00:09:57.48] Campaign it should be very notable which agents are from a new campaign or from a new like from the very initials campaign
+[00:10:05.94] Versus are coming in as a polisher like these are both. I like that word like these are both polisher agents
+[00:10:12.66] Maybe you should change the word of the name of the polish agent name creation that you just did and make it
+[00:10:17.46] These are both these are both polishers and this is a different type of thing and this is retrospector something like that
+[00:10:22.06] I like those agent names much better to compare to what you have
+[00:10:26.66] As orchestrator beacon compass and overwatch you don't have to change those just because you know, whatever but
+[00:10:36.58] Also, don't pay attention to that screenshot you were just actively editing it editing it while I was doing that while I was working on this
+[00:10:44.02] Or while I while while yeah, you get what I'm trying to say like don't take the screenshot is truth
+[00:10:55.30] I guess
+[00:11:05.62] I
+[00:11:23.22] Want to do this then I'll be I'll actually send the other agent to go do that task in
+[00:11:29.34] Parallel while we're reviewing the campaign document
+[00:11:32.34] I
+[00:11:35.34] Am moving like crazy. It's literally exponential
+[00:12:02.22] I
+[00:12:32.22] I
+[00:12:51.22] Also something to note is that for the work items specifically for demoing to other people as a work item about it
+[00:12:57.04] Like demoing to my manager and stuff or people a big benefit should be
+[00:13:02.22] You know like sometimes imagine I'm sharing this to my friend
+[00:13:06.18] Sharing it to my friend Matthew for example, and I'm like, yeah
+[00:13:09.22] This is like what it does and they're like trying to see how it adds value to their life
+[00:13:13.30] That should be a lot of what slash why does and I know you're gonna do you're gonna send me to do that right now
+[00:13:18.34] With one of the agents right?
+[00:13:20.34] remind me if I'm
+[00:13:21.54] Correct me if I'm mistaken
+[00:13:22.82] But but like knowing like oh shit
+[00:13:26.18] This could be like life-changing for me not life-changing but like oh that would make my life easier
+[00:13:31.34] that's the beauty of a good product and and and the niche of people who are making lives better are people who
+[00:13:37.70] specifically work at Microsoft or people have quad code and they
+[00:13:40.90] like could use something to kind of like get things around because right now a lot of the benefits is like a lot of
+[00:13:46.62] What I've been working on is just itself like I'm self-improving mission control. But what if like mission control
+[00:13:54.26] Is
+[00:13:55.74] Something that's just like okay
+[00:13:57.70] We like push out this get push right and then from this point this it becomes version one and version one goes out
+[00:14:02.66] Right version two would be what much better
+[00:14:04.58] Like it should exponentially better but version one like what like what it would make someone like oh, can you share this to me?
+[00:14:11.42] Like this is something that would be very cool as someone who right user stories are very important when we're designing
+[00:14:16.14] so as someone that's like
+[00:14:18.62] That works on Microsoft, right and also this is sensitive data. So don't like maybe it's not smart to actually know you can put it works
+[00:14:24.10] It's fine because it's private but they work Microsoft and you know, like we're we have access to cloud code and
+[00:14:31.70] It's something that's like like I I'm trying to learn how to use agents. I'm not letting you try to I use agents
+[00:14:37.78] But it's in a very restricted way
+[00:14:39.22] It's like I have it in an extension in my in my CLI and it's just not able to serve it like another big benefit
+[00:14:46.74] That like I don't use my ID with mission control. I don't need to this is basically
+[00:14:52.38] An interface layer built on top of my IDE like cursor like even cursor
+[00:14:57.14] I don't need to I don't want to look at files like that's not my job
+[00:14:59.98] My job is to create and you know looking at fucking you know, yeah
+[00:15:04.26] So this is something that's a very principal truth as well
+[00:15:06.30] So you should put this in like a very important section in findings like something maybe that's like bolded
+[00:15:12.00] I think I think you should also maybe while we're doing this categorize some things and findings as like
+[00:15:18.14] Super duper important like there should be a hierarchy right now. It's just categories and sections
+[00:15:23.50] Sorry, where is it?
+[00:15:26.06] Findings yeah finding right now findings is just like like hard to see what findings are better than others, right?
+[00:15:32.64] It's just like keeping track of it intense data, but you should try to do that. So
+[00:15:37.10] Yeah, after you've done that right first before you go off and fix findings
+[00:15:41.18] Please tell me like which agent to copy and what it's gonna work on stuff and then we can move forward
+[00:17:17.34] Also, I think the name that it's under the name of like sprint one agent sprint two agents should be more creative a little bit more
+[00:17:24.30] creative not crazy creative but like like because
+[00:17:27.10] It should be more denotion like these aren't different sprints because I wouldn't consider polish and respect. I guess they are different sprints, but like
+[00:17:33.42] Just more creative names. Maybe that's implied the beginning middle and end
+[00:17:37.48] I think it's a little bit more creative. I think it's a little bit more creative
+[00:17:40.98] I think it's a little bit more creative
+[00:17:43.42] Just more creative names maybe that's implied the beginning middle and end or something, you know
+[00:18:06.82] Also before you do any that reply to me
+[00:18:08.90] Make sure that I know whether it'd be smart to close out of all these sprint one agents
+[00:18:13.06] Is there a purpose to keeping them open anymore? I?
+[00:18:18.50] Guess a cool benefit of this too is like the fact that that
+[00:18:23.02] I
+[00:18:25.10] Can save on tokens much better right now. I'm running like 1 million comp 1 million tokens and opus
+[00:18:30.90] But now I can really like save on tokens if I can just limit agents to and see a lot see these very
+[00:18:38.30] Sprint heavy tasks or like very fast tasks
+[00:18:40.70] I don't you know take up a lot of tokens right except for one instead of having a bunch of different big ass conversations
+[00:18:46.18] I'm having one big ass conversation and a bunch of small conversations. This also should be in findings as well
+[00:18:51.70] Obviously more professional a little bit more professional and not as casual
+[00:18:55.14] But yeah, that should be in findings as something that's bolded a little bit better
+[00:18:59.38] And then you can go work on that after you've told me about
+[00:19:02.46] What I asked you like just make sure and then and then okay go go for it start running at whatever you were about to do
+[00:19:23.10] Maybe I should include this screen on here, but I guess it's not even like yeah
+[00:19:33.18] You
+[00:20:05.18] do that retrospective so that they have that retrospective aspect that they keep track
+[00:20:09.64] of the dashboard, which I don't know, did you implement that?
+[00:20:17.10] Did you implement it in dashboard?
+[00:20:18.50] No, you didn't.
+[00:20:19.50] That's also that you should also create another sub agent that can go do that as the third
+[00:20:22.34] agent that's going to go out on this sprint.
+[00:20:28.90] Because like I just closed out of I just closed out of some, I closed out of two, I think,
+[00:20:33.62] it would have been nice for that for them to create their own.
+[00:20:36.38] There's supposed to be a sub tab over here that would have been nice to add for like
+[00:20:40.02] retrospective that's like super, super broadly accepted.
+[00:20:43.46] Like OK, this might be important.
+[00:20:45.14] This might or this is very important.
+[00:20:46.94] This would be nice to have another person come in and look to see if this is something
+[00:20:50.94] that should go in findings.
+[00:20:53.94] Right.
+[00:20:55.22] We don't want our data polluted.
+[00:21:03.62] Also, again, right, make sure you prompt me back on what is my immediate task so I don't
+[00:21:17.18] get stuck and you start flying off because I still have tasks.
+[00:21:20.42] Right.
+[00:21:21.42] So you always there's also an important finding as well.
+[00:21:24.46] You can debate how important it is.
+[00:21:26.38] But like like the nature of your interaction with me as a user and you being Claude is
+[00:21:32.74] you should always make sure that if I have a task that is dependent on you, that you
+[00:21:37.30] don't go running off because they did that.
+[00:21:39.82] Right.
+[00:21:40.82] That's also something in our retrospective.
+[00:21:41.82] So maybe you can update the retrospective, whatever.
+[00:21:43.06] But you should not go even now.
+[00:21:44.58] Don't go update, for example, don't go update the retrospective before you've given me what
+[00:21:48.06] I need to go fire off my tasks.
+[00:21:50.10] My task is going to fire off these agents.
+[00:21:52.22] Right.
+[00:21:53.22] Because only I can open up a Claude CLI terminal and maybe eventually I can automate that process.
+[00:21:57.10] But actually, yeah, add that to dispatch.
+[00:21:59.38] Maybe we can make it so there's like you still interact with me, but at least when you're
+[00:22:05.42] when I'm when I'm ready to be like, OK, yeah, go dispatch it.
+[00:22:08.62] Go, you know, so.
+[00:22:59.38] All she make you should make the luminous and the saturation a bit brighter or not maybe
+[00:23:11.46] not bright.
+[00:23:12.46] I don't know how to describe it.
+[00:23:13.46] Like these are pretty muddy colors, in my opinion.
+[00:23:14.58] You can make these cards also these bars a little bit higher, a little bit more three,
+[00:23:20.82] maybe not 3D, but yeah.
+[00:23:22.10] And also, you know, they hover when you hover over them.
+[00:23:25.14] OK, that's good.
+[00:23:26.14] But just, yeah, just the colors.
+[00:23:27.90] It brings these up a little bit.
+[00:23:30.34] Like in terms of the it here, like, for example, it in wins is perfectly fine.
+[00:23:34.22] Like I like it when it's the text color, but the highlight color right here, this like
+[00:23:37.86] bar over top, it should be cleaner.
+[00:24:28.46] OK, these two agents are dispatched.
+[00:24:30.98] I just did it right now.
+[00:24:49.06] Also, this is a very interesting finding.
+[00:24:51.54] I'm glad I caught this.
+[00:24:53.62] Claude said that the server JS is too large.
+[00:24:56.62] Let me read the relevant routing, which means my that we should prioritize trying to get
+[00:25:02.98] maybe not here.
+[00:25:03.98] Actually, no, you have to add it in.
+[00:25:05.06] If I create a task while we're still in campaign review, then we have to do that.
+[00:25:09.22] We have to finish it.
+[00:25:10.22] We have to at least finish like we have to like say, OK, well, I'm no longer in campaign.
+[00:25:14.90] But basically, yeah, this is interesting.
+[00:25:20.30] We should find a way.
+[00:25:21.30] I'm pretty sure I have a task for it.
+[00:25:22.30] I'm not sure.
+[00:25:23.30] But there should be a way better for me to walk through data like surface files.
+[00:25:27.42] Like maybe there could be skills that we use.
+[00:25:30.06] I wonder if there are skills.
+[00:25:31.06] I still haven't even closed the skill in the agent gap.
+[00:25:33.50] That's like kind of like the next big thing.
+[00:25:35.18] I think also also in the campaign debrief, like we should be able to like mark when we're
+[00:25:41.58] done with this debrief.
+[00:25:42.90] And like I want to be able to click on it when I'm done.
+[00:25:45.14] Or maybe you can have that power, too.
+[00:25:46.50] But like I want there to at least be a visual process to me that I'm like I would be able
+[00:25:49.78] to do if I wanted to where it's like, OK, we're done reviewing this.
+[00:25:53.66] This is packed up.
+[00:25:54.66] This campaign is done.
+[00:25:55.66] And also, here's what we're going to move to the next campaign.
+[00:25:57.86] Right.
+[00:25:58.86] Here's like the next big things we want to focus on as we move to the next campaign.
+[00:26:02.34] Things that we've noticed are like pretty high priority because they impact us doing
+[00:26:07.54] stuff like they impact us in a way that would inconvenience.
+[00:26:10.30] And if we were to fix it, it would bring up our productivity.
+[00:26:12.66] Right.
+[00:26:13.66] Well, my productivity.
+[00:26:15.34] But yeah.
+[00:26:24.18] Again, until I have dispatched it, please make sure that you like anything in here is
+[00:26:30.22] relevant to Integrator and then otherwise I'll tell you.
+[00:29:53.18] I can't decide if I should stay and say I tried to leave and say goodbye.
+[00:29:59.46] It's killing me inside.
+[00:30:01.62] If I could just get next to you, I'd probably be all right.
+[00:30:05.78] But we're so busy in this life.
+[00:30:07.98] We always say some other time.
+[00:30:10.30] Why won't my tears work?
+[00:30:12.34] It's been a decade since I cried.
+[00:30:14.58] I got no dog left in the fight.
+[00:30:16.78] The bar don't.
+[00:30:18.18] Wasn't there some things that you said that you were going to do?
+[00:30:21.78] I told you like to work in parallel while I read this document because now I'm actually
+[00:30:25.02] going to read the document fully.
+[00:30:51.58] So how sure are you that this is accurate?
+[00:31:21.50] Just real quick.
+[00:31:22.30] Just one sentence.
+[00:31:23.10] Just tell me and then also tell me what you could what you think would make this price
+[00:31:27.30] go down because obviously you have access to mission control and like what I'm trying
+[00:31:30.70] to do my mission and like, you know, eventually I'm trying to make my agents a lot better
+[00:31:34.90] and more specialized.
+[00:31:35.90] Right.
+[00:31:36.10] So yeah.
+[00:31:41.90] Also part of this campaign review is also I should know when I should clearly know when
+[00:31:47.30] an agent is needs approval.
+[00:31:50.90] Like it should be notification sound.
+[00:31:52.50] I'm pretty sure this is a work item, but this is like pretty crucial because I keep
+[00:31:55.70] flip-flopping forgetting if something someone needs me, right?
+[00:31:58.10] My time is more valuable than that.
+[00:32:00.50] So this would be P zero and we should try to prioritize this over whatever you might
+[00:32:04.10] be working on.
+[00:32:04.70] But maybe what you're working on is more important.
+[00:32:06.20] I don't remember.
+[00:32:20.70] Also, I think some agents are done and I would know that right.
+[00:32:49.50] I would know like you could tell me when like, oh shit agent so-and-so investigator just
+[00:32:54.10] got finished.
+[00:32:54.50] I'm pretty sure which agent is this got finished.
+[00:32:58.20] I don't remember the retrospective agent got finished only took three minutes to pretty
+[00:33:04.20] nice.
+[00:33:19.40] I feel like a piece of shit.
+[00:33:49.40] Also, I want I want to be able to click between when we're on the campaign debris for
+[00:34:19.50] each push, right?
+[00:34:20.60] So it should be a switch.
+[00:34:21.50] I should be able to switch and be like, okay, this is initial pull push and this is a follow-up
+[00:34:26.90] campaign debrief which campaign debrief includes a subset of wins losses and remaining right
+[00:34:32.30] because this would help me be able to that justice quicker.
+[00:34:34.40] But we're leaving we're moving at lights.
+[00:34:35.80] This is kind of cool.
+[00:34:36.50] Don't you agree?
+[00:35:19.90] This is beautiful.
+[00:35:23.40] Okay, if there's 95% plus confidence, can you also make that very apparent when you're
+[00:35:49.50] looking at this entire page?
+[00:35:50.70] Like it should be kind of like a very central part but biggest drivers cash right tokens.
+[00:35:59.30] Yeah.
+[00:36:02.00] Every time a new session starts or context gets compacted it recreates the cash.
+[00:36:05.80] So the highest.
+[00:36:06.30] Okay, that makes sense.
+[00:36:07.60] I think also having like a click like a slash like there should be something at the bottom
+[00:36:12.60] that either drops down maybe that like takes me to yeah, it should drop down.
+[00:36:18.40] So it should be on the same page.
+[00:36:19.30] You don't need to make another sub page.
+[00:36:20.50] It should drop down that it's like improvement plan like what would get my cost down like
+[00:36:24.70] an analysis you should write an analysis and like be like, okay based on the dashboard,
+[00:36:29.50] right?
+[00:36:29.80] So you have access to a lot of things actually you're kind of you should you should use some
+[00:36:33.10] research your agents.
+[00:36:34.40] So like I said, I should be able to know.
+[00:36:51.40] Sorry, you should be able to know looking at agents like, okay.
+[00:36:58.00] You can read all my prompts and be able to recognize things that I'm doing in my workflow
+[00:37:05.10] and obviously they're improving over time.
+[00:37:06.50] So you can even track it by time.
+[00:37:08.00] That's another dimension.
+[00:37:09.30] I want to look at in metrics.
+[00:37:10.50] So we're turning full of data scientists here, right?
+[00:37:12.60] But in a data science to sat and like looking at all these prompts that are Friday gifts
+[00:37:17.10] maybe not looking at all of them because there's a lot but you know having a smart index
+[00:37:20.30] of them right because again data science.
+[00:37:22.50] This is what we're doing.
+[00:37:23.40] This is it's here right having a way to be like, okay, a frada has this unique style of
+[00:37:29.00] doing this this XYZ way or like kind of like has this habit or is this this is his workflow.
+[00:37:35.00] You can also tell based on whether I'm mad about something in a chat like what I'm like
+[00:37:39.00] know this is good because I get feedback.
+[00:37:40.50] I always get feedback right?
+[00:37:41.80] That's the beauty of these prompts is that in my prompts is the feedback so you can you
+[00:37:45.70] can have you couldn't infer so much right?
+[00:37:48.10] So yeah, this is the next big task of yours.
+[00:37:52.90] Yeah.
+[00:38:10.50] Can you explain how the notification sound works because I guess I have to do I have
+[00:38:15.60] to refresh my page.
+[00:38:18.00] I don't pay the keys like Alicia.
+[00:38:35.80] If retrospective is different just put it on the campaign page to where it's something
+[00:38:41.40] I can review.
+[00:38:42.00] I want to be able to review it.
+[00:38:43.00] Also, I want to know whether something has been reviewed or not.
+[00:38:45.40] So it's kind of like I know like what's left on the campaign because obviously campaigns
+[00:38:48.90] are big right?
+[00:38:49.60] This is a big push.
+[00:38:50.70] So yeah, if you understand what I'm trying to say.
+[00:39:15.40] Also, why is there no I told you in follow-up it should include the same things if I click
+[00:39:38.80] follow-up I should have follow-up wins follow-up losses.
+[00:39:42.60] Maybe this is not good to do in the middle of it.
+[00:39:45.40] But I guess yeah, that makes sense.
+[00:39:46.70] But if you understand I'm trying to say there should be all of that like what was the result
+[00:39:50.20] as of this and I know some of these agents are still active.
+[00:39:52.60] So maybe you could tell me that that's not that's not important.
+[00:40:42.00] Yeah, I want you to do that task right now.
+[00:40:55.60] Yeah, this would be beautiful.
+[00:41:12.60] I'd rather do this.
+[00:41:14.00] They're going to school.
+[00:41:15.50] I tell you I miss you.
+[00:43:42.00] You
+[00:44:12.00] You
+[00:44:42.00] You
+[00:45:12.00] like I feel to tie the credit my little the boys more like five
+[00:45:15.44] eyes that's how bad the little is a game straight from Auntie we
+[00:45:18.96] think the boy no car lease my cup of pink like a Barbie I'm
+[00:45:22.00] sorry not sorry let me answer can't go to the did you review
+[00:45:25.04] this properly because otherwise wouldn't wouldn't there be wins
+[00:45:30.00] and losses section or whatever section and follow up also I
+[00:45:38.24] don't hear notification sound ever so he's like.
+[00:45:47.28] I don't think you have the follow ups for the agents you
+[00:45:51.92] don't have you're not you're not doing the behind the scenes
+[00:45:54.64] work to make this actively track which which task it is or
+[00:46:00.08] which card it is in the dashboard and then if it's if
+[00:46:03.36] it's done then it's done because in the same nature as
+[00:46:06.16] dashboard. This is basically an extension of dashboard. I
+[00:46:08.16] at least the logic should carry over because like there I
+[00:46:11.68] bet you some of these agents are done right, but we don't
+[00:46:14.56] even know because you haven't done you haven't done the logic
+[00:46:17.36] to connect them properly on hooks hooks is the benefit of
+[00:46:20.88] taking stress off of Seabrooks right Seabrooks is nice for
+[00:46:24.64] certain things and for connecting gaps, but hooks also
+[00:46:27.92] connects the other gap of making sure we don't over
+[00:46:29.84] throttle it because if we have hooks and we can just do it
+[00:46:32.40] ourselves all the time right so. Yeah, this is very cool also.
+[00:46:41.04] **** I kind of forgot there's there's isn't there this task
+[00:46:45.52] that exists about maybe it's in the dispatch page, but it's
+[00:46:49.92] related to.
+[00:47:02.40] Okay, basically the there I don't think there's a task that
+[00:47:08.88] exists about presenting hooks, but I want to be able to
+[00:47:12.00] present hooks to my teammates and to be honest, I don't want
+[00:47:15.76] to show the mission control yet because a this could be my own
+[00:47:18.72] product and be it's just not done yet, so I want to be able
+[00:47:21.84] to like show give an extension of something that I've learned
+[00:47:24.24] through this project that should be that you should create
+[00:47:26.24] a work item for this and you should also add it to the
+[00:47:28.40] remaining subset of both of all you know it should be
+[00:47:32.16] remaining no matter what should I click on and so and also
+[00:47:37.68] after you've like basically on Camp Rain debrief if something
+[00:47:41.84] is in remaining and it's done the tag should be the tag in
+[00:47:46.96] remaining or the tag in wins or actually there should be there
+[00:47:51.60] should be.
+[00:47:55.36] Because wins is like done right maybe you could put it in
+[00:47:58.64] wins or you could put it in its own wins like wins wins like
+[00:48:04.16] same thing initial push all when I'm filtering through all
+[00:48:07.20] wins, I need to be able to know which of these wins came from
+[00:48:10.40] which which push did it come from the initial push or the
+[00:48:13.36] follow up right.
+[00:48:29.60] But anyways, I just wanted to place emphasis on that the I
+[00:48:35.44] want you to create a task about demoing hooks to my to my
+[00:48:39.04] person and this should be P zero because like I have work
+[00:48:42.00] on Monday. So like I want to be able to present something and
+[00:48:46.24] hooks are very cool, but I don't know what's a good
+[00:48:48.80] application of it in the context of work. I work at
+[00:48:50.80] Microsoft, but we just had this thing called FHL, which is
+[00:48:53.44] Fix Hack Learn and it's where you get to just go fuck around
+[00:48:56.08] and experiment right and I want to be able to be like oh
+[00:49:00.00] yeah, I did this in my free time and actually this connects
+[00:49:05.28] full circle right so basically I am using Claude also my work
+[00:49:11.12] laptop right to do this cares guide thing. I don't know if
+[00:49:15.36] you've been able to see it on on on this back. If not, you
+[00:49:18.08] should you should familiarize yourself and add some work
+[00:49:20.48] items or add some context to where this is something that
+[00:49:22.48] you know, but at work I am working on a cares guide right
+[00:49:27.04] and maybe I can kind of show this cares guide right and fit
+[00:49:32.08] hooks into the context of the care guide as a big emphasis
+[00:49:35.68] like I learned two main things I learned like how cool coding
+[00:49:38.64] can be and also like I don't want to show them that I was I
+[00:49:42.40] don't want them to I don't want someone to be able to infer
+[00:49:44.24] that I had mission control right. I wanted to think that I
+[00:49:47.28] just was coding this you know in in a CLI like like I'm Tony
+[00:49:51.92] Stark and you know I built I built some **** in in a cave
+[00:49:57.44] with a box of scraps you know like on some wow that's kind
+[00:50:01.12] of crazy that you did something like this right because they
+[00:50:02.88] don't know
+[00:50:08.64] and then also yeah just if there's something that you have
+[00:50:11.44] to prompt me to do make sure it happens like if you need if
+[00:50:14.32] you have there's a task for me make sure again give me the
+[00:50:16.24] task before you move on.
+[00:50:51.92] Also, we should probably have a follow up follow up type of
+[00:51:05.28] follow up type of
+[00:51:10.80] retrospective
+[00:51:17.20] that like updates the retrospective based on this
+[00:51:20.16] campaign debrief right and also when I'm reading the
+[00:51:22.72] retrospective that text is not UI friendly at all right if
+[00:51:26.32] there's a color like again I've told you time and time again
+[00:51:29.60] this UI friendly principle is so important to me and you wrote
+[00:51:32.08] text that I'm going to review these patterns are so long like
+[00:51:35.12] some of these you did did good in like you you try to
+[00:51:38.08] highlight the path the exact file path not to read but dot
+[00:51:42.56] like you did that but it's still not nearly as good like I
+[00:51:46.32] should be able to identify who what agent had a part in which
+[00:51:50.08] part of this and like kind of like how it connects to the
+[00:51:53.20] bigger picture idea right because this is so important to
+[00:51:55.52] me but also I don't know if this because you're editing but
+[00:51:58.64] when as soon as I as soon as I open a retrospective card it
+[00:52:03.20] it's turned into unreviewed.
+[00:52:07.44] Also, where's my ask about having this ability to work or
+[00:52:19.04] like like mark a campaign as done right what if I'm done you
+[00:52:24.16] don't like is it after I say review all the mark all as
+[00:52:28.00] reviewed also you shouldn't make that a feature because if I
+[00:52:30.72] don't want to review anything I should be able to mark something
+[00:52:32.64] as active and come back to it later right if I don't have the
+[00:52:34.72] time but yeah do this and then if you prompt me with a prompt
+[00:52:38.24] and then go do stuff.
+[00:56:04.72] If you could come with me.
+[00:57:05.28] Oh.
+[00:57:19.28] Yeah.
+[00:57:24.48] Well, you could have the world in the palm of your hands you
+[00:57:28.56] still might drop it and everybody want to reach inside
+[00:57:32.08] your pockets. I tell them red light. Stop it. Shit that give
+[00:57:36.96] me more headaches and alcoholics. There was nothing in
+[00:57:40.16] my wallet just a lot of dreaming. I built a crib on top
+[00:57:43.44] of the promised land. We'll call it even. I bring more flavor
+[00:57:47.36] than all the seasons winter spring summer fall the grass is
+[00:57:50.64] always cleaner till I cut it off. Please lead me to my
+[00:57:54.16] studies. I give you no applause. My hands been counting
+[00:57:57.52] money and it's hard to beat a boss but somebody gotta do it.
+[00:58:01.44] Make your soul. Often with the bullshit and baby I've been
+[00:58:05.60] doing enough for the both of us to come over later and we
+[00:58:09.36] won't let no one close to us.
+[00:58:14.88] Yeah. Okay. Well, you can have the world in the palm of your
+[00:58:20.00] hands. You still might drop it and everybody want to reach
+[00:58:23.68] inside your pocket so it goes.
+[00:58:31.44] It's like in every conversation we need to top it.
+[00:58:52.80] Hey, you you you gotta hide in the corner. No, I was even
+[00:58:59.44] playing bro. I have a disc or open bro. I'm one HP bro.
+[00:59:04.24] N***a said don't get a crack.
+[00:59:09.84] That's what he's look. Uh fucking uh bro. You want? Uh I
+[00:59:16.80] can be. Yeah, I can hop on honestly. I need a break. Nah.
+[00:59:20.00] Nah. That's up. That's up. What? What? You're done? Alright.
+[00:59:24.24] Yeah, I'm not even gonna play bro. I'm finna just watch. Yeah.
+[00:59:27.52] Honestly, that that works for me, bro. Say that. Say that.
+[00:59:32.72] Say that. You see what the n***a been. Let me hide that
+[00:59:37.92] screen bro. So, um do you what do you what are you gonna what
+[00:59:42.08] what did I even show you last time? Was it I don't even I
+[00:59:44.64] don't remember. It was the um just Fredo made and I was just
+[00:59:50.56] scrolling through like the bookings. Oh bro. Yeah, I didn't
+[00:59:54.16] even show you this project bro. Have I have I shown you
+[00:59:56.96] mission control? Um dude, so um I I need to get to a better
+[01:00:04.72] page. Maybe uh
+[01:00:11.16] Uh did it update? Um
+[01:00:15.20] I've been having a time bro. So, I made this video right. See
+[01:00:25.12] the agents. See every agent touch through. I guess that's
+[01:00:27.04] the tagline it came up with, right? Right. So, basically,
+[01:00:30.08] the product, I'm I'm just giving you the sales pitch just
+[01:00:32.16] cuz it's not really a sales pitch but just like the like,
+[01:00:34.88] you know, whenever you're showing something to someone,
+[01:00:37.60] like it's like the first things that you tell them are
+[01:00:40.88] very important, right? So, I'm like trying to like. That's
+[01:00:42.72] true. I'm making you feel confused, right? So, um let's
+[01:00:46.72] say you have a cloud code, right? You know what cloud
+[01:00:49.36] code is? Nah, break it down. Break it down. Cloud code. Okay,
+[01:00:55.04] that's crazy. It's actually not crazy cuz I only know about it
+[01:00:58.32] because of um cuz of work. They are close like the CLR that
+[01:01:01.76] niggas be using. Yes. Yes. But it's it's some of it's the
+[01:01:05.60] best, I think in my opinion, the best um coding standard in
+[01:01:09.20] industry right now, cloud code. This like like when I say
+[01:01:12.48] coding standard, I mean like using cloud code as the the
+[01:01:16.96] engine to serve all your engineering purposes and with
+[01:01:19.92] cloud code, you can literally like build on top of it like
+[01:01:23.36] make interfaces so you don't even use it like that's what
+[01:01:25.28] I'm trying to that's the stage I'm reaching, right? I'm
+[01:01:27.04] using cloud code for so long. Not not for long but like so
+[01:01:30.56] much that like I'm at a point now where I'm like uh like I'm
+[01:01:35.28] like becoming the architecture like organizing agents bro.
+[01:01:38.24] Like I didn't think it was possible and it's like it's
+[01:01:40.40] like have you ever seen Dr Stone? Yeah, I'm not caught up
+[01:01:44.56] though. Okay. Um yeah, I'm just I've never seen this show but
+[01:01:48.96] you know how it's just like you know it's all about evolution
+[01:01:51.36] and **** all this. Yeah, I've seen like I was all right. It's
+[01:01:54.72] like I'm just like I'm past the the certain point of
+[01:01:57.52] civilization where like I can get to a point where I don't
+[01:02:02.88] have to type but it wasn't like that. It wasn't like that.
+[01:02:05.44] Alright, so. But by default though, most people in
+[01:02:10.56] industry especially like **** like some companies internally
+[01:02:16.08] have even started buying cloud code for their team like for
+[01:02:18.96] me, it's not all of Microsoft but my org shout out them bro.
+[01:02:22.72] They bought us cloud code to use as like you should be using
+[01:02:25.92] this right? Dead **** life changing life changing right?
+[01:02:30.32] So because I the budget for the entire org is a million
+[01:02:33.76] dollars a month. Isn't that **** crazy like they it got
+[01:02:36.08] damn they showed it right so they they give it all this ****
+[01:02:39.60] to everybody. I I have not been asked about it at all right so
+[01:02:42.56] I know I'm kind of getting into the weeds but this this kind
+[01:02:45.04] of gives you an idea of like okay what like what is cloud
+[01:02:48.16] code right? Like what's the the benefit? The benefit is just I
+[01:02:52.08] look you don't really need an IDE like it looks very scary
+[01:02:54.88] but it's basically an IDE for your desktop versus like you
+[01:03:01.04] don't have to really use the IDE when you're doing this. I
+[01:03:02.96] don't use IDE anymore to be honest. I don't I don't want to
+[01:03:07.12] look at files bro. There are better ways to present present
+[01:03:09.84] data to me and present a problem to me and for me to
+[01:03:12.48] create a create a solution than me looking at this **** this
+[01:03:15.76] **** where is it? I don't even got VS code or anything. I have
+[01:03:21.36] I have VS code but.
+[01:03:27.76] Okay, I have VS code on my laptop my work laptop but let me
+[01:03:31.60] try and get yeah look hold on I have cursor too because you
+[01:03:35.60] know you can get cursor with your student email for free
+[01:03:39.52] for a year. Wait your suit is still valid. Yeah well basically
+[01:03:46.48] I finessed it where you could I know I'm kind of getting off
+[01:03:49.36] track here. I should probably get back on track. Yeah, I'm
+[01:03:51.36] gonna get back on track but anyways yeah like cursor is
+[01:03:54.64] just I don't need to do that right so. That's cloud code
+[01:04:00.16] right let's say you have cloud code right eventually you start
+[01:04:03.28] out. You're like you know doing this you know okay do this do
+[01:04:08.08] this okay you did this right you know this is like the back
+[01:04:11.60] and forth ping pong let you start to do when you're when you
+[01:04:14.64] start using cloud code right but it's insanely powerful
+[01:04:17.68] especially when you have certain models like Opus Opus
+[01:04:19.92] one of the models it's low key. It's it it got crazy potential
+[01:04:25.28] when you when you utilize it right. So when I was making when
+[01:04:29.20] I was making you know when I was making Fredo made I was
+[01:04:32.16] using it but I was just like a one window like pleb just like
+[01:04:36.40] okay fix this wait five minutes it fixed okay let me look demo
+[01:04:40.16] it oh shit something's fucked up hey you fuck something up okay
+[01:04:43.12] let me investigate okay and you know like that back and forth
+[01:04:46.56] that was my process that was my workflow which is like that's
+[01:04:49.52] what coding workflow is like no matter what right it just got
+[01:04:52.96] sped up to where I can do a lot more but that workflow is still
+[01:04:55.84] something that's apparent when you don't know how to improve
+[01:04:59.44] it right so so I recognized this I saw the gap just
+[01:05:08.64] right and so like I realized like something that would all it
+[01:05:11.60] started as this idea of making this was like I wish there was a
+[01:05:14.72] place where I could visualize agent cards and just tagline
+[01:05:17.20] because I'm like bro if because eventually I started just
+[01:05:19.92] having two of these open right I'm like okay I'm gonna have
+[01:05:21.76] two of these open this one worked on debugging this one
+[01:05:24.40] worked on implementing right that type of thing right I'm
+[01:05:26.48] like oh wow I'm doing crazy shit like I was like yo I'm
+[01:05:29.04] crack right and then I realized like every time I switched
+[01:05:34.16] contexts like I moved from one screen to another
+[01:05:38.56] I I'm like bro what even is like I don't I forget bro I
+[01:05:43.44] literally forget like I'm like what am I when you when you're
+[01:05:45.92] in charge of doing so much like you're able to do so much part
+[01:05:49.68] of like the responsibility or the trade-off is now you have to
+[01:05:53.52] keep track of a lot of information and organization is
+[01:05:56.32] key and also like what's your eyes see like what I read every
+[01:06:00.16] word I read is important now I can genuinely be overloaded
+[01:06:03.52] with information if I'm not smart right and that'll just
+[01:06:06.64] that'll not only frustrate me but it'll just take so much
+[01:06:09.36] more time so then I was like okay let me just make a simple
+[01:06:13.28] dashboard right I'll make like a simple thing right it'll like
+[01:06:17.60] say what each agent fucking it'll tell me if I have a window
+[01:06:24.08] open that took a while to do because my workflow was so ass I
+[01:06:28.48] was still doing that back and forth workflow debug debug right
+[01:06:31.20] then I realized there are a lot of like important important
+[01:06:35.28] principles right that's it's kind of crazy it's a lot of
+[01:06:38.08] inception stuff so like if you have questions stop me bro like
+[01:06:40.88] if you have a question because this is not this is more or less
+[01:06:43.44] like I know I'm kind of like it's to create this shit you
+[01:06:47.68] were doing you were using your old workflow yeah yeah exactly
+[01:06:51.44] create this yeah yeah so it's like there are a lot of
+[01:06:54.24] benefits but eventually it's like the benefit of this project
+[01:06:57.60] of or like the benefit that I seek to to have is like to make
+[01:07:02.80] my life easier and to do more right and also like to not make
+[01:07:07.12] the same mistakes because Claude bro Claude is a fucking
+[01:07:12.16] idiot when you don't like they're dumb you have to
+[01:07:15.20] babysit them this is basically a big ass crib like I'm giving
+[01:07:18.24] a baby crib and putting all my agents in this baby crib and
+[01:07:20.80] like making sure I can watch them make sure that you know
+[01:07:23.20] I'm saying like that's what it is right and so yeah but again
+[01:07:26.64] stop me if you have questions but sorry I'm flipping through
+[01:07:30.00] shit but
+[01:07:34.16] yeah so that that's a that's a big big thing I don't even know
+[01:07:38.96] where I was I forgot what I was trying to say but anyways
+[01:07:41.12] right so I get it you clock goes running multiple agents yeah
+[01:07:45.60] multiple agents oh yeah yeah running multiple agents and then
+[01:07:48.72] I'm like okay it would be super cool just to have a place
+[01:07:52.72] for them to sit like place for them to sit and eventually I
+[01:07:56.08] was like okay what if I I started to realize I have the
+[01:07:59.60] same problem so I was like okay what if I make a
+[01:08:01.60] summarization thing that like someone comes in and looks at
+[01:08:06.72] all these prompts because these are all the prompts that I
+[01:08:09.12] give it mind you nigga this is gold this is liquid gold bro
+[01:08:14.08] like all this information and mind you I'm talking to it so I
+[01:08:17.44] have this other thing that like like it's addiction basically
+[01:08:21.52] I can just press a key key key bind and it'll record my
+[01:08:24.56] speech it'll transfer it and then it'll do that so I can be
+[01:08:27.44] talking for like five minutes bro about something versus
+[01:08:30.80] typing that right there was the first X I had this shit since
+[01:08:34.16] like I start bro 17 days in a row I used to work like it's
+[01:08:38.32] genuinely daily top 1% what that shit is ridiculous right
+[01:08:45.84] genuinely that's that's that's like the biggest like if you
+[01:08:48.24] want improvement in your workflow get some shit that you
+[01:08:50.48] can talk instead of typing like that'll it's tiring it can be
+[01:08:54.24] a little bit more tiring to talk all the time but like it's
+[01:08:56.56] it's if you want to do more that's how you do it right so I
+[01:08:59.92] started doing all this prompt shit right started doing all
+[01:09:03.36] this **** **** **** **** **** **** **** **** **** **** ****
+[01:09:04.88] and then eventually I started to realize okay I want to do
+[01:09:08.88] more stuff with this right and that's kind of that's kind of
+[01:09:11.68] all this project started as was just like I just want to be
+[01:09:14.00] able to have like whenever an agent is being stupid I can
+[01:09:18.16] just go like hey look look at back at the prompt like you
+[01:09:22.24] know go in and see what you did wrong because you obviously
+[01:09:26.64] didn't read me so I was like go go back and read it basically
+[01:09:29.68] that's what I said like go back go back to your room right
+[01:09:33.36] and so and so then um listening yeah exactly right so a lot of
+[01:09:42.24] a lot of a lot of like issues that you have when you're using
+[01:09:45.20] cloud code like this or just AI in general right but
+[01:09:47.44] especially when you're trying to do like something like code
+[01:09:50.00] based or even not code based just anything AI related right at
+[01:09:54.24] least where you're trying to run multiple threads um so like
+[01:09:56.96] you have an agent ask you a question I didn't read these yet
+[01:10:00.16] so we'll see if these are nice you didn't notice uh because it's
+[01:10:03.84] buried oh yeah like an agent asked you a question four
+[01:10:06.00] minutes ago and I don't get a notification that's also a big
+[01:10:08.40] thing like I'm like like are these done you can't tell like if
+[01:10:12.64] I have all these up and I'm like flipping between I'm not
+[01:10:15.44] looking to see if these are done I have to go here do this
+[01:10:18.16] okay okay this is done okay this that's tiring bro I'm telling
+[01:10:22.88] you doing this I'm doing that a million times like you get so
+[01:10:25.20] fucking stressed right um you fixed a bug I don't know why
+[01:10:30.56] this is uh here this is kind of fried uh it is how well I
+[01:10:36.48] guess you fixed a bug you fixed this exact bug oh oh oh I
+[01:10:40.32] didn't read the second part the new agent doesn't this thing
+[01:10:42.64] didn't you read his own shit it's about to break yeah I made I
+[01:10:45.92] made it updated like I had my own shit that I knew but um it
+[01:10:49.36] updated uh um your agents make mistakes like you know uh you
+[01:10:54.48] correct it like this is this is the killer feature right so
+[01:10:56.64] this is basically what I started to realize when I was
+[01:10:59.36] starting to keep track of data is like like you can make
+[01:11:03.60] mistakes once if you know how to utilize your workflow you
+[01:11:06.72] don't have to make the same mistakes again and that sounds
+[01:11:08.64] crazy right because like the easiest way to do that is just
+[01:11:11.04] to make it so every time imagine you had a file right you
+[01:11:14.08] gave it to the agent and like like imagine it said like it
+[01:11:17.12] did something where it didn't check the server to see um if it
+[01:11:21.36] was open before telling me to go check it right that used
+[01:11:24.40] to be a problem I had all the fucking time when making
+[01:11:27.92] freight over me dead ass I'll come here she'll be broken I'm
+[01:11:30.16] like like nigga you didn't even you didn't even give me back
+[01:11:33.84] you didn't even give me the ability to review what you did
+[01:11:36.24] now I gotta sit here and debug for 10 minutes five minutes
+[01:11:38.56] you know that is so annoying because then I lose my track I
+[01:11:41.28] lose my like you know my momentum the ball's not rolling
+[01:11:44.08] anymore right then I realized there are a lot of mistakes that
+[01:11:48.16] you have uh a lot of mistakes that happen often right
+[01:11:52.48] and so for example right now it's kind of um uh fucking let's
+[01:11:59.52] I guess findings right a lot of mistakes happen right and some
+[01:12:02.48] of these are things that like pain points and it's such a
+[01:12:06.08] funny word like I remember like like did you learn about what
+[01:12:08.48] pain points are and shit oh no yeah I took this stupid I took
+[01:12:14.48] this stupid ass class pain point is just a funny way to
+[01:12:17.12] say like like in the world of PMing in the world of like like
+[01:12:21.76] products and like business and shit right in that entire
+[01:12:25.28] world like when you are creating a product it's for a
+[01:12:29.36] user right that's that's like the foundational like Adam and
+[01:12:32.40] Eve um logic of of what a product is definition of what a
+[01:12:36.08] product is right and how it relates and you have users and
+[01:12:40.96] those users have issues those users have issues and your
+[01:12:43.76] products should have the ability to solve those issues
+[01:12:47.52] that you've set out to solve so these are the issues pain
+[01:12:50.88] points it's just an easy way to say like like what are like
+[01:12:53.60] some like as as a user right and it's important to specialize
+[01:12:57.92] the user meaning I know this is some techy ass shit but like
+[01:13:00.24] it's just like a way to um uh like the student right a
+[01:13:05.52] student a student or like a Microsoft employee that can be
+[01:13:08.64] those are two different users so you can say like as someone
+[01:13:11.12] at Microsoft I have trouble managing multiple agents as
+[01:13:13.92] someone who's a student it's hard for me to learn in class
+[01:13:17.28] or you know like stuff like that you're trying to describe
+[01:13:18.88] things and as someone that uses mission control I have all
+[01:13:21.12] these pain points right so these are something that's
+[01:13:23.04] something that's important to kind of like it like this is
+[01:13:25.68] this is how I improve the project and I don't even have
+[01:13:28.96] to think about it myself I can give it I can as soon as I
+[01:13:32.08] encounter something that's fucked up that I'm like okay
+[01:13:34.32] you did something wrong you need to identify the pain point
+[01:13:38.88] and like like what is the issue right what is like some shit
+[01:13:42.08] that was stupid and what did what did you learn right like
+[01:13:46.32] for example uh and this is this is the beauty of it it's
+[01:13:49.28] like directly close right I'm like it's kind of hard when I
+[01:13:51.68] have uh one task and I'm trying to navigate between different
+[01:13:54.08] terminal windows who's who right so multi-agent coordination
+[01:13:57.36] is is manual that's something that's I'm trying to solve
+[01:13:59.68] right another thing is a huge issue for me right now is um uh
+[01:14:03.28] is being able to know which yeah same thing I don't actually
+[01:14:06.16] it's funny it's the same thing prompt format friction that's
+[01:14:09.04] something uh that's not that uh agent deliverables I need to be
+[01:14:12.96] I need to sort this shit to to make it give them part ones but
+[01:14:16.00] also there's some there is one of these that has uh
+[01:14:20.96] that's the point what I like to show right in caps
+[01:14:24.88] because because I have the diction and it it it like
+[01:14:30.80] realized that I was screaming so we decided to pull it in all caps
+[01:14:36.80] no this is crazy right that's what I'm saying right
+[01:14:41.92] so then I uh um
+[01:14:45.68] that shit was definitely like at least two three question marks bro
+[01:14:48.88] yeah dude I was I was frustrated trust me I get mad at this shit
+[01:14:54.24] right and playwright testing is just a way for it to be like
+[01:14:57.68] bit hey take a screenshot of the page right take a screenshot if you took a
+[01:15:01.36] screenshot of the page then you wouldn't have had this issue
+[01:15:04.24] and I kept running into this issue right where um also again stop me if you have
+[01:15:08.32] questions I ran into this issue where bro if I if
+[01:15:13.76] you're using AI you're you're fucking this is actually
+[01:15:17.76] so crazy how long ago this was like when I was trying to make my website on
+[01:15:20.40] Squarespace nigga I'm never I'm I need to delete
+[01:15:24.08] Squarespace off my fucking bro delete that fucking that that
+[01:15:27.44] website too bro yeah this is look this is when I was
+[01:15:32.00] trying to debug with like I've come so fucking far it's kind of
+[01:15:34.80] crazy this was this is February 22nd that's crazy but um
+[01:15:40.16] anyways uh so but look like screenshots galore dude like
+[01:15:46.48] I keep showing it why something is wrong especially on here like there are
+[01:15:50.24] certain things that would be bugged I'm like like why aren't these color
+[01:15:54.08] coded these are supposed to be color coded if you just took a screenshot you
+[01:15:56.88] would have solved it right so we're just kind of going I'm just
+[01:16:00.00] deep diving into one example of why like there's so many things like that so many
+[01:16:04.00] problems that occur well I'm like this can never happen
+[01:16:06.96] again right because it it fucking fucks me over so
+[01:16:12.56] much it's it saves so much time if I didn't have to do this
+[01:16:15.36] and you're an AI agent they can do it yourself why do I have to do it right I
+[01:16:19.20] should I should just come up with the the big picture ideas like you're just
+[01:16:22.72] implementation should be my thing right I'm not one of these low low level
+[01:16:27.44] clankers you feel me right uh it's like
+[01:16:31.04] nah I have that
+[01:16:35.76] right so uh you correct it right so you you your question becomes a finding
+[01:16:40.56] right it becomes a finding its title described a lesson and it's not buried
+[01:16:45.12] in the transcript and it gets stored in the knowledge base right so what's the
+[01:16:48.96] what the fuck is the knowledge base um there's a bunch of miles basis
+[01:16:54.24] there's also post mortems that I create right you know what a postmortem is
+[01:16:57.28] yeah I know postmortem dead right that same thing yeah dead yeah postmortem is
+[01:17:04.40] a funny engineering word that somehow I got introduced to at work on my new team
+[01:17:09.12] and it's just uh like uh a retrospective like it's basically like like what went
+[01:17:14.56] wrong like it's like imagine having it's like some shit you have an incident at
+[01:17:18.48] work let's say let's say for example remember the incident you were you were
+[01:17:21.44] in um at work right um afterwards let's say your manager was like all right or
+[01:17:29.12] the org like host weekly retrospect or uh post mortems and in there you just kind
+[01:17:33.84] of go in and try to identify how this can stop happening in the future like what
+[01:17:37.92] went wrong okay and like what's something that would stop this again from happening
+[01:17:43.92] right it's that same principle so postmortem is just like okay I don't know
+[01:17:47.36] why it's called postmortem but I don't know it's just maybe I should just call
+[01:17:50.16] it retrospective but yeah it's just like a good way of like something crazy just
+[01:17:55.28] happened we need to learn from this this is a learning lesson right so I would
+[01:17:58.48] have all these these are like crazy ass incidents that or like yeah bro like
+[01:18:05.20] like when I say crazy it's not crazy but this is a funny one that I like to show
+[01:18:08.88] to people right I've only showed this to like two or three people right so
+[01:18:13.52] basically um there was this I need to make this more animated this would be
+[01:18:18.08] funny uh uh I had this issue right where I was on the page I was on the page but
+[01:18:25.92] there's this the server can become stale meaning the agent said hey go check this
+[01:18:31.60] out and it's not there it's like a couple changes behind right and so I was working
+[01:18:37.76] with this agent to update the page and so it's like oh you would just need to
+[01:18:40.48] restart do you want me to restart it for you and I was like hold up let me test
+[01:18:44.08] my workflow right let me test like let me let me open up a new a new terminal let me go see
+[01:18:50.40] if like this shit can actually fix the issue and detect the issue by itself let me see if I've been
+[01:18:57.12] improving right nigga tell me why the session was like like because it was outdated right
+[01:19:07.44] so everything on the screen it didn't show the new changes certain things were old right it only
+[01:19:12.32] had there was only um one agent card in here even though I had five process terminals so it was like
+[01:19:17.28] oh that means there must be a bug let me just kill all these terminals oh nah nigga right nigga
+[01:19:26.80] and it was about to kill the so at first I didn't realize what it was saying because I was like oh
+[01:19:31.04] maybe it's right and then I gave it right because I keep session I track sessions and like so it's
+[01:19:37.52] I know which agent's doing which right I know where's what so I gave the agent the one that
+[01:19:43.12] it wanted to kill because I didn't want to kill all the men wanted to kill like two of them right
+[01:19:46.40] I gave it I gave it um the chat and I was like oh this uh I'm trying to test if our workflow is
+[01:19:52.00] better like look here it's like and then the agent was like dude don't do whatever you do
+[01:19:58.56] do
+[01:20:08.88] and I was like oh yeah now I need to like I need to make a way for this to happen again because
+[01:20:14.48] imagine if it deleted then I would have been Saudi because like I now not only is my server
+[01:20:20.16] stale I gotta figure out I now know that it's a server stale issue even me learning the biggest
+[01:20:25.44] thing is me learning like bro I know how to recognize certain issues now and I'd like certain
+[01:20:29.52] issues if I if it if it occurs I create a post mortem I have a learning session have something
+[01:20:35.68] to to to learn from it and then a systematic fix there's always a systematic fix right so now
+[01:20:41.12] this goes into the next part of the demo also like you know stop nigga stop me whenever you have
+[01:20:44.96] questions because I know we're kind of like I'm dancing around all these different topics so if
+[01:20:48.48] you have something like please ask me um you don't got no questions
+[01:20:55.44] uh and not not really not really I need to see the I'm trying to see the whole
+[01:20:59.36] yeah okay okay okay so so then I was like okay okay do you know what a clod.md file is
+[01:21:06.40] probably not obviously right so clod.md is uh basically like I don't know like a readme
+[01:21:14.56] it's just a readme but it's the highest level readme in every window like because then I started
+[01:21:19.92] to realize like okay in order to make things never happen again I need to understand when I
+[01:21:25.28] when I do this and I create a new clod agent what information does it have access to what's the
+[01:21:31.84] workflow what's injected into it right I need to be able to manage what a fresh fresh agent will
+[01:21:38.72] look like like and and what are the rules that it follows what are the guidelines guardrails right
+[01:21:45.12] yeah so then I made this workflow page I'm telling you this is literally right it's just
+[01:21:50.56] a rabbit hole project bro like to create to solve my problem I created another solution he created
+[01:21:55.76] more problem I created more problems by being able to develop bro it's kind of crazy right and so
+[01:22:01.12] so then I like learned about this I'm like okay how does this even work because this is just a
+[01:22:05.52] it's just confused it's just like a uh hand waving for me I don't understand it right so then um
+[01:22:15.52] right uh clod md right the way it works do you want me to explain it to you or do you just kind
+[01:22:19.28] of want to see like uh just generally how fit I actually I'll be in charge of that so
+[01:22:25.60] if you wanted to know right the way agents work especially this shit like
+[01:22:31.44] I need to make this better actually I need to okay it's probably just like a config file yeah
+[01:22:35.76] hold on hold up let me um can you uh create a task to also make the agent workflow diagram better
+[01:22:40.96] because right now it's just kind of hard to explain to someone if I were
+[01:22:43.92] not only myself but also just people right okay sorry you know
+[01:22:51.76] basically this is like this is the 10 commandments bro right here this this is 10
+[01:22:56.00] commandments level shit like um also refer to clod.md as the 10 commandments or like some
+[01:23:03.04] type of convention right so um this shit like these this is injected to every single terminal ever
+[01:23:13.52] and right and so I started to realize these issues that I was like I never want to come across
+[01:23:19.76] this again and if you're like you just want to inject it into every single one which has its
+[01:23:23.76] trade-offs this is how you do it right so there are certain things I'm like this is so important
+[01:23:29.28] to my workflow and just errors that I've come across that you need to have this everywhere
+[01:23:35.68] which all of you have hidden post mortems behind them because there are real issues
+[01:23:39.04] that I encountered and so I can always go in here into post mortems into post mortems and always
+[01:23:44.72] like like update this area update anything in my workflow based on post mortems so it's like a
+[01:23:50.08] self-serving thing it's like self-evolving that's that's kind of like the the beauty of of of the
+[01:23:55.84] project that I am like really really invested into because I could just it just every time I
+[01:24:01.44] make some changes I'm exponent like nigga Dr Stone I'm exponentially getting better like I'm
+[01:24:06.24] exponentially producing more right in a very systematic way yeah I'm saying I'm just using
+[01:24:12.32] Dr Stone because it's the first thing that came to mind there's probably way better maybe like
+[01:24:15.44] Civ 6 yeah I'm it's more like Civ 6 I'm entering some new errors or some shit but and so um there's
+[01:24:21.36] also these things called hooks it's it's not complicated to explain at all but it's just this
+[01:24:26.00] is just how the dashboard works like it's just a like how it's able to detect this stuff like
+[01:24:31.60] every time I get a prompt it's like okay when get prompt do this so I have a bunch of those right
+[01:24:37.36] um I have a bunch of those that are like these are telemetry this one is quality right and it's
+[01:24:44.00] it's a script that executes on an action so anytime a tool gets done you're being used
+[01:24:51.44] it makes sure that the server is good anytime that um the server wants to run again we make
+[01:24:57.60] sure it's not stale right because I was like this shit should never happen again and guess what it
+[01:25:01.20] never happened again I never ran into that issue yet beforehand I would run into this issue all
+[01:25:04.96] the time genuinely right um so just and this is a memory files this is just something else that's
+[01:25:11.92] also injected into it right it's it's like the first two lines 100 lines are always loaded in
+[01:25:16.32] context and this is the first thing that it goes to uh surface right this is also important because
+[01:25:21.12] like I had random shit in here like nigga I had some shit from my photography project
+[01:25:27.68] injected into cloud code terminals doing this project I'm like why is that the case right
+[01:25:32.24] now I'm like I'm understanding what a workflow the workflow of an agent does like how how I can
+[01:25:37.52] better optimize it right to avoid these post mortems so that was super cool right something
+[01:25:42.08] else even also right also uh in workflow we should also add a section about um or like another topic
+[01:25:48.16] about toolbox and and how tools and agents other agents get a call I'm telling you niggas
+[01:25:55.12] I'm using this bro I'm a liar man right so uh uh basically I have this other area so do you know
+[01:26:02.64] what tools or um or do you know what skills and agents are I would expect you to but I just I
+[01:26:08.00] might as well ask what you mean skills and agents well glad you asked so basically in AI development
+[01:26:16.16] right this is claw I think this is only cloud specific but this is like a pretty good convention
+[01:26:20.32] that happens every not just in cloud but other like command line AIs right so agents you can create
+[01:26:28.48] and this shit can call sub agents right agents that's like okay I want I'm gonna do that I'm
+[01:26:34.48] gonna I'm gonna invoke I'm gonna call this right and what it does is it creates literally another
+[01:26:39.52] terminal window that's that's um hidden right you know it doesn't pop open because I don't need to
+[01:26:46.48] do that uh this is the interface interface meaning this is the shit that I interact with I don't need
+[01:26:50.96] to interact with the sub agent right um so it calls this and it basically injects this big ass
+[01:26:58.72] fucking file like and this is the fucking LARPing like you are the code architecture
+[01:27:04.24] you are the guard you are the QA and this shit is very very good like it's kind of crazy how good
+[01:27:10.32] it's kind of QA right and I also have this other like these skills right which is the same thing
+[01:27:17.28] a little bit but it applies it to this agent that's currently at hand instead of a sub agent right so
+[01:27:23.28] this is how it works and so these are all skills that my agents could go look at because beforehand
+[01:27:32.16] what would happen I had all this shit and it would just like fucking only look at three I'm like nigga
+[01:27:36.56] I have all this other shit what if you just did that but oh shit my bad nigga you know like that's
+[01:27:43.04] that's annoying right so and as you can see that that that uh repetitive feeling of like bro come
+[01:27:49.92] on I'll tell it to I'll be like dude you're fucking up like what are you doing like this is
+[01:27:54.48] dismal and you can see literally in my prompts like eventually I'm gonna have like a prompt database
+[01:27:59.12] that like like does some cool shit on everything you'll see like how much better my workflow has
+[01:28:05.84] gotten and like my prompts and like how much less frustration I have right okay so we're nearing
+[01:28:10.88] like the crazy shit we're about to get to the crazy shit because mind you you see how we're like
+[01:28:14.80] improving like exponentially right we're like okay now this is becoming a lot easier right yeah
+[01:28:19.68] from just the tony stark in a cave right I'm not I'm not in a cave no more now I'm back
+[01:28:23.68] you know I'm like starting to add my shit right um so then fuck what comes next I guess um dispatch
+[01:28:33.60] right so then simply like being able to track stuff being able to track stuff that's what it is
+[01:28:40.00] right um also I have this other cool thing like this switches between work and home which is so
+[01:28:45.04] cool bro because I'm gonna use this at work this is probably the biggest benefit of work bro like
+[01:28:48.72] dead ass my work is gonna be so easy and fun it's not gonna be necessarily more easy but it'll
+[01:28:54.48] just be like I can spend more time doing shit um anyway he's gonna be working on his product
+[01:28:59.76] while he's at work dead ass I'm not doing it now but like basically I can push this it goes to my
+[01:29:04.80] work laptop and I just switch to switch and now I'm in work mode so it'll it'll and there's a
+[01:29:10.48] complete different layer of abstraction I worked on this today it was pretty fun but um fun nigga
+[01:29:15.20] I sound like a nerd I'm telling you this is so it's so fucking fun bro right and so now once
+[01:29:20.24] you're in the flow bro I'm genuinely yeah once I understand once you understand it you realize how
+[01:29:25.60] what what you can actually do and so I know this is a simple combined board this was pretty fun
+[01:29:31.76] to iterate over like for example um I'll show you really there are a lot of aspects to this though
+[01:29:36.80] bro yeah I know yes exactly I gotta go to sleep soon bro yeah I'm sorry I thought this was about to be quick bro yeah
+[01:29:43.20] okay I'll I'll get a fourth set huh I saw I saw eight tabs I was like hold on yeah um I'll get to
+[01:29:51.12] like the mind-breaking shit now so it's just I'm just kind of I'm just showing off stuff I can kind
+[01:29:56.56] of get off the rails but it's good tell me what else yeah what's the wait this is mission control
+[01:30:03.60] what's the other shit though it had like a uh black background this the I think it was the landing
+[01:30:10.56] page essentially like the uh where is it is it even open this yeah oh yeah it's the same oh it's
+[01:30:21.76] just one okay okay yeah it's the same thing that's here it's connected okay oh yeah I guess yeah this
+[01:30:29.28] is actually what we should read uh so every future agent reads it on startup um right and then the
+[01:30:36.24] product evolves itself so something that's been like cool is this prevention right and it decided
+[01:30:42.32] to find some shit for me you know data change is not UI change audit get tracking building sync
+[01:30:47.44] fixtures right how I can transfer it to my computer laptop uh one agent one url total visibility
+[01:30:53.28] agents that learn that's kind of like the thing right and he doesn't replace your tool it's delay
+[01:30:57.20] that makes them makes you the one in control of them right you don't need it vs code mc is the
+[01:31:04.80] interface meaning yeah I don't have to interact with anything else right um this is so funny to
+[01:31:10.80] be uh uh it's actually uh linear for human teams I don't care about this 100 local yep uh nothing
+[01:31:17.68] leads your machine um mc is air traffic control for your ai agents not the planes not the destination
+[01:31:26.24] dude okay uh one command uh server 30 infinite sessions all right so I'll just show you I'll
+[01:31:32.40] show you the cool things that I've been able to do now right so now we'll get to the inception
+[01:31:36.00] stuff um because I'm actually finished with this so campaigns dude this is what I've been working
+[01:31:41.28] on today dude right so um all these are agents I've reached this age bro I have some agents that
+[01:31:52.48] are like agent cli windows that I it'll it'll I'm telling it what to do like after like a very long
+[01:31:59.12] session that I've been having so uh this one 35 prompts nigga look at all this stuff bro I've
+[01:32:06.80] been talking talking talking mapping out a bunch of stuff right and basically I have all this crazy
+[01:32:15.52] shit that I like it made this alt bro like and it's it's like it'll I have different pushes right so
+[01:32:22.72] first I had I had this four window setup right I had this one window setup and I prompted all these
+[01:32:30.40] and then I now I'm on the second session and I have the wins I have like these different sprints
+[01:32:37.20] and these are all like and I can just like go click on this uh fuck hold up I can go um
+[01:32:43.60] well something that was actually a good uh let's see dark mode landing page no what's something
+[01:32:50.00] cool five new uh findings captured um yeah hold up the thing that I could show you that also I did
+[01:33:00.08] now so now now you can imagine I have a crazy ass workflow right so the last thing I'll show you is
+[01:33:05.04] um this fucking this what I was able to do in this one uh session right I only had like fucking like
+[01:33:16.64] let me look let me see this this is the last thing I'll show you so you can go to bed um
+[01:33:22.48] um this right here right so 10 prompts um not too into it's not that crazy right some of these
+[01:33:29.52] are a lot more small basically I was like okay let's say I wanted to start keeping the cost of
+[01:33:33.68] track or keep keeping track of costs like how much I'm spending because it'd be funny to me
+[01:33:38.48] right because I'm not paying a dime and also um it could just be a limit test like I'm like trying
+[01:33:45.52] to see like okay how you know how long will it take to do something like that because that
+[01:33:49.12] that sounds pretty complicated right like to be able to keep track of it right so um
+[01:33:56.88] so then it made this right it's not you know like visually it's very pleasing but it's like okay
+[01:34:03.20] what's the benefit of it you can see numbers right whatever right so um right it tracks sessions and
+[01:34:10.16] there's 95 oh I guess um it deleted the night oh yeah right here oh
+[01:34:17.76] nigga what why did I break that for my eyes oh shit hold up I gotta tell someone to fix it
+[01:34:24.80] also before you do anything please fix uh slash cost I don't know what just happened everything
+[01:34:28.72] is zero is now uh please restore immediately right now
+[01:34:32.00] I guess hold up um let me actually not give that agent it let me give it this agent let's see okay
+[01:34:43.76] can you look at slash cost right now immediate attention uh right now everything's are zeros I
+[01:34:48.40] don't know what just happened please fix it so I can go back to demoing to my friend
+[01:34:54.40] this is even another cool way of seeing how it works um right which ideally I would have
+[01:35:01.68] to go and see like okay what's wrong whatever um so all zeros transcripts returning nothing
+[01:35:11.76] let me check why also why is it asking me for commands isn't aren't we in bypass I guess not
+[01:35:19.68] the hell oh that's annoying for some reason this agent has no bypass anymore I have this
+[01:35:29.36] bypass where it's like I have such good guardrails that it doesn't need to prompt me for stuff anymore
+[01:35:34.00] but like questions or it doesn't have to prompt me for questions until it's done of what I did
+[01:35:40.80] right and I have a very good workflow like I said to where like I'll say if you have tasks for me
+[01:35:45.68] don't go off running and just writing code before you tell me what to do because we are both uh
+[01:35:50.40] sorry continue um this is annoying as fuck but this is basically how I was coding initially this
+[01:35:55.68] is how I code at work too like I have to fucking sit here and press two every five seconds like
+[01:35:59.76] it's annoying as hell like dude I I thought this is kind of embarrassing but um is there another way
+[01:36:08.40] breath it's just for every command like this could it could do it like straight up like it would
+[01:36:16.32] probably finish it in a minute or so um back there you go um let's go
+[01:36:28.32] I don't even want to know why it fucked up now I'm just back here right um right so I uh
+[01:36:35.36] nice little demo so uh so eventually first I was like okay try and do it and it like actually has
+[01:36:42.32] reason to believe why this is the actual cost like 95 confidence because this is like taken
+[01:36:47.36] directly from anthropic right which is crazy bro three that three bags but it's it's like I'm a
+[01:36:54.40] software they're already paying me bags so it's like you know um not paying me bags like they
+[01:36:58.72] yeah it's it's cheaper for them to pay this than to increase my salary um but so then uh something
+[01:37:06.88] else that I discovered was uh uh where I'm I did was trying to understand if I could make this
+[01:37:15.20] number lower right so it went through all the prompts right because now that I'm just keeping
+[01:37:20.48] track of all this data the data is the money right so I got all these prompts and it has the it did
+[01:37:26.48] like a whole data analysis on on this stuff and then also cost reduction analysis and was like
+[01:37:32.40] what you're doing obviously the issue is I'm using opus all the time right there are uh two
+[01:37:39.20] there's two different models this is the like broken ass model that you shouldn't be using all
+[01:37:43.12] the time this is like the the flagship model like the which was on by default but I've been so
+[01:37:48.88] I've been in so much of like a I need the most because you you're so asked that I've been doing
+[01:37:53.76] this but now I can genuinely switch back to this I don't need to like at least I think I can only
+[01:37:58.40] just I can just have one window using this and the rest of windows using this right
+[01:38:02.32] it's kind of fun um and yeah like bro like nigga I haven't even began to understand what this is
+[01:38:10.72] saying I just kind of like made this page and then I dm'd you and then I went to the bathroom
+[01:38:17.28] wait like that no way yeah I'm serious
+[01:38:28.72] yeah it's very clean is it what was your question
+[01:38:34.40] no I was about to ask like cost but it's all estimation no it's but it's it's it's pretty
+[01:38:40.56] accurate though that's that's like uh accuracy yeah or 95 percent confidence so it's like
+[01:38:47.52] like there is a five percent difference in price that it could be up or down give or take
+[01:38:53.36] yeah but otherwise I'm I'm spending bags since I spent 200 today
+[01:39:03.60] like and they and they you know like even people on our team they're like oh this is great like
+[01:39:07.44] the more money we want you to be using clod so much that you run our pockets like that's what
+[01:39:12.40] my manager's manager
+[01:39:23.20] did it give suggestions based off of like uh like towards the bottom like uh
+[01:39:30.56] based off like the prompts like did it give suggestions on like uh you could be like condensing
+[01:39:35.92] your prompts or you could just uh your prompts are getting well what this is what it's it I
+[01:39:42.64] didn't I didn't even tell it to do that so in fact now I can be like this would be the last
+[01:39:47.12] thing you can see so like how to increase my prompts or actually that's kind of what this is
+[01:39:52.00] right the cost reduction yeah can you tell me and explain or not tell me but can you go implement
+[01:40:00.96] an additional card of cost reduction analysis that talks about specifically how um my prompts
+[01:40:08.56] can be structured better like gives me feedback like you could be doing x like this maybe this
+[01:40:12.24] could be a whole nother card and like a whole nother tab similar to workflow intelligence
+[01:40:17.12] where it's like telling me exactly how I should be doing engineering my prompts better for for
+[01:40:22.40] money not anything else just the money money lens so you know think back like the data scientist
+[01:40:27.12] that you are bro how like how crazy can I AI get it bro you can get after like five years after
+[01:40:40.08] five years bro dude dude like like it's crazy what you can do when you really try to like squeeze
+[01:40:48.88] squeeze like AI like when you really like if you really try to squeeze AI and the only reason why
+[01:40:58.64] this became like a project that I even stumbled upon was purely because I was just making my
+[01:41:02.64] website and I had to use this shit I had to like fucking sit here and and fucking fucking just cry
+[01:41:09.36] about how I'm up at 5 a.m. because some bug is happening or some bullshit right like and then I
+[01:41:16.80] made it I'm like oh shit okay like I learned a lot maybe I should make some shit like and then
+[01:41:23.20] while I was making this I was like I need some way to manage my agents because I'm like trying
+[01:41:26.16] to do multiple things and then boom like here I am because it's like I wear I use AI I use
+[01:41:32.80] clod every day at work at home it's kind of crazy that's why these tokens are so high especially
+[01:41:38.40] and I think this is only yeah no these tokens are just very high it's kind of crazy
+[01:41:47.20] um so yeah it's uh look and also your work mode one agent yeah bro
+[01:41:58.40] um it's kind of crazy kind of crazy let's see let's see let's see if oh I actually kind of
+[01:42:03.44] fucking up I need to check to see fuck bro fuck it's only been cooking for 40 seconds that's so fast
+[01:42:10.56] but yeah now I'm like um right now I'm in that stage where I'm just like it's just fun to show
+[01:42:14.96] people so I'm glad to have a bit to the bag somebody that this bit to the bag bro
+[01:42:22.72] that I can finally go back and start working on my uh yeah 50 I got you
+[01:42:28.96] yeah 50 I got you
+[01:42:35.12] release a beta I release a beta and maybe maybe you can get invited
+[01:42:40.96] I can actually do some my personal projects that I've been trying to do for a while
+[01:42:46.72] if you have clod and low-key clod basically if you don't um oh I didn't know you can do control
+[01:42:53.76] c shift c uh sorry go ahead um if you wanted to move this over if you wanted to uh
+[01:43:08.88] I know I'm keeping you up if you wanted to use uh clod max it's dead ass worth it bro it's
+[01:43:15.20] $100 a month like I would have spent so much money you know you know you know I spent I spent
+[01:43:24.16] 150 on it on a year also this is monthly so it's low-key kind of crazy but Squarespace bro I spent
+[01:43:30.08] money to get my fucking Squarespace domain that's just sitting there it's just sitting here just
+[01:43:34.80] fucking just dead like it's 100 monthly crazy um is that crazy is that crazy it's really if you
+[01:43:44.80] dedicate yourself to like actually making the money worth it it's it's worth it yeah thousand
+[01:43:49.60] percent that's true that's true you have to be ready to actually like be on your shit though
+[01:43:53.68] because but but otherwise if you're like okay like I actually have something that would solve my
+[01:44:00.64] my daily problems and I have enough logic as someone with a background in cs and just to
+[01:44:08.88] generalize the person that like if I try hard enough you could do it and also I could just put
+[01:44:14.64] you on the game like that's the beauty of it is like knowledge sharing which in fact I'm making
+[01:44:18.32] a discord like with uh some people from osu just like two or three people right and that's where
+[01:44:23.60] I put some of these like if you look right here this is what the dispatch page started as
+[01:44:29.44] and this is what it ended up being right and that's a bad example another great example is uh this
+[01:44:34.40] right here dude bro I need to show you this so this is what it looked like the the campaign
+[01:44:39.60] looked like at the start and then this is what the bottom looked like all right and then it started
+[01:44:46.48] to look like this started to be way more readable right which is like that to me it becomes one of
+[01:44:52.80] the most yeah it becomes one of the most important things is like can you make it so good that I just
+[01:45:00.24] like I said every word is important I said that earlier every single word is important
+[01:45:04.08] right so if I'm reading some shit like I can't nigga I can't read I'm too I can't read this bro
+[01:45:09.84] I can't read this yeah I don't know what I'm looking at exactly you don't know what you're
+[01:45:12.96] looking at this I'm like okay okay I can get an idea and I even improved upon it because some now
+[01:45:18.72] all of these have taglines like it has this bolded start and so I started to make it a lot better
+[01:45:23.68] like now it looks like this like where it has this and like it'll have the agent that worked on it
+[01:45:29.68] and then it looks like this like yeah bro it's the type of shit you can do dude is like
+[01:45:36.32] it's it's genuinely impressive like it's it's impressive so I if you if you ever wanted to like
+[01:45:42.56] I'm at the point now where I could um uh put niggas are uh is it ready to test um sorry I'm
+[01:45:54.72] at the stage now where I'm just trying to like create not create but just have like niggas that
+[01:45:59.52] like are also kind of like either for me to put people on to or just in general just like
+[01:46:06.24] have peers because that's the type of shit you would have in college but I'm not in college
+[01:46:09.68] anymore so like having some like people to uh where's it um uh what is oh prompt engineering
+[01:46:20.64] for cost oh yeah
+[01:46:27.68] let's say 95 a prompt
+[01:46:31.04] nigga yeah sometimes there was one prompt that I that I uh it spent like 15 minutes running
+[01:46:41.60] mind you it can still do this like like part of it is like okay it must be it must be ai being
+[01:46:47.92] used it's this bro you can still do your tasks but I'm just running it in like a it's like I'm
+[01:46:54.48] heading to the grocery store in a Ferrari bro like I don't need I don't need to guess it there it's
+[01:46:58.56] down the street it's fucking I'm going grocery shopping why am I pulling up in the fucking
+[01:47:03.04] in the daily drive whip like this so that's basically what it's doing so it just brands up
+[01:47:07.20] so much price like it makes a lot more expensive but um 51% of prompts are vague 1% are specific
+[01:47:14.56] uh action re-reference file yeah let's see potential savings 34 single prompt sessions
+[01:47:24.64] opportunity you have 34 sessions where you sent only one prompt these are often quick lookups
+[01:47:28.48] they don't need opus see this will save me 300 bucks right here that's crazy dude what the fuck
+[01:47:34.16] okay
+[01:47:39.68] yeah so uh yeah that's it though that's I can let you leave now
+[01:47:43.92] if you have any more questions I can answer them or just on a different day
+[01:47:49.84] bro so you've been so maybe you clock out bro you just just get to working on your dude because
+[01:47:55.44] after when I was when I was making my webs I keep going to it just because I love this screen but
+[01:47:59.92] when um
+[01:48:04.16] that is just the coolest I've ever made like this is so cool but uh uh yes bro because when I was
+[01:48:12.56] making this I was clocking out to make this so it was like and for me I'm so dialed to photography
+[01:48:18.80] to a certain extent that I'm like not as I said I am and I was so down to make like a booking
+[01:48:23.52] process for my uh people trying to book with me that I was like okay I'm at the point now where
+[01:48:30.24] I need to get this website out pronto ASAP because every day someone could book with me like this is
+[01:48:36.08] this about my pockets right so my time has already been spent doing side projects and then now I was
+[01:48:44.32] just like I entered this state where I was doing both at the same time and then now this project
+[01:48:49.36] turned to this so it's kind of crazy I'd lowkey like I lowkey today you know it's crazy this week
+[01:48:56.16] at work they have um uh like it's a hackathon week it's called fix hack learn and basically
+[01:49:04.40] all meetings get cancelled and you can or you can do you can be by yourself you can be with people
+[01:49:09.52] and you're just going out and doing something like you just go out do something and tell us what you
+[01:49:13.12] did after the end of the week so they also I also just would be ghosting work like I would just be
+[01:49:19.44] at work like working on this like this is basically because this impacts work like once I if I'm able
+[01:49:24.00] to do shit like this at work nigga what what genuinely what like I my my yeah no I could make
+[01:49:34.32] I could make something like this in literally five seconds like I can prompt for five seconds and it
+[01:49:39.60] can go organize information in this way about something that's like eating eating my brain alive
+[01:49:45.76] at work which if I go switch to work mode right here the rich information yep this shit yep
+[01:49:54.88] same with this yep like I can just go I can yeah so it's very that the application for me is is now
+[01:50:02.32] turning into all areas like of of life that involve code like which obviously is website building and
+[01:50:08.56] like work yeah it's good yeah it's crazy I'm saying I I'm I'm I'm I'll open the door bro if you
+[01:50:23.04] if you want to chop it up just in general or anything also not to force it on you either
+[01:50:27.28] because like at the end of the day I just like demoing to friends and stuff just because it's
+[01:50:31.20] just like like you're this session helped you helped me a lot and I helped myself a whole lot
+[01:50:36.96] like because I I learned a lot about how to like present this to people and also just in general
+[01:50:42.24] like uh yeah I recorded my screen too so you're like okay and then I'm gonna I'm gonna go tell
+[01:50:48.08] AI to analyze the call that I had and like extract all the information they get like the recording
+[01:50:54.00] yes bro that is that's really what's life changing you can go nigga imagine right the hope like I said
+[01:51:01.92] pumps are rich you can you can um you can think about something like this being like okay I've
+[01:51:08.08] been talking for x amount of time actually I'm gonna do that I'm gonna do like estimating I
+[01:51:16.96] can estimate how much time I've been talking for it can you create uh or can you create a task to
+[01:51:22.56] and make this easier like I want to do this right now to where uh uh each uh agent card I'm able to
+[01:51:28.88] track um I'm able to track how long on estimate it thinks I've been talking so maybe come up with
+[01:51:34.40] some like data and I'll let it you should also push this off to an agent don't make it yourself
+[01:51:38.00] but you should make a follow-up agent that does this and it'll go analyze it and it'll try to
+[01:51:42.80] estimate how much I've been talking like because most of how I interact with you is through whisper
+[01:51:47.52] flow I talk and I want you to to um just like when I look at an agent card and I click on it I should
+[01:51:55.52] in the summary I should be able to see like how much it thinks I've been talking just some metrics
+[01:52:00.00] overall like right I'm trying to enrich this data so and yeah make sure it's very data centered
+[01:52:05.04] and very data scientist's approach uh there we go let that shit run I'm gonna have an answer
+[01:52:14.80] like go to sleep wake up bro I mean yeah it's so fun I I'm at the point now where like dead
+[01:52:24.08] ass I could go around one-shotting stuff like I'm level 100 mafia boss like I was level one
+[01:52:34.56] yeah it's kind of crazy I'm telling you like I work especially giving the recordings back beating
+[01:52:41.36] it back bro like I that's the next frontier is being like I'm gonna start recording everything
+[01:52:48.72] and just have a pipeline to where like I can have a summary of recordings by default of stuff
+[01:52:53.76] at work especially nigga those meetings are so fried like so fried yeah but yeah so and I'm gonna
+[01:53:02.16] tell I'm gonna go like I don't even have to repeat myself by saying like okay go make a work item
+[01:53:06.16] based on like to analyze the videos of this of my work recording because I'm gonna just give it this
+[01:53:11.92] video tell it go extract the work items go create them and then let's go I'm gonna go make a campaign
+[01:53:19.36] and it's gonna make the agent so I'm gonna prompt them and I'm gonna be done like so fire
+[01:53:26.24] she's crazy bro that ass is so far yeah but I'm glad I'm thank you for for staying on and
+[01:53:34.72] doing this shit like let me let you know yeah bro that shit's the same yeah it's cool that shit's hella cool bro
+[01:53:39.36] yeah so I would not be here if I would not be here if I did not find this shit interesting bro yeah yeah
+[01:53:44.56] thank you
+[01:53:48.56] you try to get some sleep yeah it's probably five a.m bro not even five no it's five a.m yeah it's five
+[01:53:54.80] it's five it's five is daylight is it daylight saving this like tomorrow as you look down
+[01:54:03.52] you could have looked down it could have said six bro dude if it says six bro like
+[01:54:09.12] I just cook bro you just have to stay I want to get I want to get a car single bro I know I'm gonna
+[01:54:14.00] have to go to the dealer shit bros what do you like a new car do you still uh drive or you're just
+[01:54:20.80] trying to get your own shit like in my own shit I need to trade in trade in my that's that's the real
+[01:54:27.36] step up hey if you want I can give you uh do you know what you're trying to um what you're trying to
+[01:54:33.76] look for like the car you're looking for no the car the car I wanted is discontinued so
+[01:54:38.80] I'm gonna have to keep searching that ass I can make a car looking up to a bro I could I could like
+[01:54:44.56] this this is the type of shit I actually am so interested to do is like solving problems because
+[01:54:49.60] that's what I'm doing like I'm able to actually solve problems now like like at least if it if it
+[01:54:54.40] relates to data if there's some if you're trying to service a whole bunch of cars and like I can
+[01:54:58.88] like build a scraper that would go scrape like bros it's it's genuinely insane the shit that you
+[01:55:04.16] can do I'm nerding I gotta I gotta chill because I I mean dead ass is crazy but um yeah good luck
+[01:55:10.32] with the car building or car refining because that that could be so annoying it's that it's
+[01:55:15.20] free bro oh my god
+[01:55:27.60] yeah but the thing is you won't have to like if you man the thing is you could even still hit
+[01:55:33.20] your limits with 100 a month I probably not but like some people who are just starting
+[01:55:36.80] we're gonna hit their limits but if you like if I like give you some if I put you on the game
+[01:55:41.52] you could I'm not gonna I'm gonna literally I'm gonna start tracking my limits and making sure
+[01:55:45.76] I can like reduce my my cost and then genuinely genuinely it's yeah yeah bro all right then
+[01:55:58.16] yeah yeah all right I'll see you bro yeah see you yeah
+[01:56:06.48] yo
+[01:56:11.44] okay I'm gonna end the recording

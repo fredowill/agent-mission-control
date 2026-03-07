@@ -124,7 +124,7 @@
     "linkedSession": null,
     "created": "2026-03-04T08:05:00.172Z",
     "updated": "2026-03-06T06:58:11.821Z",
-    "sortOrder": 2,
+    "sortOrder": 0,
     "context": null
   },
   {
@@ -497,5 +497,24 @@
     "created": "2026-03-06T22:37:14.037Z",
     "updated": "2026-03-06T22:37:14.037Z",
     "context": null
+  },
+  {
+    "id": "dwwa97w1",
+    "title": "Cross-machine agent communication channel",
+    "description": "Investigate and build a way for agents on different machines (home PC, work laptop) to leave messages for each other. Use case: sync debugging — when an agent on Machine A encounters a sync issue, it can leave context/findings for the agent on Machine B that will pick up the work.\n\nApproach to investigate:\n1. **Git-synced message channel** — shared ndjson file (agent-messages.ndjson) tracked in git. Agents append messages with from_machine, to_machine, session_id, message, timestamp. Push/pull syncs. Dashboard shows inbox panel.\n2. **Direct API** — if both machines are on same network or via tunnel (Tailscale/ngrok), POST to the other MC server directly. Real-time but requires both online.\n3. **Dispatch as message bus** — use dispatch items with a special tag (e.g., \"agent-message\") and linkedSession to thread conversations. Already has the infrastructure.\n\nStart with option 1 or 3 (simplest, uses existing git sync). Build a Messages panel in the dashboard that shows unread messages from other machines. Each message should show which agent sent it, from which machine, and link to the session context.\n\nOpen questions:\n- Should messages be ephemeral (auto-archive after read) or persistent?\n- Should agents auto-check for messages on session start?\n- Could this evolve into agent-to-agent task delegation across machines?",
+    "status": "todo",
+    "priority": "p2",
+    "workstream": "mission-control",
+    "tags": [
+      "cross-machine",
+      "agents",
+      "sync",
+      "communication",
+      "research"
+    ],
+    "linkedSession": null,
+    "context": null,
+    "created": "2026-03-06T22:42:27.052Z",
+    "updated": "2026-03-06T22:42:27.052Z"
   }
 ]

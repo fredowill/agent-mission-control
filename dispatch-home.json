@@ -142,7 +142,7 @@
     "id": "ls1ipf9q",
     "title": "Global prompt search across all sessions",
     "description": "Search all captured prompts across every session to surface past context, decisions, and ideas. Already implemented in Dispatch page -- verify it works well, consider adding search to dashboard too.",
-    "status": "todo",
+    "status": "done",
     "priority": "p1",
     "workstream": "mission-control",
     "tags": [
@@ -151,8 +151,8 @@
     ],
     "linkedSession": null,
     "created": "2026-03-04T08:05:00.172Z",
-    "updated": "2026-03-06T06:58:11.821Z",
-    "sortOrder": 2,
+    "updated": "2026-03-07T00:26:00.529Z",
+    "sortOrder": 0,
     "context": null,
     "areas": [
       "dashboard",
@@ -356,13 +356,14 @@
   {
     "id": "ulz7ddsz",
     "title": "Demo Mission Control to team (Matthew, Anteneh, Manager)",
-    "description": "Prepare and schedule a walkthrough of Mission Control for teammates. Show the dispatch board, agent cards with live state tracking, workstream filtering, toolbox, and the multi-machine git sync workflow. Keep it casual — focus on how it helps manage parallel Claude sessions and track work across machines.",
+    "description": "Prepare and schedule a walkthrough of Mission Control for teammates. Show the dispatch board, agent cards with live state tracking, workstream filtering, toolbox, and the multi-machine git sync workflow. Keep it casual — focus on how it helps manage parallel Claude sessions and track work across machines.\n\n## Reference Videos\n- **IndyDevDan: I'm HOOKED on Claude Code Hooks** (https://www.youtube.com/watch?v=J5B9UGTuNoM, Jul 2025) — practical hooks demo: saved codebase from rogue rm -rf, parallel agent real-time communication, advanced hook patterns. Use as inspiration and example material for the FHL hooks presentation.",
     "status": "todo",
     "priority": "p1",
     "workstream": "mission-control",
     "tags": [
       "demo",
-      "sharing"
+      "sharing",
+      "hooks"
     ],
     "linkedSession": null,
     "created": "2026-03-06T08:25:59.290Z",
@@ -379,7 +380,7 @@
     "id": "pm003",
     "title": "Agent Selection Blindness: Wrong agent dispatched, 18 of 20 agents never considered",
     "description": "## Incident (2026-03-06)\nDuring the Dispatch V2 session, 3 agents were dispatched from a roster of ~20. Agent selection was done by keyword-matching task descriptions to agent descriptions. The critic agent was dispatched for a UX critique task (screenshot the page, test interactions, evaluate visual design) but is designed exclusively for code architecture review (read files, trace data flow). It ran for 5+ minutes producing nothing and had to be killed. Meanwhile, the configurator agent, literally designed to answer \"which agents should I use for this task,\" was never even considered.\n\n## What actually happened\nThe user asked for three parallel agents: a design reviewer, a UX critic, and an editor researcher. I scanned my memory for agent descriptions that matched keywords. \"Visual polish\" matched design. \"Reviewer\" matched critic. \"Researching libraries\" matched scout. Picked three, dispatched them. Never reviewed the full roster. Never asked \"is there an agent that helps me pick agents?\" The critic agent tried to apply its 4-phase code review protocol to a 1000-line HTML file as if it were a code review task. It mapped territory, traced data flow, analyzed architecture, none of which was asked for. It never took a screenshot, never clicked a button, never evaluated any visual element.\n\n## Failure 1: No agent selection protocol\n- With 20 agents available, I picked 3 by keyword matching from memory\n- Never reviewed the full roster to see what else was available\n- The configurator agent exists specifically for this: \"set up the right combination of agents for a project phase, audit the agent roster for gaps\"\n- I forgot it existed because its name does not surface when you are thinking \"I need a UX reviewer\"\n- **Lesson: Agent selection needs a deliberate step, not a keyword guess. For multi-agent tasks, either review the full roster or consult configurator first.**\n- **Systemic fix: Agent routing table, a config mapping task categories to recommended agents. Plus outcome logging so future sessions know what works.**\n\n## Failure 2: Ambiguous agent boundaries\n- Critic described itself as \"architecture and logic reviewer,\" vague enough to seem like it could cover UX critique\n- Nothing in the description said \"CODE ONLY\" or \"does NOT do visual review\"\n- The design agent says \"UI components, styling, animations,\" which overlaps with what \"review\" could mean in the critic context\n- When boundaries are fuzzy, wrong picks happen\n- **Lesson: Agent descriptions must include explicit negative boundaries, stating what the agent does NOT do, not just what it does.**\n- **Systemic fix: Critic description updated to say CODE ONLY, does NOT review UI/visual/UX. Model changed from opus to sonnet to prevent timeouts. Write/Edit tools removed to enforce observer role.**\n\n## Action items\n1. Agent Track Record System: log outcomes per agent per task type (dispatch item 23j3qgw3, P0)\n2. Task-to-agent routing hints: config mapping task categories to recommended agents\n3. Sharper agent descriptions with explicit boundaries. Started with critic and scout\n4. Configurator as default first step for multi-agent work\n5. Create Post-Mortem agent or skill for structured incident capture (dispatch item pm-agent, P0)",
-    "status": "done",
+    "status": "todo",
     "priority": "p0",
     "workstream": "mission-control",
     "tags": [
@@ -618,5 +619,498 @@
     "created": "2026-03-06T22:59:44.206Z",
     "updated": "2026-03-06T22:59:44.207Z",
     "context": null
+  },
+  {
+    "id": "emlnupz9",
+    "title": "Track token usage and costs across agent sessions",
+    "description": "## Problem\nNo visibility into how many tokens each agent session consumes. Sessions vary wildly in cost — a quick scout lookup vs a 2-hour design overhaul — but there is zero tracking. Cannot answer: How much did today cost? Which agents burn the most tokens? Is a session spiraling?\n\n## Why this matters\n- Claude Code bills per token. Without tracking, spending is invisible until the monthly bill arrives.\n- Long-running agents (critic timeouts, design iterations) can silently burn through budget.\n- Knowing token usage per agent type helps make smarter dispatch decisions (e.g. \"use sonnet for this, not opus\").\n- Usage trends over time show whether workflow improvements are actually reducing cost.\n\n## What to track\n1. **Per-session totals** — input tokens, output tokens, total tokens, estimated cost (based on model pricing)\n2. **Per-tool-call granularity** — each tool invocation has token counts in the API response. Hook could capture these.\n3. **Model used** — opus vs sonnet vs haiku have very different pricing. Must track which model each session uses.\n4. **Running total** — daily, weekly, monthly aggregates visible on the dashboard.\n5. **Cost per workstream** — how much is Mission Control dev costing vs portfolio work vs personal tasks?\n\n## Implementation approach\n\n### Option A: Hook-based capture (preferred)\n- The PostToolUse hook already fires on every tool call. Claude Code exposes usage stats in the session metadata.\n- Extend hook.js to capture token counts from the tool result metadata and append to the session log.\n- State file gets running token totals that update with each tool call.\n- Dashboard reads these and displays them on agent cards + a usage summary.\n\n### Option B: Transcript parsing\n- Claude Code stores conversation transcripts as .jsonl in the projects dir.\n- Parse these after session ends to extract usage data.\n- Less real-time but simpler — no hook changes needed.\n- Could run as a batch job or on-demand from the dashboard.\n\n### Option C: Claude API usage endpoint\n- If Anthropic exposes a usage/billing API, query it directly.\n- Most accurate but depends on API availability.\n\n## Dashboard integration\n- **Agent cards**: Show token count badge (e.g. \"42k tokens\" or \"/usr/bin/bash.85\") on each card.\n- **Usage summary widget**: Daily/weekly/monthly totals at the top of the dashboard or on a dedicated stats page.\n- **Cost alerts**: Visual warning if a session exceeds a threshold (e.g. > 100k tokens).\n- **Workstream breakdown**: Pie chart or bar showing cost distribution across workstreams.\n- **Trend line**: Are costs going up or down over time?\n\n## Data storage\n- Token data per session: add to existing state files (lightweight, already written on every tool call).\n- Aggregates: new file like agent-hub/usage.json with daily rollups.\n- Historical: append-only log for long-term trend analysis.\n\n## Pricing reference (as of early 2026)\n- Opus: ~5/M input, ~5/M output\n- Sonnet: ~/M input, ~5/M output\n- Haiku: ~/usr/bin/bash.25/M input, ~.25/M output\n- These should be configurable since pricing changes.",
+    "status": "in-progress",
+    "priority": "p0",
+    "workstream": "mission-control",
+    "tags": [
+      "dashboard",
+      "hooks",
+      "infrastructure",
+      "ux"
+    ],
+    "linkedSession": null,
+    "context": null,
+    "created": "2026-03-07T00:42:30.155Z",
+    "updated": "2026-03-07T00:42:30.155Z"
+  },
+  {
+    "id": "pm006",
+    "title": "Post-Mortem: Agent polluted memory with low-level implementation details that no future agent needs",
+    "description": "## Incident (2026-03-06)\nAfter implementing the cost tracker feature, agent saved a retrospective file (cost-tracker.md) to memory containing implementation minutiae: Windows readline timeouts, sync vs async file reading benchmarks, transcript JSON field names, pricing tables, cache TTL values. 67 lines of noise injected into every future agent's context.\n\n## What went wrong\nThe agent confused 'things I learned while building this' with 'things that will help the next agent.' Implementation details are already in the code — saving them to memory is redundant AND harmful because memory gets loaded into every session.\n\n## The principle violated\nMemory is not a diary. It's not a notebook. It's a curated, high-signal data store that every future agent pays the cost of reading. Every line must earn its spot by being:\n1. **High-level** — patterns, not specifics\n2. **General** — serves ALL agents, not just ones working on the same feature\n3. **Actionable** — prevents mistakes or enables decisions\n4. **Non-redundant** — if it's in the code, don't also put it in memory\n\n## The deeper philosophy\nThe user is ascending past low-level coding. Mission Control exists so they can operate at the strategic level — dispatching agents, tracking progress, making decisions. Every piece of data in the system must serve that elevation. Muddy data pulls them back down.\n\n## Systemic fix\n- Finding f028 added: 'Memory must be high-level — never save implementation details'\n- cost-tracker.md DELETED. Replaced with one line in MEMORY.md: 'Hidden pages: /cost (token/cost tracker, POC)'\n- This principle must be applied retroactively: audit existing memory files for low-level noise\n\n## Litmus test for future memory entries\nBefore writing to memory, ask: 'If I deleted this line, would the next agent make a mistake?' If no — don't write it.",
+    "status": "done",
+    "priority": "p0",
+    "workstream": "mission-control",
+    "tags": [
+      "post-mortem",
+      "data-quality",
+      "memory",
+      "principle"
+    ],
+    "linkedSession": null,
+    "created": "2026-03-07T01:15:00.000Z",
+    "updated": "2026-03-07T01:15:00.000Z",
+    "context": null
+  },
+  {
+    "id": "vid-demo-dissect",
+    "title": "Dissect 44-min MC demo video for value proposition clarity",
+    "description": "Ephratah recorded a 44-minute informal demo/presentation of Mission Control to friends. The video needs to be dissected to:\n\n1. Extract the core value proposition as articulated naturally\n2. Identify the strongest selling points vs. the weakest explanations\n3. Note where the audience reacted, asked questions, or looked confused\n4. Produce a clear, refined pitch based on what worked\n5. Feed insights into the /why page content\n\nPrerequisites:\n- Adapt dissect-video command for home machine (currently has hardcoded work paths)\n- User needs to provide the video file path\n- May need VTT/transcript companion file\n\nThe dissect-video command is at: .claude/agent-hub/toolbox/commands/dissect-video.md\nIt needs 3 path changes for home machine (ffmpeg, output dir, INDEX.md).",
+    "status": "todo",
+    "priority": "p1",
+    "workstream": "mission-control",
+    "tags": [
+      "video",
+      "value-prop",
+      "demo",
+      "dissect"
+    ],
+    "linkedSession": null,
+    "created": "2026-03-07T06:30:00.000Z",
+    "updated": "2026-03-07T06:30:00.000Z",
+    "context": null,
+    "areas": [
+      "demo"
+    ]
+  },
+  {
+    "id": "camp-lifecycle",
+    "title": "Campaign lifecycle states: Setup → Active → Retrospective → Done",
+    "description": "Campaigns need 4 distinct states with different UI for each:\n\n**Setup**: Agent action items checklist extracted from user's original prompt. This is the verification step — before going active, confirm every ask is accounted for. Sprint prompts visible here. This state would have prevented the video dissection miss.\n\n**Active**: Live agent tracking, status badges, current tool/file. What we have now but better.\n\n**Retrospective**: Wins/Losses/Remaining with root cause analysis on losses. View buttons linking to deliverables. This is the learning phase — why did things go wrong, what do we prevent next time.\n\n**Done**: Archived, searchable. Previous campaigns browsable.\n\nThe setup state is the most critical — it's the contract between user and agents. If an item from the original prompt isn't in the action items, it WILL be missed.",
+    "status": "todo",
+    "priority": "p0",
+    "workstream": "mission-control",
+    "tags": [
+      "campaigns",
+      "lifecycle",
+      "infrastructure"
+    ],
+    "linkedSession": null,
+    "created": "2026-03-07T07:00:00.000Z",
+    "updated": "2026-03-07T07:00:00.000Z",
+    "context": null,
+    "areas": [
+      "dispatch"
+    ]
+  },
+  {
+    "id": "profile-v2",
+    "title": "Rebuild Ephratah's self-updating profile using MC's rich data",
+    "description": "The original 'Afrada Dash' profile was built during PHREDOMADE and was hyper-specific to the photography portfolio project. It's been deprecated for months.\n\nNow we have massively richer data across MC: findings, post-mortems, session histories, agent patterns, work style preferences, pain points, design philosophy. A general-purpose self-updating profile could surface:\n- How Ephratah works (stream of consciousness, values organization, Apple design)\n- What he's been building (MC, portfolio, work projects)\n- Patterns and preferences agents should know\n- A living document that updates as more sessions happen\n\nThis replaces the old project-specific profile with something that lives in MC and leverages all the data we already collect.",
+    "status": "todo",
+    "priority": "p1",
+    "workstream": "mission-control",
+    "tags": [
+      "profile",
+      "personalization",
+      "data"
+    ],
+    "linkedSession": null,
+    "created": "2026-03-07T08:00:00.000Z",
+    "updated": "2026-03-07T08:00:00.000Z",
+    "context": null,
+    "areas": [
+      "dashboard"
+    ]
+  },
+  {
+    "id": "demo-guide",
+    "title": "Create /demo-guide page — practical guide for showing MC to someone",
+    "description": "Separate from /why (value proposition), /demo-guide is the practical 'how to demo this' page:\n- What to show first, second, third\n- Talking points for each MC page\n- What's impressive vs what's still rough\n- How to handle questions\n- Pre-demo checklist (server running, agents active, dispatch populated)\n\n/why = front-end landing page explaining value\n/demo-guide = internal guide for Ephratah on HOW to present it effectively",
+    "status": "todo",
+    "priority": "p1",
+    "workstream": "mission-control",
+    "tags": [
+      "demo",
+      "documentation",
+      "presentation"
+    ],
+    "linkedSession": null,
+    "created": "2026-03-07T08:00:00.000Z",
+    "updated": "2026-03-07T08:00:00.000Z",
+    "context": null,
+    "areas": [
+      "demo"
+    ]
+  },
+  {
+    "id": "web-interface",
+    "title": "Investigate browser-based chat UI for MC instead of terminal",
+    "description": "Pain point: using an IDE/terminal to talk to agents has friction. A browser-based chat interface (like ChatGPT) where you can click on agents, see their status, and send them messages would remove that friction entirely.\n\nApproaches to investigate:\n- Claude API + web frontend (custom chat UI)\n- MCP server bridging MC to a web interface\n- Desktop app (Electron/Tauri) wrapping MC + chat\n- Integration with existing Claude Code via its API\n\nThis is the 'ChatGPT for your agents' vision Overwatch researched.",
+    "status": "backlog",
+    "priority": "p2",
+    "workstream": "mission-control",
+    "tags": [
+      "interface",
+      "ux",
+      "research"
+    ],
+    "linkedSession": null,
+    "created": "2026-03-07T09:00:00.000Z",
+    "updated": "2026-03-07T09:00:00.000Z",
+    "context": null,
+    "areas": [
+      "dashboard"
+    ]
+  },
+  {
+    "id": "campaign-metrics",
+    "title": "Define campaign success metrics and surface standout wins",
+    "description": "What makes a campaign 'great'? We need metrics:\n- Ratio of wins to losses\n- How many objectives completed vs remaining\n- Time to completion\n- Number of findings/post-mortems generated (learning density)\n- 'Pinch me' wins: standout achievements that exceeded expectations\n\nThe campaign page should surface these metrics prominently. Standout wins could appear in a special highlighted section.",
+    "status": "backlog",
+    "priority": "p2",
+    "workstream": "mission-control",
+    "tags": [
+      "campaigns",
+      "metrics",
+      "data"
+    ],
+    "linkedSession": null,
+    "created": "2026-03-07T09:00:00.000Z",
+    "updated": "2026-03-07T09:00:00.000Z",
+    "context": null,
+    "areas": [
+      "dispatch"
+    ]
+  },
+  {
+    "id": "serverjs-split",
+    "title": "Split server.js into modules: too large for agents to read in one pass",
+    "description": "server.js is 3600+ lines. Agents say 'Server.js is too large' and only read sections. This means they miss context and make mistakes.\n\nSplit into:\n- server.js (core HTTP, routing, helpers)\n- dashboard.js (embedded Dashboard HTML)\n- api-agents.js (agents API + readAgents)\n- api-dispatch.js (dispatch CRUD)\n- api-campaigns.js (campaigns API)\n- cost-tracker.js (cost computation)\n\nUse require() to compose. readPage and other shared helpers stay in server.js.",
+    "status": "todo",
+    "priority": "p1",
+    "workstream": "mission-control",
+    "tags": [
+      "infrastructure",
+      "refactor",
+      "developer-experience"
+    ],
+    "linkedSession": null,
+    "created": "2026-03-07T10:00:00.000Z",
+    "updated": "2026-03-07T10:00:00.000Z",
+    "context": null,
+    "areas": [
+      "infra"
+    ]
+  },
+  {
+    "id": "agent-notifications",
+    "title": "Sound + browser notification when agents need approval or finish",
+    "description": "P0 pain point: user keeps forgetting to check terminals when agents need input. Time is wasted.\n\nImplemented on campaigns page: polls every 5s, detects state changes, plays sound + browser Notification API when an agent transitions to 'waiting' (needs input) or 'idle' (finished). Works even when tab isn't focused.\n\nNext steps: make this work on Dashboard too, not just Campaigns. Consider a persistent notification bar across all MC pages.",
+    "status": "in-progress",
+    "priority": "p0",
+    "workstream": "mission-control",
+    "tags": [
+      "notifications",
+      "ux",
+      "productivity"
+    ],
+    "linkedSession": null,
+    "created": "2026-03-07T10:30:00.000Z",
+    "updated": "2026-03-07T10:30:00.000Z",
+    "context": null,
+    "areas": [
+      "notifications"
+    ]
+  },
+  {
+    "id": "workflow-diagram",
+    "title": "Make the agent workflow diagram explainable to others, not just yourself",
+    "description": "The current Workflow page shows hooks, memory files, and settings but doesn't explain the flow visually or narratively. If you were showing this to a friend or colleague, they wouldn't understand how agents, hooks, skills, tools, and the Toolbox connect.\n\nNeeded:\n- Visual flow diagram: user prompt → agent selection → tools/skills → hooks fire → state captured → findings loop\n- Explain the Toolbox: what agents exist, what skills exist, how they get selected\n- Show how CLAUDE.md ('The Ten Commandments') governs all agent behavior\n- Make it presentable, not just internal documentation\n\nAlso add a Toolbox section to Workflow explaining how tools and agents route through the system.",
+    "status": "todo",
+    "priority": "p1",
+    "workstream": "mission-control",
+    "tags": [
+      "workflow",
+      "documentation",
+      "diagram",
+      "toolbox"
+    ],
+    "linkedSession": null,
+    "created": "2026-03-07T12:00:00.000Z",
+    "updated": "2026-03-07T12:00:00.000Z",
+    "context": null,
+    "areas": [
+      "workflow",
+      "toolbox"
+    ]
+  },
+  {
+    "id": "session-analytics",
+    "title": "Session analytics: estimate talk time, prompt count, token spend per agent card",
+    "description": "Data-scientist approach to enriching agent cards with session metrics.\n\nCore metrics to surface per session:\n- Estimated talk time (user uses Wispr Flow voice-to-text, so prompt length / ~150 wpm = approximate speaking time)\n- Total prompts sent\n- Average prompt length (words)\n- Agent response count + avg length\n- Session duration (first prompt to last activity)\n- Estimated token spend (cross-reference with /cost data if available)\n- Tool call breakdown (how many Read, Write, Edit, Bash, etc.)\n\nData sources:\n- Prompt files (.claude/agent-hub/prompts/{sid}.ndjson)\n- Transcript files (~/.claude/projects/{slug}/{sid}.jsonl)\n- State files (.claude/agent-hub/states/{sid}.json) for timestamps\n- Cost tracker data for token estimates\n\nDisplay: new 'Analytics' tab on Dashboard agent cards showing these metrics with small charts/sparklines.\n\nThis is a dispatch-to-agent task — the orchestrator should NOT build this, a focused agent should.",
+    "status": "todo",
+    "priority": "p1",
+    "workstream": "mission-control",
+    "tags": [
+      "analytics",
+      "data",
+      "dashboard",
+      "enrichment"
+    ],
+    "linkedSession": null,
+    "created": "2026-03-07T12:30:00.000Z",
+    "updated": "2026-03-07T12:30:00.000Z",
+    "context": null,
+    "areas": [
+      "dashboard"
+    ]
+  },
+  {
+    "id": "video-intake-2hr",
+    "title": "Intake and analyze 2-hour demo/brainstorm recording — P-1 priority",
+    "description": "Above P0. Ephratah recorded a 2-hour Discord screen share + voice session demoing MC to a friend. This recording contains:\n- Detailed value proposition reasoning (why MC exists, who it helps)\n- Future vision and roadmap ideas (stated and inferable)\n- Real-time reactions from an outside observer\n- Design philosophy and product thinking\n- Rich context for /why page, President's Report, and multiple dispatch items\n\nProcess:\n1. User provides the MP4 file path\n2. Generate transcript (ffmpeg + whisper or VTT companion if available)\n3. Analyze transcript for: stated ideas, inferred ideas, value prop gems, future plans, audience reactions\n4. Cross-reference with existing dispatch items — which ideas already have tasks?\n5. Create new dispatch items for ideas that don't have tasks yet\n6. Extract quotes for /why page and President's Report\n7. Produce a structured 'Session Gold' document with all findings\n\nThis is the richest single data source MC has ever had. Handle with care.",
+    "status": "todo",
+    "priority": "p0",
+    "workstream": "mission-control",
+    "tags": [
+      "video",
+      "analysis",
+      "value-prop",
+      "roadmap",
+      "data"
+    ],
+    "linkedSession": null,
+    "created": "2026-03-07T13:00:00.000Z",
+    "updated": "2026-03-07T13:00:00.000Z",
+    "context": null,
+    "areas": [
+      "demo"
+    ]
+  },
+  {
+    "id": "presidents-report",
+    "title": "Create President's Report page — vision, direction, and roadmap for MC",
+    "description": "A page where the 'director' sets the strategic direction. Like a CEO letter or org-level OKR page.\n\nContent:\n- Where MC is headed (vision)\n- What the next 3 campaigns should be\n- Key decisions and their rationale\n- Open questions that need answering\n- What success looks like (measurable)\n\nThis is the strategic counterpart to Dispatch (tactical). Dispatch says 'what to do.' The President's Report says 'why we're doing it and where we're going.'\n\nShould be a hidden page like /why — accessible at /president or /vision. Not in the main nav until it's polished.",
+    "status": "todo",
+    "priority": "p1",
+    "workstream": "mission-control",
+    "tags": [
+      "strategy",
+      "vision",
+      "roadmap",
+      "leadership"
+    ],
+    "linkedSession": null,
+    "created": "2026-03-07T13:00:00.000Z",
+    "updated": "2026-03-07T13:00:00.000Z",
+    "context": null,
+    "areas": [
+      "demo"
+    ]
+  },
+  {
+    "id": "sonnet-subagents",
+    "title": "Default sub-agents to Sonnet model to save tokens",
+    "description": "Currently all agents run on whatever model is set via /model. Campaign sub-agents doing focused tasks (file analysis, code changes, research) should default to Sonnet, not Opus. Opus should be reserved for the orchestrator and complex reasoning tasks.\n\nImplementation ideas:\n- Agent briefs could specify 'run this with /model sonnet' as a first instruction\n- Or create a hook/skill that auto-sets model based on agent type\n- Or the prompt itself could include: 'Before starting, run /model sonnet'\n\nThis is about token cost architecture. Good task decomposition means sub-agents don't NEED the full power of Opus.",
+    "status": "todo",
+    "priority": "p1",
+    "workstream": "mission-control",
+    "tags": [
+      "tokens",
+      "cost",
+      "architecture",
+      "agents"
+    ],
+    "linkedSession": null,
+    "created": "2026-03-07T13:30:00.000Z",
+    "updated": "2026-03-07T13:30:00.000Z",
+    "context": null,
+    "areas": [
+      "agents"
+    ]
+  },
+  {
+    "id": "orchestrator-agent",
+    "title": "Create a reusable Orchestrator agent/skill that captures this session's patterns",
+    "description": "This session proved the orchestrator pattern works. Codify it into a reusable agent or skill:\n\n- Setup Checklist Protocol (capture objectives, map to agents, confirm before launch)\n- Brief writing with exact file paths, ownership, working agreements\n- Serve prompts via hotlink page\n- Monitor agents, capture findings in real-time\n- Post-sprint audit of all deliverables\n- Debrief compilation (wins, losses, remaining)\n\nThis session's orchestrator role should be learnable by future sessions. The orchestrator agent reads campaigns.json, understands the protocol, and executes it.",
+    "status": "todo",
+    "priority": "p0",
+    "workstream": "mission-control",
+    "tags": [
+      "agents",
+      "orchestration",
+      "patterns"
+    ],
+    "linkedSession": null,
+    "created": "2026-03-07T13:30:00.000Z",
+    "updated": "2026-03-07T13:30:00.000Z",
+    "context": null,
+    "areas": [
+      "agents"
+    ]
+  },
+  {
+    "id": "pm007",
+    "title": "Post-Mortem: Agent waited for input with no notification — user didn't know for 7+ minutes",
+    "description": "## Incident (2026-03-07)\nDuring the MC Evolution Sprint follow-up, a dispatched agent (likely Polisher or Integrator) reached a confirmation point ('Here's my plan. Are you ready?') and sat waiting for input. The user was focused on another terminal and the campaigns page. No sound cue, no browser notification, no visual alert. The agent waited 7+ minutes before the user discovered it.\n\n## What actually happened\nThe campaigns page has notification code that polls every 5 seconds and checks for state changes. But the sound (base64 WAV) is too minimal to hear, the browser notification permission may not have been granted, and the polling may not have caught the transition from 'thinking' to 'waiting' cleanly.\n\n## Failure 1: Notification system not actually working\n- Sound is inaudible or doesn't play\n- Browser notification permission wasn't confirmed\n- State transition detection may have a race condition with the 5s poll interval\n- **Lesson: Features that claim to notify the user MUST be tested end-to-end. A notification system that doesn't notify is worse than no system at all — it creates false confidence.**\n- **Systemic fix: Test the notification sound and browser alert by simulating a state change. Replace the base64 beep with an actual audible sound file. Add a 'Test Notification' button to the campaigns page.**\n\n## Failure 2: Orchestrator should detect agent states, not ask the user\n- When the user asked 'is the agent done?' the orchestrator asked the user to check their terminals instead of reading the state files\n- The state files had the answer (state: 'waiting', state: 'idle')\n- **Lesson: The orchestrator has access to state files. It should proactively report agent status changes, not ask the user to look.**\n\n## Action items\n1. Replace the base64 WAV with a real, audible notification sound\n2. Add a 'Test Notification' button to campaigns page\n3. Ensure browser notification permission is granted on page load\n4. Orchestrator should check state files when asked about agent status, never ask the user to check terminals",
+    "status": "open",
+    "priority": "p0",
+    "workstream": "mission-control",
+    "tags": [
+      "post-mortem",
+      "notifications",
+      "agent-workflow"
+    ],
+    "linkedSession": null,
+    "created": "2026-03-07T14:00:00.000Z",
+    "updated": "2026-03-07T14:00:00.000Z",
+    "context": null,
+    "areas": [
+      "notifications"
+    ]
+  },
+  {
+    "id": "machine-sync-agent",
+    "title": "Create a one-click sync agent between home and work machines",
+    "description": "MC runs on two machines (home PC + work laptop). Syncing is currently manual git push/pull with handoff prompts that break because paths differ.\n\nVision: a seamless switch. Like signing out of one machine and into another.\n- One button or command: 'switching to work' → pushes everything, tags current state\n- On work laptop: 'arriving from home' → pulls, verifies, sets mode to work\n- Should NOT interfere with Home/Work mode toggle (that's about filtering, not machine identity)\n- Machine identity is an overarching concept: 'this IS the work laptop' vs 'I'm viewing work items'\n\nWhat needs to sync:\n- MC data: dispatch, findings, campaigns, workstreams, areas\n- Toolbox: agents, skills, commands (already partially in toolbox/ directory)\n- State awareness: which sessions were running, what was the last campaign state\n- NOT: session state files (those are machine-local), mode.json (machine-local)\n\nImplementation: could be an agent (.claude/agents/sync.md) or a command (.claude/commands/sync.md) that handles the git operations + verification.",
+    "status": "todo",
+    "priority": "p1",
+    "workstream": "mission-control",
+    "tags": [
+      "sync",
+      "infrastructure",
+      "multi-machine"
+    ],
+    "linkedSession": null,
+    "created": "2026-03-07T14:30:00.000Z",
+    "updated": "2026-03-07T14:30:00.000Z",
+    "context": null,
+    "areas": [
+      "infra"
+    ]
+  },
+  {
+    "id": "health-page",
+    "title": "Create /health page: system integrity, API status, and diagnostics",
+    "description": "The Logic page has a live diagnostics section that's useful but the page itself is deprecated. Extract and improve the diagnostics into a dedicated /health page.\n\nShow:\n- API endpoint status (green/red for each endpoint)\n- State file count, active sessions, stale sessions\n- Disk usage (state files, logs, transcripts)\n- Hook health (last fire time, any errors)\n- Server uptime, memory usage\n- Data integrity checks (orphaned files, broken JSON)\n\nThis is the 'is everything working?' page. Like a Kubernetes health dashboard but for MC.",
+    "status": "todo",
+    "priority": "p2",
+    "workstream": "mission-control",
+    "tags": [
+      "health",
+      "diagnostics",
+      "infrastructure"
+    ],
+    "linkedSession": null,
+    "created": "2026-03-07T15:00:00.000Z",
+    "updated": "2026-03-07T15:00:00.000Z",
+    "context": null,
+    "areas": [
+      "infra"
+    ]
+  },
+  {
+    "id": "dashboard-campaign-link",
+    "title": "Dashboard agent cards: show campaign badge + link back to campaign page",
+    "description": "QoL: when an agent is part of a campaign, the Dashboard card should show:\n- A campaign badge (e.g., 'MC Evolution Sprint' with campaign color)\n- Clicking the badge takes you to /campaigns\n- The agent's role name (e.g., 'Medic', 'Findings Analyst') visible on the card\n\nImplementation: /api/agents already returns sessionId. Cross-reference with campaigns.json to find if the session belongs to a campaign. Add campaign name + role to the API response. Dashboard HTML renders the badge.\n\nOther QoL features to bundle:\n- Dashboard cards show statusLine (already in state files, just needs rendering)\n- Click agent card to expand inline (inspector panel lite) instead of navigating away\n- 'View in Campaign' button on session detail page\n- Color-code Dashboard cards to match their campaign agent color",
+    "status": "todo",
+    "priority": "p1",
+    "workstream": "mission-control",
+    "tags": [
+      "dashboard",
+      "campaigns",
+      "qol",
+      "backward-compat"
+    ],
+    "linkedSession": null,
+    "created": "2026-03-07T15:30:00.000Z",
+    "updated": "2026-03-07T15:30:00.000Z",
+    "context": null,
+    "areas": [
+      "dashboard"
+    ]
+  },
+  {
+    "id": "pm008",
+    "title": "Post-Mortem: Dashboard blank — server-side Node.js code injected into client-side browser JavaScript",
+    "description": "## Incident (2026-03-07)\nDashboard showed header and nav but zero agent cards. The page was completely blank except for '5 active' in the corner.\n\n## What actually happened\nThe orchestrator added a `getCampaignLookup()` function to the Dashboard's renderCard code. This function used `readJSON()` and `fs.readFileSync()` — Node.js-only APIs. But the Dashboard HTML is a template literal in server.js that gets served to the BROWSER. The browser has no `fs` module. The function crashed silently on first call, killing the entire render pipeline.\n\n## Root cause\nThe Dashboard code lives inside a template literal (`const DETAIL_PAGE = \\`...\\``) in server.js. It LOOKS like server code because it's in server.js, but it RUNS in the browser. The orchestrator didn't distinguish between server-side and client-side execution contexts.\n\n## Failure 1: Wrong execution context\n- Used `readJSON(CAMPAIGNS_F, [])` which calls `fs.readFileSync` — a Node.js API\n- This was injected into browser JavaScript where `fs` doesn't exist\n- The browser silently swallowed the error, resulting in a blank page with no visible error\n- **Lesson: Code inside template literals in server.js that gets served as HTML runs in the BROWSER, not in Node.js. Never use fs, path, require, or any Node.js API in embedded Dashboard/page JavaScript. Use fetch() to get data from API endpoints instead.**\n\n## Failure 2: No regression test after Dashboard changes\n- The orchestrator restarted the server and checked HTTP 200 status but never verified the Dashboard actually rendered cards\n- A simple `curl | grep card-body` would have caught zero cards\n- **Lesson: After any change to embedded Dashboard HTML in server.js, verify cards render — not just that the page loads.**\n\n## Action items\n1. Add a code comment in server.js above the DASHBOARD template literal: 'BROWSER CODE — no fs, path, require, readJSON'\n2. The /health page regression check should verify Dashboard renders >0 cards\n3. Consider extracting Dashboard to a separate HTML file (like other pages) to make the client/server boundary obvious",
+    "status": "open",
+    "priority": "p0",
+    "workstream": "mission-control",
+    "tags": [
+      "post-mortem",
+      "infrastructure",
+      "dashboard"
+    ],
+    "linkedSession": null,
+    "created": "2026-03-07T16:00:00.000Z",
+    "updated": "2026-03-07T16:00:00.000Z",
+    "context": null,
+    "areas": [
+      "dashboard",
+      "bug"
+    ]
+  },
+  {
+    "id": "pm009",
+    "title": "Post-Mortem: Toolbox utilization blind spot — 34 skills, 13 agents, near-zero usage detected",
+    "description": "## Incident (2026-03-07)\nWhile building session analytics for Dashboard agent cards, the Analyst agent discovered that across 58 tracked sessions, toolbox skill usage is near-zero. Only 8 Skill tool_use calls exist across ALL transcripts. 13 custom agents exist in the toolbox but sub-agent spawning shows generic types (general-purpose) more often than named toolbox agents.\n\n## The numbers\n- **34 skills** in `.claude/skills/` (frontend-design, brainstorming, systematic-debugging, verification-before-completion, etc.)\n- **13 agents** in `.claude/agents/` (design, scout, critic, qa, perf, a11y, etc.)\n- **5 commands** in `.claude/commands/` (localtest, build, deep-scrape, name, end-session)\n- **8 total Skill invocations** found across all 135 transcript files\n- **Most sessions show 0 skills, 0 named agents**\n\n## Two distinct failures\n\n### Failure 1: Skills aren't triggering automatically\n- Skills like `verification-before-completion`, `systematic-debugging`, `brainstorming` have auto-trigger descriptions\n- Despite this, they rarely appear in transcripts as Skill tool_use calls\n- Either the trigger conditions aren't being met, or Claude is solving the same problems without invoking the skill\n- **The user invested significant effort building these skills. They should be firing.**\n\n### Failure 2: Sub-agent tool usage is invisible\n- When a sub-agent (design, scout, critic) is spawned, Claude Code does NOT persist its sidechain transcript\n- The main transcript records the dispatch and the final output, but NOT what happened inside\n- We can't tell if a design agent used 15 Reads and 3 Writes, or if it used the brainstorming skill internally\n- **Claude Code platform limitation — sidechain data is lost**\n\n## Why this matters\nThe user built a toolbox specifically so agents work in a structured, repeatable way. If the tools aren't being used, every session is ad-hoc improvisation instead of disciplined execution. The analytics tab now surfaces this gap visually — making the invisible visible.\n\n## Action items\n1. P0: Investigate why auto-trigger skills aren't firing — check if trigger descriptions need tuning\n2. P0: Sub-agent sidechain visibility — hook into PostToolUse for sub-agents, or parse temp output files\n3. Consider: skill usage dashboard on Toolbox page showing adoption rates\n4. Consider: session-start hook that reminds agents of available skills for the task type",
+    "status": "open",
+    "priority": "p0",
+    "workstream": "mission-control",
+    "tags": [
+      "post-mortem",
+      "analytics",
+      "toolbox",
+      "skills",
+      "machine:home"
+    ],
+    "linkedSession": "ce794c20-903b-4efe-bcd3-6cc75d762cbf",
+    "created": "2026-03-07T22:00:00.000Z",
+    "updated": "2026-03-07T22:00:00.000Z",
+    "context": null,
+    "areas": [
+      "toolbox",
+      "analytics",
+      "dashboard"
+    ]
+  },
+  {
+    "id": "competitor-indydevdan",
+    "title": "Deep-dive IndyDevDan multi-agent observability video — closest competitor analysis",
+    "description": "IndyDevDan (GitHub: disler) published 'I Can SEE EVERYTHING: Claude Code Hooks for Multi Agent Observability' (Jul 2025, YouTube: 9ijnN985O_c). This is the closest competitor to MC — same hooks API, same multi-agent monitoring problem.\n\nAction items:\n1. Watch the full 20-min video, extract UI patterns and dashboard design choices\n2. Compare their event model (12 hook types, WebSocket, SQLite) against MC's approach (JSON files, readPage)\n3. Identify what they do better on the surface/presentation layer\n4. Identify what MC does that they don't (findings, campaigns, cost, learning loop, dispatch)\n5. Update /why competitive section with specific visual comparisons if useful\n6. Consider: what design inspiration can improve MC's dashboard and agent cards?\n\nThis is NOT about copying — it's about understanding the landscape and ensuring MC's positioning is sharp. Their tool watches agents. MC manages them and makes them smarter. That gap needs to be crystal clear.",
+    "status": "todo",
+    "priority": "p1",
+    "workstream": "mission-control",
+    "tags": [
+      "competitive-analysis",
+      "design",
+      "research",
+      "machine:home"
+    ],
+    "linkedSession": null,
+    "created": "2026-03-07T13:00:00.000Z",
+    "updated": "2026-03-07T13:00:00.000Z",
+    "context": null,
+    "areas": [
+      "dashboard",
+      "design"
+    ]
+  },
+  {
+    "id": "demo-boonyeep",
+    "title": "Demo MC to Boon Yeep (former manager at Microsoft)",
+    "description": "Low priority. Eventually show Boon Yeep what MC can do. He has context on the work environment and would understand the value prop for Microsoft/enterprise Claude Code users.",
+    "status": "backlog",
+    "priority": "p3",
+    "workstream": "mission-control",
+    "tags": [
+      "demo",
+      "sharing",
+      "work",
+      "machine:home"
+    ],
+    "linkedSession": null,
+    "created": "2026-03-07T13:30:00.000Z",
+    "updated": "2026-03-07T13:30:00.000Z",
+    "context": null,
+    "areas": [
+      "demo"
+    ]
   }
 ]

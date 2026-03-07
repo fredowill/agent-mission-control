@@ -40,6 +40,41 @@ function detectSkill(text) {
   return null;
 }
 
+// ── Display name extraction ──
+// Extracts a short topic from the user's first prompt for terminal/dashboard display.
+function extractDisplayName(prompt) {
+  let name = prompt.split('\n')[0].trim();
+  // Strip markdown headers
+  name = name.replace(/^#+\s*/, '');
+  // Strip conversational prefixes
+  name = name.replace(/^(hey,?\s*|hi,?\s*|hello,?\s*|please\s+|can you\s+|could you\s+|i need you to\s+|i want you to\s+)/i, '');
+  // Truncate at 50 chars on word boundary
+  if (name.length > 50) {
+    name = name.substring(0, 50);
+    const lastSpace = name.lastIndexOf(' ');
+    if (lastSpace > 20) name = name.substring(0, lastSpace);
+    name += '...';
+  }
+  return name || null;
+}
+
+// ── Terminal title ──
+// Sets the terminal tab title. Multiple approaches for Windows Terminal compatibility.
+// Best-effort, never crashes. At least one approach should work.
+function setTerminalTitle(title) {
+  // Approach 1: process.title — on Windows, calls SetConsoleTitleW (Win32 API)
+  try { process.title = title; } catch {}
+  // Approach 2: ANSI OSC escape — works in terminals that support VT100
+  const seq = `\x1b]0;${title}\x07`;
+  try { process.stderr.write(seq); } catch {}
+  // Approach 3: Write directly to TTY device (bypasses capture)
+  try {
+    const fd = fs.openSync('/dev/tty', 'w');
+    fs.writeSync(fd, seq);
+    fs.closeSync(fd);
+  } catch {}
+}
+
 // ── Dedup guard ──
 // Skip if the exact same prompt was written in the last 5 seconds
 function isDuplicate(file, prompt) {
@@ -103,10 +138,12 @@ process.stdin.on('end', () => {
       // Preserve claudePid and resumeCount from existing state file
       let claudePid = null;
       let resumeCount = 0;
+      let displayName = null;
       try {
         const prev = JSON.parse(fs.readFileSync(stateFile, 'utf8'));
         claudePid = prev.claudePid || null;
         resumeCount = prev.resumeCount || 0;
+        displayName = prev.displayName || null;
       } catch {}
 
       // If stored PID exists, check liveness. Dead PID = /resume in new terminal.
@@ -123,6 +160,13 @@ process.stdin.on('end', () => {
         } catch { claudePid = null; }
       }
 
+      // Auto-name session from first user prompt (skip skills and long expansions)
+      if (!displayName && !skillName && prompt.length < 500) {
+        displayName = extractDisplayName(prompt);
+      }
+      // Re-assert terminal title on every prompt (handles resume / new terminal)
+      if (displayName) setTerminalTitle(displayName);
+
       const stateData = {
         sessionId: sid,
         tool: null,
@@ -130,11 +174,38 @@ process.stdin.on('end', () => {
         ts: Date.now(),
         claudePid,
         resumeCount,
+        displayName,
         state: 'thinking',
         emoji: '💭',
         label: 'THINKING',
       };
       fs.writeFileSync(stateFile, JSON.stringify(stateData));
+
+      // ── Campaign auto-linking ──
+      // If first prompt mentions a known campaign agent name, auto-link this session
+      try {
+        const campaignsFile = path.join(__dirname, 'campaigns.json');
+        const isFirstPrompt = !fs.existsSync(file) || fs.readFileSync(file, 'utf8').trim().split('\n').length <= 1;
+        if (isFirstPrompt && prompt.length > 50) {
+          const campaigns = JSON.parse(fs.readFileSync(campaignsFile, 'utf8'));
+          let changed = false;
+          for (const camp of campaigns) {
+            if (!camp.agents) continue;
+            for (const agent of camp.agents) {
+              // Match: "You're the Medic agent" or "You're the Video Analyzer agent"
+              const namePattern = new RegExp("you(?:'re| are) the " + agent.name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'i');
+              if (namePattern.test(prompt) && !agent.sessionId) {
+                agent.sessionId = sid;
+                agent.status = 'active';
+                changed = true;
+                break;
+              }
+            }
+            if (changed) break;
+          }
+          if (changed) fs.writeFileSync(campaignsFile, JSON.stringify(campaigns, null, 2));
+        }
+      } catch {} // never crash
 
       // Append to activity log
       const logFile = path.join(LOGS_DIR, `${sid}.ndjson`);

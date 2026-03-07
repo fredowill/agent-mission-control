@@ -60,5 +60,37 @@
     ],
     "added": "2026-03-03",
     "pinned": true
+  },
+  {
+    "id": "stripe-minions-one-shot-end-to-end-coding-agents",
+    "name": "Stripe Minions: One-Shot End-to-End Coding Agents",
+    "url": "https://stripe.dev/blog/minions-stripes-one-shot-end-to-end-coding-agents",
+    "category": "Research",
+    "description": "Stripe built Minions on top of Goose (open-source). Generates PRs from Slack messages � 1,000+ merged PRs/week. Key takeaways: agent orchestration at enterprise scale, but HN commenters flag reviewer burnout, code quality concerns, and vanity metrics. Relevant for MC because it shows the enterprise agent management problem at scale � and the pain points MC could solve (quality tracking, institutional memory, preventing repeated mistakes). HN discussion: https://news.ycombinator.com/item?id=47110495",
+    "tags": [
+      "enterprise",
+      "agents",
+      "stripe",
+      "coding-agents",
+      "competitive-intel"
+    ],
+    "added": "2026-03-07",
+    "pinned": false
+  },
+  {
+    "id": "stripe-minions-one-shot-end-to-end-coding-agents",
+    "name": "Stripe Minions: One-Shot End-to-End Coding Agents",
+    "url": "https://stripe.dev/blog/minions-stripes-one-shot-end-to-end-coding-agents",
+    "category": "Research",
+    "description": "Stripe built Minions on top of Goose (open-source). Generates PRs from Slack messages -- 1,000+ merged PRs/week. Key takeaways: enterprise agent orchestration at scale, but HN flags reviewer burnout and code quality concerns. Relevant for MC: shows the enterprise agent management problem and pain points MC could solve (quality tracking, institutional memory, preventing repeated mistakes). HN: https://news.ycombinator.com/item?id=47110495",
+    "tags": [
+      "enterprise",
+      "agents",
+      "stripe",
+      "coding-agents",
+      "competitive-intel"
+    ],
+    "added": "2026-03-07",
+    "pinned": false
   }
 ]

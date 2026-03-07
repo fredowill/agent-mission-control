@@ -19,7 +19,8 @@
     "lesson": "Every UI change must be visually verified via Playwright screenshot AND critically evaluated — not \"did something render\" but \"does it actually look right.\"",
     "meta": "Session: 026c9577",
     "id": "f002",
-    "context": null
+    "context": null,
+    "importance": "critical"
   },
   {
     "tier": "tier1",
@@ -30,7 +31,8 @@
     "lesson": "When the user declares a design truth, it becomes a hard constraint. If code seems \"wrong\" but aligns with a stated principle, ASK before changing.",
     "meta": "Session: 7e4fe890 • Led to CLAUDE.md creation",
     "id": "f003",
-    "context": null
+    "context": null,
+    "importance": "critical"
   },
   {
     "tier": "tier1",
@@ -41,7 +43,8 @@
     "lesson": "Cross-session memory of principles and design constraints is essential. Store PATTERNS not INCIDENTS. Distill, don't hoard.",
     "meta": "Session: 7e4fe890 • Led to principles.md + postmortem pipeline",
     "id": "f004",
-    "context": null
+    "context": null,
+    "importance": "critical"
   },
   {
     "tier": "tier1",
@@ -240,5 +243,153 @@
     "lesson": "Before modifying .gitignore or proposing commits, identify the repo's purpose. Ask: what is this repo FOR? Do these files serve that purpose? Never assume a parent directory's repo should track everything inside it.",
     "meta": "Session: current. PM005. Happened 4 times in one session despite corrections.",
     "context": null
+  },
+  {
+    "id": "f023",
+    "tier": "tier5",
+    "tag": "pain-point",
+    "title": "Terminal Identity Crisis",
+    "quote": "\"A huge issue for me now would make my productivity much much better -- being able to know which terminal is which.\"",
+    "body": "When running 3-5 Claude Code sessions simultaneously, every Windows Terminal tab looks identical. All show 'Claude Code' with no visual differentiation. User must click into each terminal to figure out which agent is doing what.",
+    "lesson": "Agent sessions need visual identity -- terminal title, color coding, or tagline display -- that maps to what the Dashboard shows. Multi-agent workflows are unusable without fast identification.",
+    "meta": "Coordinated Sprint, 2026-03-06",
+    "context": null
+  },
+  {
+    "id": "f024",
+    "tier": "tier5",
+    "tag": "pain-point",
+    "title": "Prompt Format Friction",
+    "quote": "\"Sometimes you just give me 'Okay here's the prompt and give me the MD file.' Now I have to go and open the MD file... this is a huge pain point.\"",
+    "body": "When agents produce prompts for other agents, they often give an MD file path instead of a self-contained prompt with inline context. Forces the user to manually open files, copy-paste paths, and context-switch.",
+    "lesson": "Prompts must be self-contained and copy-pasteable. Include file paths TO READ inside the prompt text itself, not as separate deliverables. The user's hands should never leave the terminal.",
+    "meta": "Coordinated Sprint, 2026-03-06",
+    "context": null
+  },
+  {
+    "id": "f025",
+    "tier": "tier5",
+    "tag": "pain-point",
+    "title": "No Session Retrospective",
+    "quote": "\"Adding insights and a retrospective that an agent, by default, always gives whenever I say 'alright we're ending the session.'\"",
+    "body": "When sessions end, all context evaporates. No structured summary of accomplishments, decisions, or unfinished work. Agent cards go stale without enrichment.",
+    "lesson": "Session lifecycle needs a close ritual -- automatic or triggered -- that captures what happened, what was decided, and what's next. This data enriches agent cards and feeds the knowledge base.",
+    "meta": "Coordinated Sprint, 2026-03-06",
+    "context": null
+  },
+  {
+    "id": "f026",
+    "tier": "tier5",
+    "tag": "pain-point",
+    "title": "Multi-Agent Coordination is Manual",
+    "quote": "\"It's kind of hard when I have one task and I'm trying to navigate between different terminal windows, who's who.\"",
+    "body": "Running a coordinated multi-agent sprint requires manual briefing docs, separate prompts, and mental tracking of who's doing what. No tooling support for parallel workstreams or coordinated efforts.",
+    "lesson": "MC should support coordinated sprints as a first-class concept -- briefing agents, tracking parallel progress, preventing file conflicts, and producing a unified retrospective.",
+    "meta": "Coordinated Sprint, 2026-03-06",
+    "context": null
+  },
+  {
+    "id": "f027",
+    "tier": "tier1",
+    "tag": "principle",
+    "title": "Never dump prompts inline -- use a hotlink copy page",
+    "quote": "\"That was very cumbersome to find the inline while trying to copy a certain text. I sent prompt one twice to two different agents so obviously I had to end one.\"",
+    "body": "Agent produced 3 multi-paragraph prompts as inline code blocks in the conversation. User had to manually drag-select each one in the terminal, couldn't tell where one ended and the next began, and accidentally pasted the wrong prompt into two terminals -- wasting a session and causing confusion.",
+    "lesson": "When generating prompts for the user to copy-paste into other terminals, NEVER dump them inline. Always create a hotlink page (e.g. localhost:3033/prompts) with one-click copy buttons. The cost of one extra file is trivial. The cost of a mispasted prompt is a wasted agent session. This is now a MANDATORY pattern for coordinated sprints.",
+    "meta": "Coordinated Sprint, 2026-03-06. Led to /prompts page.",
+    "context": null,
+    "importance": "critical"
+  },
+  {
+    "id": "f028",
+    "tier": "tier1",
+    "tag": "principle",
+    "title": "Memory must be high-level -- never save implementation details",
+    "quote": "\"I don't want to know the low-level stuff. I am trying to elevate myself further away from the lowest level of coding. Think like a data scientist -- keep important parts of data, don't create muddy data.\"",
+    "body": "Agent saved a retrospective file (cost-tracker.md) full of implementation details: 'use sync readFileSync on Windows,' 'filter <synthetic> model entries,' 'readline streams timeout with 100+ files.' None of this helps the next agent. It's noise that pollutes context. The code itself already documents these decisions. Memory files get injected into EVERY future session -- every line must earn its spot.",
+    "lesson": "Memory and retrospectives must contain only what serves ALL future agents at a high level. Implementation details belong in code comments at the point of editing, NOT in memory files. Before writing to memory, ask: 'Would this prevent a mistake, or is it just documenting how I solved something?' If the latter, it doesn't belong. Data quality over data quantity -- always.",
+    "meta": "Session: cost tracker implementation, 2026-03-06. Led to deletion of cost-tracker.md. Post-mortem PM006.",
+    "context": null
+  },
+  {
+    "id": "f029",
+    "tier": "tier1",
+    "tag": "principle",
+    "title": "Pause after delivering what the user asked for",
+    "quote": "\"It was supposed to give me prompts to hand off but it did it at the beginning and then started flying down and so I couldn't even track it. I was like damn, is it being stupid or did it just not do it? It did it but the chats flew by.\"",
+    "body": "Agent produced a requested deliverable (handoff prompts) at the start of output, then immediately launched into 10+ minutes of follow-up work. The deliverable scrolled off-screen. User couldn't find it, couldn't act on it, and had to wonder whether the agent had even done it.",
+    "lesson": "When the user asks you to produce something (prompts, summaries, plans, handoffs), deliver it and PAUSE. Let the user see it, copy it, act on it. Do not immediately start the next phase of work. A deliverable that scrolls off-screen may as well not exist. Present, then wait for acknowledgment before continuing.",
+    "meta": "Multiple sessions, 2026-03-06. Pattern observed across coordinated sprints.",
+    "context": null
+  },
+  {
+    "id": "f030",
+    "tier": "tier1",
+    "tag": "principle",
+    "title": "Data change is not a UI change -- the user sees the screen, not the JSON",
+    "quote": "\"This is not the improvement I asked you to do. I'm almost as upset that I could file a post-mortem. The page looks the exact same.\"",
+    "body": "User asked for the Campaign page to show wins, losses, and outcomes. Agent updated campaigns.json with new status fields and agent names but did not update the page HTML to render that data. The page looked identical. Editing backend data without updating the frontend that displays it is invisible work -- the user sees the screen, not the JSON file.",
+    "lesson": "When the user asks to improve a page, they mean what they SEE. Updating data files without updating the rendering code is not a deliverable. Always close the loop: data change + UI change + visual verification. If you changed data but the page looks the same, you did nothing.",
+    "meta": "Coordinated Sprint, 2026-03-06. Campaigns page debrief.",
+    "context": null,
+    "importance": "critical"
+  },
+  {
+    "id": "f031",
+    "tier": "tier5",
+    "tag": "pain-point",
+    "title": "Agent deliverables not wired — files exist but aren't accessible",
+    "quote": "\"Can you tell me why /why page wasn't wired? This was a pretty big miss.\"",
+    "body": "Compass agent created why-page.html as a deliverable. The orchestrator never audited agent outputs to check if they needed wiring (server routes, nav links). The file sat on disk for the entire session with no route. The user had to discover it was missing and ask why. Pattern: agents produce files, nobody verifies they're actually reachable by the user.",
+    "lesson": "After any coordinated sprint, the orchestrator must audit every agent's output files and verify each deliverable is accessible — routes wired, links added, pages loading. A file on disk is not a deliverable. A deliverable is something the user can reach.",
+    "meta": "Coordinated Sprint, 2026-03-07. /why page was created but never routed until user asked.",
+    "context": null
+  },
+  {
+    "id": "f032",
+    "tier": "tier1",
+    "tag": "principle",
+    "title": "Tasks spawned during campaign review must go into remaining",
+    "quote": "\"Did you add profile V2 and demo guide P1s to remaining? I don't want to just get lost in the sauce of dispatch.\"",
+    "body": "While reviewing the campaign debrief, new tasks were created (profile-v2, demo-guide) and added to dispatch but NOT to the campaign's remaining list. The campaign is the user's primary tracking view during a sprint. Dispatch items created as a result of the campaign that don't appear in the campaign's remaining section are invisible to the user in context.",
+    "lesson": "Any task created BECAUSE of a campaign must be added to that campaign's remaining list, not just to dispatch. The campaign is the source of truth during a sprint. Dispatch is the global backlog. Both must stay in sync. If you create a task while reviewing a campaign, add it to remaining in the same edit.",
+    "meta": "Coordinated Sprint, 2026-03-07. Profile-v2 and demo-guide were in dispatch but missing from campaign remaining.",
+    "context": null
+  },
+  {
+    "id": "f033",
+    "tier": "tier1",
+    "tag": "principle",
+    "title": "MC is an interface layer, not an IDE. Your job is to create, not read files.",
+    "quote": "\"I don't use my IDE with Mission Control. This is an interface layer built on top of CLI. My job is to create, not to look at files.\"",
+    "body": "Mission Control eliminates the need to open an IDE, read files, or context-switch into code. The user operates at command level: see all agents, their status, what they learned, what went wrong. The 'oh shit' moment: you can see everything without opening a single file. This is the core value proposition and must be preserved in every design decision.",
+    "lesson": "Every MC feature must work without requiring the user to open files, read code, or use an IDE. If a feature requires the user to leave the browser and go read something, it's broken. MC is the interface layer. The CLI does the work. The user creates and directs.",
+    "meta": "Coordinated Sprint, 2026-03-07. Core value proposition insight.",
+    "context": null,
+    "importance": "critical"
+  },
+  {
+    "id": "f034",
+    "tier": "tier1",
+    "tag": "principle",
+    "title": "One long conversation + many short ones beats many long ones",
+    "quote": "\"Instead of having a bunch of different big-ass conversations, having one big-ass conversation and a bunch of small conversations.\"",
+    "body": "Running multiple large-context agents simultaneously burns tokens across all of them. The efficient pattern: one orchestrator session with full context (1M tokens, long-lived), dispatching focused short-lived agents for specific tasks. The orchestrator holds the big picture. The dispatched agents get narrow briefs, execute fast, and close. This saves tokens, reduces context pollution, and keeps each agent focused on one thing.",
+    "lesson": "Default to the orchestrator pattern: 1 long session that coordinates + many short sessions that execute. Avoid running multiple long-lived agents in parallel unless they truly need independent long context. Short agents with tight briefs are cheaper and often better. Token cost is a real constraint that shapes architecture.",
+    "meta": "Coordinated Sprint, 2026-03-07. Token efficiency insight from campaign review.",
+    "context": null,
+    "importance": "critical"
+  },
+  {
+    "id": "f035",
+    "tier": "tier1",
+    "tag": "principle",
+    "title": "Never fly off before the user has what they need to act",
+    "quote": "\"Don't go update the retrospective before you've given me what I need to fire off my tasks.\"",
+    "body": "The orchestrator started working on follow-up tasks before giving the user the prompts needed to dispatch agents. The user was blocked, waiting for copy-paste prompts, while the agent was already editing files. The user's action items must always come first.",
+    "lesson": "If the user has a blocking action (dispatching agents, copying prompts, reviewing something), deliver that FIRST and confirm they have it. Only then proceed with your own work. The user's next action is always higher priority than the agent's next edit.",
+    "meta": "Coordinated Sprint, 2026-03-07. Repeated pattern across the sprint.",
+    "context": null,
+    "importance": "critical"
   }
 ]

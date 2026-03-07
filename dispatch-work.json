@@ -51,5 +51,75 @@
     "context": null,
     "created": "2026-03-06T22:53:54.906Z",
     "updated": "2026-03-06T22:53:54.906Z"
+  },
+  {
+    "id": "azy57qxr",
+    "title": "Untitled",
+    "description": "ddd",
+    "status": "todo",
+    "priority": "p0",
+    "workstream": "",
+    "tags": [],
+    "linkedSession": null,
+    "context": "work",
+    "created": "2026-03-07T00:39:31.478Z",
+    "updated": "2026-03-07T00:39:35.557Z"
+  },
+  {
+    "id": "n17nkr09",
+    "title": "Tracking how much im spending in tokens",
+    "description": "graphic ",
+    "status": "in-progress",
+    "priority": "p0",
+    "workstream": "mission-control",
+    "tags": [],
+    "linkedSession": null,
+    "context": "work",
+    "created": "2026-03-07T00:40:28.033Z",
+    "updated": "2026-03-07T00:40:54.779Z",
+    "areas": [
+      "agents"
+    ]
+  },
+  {
+    "id": "wk-summit01",
+    "title": "Create Slack group chat for summit brainstorming",
+    "description": "Create a new Slack group chat and start brainstorming for the summit. Been slacking on this — need to get the conversation going ASAP.\n\nTODO:\n- Create the group chat, invite the right people\n- Seed it with initial brainstorming topics / agenda ideas\n- Get discussion flowing",
+    "status": "todo",
+    "priority": "p0",
+    "workstream": "",
+    "tags": ["summit", "slack", "brainstorming"],
+    "linkedSession": null,
+    "context": "work",
+    "created": "2026-03-06T23:00:00.000Z",
+    "updated": "2026-03-06T23:00:00.000Z"
+  },
+  {
+    "id": "wk-cares-showcase",
+    "title": "Clean up CARES guide and present to manager",
+    "description": "Big push to get the CARES guide polished and presentable. This is a showcase moment.\n\n1. Launch a campaign to clean up the CARES guide content\n2. Fix content quality, structure, and completeness\n3. Make it visually sharp and demo-ready\n4. Present to manager — show what MC + agents can produce\n\nThis is the first real 'showcase' — proving the agent workflow produces real, presentable work product.",
+    "status": "todo",
+    "priority": "p0",
+    "workstream": "cares",
+    "tags": ["showcase", "cares", "presentation", "manager"],
+    "linkedSession": null,
+    "context": "work",
+    "created": "2026-03-07T06:00:00.000Z",
+    "updated": "2026-03-07T06:00:00.000Z",
+    "areas": ["showcase", "cares"]
+  },
+  {
+    "id": "wk-hooks-demo",
+    "title": "Demo hooks to teammates at work — FHL presentation",
+    "description": "P0 — Monday deadline.\n\nPresent Claude Code hooks as something learned during FHL experimentation. Frame it as: 'I've been exploring CLI agent workflows and discovered hooks are incredibly powerful.'\n\nKey constraints:\n- DO NOT reveal Mission Control exists. This is personal IP.\n- Present as if you built everything in CLI with scraps. Tony Stark energy.\n- Show hooks in the context of the CARES guide work — real, practical application\n- Focus: 'I learned two things — how cool coding can be, and how hooks automate quality checks'\n\nDemo ideas:\n- Hook that validates code changes against a checklist before commit\n- Hook that auto-captures session context (what was worked on, key decisions)\n- Hook that warns about file conflicts when multiple people edit the same thing\n- Show how hooks prevent repeat mistakes without manual effort\n\nPrep needed:\n1. Pick 2-3 hooks that are impressive but don't expose MC\n2. Create a clean demo script showing hooks firing in real-time\n3. Connect to CARES guide context — 'I used this to build the guide faster'\n4. Practice the narrative: discovery → application → results",
+    "status": "todo",
+    "priority": "p0",
+    "workstream": "cares",
+    "tags": ["showcase", "hooks", "fhl", "presentation", "monday-deadline"],
+    "linkedSession": null,
+    "context": "work",
+    "created": "2026-03-07T11:00:00.000Z",
+    "updated": "2026-03-07T11:00:00.000Z",
+    "areas": ["showcase"]
   }
 ]

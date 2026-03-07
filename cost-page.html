@@ -1,0 +1,892 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Cost Tracker &mdash; Mission Control</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=DM+Sans:wght@400;500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#fff;--bg2:#fafafa;--surface:#f4f4f5;--surface2:#e4e4e7;
+  --text:#09090b;--text2:#52525b;--text3:#a1a1aa;--sep:#e4e4e7;
+  --purple:#8b5cf6;--purple-bg:rgba(139,92,246,0.06);
+  --blue:#3b82f6;--blue-bg:rgba(59,130,246,0.06);
+  --green:#22c55e;--green-bg:rgba(34,197,94,0.06);
+  --amber:#f59e0b;--amber-bg:rgba(245,158,11,0.06);
+  --rose:#ef4444;--rose-bg:rgba(239,68,68,0.05);
+  --radius:12px;
+}
+body{background:var(--bg2);color:var(--text);font-family:'DM Sans',-apple-system,sans-serif;-webkit-font-smoothing:antialiased;overflow-x:hidden;min-height:100vh}
+
+/* Header */
+header{display:flex;align-items:center;justify-content:space-between;padding:0 clamp(24px,4vw,48px);height:64px;background:var(--bg);border-bottom:1px solid var(--sep);position:sticky;top:0;z-index:50}
+.logo{display:flex;align-items:center;gap:10px}
+.logo-dot{width:8px;height:8px;border-radius:50%;background:var(--purple)}
+.logo-text{font-family:'Plus Jakarta Sans',sans-serif;font-size:14px;font-weight:700;letter-spacing:-0.02em}
+.header-nav{display:flex;gap:2px;padding:3px;background:var(--surface);border-radius:8px;position:absolute;left:50%;transform:translateX(-50%)}
+.nav-link{padding:5px 14px;border-radius:6px;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;color:var(--text3);text-decoration:none;transition:all .15s;white-space:nowrap}
+.nav-link:hover{color:var(--text2)}
+.nav-link.active{background:var(--bg);color:var(--text);box-shadow:0 1px 3px rgba(0,0,0,.06)}
+
+/* Content */
+.page-wrap{max-width:1200px;margin:0 auto;padding:32px 24px 60px}
+.page-title{font-family:'Plus Jakarta Sans',sans-serif;font-size:28px;font-weight:800;letter-spacing:-0.04em;margin-bottom:4px}
+.page-sub{font-size:13px;color:var(--text3);margin-bottom:28px}
+
+/* Summary cards */
+.cards{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:32px}
+.card{background:var(--bg);border:1px solid var(--sep);border-radius:var(--radius);padding:20px 22px}
+.card-label{font-size:11px;font-weight:500;color:var(--text3);text-transform:uppercase;letter-spacing:0.04em;margin-bottom:8px}
+.card-value{font-family:'Plus Jakarta Sans',sans-serif;font-size:32px;font-weight:800;letter-spacing:-0.04em;line-height:1}
+.card-value.green{color:var(--green)}
+.card-value.blue{color:var(--blue)}
+.card-value.purple{color:var(--purple)}
+.card-value.rose{color:var(--rose)}
+.card-detail{font-family:'DM Mono',monospace;font-size:11px;color:var(--text3);margin-top:6px}
+
+/* Sections */
+.section{background:var(--bg);border:1px solid var(--sep);border-radius:var(--radius);padding:24px;margin-bottom:20px}
+.section-title{font-family:'Plus Jakarta Sans',sans-serif;font-size:16px;font-weight:700;letter-spacing:-0.02em;margin-bottom:16px;display:flex;align-items:center;gap:8px}
+.section-badge{font-family:'DM Mono',monospace;font-size:10px;color:var(--text3);background:var(--surface);padding:2px 8px;border-radius:100px}
+
+/* Daily chart */
+.chart{display:flex;align-items:flex-end;gap:4px;height:160px;padding:0 4px}
+.chart-bar-wrap{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;height:100%}
+.chart-bar-outer{flex:1;width:100%;display:flex;align-items:flex-end;justify-content:center}
+.chart-bar{width:100%;max-width:36px;border-radius:4px 4px 0 0;background:var(--purple);transition:height .4s ease;position:relative;cursor:default;min-width:8px}
+.chart-bar:hover{opacity:0.8}
+.chart-bar .tooltip{display:none;position:absolute;bottom:calc(100% + 6px);left:50%;transform:translateX(-50%);background:var(--text);color:#fff;font-family:'DM Mono',monospace;font-size:10px;padding:4px 8px;border-radius:4px;white-space:nowrap;z-index:10}
+.chart-bar:hover .tooltip{display:block}
+.chart-label{font-family:'DM Mono',monospace;font-size:9px;color:var(--text3);white-space:nowrap}
+
+/* Model breakdown */
+.model-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:12px}
+.model-card{background:var(--surface);border-radius:10px;padding:16px 18px}
+.model-name{font-family:'DM Mono',monospace;font-size:12px;font-weight:500;margin-bottom:8px}
+.model-cost{font-family:'Plus Jakarta Sans',sans-serif;font-size:22px;font-weight:800;letter-spacing:-0.03em;margin-bottom:6px}
+.model-stat{font-family:'DM Mono',monospace;font-size:10px;color:var(--text3);margin-bottom:2px}
+.model-bar{height:4px;border-radius:2px;background:var(--surface2);margin-top:8px;overflow:hidden}
+.model-bar-fill{height:100%;border-radius:2px}
+
+/* Session table */
+.s-table{width:100%;border-collapse:collapse}
+.s-table th{text-align:left;font-family:'DM Sans',sans-serif;font-size:11px;font-weight:500;color:var(--text3);text-transform:uppercase;letter-spacing:0.04em;padding:8px 12px;border-bottom:1px solid var(--sep)}
+.s-table td{padding:10px 12px;border-bottom:1px solid var(--surface);font-size:12px;vertical-align:middle}
+.s-table tr:last-child td{border-bottom:none}
+.s-table tr:hover td{background:var(--surface)}
+.s-id{font-family:'DM Mono',monospace;font-size:11px;color:var(--purple)}
+.s-model{font-family:'DM Mono',monospace;font-size:10px;color:var(--text3)}
+.s-cost{font-family:'DM Mono',monospace;font-size:12px;font-weight:500}
+.s-tokens{font-family:'DM Mono',monospace;font-size:10px;color:var(--text3)}
+.s-date{font-family:'DM Mono',monospace;font-size:11px;color:var(--text2)}
+.s-topic{font-size:12px;color:var(--text2);max-width:300px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+/* Token breakdown row */
+.token-breakdown{display:flex;gap:16px;margin-top:12px;padding:12px 0;border-top:1px solid var(--sep)}
+.tb-item{display:flex;flex-direction:column;gap:2px}
+.tb-label{font-family:'DM Mono',monospace;font-size:10px;color:var(--text3)}
+.tb-value{font-family:'DM Mono',monospace;font-size:13px;font-weight:500}
+
+/* Loading */
+.loading{display:flex;align-items:center;justify-content:center;min-height:300px;color:var(--text3);font-size:13px}
+.loading::after{content:'';width:18px;height:18px;border:2px solid var(--surface2);border-top-color:var(--purple);border-radius:50%;animation:spin .6s linear infinite;margin-left:10px}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* Refresh button */
+.refresh-btn{padding:6px 14px;border-radius:6px;font-size:11px;font-weight:500;background:var(--surface);border:1px solid var(--sep);color:var(--text2);cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .12s}
+.refresh-btn:hover{border-color:var(--purple);color:var(--purple)}
+.refresh-btn.loading-btn{pointer-events:none;opacity:0.5}
+
+/* Show more */
+.show-more{text-align:center;padding:12px}
+.show-more button{padding:6px 20px;border-radius:6px;font-size:11px;font-weight:500;background:var(--surface);border:1px solid var(--sep);color:var(--text2);cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .12s}
+.show-more button:hover{border-color:var(--purple);color:var(--purple)}
+
+/* Date range pills */
+.range-pills{display:flex;gap:4px;margin-left:auto}
+.range-pill{padding:4px 10px;border-radius:100px;font-family:'DM Mono',monospace;font-size:10px;font-weight:500;color:var(--text3);border:1px solid transparent;cursor:pointer;background:transparent;transition:all .12s}
+.range-pill:hover{color:var(--text2)}
+.range-pill.active{border-color:var(--purple);color:var(--purple);background:var(--purple-bg)}
+
+/* Workflow mini chart */
+.mini-chart{display:flex;align-items:flex-end;gap:2px;height:40px;margin:8px 0}
+.mini-bar{flex:1;border-radius:2px 2px 0 0;min-width:3px;transition:height .3s}
+.wf-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:16px}
+.wf-stat{background:var(--surface);border-radius:8px;padding:12px 14px}
+.wf-stat-label{font-size:10px;font-weight:500;color:var(--text3);text-transform:uppercase;letter-spacing:0.04em;margin-bottom:4px}
+.wf-stat-value{font-family:'Plus Jakarta Sans',sans-serif;font-size:22px;font-weight:800;letter-spacing:-0.03em}
+.wf-stat-sub{font-family:'DM Mono',monospace;font-size:10px;color:var(--text3);margin-top:2px}
+.excerpt{padding:10px 14px;background:var(--surface);border-radius:8px;margin-bottom:6px;border-left:3px solid var(--sep)}
+.excerpt.frust{border-left-color:var(--rose)}
+.excerpt.satis{border-left-color:var(--green)}
+.excerpt.fdbk{border-left-color:var(--purple)}
+.excerpt-text{font-size:12px;color:var(--text);line-height:1.5;font-style:italic}
+.excerpt-meta{font-family:'DM Mono',monospace;font-size:9px;color:var(--text3);margin-top:4px}
+.wf-section-title{font-family:'Plus Jakarta Sans',sans-serif;font-size:13px;font-weight:700;margin:18px 0 10px;color:var(--text)}
+.mood-legend{display:flex;gap:12px;font-family:'DM Mono',monospace;font-size:10px;color:var(--text3);margin-bottom:8px}
+.mood-legend span{display:flex;align-items:center;gap:4px}
+.mood-legend .dot{width:8px;height:8px;border-radius:2px}
+
+/* Confidence badge */
+.confidence{display:inline-flex;align-items:center;gap:6px;padding:4px 12px;border-radius:100px;font-family:'DM Mono',monospace;font-size:11px;font-weight:600;background:rgba(34,197,94,0.08);color:#059669;border:1px solid rgba(34,197,94,0.2);margin-left:12px}
+.confidence .dot{width:6px;height:6px;border-radius:50%;background:#22c55e}
+
+/* Expandable analysis */
+.analysis-toggle{display:flex;align-items:center;gap:8px;cursor:pointer;user-select:none;padding:4px 0}
+.analysis-toggle .chevron{transition:transform .2s;font-size:10px;color:var(--text3)}
+.analysis-toggle.open .chevron{transform:rotate(90deg)}
+.analysis-body{overflow:hidden;max-height:0;transition:max-height .3s ease}
+.analysis-body.open{max-height:2000px}
+.insight{padding:14px 16px;background:var(--surface);border-radius:10px;margin-bottom:10px}
+.insight-title{font-family:'Plus Jakarta Sans',sans-serif;font-size:13px;font-weight:700;margin-bottom:6px;display:flex;align-items:center;gap:6px}
+.insight-title .tag{font-family:'DM Mono',monospace;font-size:9px;font-weight:600;padding:2px 6px;border-radius:4px;text-transform:uppercase}
+.tag-high{background:rgba(239,68,68,0.08);color:var(--rose)}
+.tag-med{background:rgba(245,158,11,0.08);color:var(--amber)}
+.tag-low{background:rgba(59,130,246,0.08);color:var(--blue)}
+.insight-body{font-size:12px;color:var(--text2);line-height:1.6}
+.insight-body strong{color:var(--text)}
+.insight-stat{font-family:'DM Mono',monospace;font-size:11px;color:var(--purple);font-weight:600}
+.savings{font-family:'DM Mono',monospace;font-size:12px;font-weight:600;color:#059669;margin-top:4px}
+
+@media(max-width:800px){
+  .cards{grid-template-columns:repeat(2,1fr)}
+  .header-nav{display:none}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">
+    <div class="logo-dot"></div>
+    <div class="logo-text">Mission Control</div>
+  </div>
+  <nav class="header-nav">
+    <a href="/" class="nav-link">Dashboard</a>
+    <a href="/dispatch" class="nav-link">Dispatch</a>
+    <a href="/workflow" class="nav-link">Workflow</a>
+    <a href="/tools" class="nav-link">Toolbox</a>
+    <a href="/findings" class="nav-link">Findings</a>
+    <a href="/health" class="nav-link">Health</a>
+  </nav>
+  <div style="width:120px"></div>
+</header>
+
+<div class="page-wrap">
+  <div style="display:flex;align-items:baseline;justify-content:space-between;margin-bottom:4px">
+    <h1 class="page-title">Cost Tracker</h1>
+    <button class="refresh-btn" onclick="loadData(true)" id="refreshBtn">Refresh</button>
+  </div>
+  <div style="display:flex;align-items:center;margin-bottom:4px">
+    <p class="page-sub" style="margin-bottom:0">Cost calculated from token counts (exact, from Claude API responses) at published Anthropic rates.</p>
+    <span class="confidence"><span class="dot"></span>95%+ confidence</span>
+  </div>
+
+  <div class="cards" id="cards">
+    <div class="loading">Loading cost data</div>
+  </div>
+
+  <div class="section" id="chartSection" style="display:none">
+    <div class="section-title">
+      Daily Spend
+      <div class="range-pills" id="rangePills">
+        <button class="range-pill active" data-days="7">7d</button>
+        <button class="range-pill" data-days="14">14d</button>
+        <button class="range-pill" data-days="30">30d</button>
+        <button class="range-pill" data-days="0">All</button>
+      </div>
+    </div>
+    <div class="chart" id="chart"></div>
+  </div>
+
+  <div class="section" id="modelsSection" style="display:none">
+    <div class="section-title">Model Breakdown</div>
+    <div class="model-grid" id="models"></div>
+    <div class="token-breakdown" id="tokenBreakdown"></div>
+  </div>
+
+  <div class="section" id="sessionsSection" style="display:none">
+    <div class="section-title">Sessions <span class="section-badge" id="sessionCount"></span></div>
+    <table class="s-table">
+      <thead>
+        <tr>
+          <th>Session</th>
+          <th>Topic</th>
+          <th>Model</th>
+          <th style="text-align:right">Cost</th>
+          <th style="text-align:right">Tokens</th>
+          <th>Date</th>
+        </tr>
+      </thead>
+      <tbody id="sessionBody"></tbody>
+    </table>
+    <div class="show-more" id="showMore" style="display:none">
+      <button onclick="showMoreSessions()">Show more</button>
+    </div>
+  </div>
+
+  <div class="section" id="workflowSection" style="display:none">
+    <div class="analysis-toggle" onclick="toggleWorkflow()" id="workflowToggle">
+      <div class="section-title" style="margin-bottom:0">Workflow Intelligence</div>
+      <span class="chevron">&#9654;</span>
+    </div>
+    <div class="analysis-body" id="workflowBody">
+      <div class="loading" id="workflowLoading">Analyzing prompts</div>
+    </div>
+  </div>
+
+  <div class="section" id="promptCostSection" style="display:none">
+    <div class="analysis-toggle" onclick="togglePromptCost()" id="promptCostToggle">
+      <div class="section-title" style="margin-bottom:0">Prompt Engineering for Cost</div>
+      <span class="chevron">&#9654;</span>
+    </div>
+    <div class="analysis-body" id="promptCostBody">
+      <div class="loading" id="promptCostLoading">Analyzing prompt patterns</div>
+    </div>
+  </div>
+
+  <div class="section" id="analysisSection" style="display:none">
+    <div class="analysis-toggle" onclick="toggleAnalysis()" id="analysisToggle">
+      <div class="section-title" style="margin-bottom:0">Cost Reduction Analysis</div>
+      <span class="chevron">&#9654;</span>
+    </div>
+    <div class="analysis-body" id="analysisBody"></div>
+  </div>
+
+  <div class="section" id="methodSection">
+    <div class="section-title">Methodology</div>
+    <div style="font-size:12px;color:var(--text2);line-height:1.7;max-width:720px">
+      <p style="margin-bottom:10px"><strong style="color:var(--text)">Data source</strong> &mdash; Claude Code conversation transcripts (<code>.jsonl</code> files stored locally by Claude Code). Each API call records exact token counts in the response.</p>
+      <p style="margin-bottom:10px"><strong style="color:var(--text)">Token counts</strong> &mdash; <span style="color:var(--green);font-weight:600">Exact.</span> Taken directly from Anthropic's API response fields: <code>input_tokens</code>, <code>output_tokens</code>, <code>cache_creation_input_tokens</code>, <code>cache_read_input_tokens</code>.</p>
+      <p style="margin-bottom:10px"><strong style="color:var(--text)">Pricing</strong> &mdash; <span style="color:var(--green);font-weight:600">Published Anthropic rates.</span> Opus 4.6: $15/$75 per MTok (in/out), $18.75/$1.875 cache (write/read). Sonnet 4.6: $3/$15, $3.75/$0.30. Haiku 4.5: $0.80/$4, $1.00/$0.08.</p>
+      <p style="margin-bottom:10px"><strong style="color:var(--text)">Deduplication</strong> &mdash; Streaming chunks from the same API call share identical cache token counts. Grouped by <code>(model, cacheRead, cacheWrite)</code>; only the entry with the highest <code>output_tokens</code> per group is counted.</p>
+      <p><strong style="color:var(--text)">Scope</strong> &mdash; This project's transcripts only (phredomade working directory). Data starts from the earliest available transcript file.</p>
+    </div>
+  </div>
+</div>
+
+<script>
+const PRICING = {
+  'claude-opus-4-6':          { input: 15, output: 75, cacheWrite: 18.75, cacheRead: 1.875, color: 'var(--purple)', label: 'Opus 4.6' },
+  'claude-sonnet-4-6':        { input: 3,  output: 15, cacheWrite: 3.75,  cacheRead: 0.30,  color: 'var(--blue)',   label: 'Sonnet 4.6' },
+  'claude-haiku-4-5-20251001':{ input: 0.80, output: 4, cacheWrite: 1.0,  cacheRead: 0.08,  color: 'var(--green)',  label: 'Haiku 4.5' },
+};
+const DEFAULT_PRICING = { input: 15, output: 75, cacheWrite: 18.75, cacheRead: 1.875, color: 'var(--text3)', label: 'Unknown' };
+
+let costData = null;
+let sessionLimit = 20;
+let chartDays = 7;
+
+function fmt$(n) {
+  if (n >= 1000) return '$' + n.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  if (n >= 100) return '$' + n.toFixed(2);
+  if (n >= 1) return '$' + n.toFixed(2);
+  return '$' + n.toFixed(3);
+}
+function fmtTokens(n) {
+  if (n >= 1e9) return (n/1e9).toFixed(1) + 'B';
+  if (n >= 1e6) return (n/1e6).toFixed(1) + 'M';
+  if (n >= 1e3) return (n/1e3).toFixed(1) + 'K';
+  return n.toString();
+}
+function calcCost(model, usage) {
+  const p = PRICING[model] || DEFAULT_PRICING;
+  return (
+    (usage.input || 0) * p.input / 1e6 +
+    (usage.output || 0) * p.output / 1e6 +
+    (usage.cacheWrite || 0) * p.cacheWrite / 1e6 +
+    (usage.cacheRead || 0) * p.cacheRead / 1e6
+  );
+}
+
+async function loadData(force) {
+  const btn = document.getElementById('refreshBtn');
+  btn.classList.add('loading-btn');
+  btn.textContent = 'Scanning...';
+  try {
+    const url = '/api/cost' + (force ? '?refresh=1' : '');
+    const res = await fetch(url);
+    costData = await res.json();
+    render();
+  } catch (e) {
+    document.getElementById('cards').innerHTML = '<div style="color:var(--rose);padding:40px;text-align:center">Failed to load cost data: ' + e.message + '</div>';
+  } finally {
+    btn.classList.remove('loading-btn');
+    btn.textContent = 'Refresh';
+  }
+}
+
+function render() {
+  if (!costData) return;
+  renderCards();
+  renderChart();
+  renderModels();
+  renderSessions();
+}
+
+function renderCards() {
+  const d = costData;
+  const today = new Date().toISOString().slice(0, 10);
+  const todayCost = d.daily[today] ? calcDailyCost(d.daily[today]) : 0;
+  const totalCost = d.totalCost;
+  const el = document.getElementById('cards');
+  el.innerHTML = `
+    <div class="card">
+      <div class="card-label">Total Cost</div>
+      <div class="card-value">${fmt$(totalCost)}</div>
+      <div class="card-detail">${d.totalSessions} sessions</div>
+    </div>
+    <div class="card">
+      <div class="card-label">Today</div>
+      <div class="card-value blue">${fmt$(todayCost)}</div>
+      <div class="card-detail">${new Date().toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' })}</div>
+    </div>
+    <div class="card">
+      <div class="card-label">API Calls</div>
+      <div class="card-value purple">${d.totalCalls.toLocaleString()}</div>
+      <div class="card-detail">${fmtTokens(d.totalTokens.input + d.totalTokens.output + d.totalTokens.cacheWrite + d.totalTokens.cacheRead)} total tokens</div>
+    </div>
+    <div class="card">
+      <div class="card-label">Avg / Session</div>
+      <div class="card-value green">${fmt$(d.totalSessions ? totalCost / d.totalSessions : 0)}</div>
+      <div class="card-detail">${d.totalSessions ? Math.round(d.totalCalls / d.totalSessions) : 0} calls avg</div>
+    </div>
+  `;
+}
+
+function calcDailyCost(day) {
+  let cost = 0;
+  for (const [model, usage] of Object.entries(day)) {
+    cost += calcCost(model, usage);
+  }
+  return cost;
+}
+
+function renderChart() {
+  const section = document.getElementById('chartSection');
+  section.style.display = '';
+  const chart = document.getElementById('chart');
+  const days = Object.keys(costData.daily).sort();
+  if (!days.length) { chart.innerHTML = '<div style="color:var(--text3);text-align:center;width:100%">No data</div>'; return; }
+
+  const filtered = chartDays > 0 ? days.slice(-chartDays) : days;
+  const costs = filtered.map(d => ({ date: d, cost: calcDailyCost(costData.daily[d]) }));
+  const max = Math.max(...costs.map(c => c.cost), 0.01);
+
+  chart.innerHTML = costs.map(c => {
+    const pct = (c.cost / max * 100).toFixed(1);
+    const d = new Date(c.date + 'T12:00:00');
+    const label = d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+    return `<div class="chart-bar-wrap">
+      <div class="chart-bar-outer">
+        <div class="chart-bar" style="height:${Math.max(pct, 2)}%">
+          <div class="tooltip">${label}: ${fmt$(c.cost)}</div>
+        </div>
+      </div>
+      <div class="chart-label">${d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}</div>
+    </div>`;
+  }).join('');
+
+  // Range pills
+  document.querySelectorAll('.range-pill').forEach(pill => {
+    pill.classList.toggle('active', parseInt(pill.dataset.days) === chartDays);
+    pill.onclick = () => { chartDays = parseInt(pill.dataset.days); renderChart(); };
+  });
+}
+
+function renderModels() {
+  const section = document.getElementById('modelsSection');
+  section.style.display = '';
+  const models = costData.models;
+  const entries = Object.entries(models).sort((a, b) => b[1].cost - a[1].cost);
+  const totalCost = costData.totalCost || 1;
+
+  document.getElementById('models').innerHTML = entries.map(([model, data]) => {
+    const p = PRICING[model] || DEFAULT_PRICING;
+    const pct = (data.cost / totalCost * 100).toFixed(1);
+    return `<div class="model-card">
+      <div class="model-name" style="color:${p.color}">${p.label} <span style="color:var(--text3)">(${pct}%)</span></div>
+      <div class="model-cost">${fmt$(data.cost)}</div>
+      <div class="model-stat">${data.calls.toLocaleString()} calls &middot; ${fmtTokens(data.input)} in &middot; ${fmtTokens(data.output)} out</div>
+      <div class="model-stat">Cache: ${fmtTokens(data.cacheWrite)} write &middot; ${fmtTokens(data.cacheRead)} read</div>
+      <div class="model-bar"><div class="model-bar-fill" style="width:${pct}%;background:${p.color}"></div></div>
+    </div>`;
+  }).join('');
+
+  const t = costData.totalTokens;
+  document.getElementById('tokenBreakdown').innerHTML = `
+    <div class="tb-item"><div class="tb-label">Input Tokens</div><div class="tb-value">${fmtTokens(t.input)}</div></div>
+    <div class="tb-item"><div class="tb-label">Output Tokens</div><div class="tb-value">${fmtTokens(t.output)}</div></div>
+    <div class="tb-item"><div class="tb-label">Cache Write</div><div class="tb-value">${fmtTokens(t.cacheWrite)}</div></div>
+    <div class="tb-item"><div class="tb-label">Cache Read</div><div class="tb-value">${fmtTokens(t.cacheRead)}</div></div>
+    <div class="tb-item"><div class="tb-label">Input Cost</div><div class="tb-value">${fmt$(costData.costBreakdown.input)}</div></div>
+    <div class="tb-item"><div class="tb-label">Output Cost</div><div class="tb-value">${fmt$(costData.costBreakdown.output)}</div></div>
+    <div class="tb-item"><div class="tb-label">Cache Write Cost</div><div class="tb-value">${fmt$(costData.costBreakdown.cacheWrite)}</div></div>
+    <div class="tb-item"><div class="tb-label">Cache Read Cost</div><div class="tb-value">${fmt$(costData.costBreakdown.cacheRead)}</div></div>
+  `;
+}
+
+function renderSessions() {
+  const section = document.getElementById('sessionsSection');
+  section.style.display = '';
+  const sessions = costData.sessions.slice(0, sessionLimit);
+  document.getElementById('sessionCount').textContent = costData.sessions.length + ' total';
+  const body = document.getElementById('sessionBody');
+  body.innerHTML = sessions.map(s => {
+    const p = PRICING[s.model] || DEFAULT_PRICING;
+    const totalTok = s.input + s.output + s.cacheWrite + s.cacheRead;
+    return `<tr>
+      <td><span class="s-id">${s.id.slice(0, 8)}</span></td>
+      <td><span class="s-topic">${escHtml(s.topic || '--')}</span></td>
+      <td><span class="s-model" style="color:${p.color}">${p.label}</span></td>
+      <td style="text-align:right"><span class="s-cost">${fmt$(s.cost)}</span></td>
+      <td style="text-align:right"><span class="s-tokens">${fmtTokens(totalTok)}</span></td>
+      <td><span class="s-date">${s.date || '--'}</span></td>
+    </tr>`;
+  }).join('');
+
+  document.getElementById('showMore').style.display = sessionLimit < costData.sessions.length ? '' : 'none';
+}
+
+function showMoreSessions() {
+  sessionLimit += 30;
+  renderSessions();
+}
+
+function escHtml(s) {
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+// ── Workflow Intelligence ──
+let insightsData = null;
+
+function toggleWorkflow() {
+  const toggle = document.getElementById('workflowToggle');
+  const body = document.getElementById('workflowBody');
+  toggle.classList.toggle('open');
+  body.classList.toggle('open');
+  // Lazy load insights on first expand
+  if (!insightsData && toggle.classList.contains('open')) {
+    loadInsights();
+  }
+}
+
+async function loadInsights() {
+  try {
+    const res = await fetch('/api/insights');
+    insightsData = await res.json();
+    renderWorkflow();
+  } catch (e) {
+    document.getElementById('workflowBody').innerHTML = '<div style="color:var(--rose);padding:20px">Failed to load: ' + e.message + '</div>';
+  }
+}
+
+function renderWorkflow() {
+  if (!insightsData) return;
+  document.getElementById('workflowSection').style.display = '';
+  const body = document.getElementById('workflowBody');
+  const d = insightsData;
+  const t = d.totals;
+  const days = Object.keys(d.daily).sort();
+
+  // Compute trends
+  const halfIdx = Math.floor(days.length / 2);
+  const firstHalf = days.slice(0, halfIdx);
+  const secondHalf = days.slice(halfIdx);
+  const avgLenFirst = firstHalf.length ? firstHalf.reduce((a, day) => a + (d.daily[day].totalLen / Math.max(d.daily[day].prompts, 1)), 0) / firstHalf.length : 0;
+  const avgLenSecond = secondHalf.length ? secondHalf.reduce((a, day) => a + (d.daily[day].totalLen / Math.max(d.daily[day].prompts, 1)), 0) / secondHalf.length : 0;
+  const lenTrend = avgLenFirst ? ((avgLenSecond - avgLenFirst) / avgLenFirst * 100) : 0;
+
+  const frustFirst = firstHalf.length ? firstHalf.reduce((a, day) => a + d.daily[day].frustrated, 0) / firstHalf.reduce((a, day) => a + d.daily[day].prompts, 0) * 100 : 0;
+  const frustSecond = secondHalf.length ? secondHalf.reduce((a, day) => a + d.daily[day].frustrated, 0) / secondHalf.reduce((a, day) => a + d.daily[day].prompts, 0) * 100 : 0;
+
+  const promptsPerSession = days.length ? days.reduce((a, day) => a + (d.daily[day].sessions ? d.daily[day].prompts / d.daily[day].sessions : 0), 0) / days.length : 0;
+
+  let h = '';
+
+  // Stats cards
+  h += '<div class="wf-stats">';
+  h += '<div class="wf-stat"><div class="wf-stat-label">Total Prompts</div><div class="wf-stat-value">' + t.prompts.toLocaleString() + '</div><div class="wf-stat-sub">' + days.length + ' days tracked</div></div>';
+  h += '<div class="wf-stat"><div class="wf-stat-label">Avg Length</div><div class="wf-stat-value">' + t.avgLen + '</div><div class="wf-stat-sub">chars/prompt &middot; ' + (lenTrend > 0 ? '+' : '') + lenTrend.toFixed(0) + '% trend</div></div>';
+  h += '<div class="wf-stat"><div class="wf-stat-label">Frustration Rate</div><div class="wf-stat-value" style="color:' + (t.frustrationRate > 15 ? 'var(--rose)' : t.frustrationRate > 8 ? 'var(--amber)' : 'var(--green)') + '">' + t.frustrationRate.toFixed(1) + '%</div><div class="wf-stat-sub">' + t.frustrated + ' of ' + t.prompts + ' prompts</div></div>';
+  h += '<div class="wf-stat"><div class="wf-stat-label">Satisfaction Rate</div><div class="wf-stat-value" style="color:var(--green)">' + t.satisfactionRate.toFixed(1) + '%</div><div class="wf-stat-sub">' + t.satisfied + ' positive signals</div></div>';
+  h += '<div class="wf-stat"><div class="wf-stat-label">Feedback Given</div><div class="wf-stat-value" style="color:var(--purple)">' + t.feedback + '</div><div class="wf-stat-sub">principle/rule prompts</div></div>';
+  h += '<div class="wf-stat"><div class="wf-stat-label">Prompts / Session</div><div class="wf-stat-value">' + promptsPerSession.toFixed(1) + '</div><div class="wf-stat-sub">avg (lower = more autonomous)</div></div>';
+  h += '</div>';
+
+  // Daily prompt volume + mood chart
+  h += '<div class="wf-section-title">Daily Activity & Mood</div>';
+  h += '<div class="mood-legend"><span><span class="dot" style="background:var(--purple)"></span>Prompts</span><span><span class="dot" style="background:var(--rose)"></span>Frustrated</span><span><span class="dot" style="background:var(--green)"></span>Satisfied</span></div>';
+
+  if (days.length) {
+    const maxPrompts = Math.max(...days.map(d2 => d.daily[d2].prompts), 1);
+    h += '<div style="display:flex;gap:2px;align-items:flex-end;height:80px;margin-bottom:8px">';
+    for (const day of days) {
+      const dd = d.daily[day];
+      const barH = (dd.prompts / maxPrompts * 100);
+      const frustPct = dd.prompts ? (dd.frustrated / dd.prompts) : 0;
+      const satisPct = dd.prompts ? (dd.satisfied / dd.prompts) : 0;
+      // Color: mix based on mood
+      let color = 'var(--purple)';
+      if (frustPct > 0.2) color = 'var(--rose)';
+      else if (satisPct > 0.3) color = 'var(--green)';
+      const dt = new Date(day + 'T12:00:00');
+      const label = dt.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+      h += '<div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;height:100%">';
+      h += '<div style="flex:1;width:100%;display:flex;align-items:flex-end;justify-content:center">';
+      h += '<div style="width:100%;max-width:36px;height:' + Math.max(barH, 3) + '%;background:' + color + ';border-radius:3px 3px 0 0;min-width:6px;position:relative;cursor:default" title="' + label + ': ' + dd.prompts + ' prompts, ' + dd.frustrated + ' frustrated, ' + dd.satisfied + ' satisfied"></div>';
+      h += '</div>';
+      h += '<div style="font-family:\'DM Mono\',monospace;font-size:8px;color:var(--text3);white-space:nowrap">' + dt.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) + '</div>';
+      h += '</div>';
+    }
+    h += '</div>';
+  }
+
+  // Evolution insight
+  h += '<div class="wf-section-title">Evolution</div>';
+  h += '<div class="insight"><div class="insight-body">';
+  if (lenTrend < -10) {
+    h += 'Your prompts are getting <strong>' + Math.abs(lenTrend).toFixed(0) + '% shorter</strong> over time — you\'re communicating more efficiently with agents.';
+  } else if (lenTrend > 10) {
+    h += 'Your prompts are getting <strong>' + lenTrend.toFixed(0) + '% longer</strong> over time — likely giving more context and specifications upfront, which reduces back-and-forth.';
+  } else {
+    h += 'Prompt length is <strong>stable</strong> — your communication style is consistent.';
+  }
+  if (frustSecond < frustFirst && frustFirst > 0) {
+    h += '<br><br>Frustration rate dropped from <span class="insight-stat">' + frustFirst.toFixed(1) + '%</span> to <span class="insight-stat">' + frustSecond.toFixed(1) + '%</span> — agents are getting better at meeting expectations.';
+  } else if (frustSecond > frustFirst && frustFirst > 0) {
+    h += '<br><br>Frustration rate increased from <span class="insight-stat">' + frustFirst.toFixed(1) + '%</span> to <span class="insight-stat">' + frustSecond.toFixed(1) + '%</span> — may indicate pushing into more complex territory or agent capability gaps.';
+  }
+  h += '</div></div>';
+
+  // Excerpts
+  if (d.frustrationExcerpts.length) {
+    h += '<div class="wf-section-title">Recent Frustration Signals</div>';
+    h += d.frustrationExcerpts.slice(-5).reverse().map(e =>
+      '<div class="excerpt frust"><div class="excerpt-text">"' + escHtml(e.text) + '"</div><div class="excerpt-meta">' + e.date + ' &middot; ' + e.sid + '</div></div>'
+    ).join('');
+  }
+  if (d.satisfactionExcerpts.length) {
+    h += '<div class="wf-section-title">Recent Satisfaction Signals</div>';
+    h += d.satisfactionExcerpts.slice(-5).reverse().map(e =>
+      '<div class="excerpt satis"><div class="excerpt-text">"' + escHtml(e.text) + '"</div><div class="excerpt-meta">' + e.date + ' &middot; ' + e.sid + '</div></div>'
+    ).join('');
+  }
+  if (d.feedbackExcerpts.length) {
+    h += '<div class="wf-section-title">Principle & Rule Feedback</div>';
+    h += d.feedbackExcerpts.slice(-5).reverse().map(e =>
+      '<div class="excerpt fdbk"><div class="excerpt-text">"' + escHtml(e.text) + '"</div><div class="excerpt-meta">' + e.date + ' &middot; ' + e.sid + '</div></div>'
+    ).join('');
+  }
+
+  body.innerHTML = h;
+}
+
+// Show workflow section once cost data loads (toggle is collapsed by default)
+const _origRender2 = render;
+render = function() { _origRender2(); document.getElementById('workflowSection').style.display = ''; document.getElementById('promptCostSection').style.display = ''; };
+
+// ── Prompt Engineering for Cost ──
+function togglePromptCost() {
+  const toggle = document.getElementById('promptCostToggle');
+  const body = document.getElementById('promptCostBody');
+  toggle.classList.toggle('open');
+  body.classList.toggle('open');
+  if (!insightsData && toggle.classList.contains('open')) {
+    loadInsights().then(() => renderPromptCost());
+  } else if (insightsData) {
+    renderPromptCost();
+  }
+}
+
+function renderPromptCost() {
+  if (!insightsData || !costData) return;
+  document.getElementById('promptCostSection').style.display = '';
+  const body = document.getElementById('promptCostBody');
+  const sp = insightsData.sessionPrompts || {};
+  const sessions = costData.sessions || [];
+
+  // Join: per-session cost + prompt stats
+  const joined = [];
+  for (const s of sessions) {
+    const p = sp[s.id];
+    if (!p || p.count === 0) continue;
+    joined.push({
+      id: s.id, cost: s.cost, topic: s.topic,
+      prompts: p.count, avgLen: Math.round(p.totalLen / p.count),
+      maxLen: p.maxLen, vague: p.vague, specific: p.specific,
+      costPerPrompt: s.cost / p.count
+    });
+  }
+  joined.sort((a, b) => b.costPerPrompt - a.costPerPrompt);
+
+  const insights = [];
+
+  // 1. Cost per prompt analysis
+  const avgCostPerPrompt = joined.length ? joined.reduce((a, s) => a + s.costPerPrompt, 0) / joined.length : 0;
+  const topExpensive = joined.slice(0, 5);
+  const bottomCheap = joined.filter(s => s.prompts >= 2).sort((a, b) => a.costPerPrompt - b.costPerPrompt).slice(0, 3);
+
+  insights.push({
+    title: 'Your average cost per prompt is ' + fmt$(avgCostPerPrompt),
+    tag: 'high', tagLabel: 'Key Metric',
+    body: 'Every time you hit enter, it costs roughly <strong>' + fmt$(avgCostPerPrompt) + '</strong> at Opus rates. '
+      + 'This means each unnecessary back-and-forth costs real money.'
+      + '<br><br><strong>Most expensive prompts (cost/prompt):</strong>'
+      + '<div style="margin-top:6px">' + topExpensive.map(s =>
+        '<div style="display:flex;justify-content:space-between;padding:3px 0;font-family:\'DM Mono\',monospace;font-size:11px">'
+        + '<span style="color:var(--text2)">' + escHtml((s.topic || s.id).slice(0, 50)) + '</span>'
+        + '<span style="color:var(--rose);font-weight:600">' + fmt$(s.costPerPrompt) + '/prompt</span></div>'
+      ).join('') + '</div>'
+      + (bottomCheap.length ? '<br><strong>Most efficient sessions:</strong>'
+        + '<div style="margin-top:6px">' + bottomCheap.map(s =>
+          '<div style="display:flex;justify-content:space-between;padding:3px 0;font-family:\'DM Mono\',monospace;font-size:11px">'
+          + '<span style="color:var(--text2)">' + escHtml((s.topic || s.id).slice(0, 50)) + '</span>'
+          + '<span style="color:var(--green);font-weight:600">' + fmt$(s.costPerPrompt) + '/prompt</span></div>'
+        ).join('') + '</div>' : '')
+  });
+
+  // 2. Vague vs specific prompt correlation
+  const vagueTotal = joined.reduce((a, s) => a + s.vague, 0);
+  const specificTotal = joined.reduce((a, s) => a + s.specific, 0);
+  const totalP = joined.reduce((a, s) => a + s.prompts, 0);
+  const vaguePct = totalP ? (vagueTotal / totalP * 100) : 0;
+  const specificPct = totalP ? (specificTotal / totalP * 100) : 0;
+
+  // Compare cost of vague-heavy vs specific-heavy sessions
+  const vagueHeavy = joined.filter(s => s.vague > s.specific && s.prompts >= 2);
+  const specificHeavy = joined.filter(s => s.specific > s.vague && s.prompts >= 2);
+  const avgCostVague = vagueHeavy.length ? vagueHeavy.reduce((a, s) => a + s.costPerPrompt, 0) / vagueHeavy.length : 0;
+  const avgCostSpecific = specificHeavy.length ? specificHeavy.reduce((a, s) => a + s.costPerPrompt, 0) / specificHeavy.length : 0;
+  const specificSavings = avgCostVague > avgCostSpecific ? ((avgCostVague - avgCostSpecific) / avgCostVague * 100) : 0;
+
+  insights.push({
+    title: vaguePct.toFixed(0) + '% of prompts are vague, ' + specificPct.toFixed(0) + '% are specific',
+    tag: vaguePct > 30 ? 'high' : vaguePct > 15 ? 'med' : 'low',
+    tagLabel: vaguePct > 30 ? 'High Impact' : vaguePct > 15 ? 'Medium' : 'Good',
+    body: '<strong>Vague prompts</strong> (short, no file/code references) trigger more agent exploration = more tool calls = more tokens.'
+      + (avgCostVague > 0 && avgCostSpecific > 0 ?
+        '<br><br>Sessions with mostly <strong>vague</strong> prompts cost <span class="insight-stat">' + fmt$(avgCostVague) + '/prompt</span> vs '
+        + '<strong>specific</strong> prompts at <span class="insight-stat">' + fmt$(avgCostSpecific) + '/prompt</span>.'
+        + (specificSavings > 5 ? '<div class="savings">Specific prompts are ' + specificSavings.toFixed(0) + '% cheaper per interaction.</div>' : '')
+        : '')
+      + '<br><br><strong>Action:</strong> Reference file names, line numbers, or code snippets in your prompts. '
+      + 'Instead of <em>"fix the button"</em>, say <em>"fix the submit button in BookPageClient.tsx — it\'s not disabled during loading"</em>. '
+      + 'The agent skips exploration and goes straight to the fix.'
+  });
+
+  // 3. Session length sweet spot
+  const buckets = { short: [], medium: [], long: [] };
+  for (const s of joined) {
+    if (s.prompts <= 3) buckets.short.push(s);
+    else if (s.prompts <= 10) buckets.medium.push(s);
+    else buckets.long.push(s);
+  }
+  const avgShort = buckets.short.length ? buckets.short.reduce((a, s) => a + s.cost, 0) / buckets.short.length : 0;
+  const avgMedium = buckets.medium.length ? buckets.medium.reduce((a, s) => a + s.cost, 0) / buckets.medium.length : 0;
+  const avgLong = buckets.long.length ? buckets.long.reduce((a, s) => a + s.cost, 0) / buckets.long.length : 0;
+
+  insights.push({
+    title: 'Session length vs cost',
+    tag: 'med', tagLabel: 'Strategy',
+    body: '<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin:8px 0">'
+      + '<div style="background:var(--bg);padding:10px;border-radius:8px;text-align:center">'
+      + '<div style="font-family:\'DM Mono\',monospace;font-size:10px;color:var(--text3)">1-3 prompts</div>'
+      + '<div style="font-family:\'Plus Jakarta Sans\',sans-serif;font-size:18px;font-weight:800">' + fmt$(avgShort) + '</div>'
+      + '<div style="font-family:\'DM Mono\',monospace;font-size:10px;color:var(--text3)">' + buckets.short.length + ' sessions</div></div>'
+      + '<div style="background:var(--bg);padding:10px;border-radius:8px;text-align:center">'
+      + '<div style="font-family:\'DM Mono\',monospace;font-size:10px;color:var(--text3)">4-10 prompts</div>'
+      + '<div style="font-family:\'Plus Jakarta Sans\',sans-serif;font-size:18px;font-weight:800">' + fmt$(avgMedium) + '</div>'
+      + '<div style="font-family:\'DM Mono\',monospace;font-size:10px;color:var(--text3)">' + buckets.medium.length + ' sessions</div></div>'
+      + '<div style="background:var(--bg);padding:10px;border-radius:8px;text-align:center">'
+      + '<div style="font-family:\'DM Mono\',monospace;font-size:10px;color:var(--text3)">11+ prompts</div>'
+      + '<div style="font-family:\'Plus Jakarta Sans\',sans-serif;font-size:18px;font-weight:800">' + fmt$(avgLong) + '</div>'
+      + '<div style="font-family:\'DM Mono\',monospace;font-size:10px;color:var(--text3)">' + buckets.long.length + ' sessions</div></div>'
+      + '</div>'
+      + '<strong>Action:</strong> Front-load context in your first prompt. A detailed first message (files to read, what to change, acceptance criteria) lets the agent work autonomously — '
+      + 'fewer follow-up prompts, each of which triggers a full cache read cycle.'
+  });
+
+  // 4. The "one prompt session" opportunity
+  const singlePrompt = joined.filter(s => s.prompts === 1);
+  const singleCost = singlePrompt.reduce((a, s) => a + s.cost, 0);
+  const singlePct = costData.totalCost ? (singleCost / costData.totalCost * 100) : 0;
+
+  if (singlePrompt.length > 3) {
+    insights.push({
+      title: singlePrompt.length + ' single-prompt sessions (' + fmt$(singleCost) + ')',
+      tag: singlePct > 10 ? 'med' : 'low',
+      tagLabel: singlePct > 10 ? 'Opportunity' : 'Minor',
+      body: 'You have <strong>' + singlePrompt.length + '</strong> sessions where you sent only one prompt. '
+        + 'These are often quick lookups, research, or small fixes that don\'t need Opus.'
+        + '<br><br><strong>Action:</strong> For one-off questions and simple tasks, use <code>claude -m sonnet</code> or dispatch to a Haiku-powered scout agent. '
+        + 'At Sonnet rates, these ' + singlePrompt.length + ' sessions would cost <strong>'
+        + fmt$(singleCost * 3 / 15) + '</strong> instead of <strong>' + fmt$(singleCost) + '</strong>.'
+        + '<div class="savings">Potential savings: ' + fmt$(singleCost - singleCost * 3 / 15) + '</div>'
+    });
+  }
+
+  // 5. Prompt length distribution
+  const lenBuckets = { tiny: 0, short: 0, medium: 0, long: 0 };
+  for (const s of joined) {
+    if (s.avgLen < 50) lenBuckets.tiny += s.prompts;
+    else if (s.avgLen < 200) lenBuckets.short += s.prompts;
+    else if (s.avgLen < 500) lenBuckets.medium += s.prompts;
+    else lenBuckets.long += s.prompts;
+  }
+
+  insights.push({
+    title: 'Prompt length distribution',
+    tag: 'low', tagLabel: 'Info',
+    body: '<div style="display:flex;gap:8px;margin:8px 0">'
+      + ['<50 chars|tiny|var(--text3)', '50-200|short|var(--blue)', '200-500|medium|var(--purple)', '500+|long|var(--amber)'].map(b => {
+        const [label, key, color] = b.split('|');
+        const count = lenBuckets[key];
+        const pct = totalP ? (count / totalP * 100) : 0;
+        return '<div style="flex:1;background:var(--surface);padding:8px;border-radius:6px;text-align:center">'
+          + '<div style="font-family:\'DM Mono\',monospace;font-size:9px;color:var(--text3)">' + label + '</div>'
+          + '<div style="font-family:\'Plus Jakarta Sans\',sans-serif;font-size:16px;font-weight:800;color:' + color + '">' + pct.toFixed(0) + '%</div>'
+          + '<div style="font-family:\'DM Mono\',monospace;font-size:9px;color:var(--text3)">' + count + ' prompts</div></div>';
+      }).join('')
+      + '</div>'
+      + '<strong>Sweet spot:</strong> 100-300 chars. Enough context to be specific, short enough to not waste input tokens. '
+      + 'Very short prompts (&lt;50 chars) often need follow-ups. Very long prompts (&gt;500 chars) may include context the agent could find itself.'
+  });
+
+  body.innerHTML = insights.map(i =>
+    '<div class="insight">'
+    + '<div class="insight-title">' + i.title + ' <span class="tag tag-' + i.tag + '">' + i.tagLabel + '</span></div>'
+    + '<div class="insight-body">' + i.body + '</div>'
+    + '</div>'
+  ).join('');
+}
+
+function toggleAnalysis() {
+  const toggle = document.getElementById('analysisToggle');
+  const body = document.getElementById('analysisBody');
+  toggle.classList.toggle('open');
+  body.classList.toggle('open');
+}
+
+function renderAnalysis() {
+  if (!costData) return;
+  const section = document.getElementById('analysisSection');
+  section.style.display = '';
+  const body = document.getElementById('analysisBody');
+  const d = costData;
+  const insights = [];
+
+  // 1. Model mix analysis
+  const opusData = d.models['claude-opus-4-6'] || { calls: 0, cost: 0 };
+  const sonnetData = d.models['claude-sonnet-4-6'] || { calls: 0, cost: 0 };
+  const haikuData = d.models['claude-haiku-4-5-20251001'] || { calls: 0, cost: 0 };
+  const opusPct = d.totalCost ? (opusData.cost / d.totalCost * 100) : 0;
+
+  if (opusPct > 90) {
+    const hypotheticalSonnet = (opusData.input * 3 + opusData.output * 15 + opusData.cacheWrite * 3.75 + opusData.cacheRead * 0.30) / 1e6;
+    const hypotheticalHaiku = (opusData.input * 0.80 + opusData.output * 4 + opusData.cacheWrite * 1.0 + opusData.cacheRead * 0.08) / 1e6;
+    const savingsIfHalf = opusData.cost * 0.3 - (opusData.cost * 0.3 / opusData.cost) * hypotheticalSonnet;
+    insights.push({
+      title: 'Model mix is ' + opusPct.toFixed(0) + '% Opus',
+      tag: 'high', tagLabel: 'High Impact',
+      body: '<strong>' + fmt$(opusData.cost) + '</strong> of ' + fmt$(d.totalCost) + ' is Opus 4.6. '
+        + 'Opus is 5x more expensive than Sonnet and 19x more than Haiku per token. '
+        + 'Research, file search, and scout tasks don\'t need Opus-level reasoning.'
+        + '<br><br><strong>If 30% of Opus calls ran on Sonnet instead:</strong>'
+        + '<div class="savings">Potential savings: ~' + fmt$(opusData.cost * 0.3 - (opusData.cost * 0.3 * hypotheticalSonnet / opusData.cost)) + '/period</div>'
+        + '<br><strong>Action:</strong> Route scout, grep-heavy, and research tasks to Sonnet or Haiku. '
+        + 'The agent roster already supports <code>model: sonnet</code> in frontmatter.'
+    });
+  }
+
+  // 2. Cache write vs read ratio
+  const cacheWriteCost = d.costBreakdown.cacheWrite;
+  const cacheReadCost = d.costBreakdown.cacheRead;
+  const totalCacheCost = cacheWriteCost + cacheReadCost;
+  const writeRatio = totalCacheCost ? (cacheWriteCost / totalCacheCost * 100) : 0;
+
+  insights.push({
+    title: 'Cache writes are ' + writeRatio.toFixed(0) + '% of cache cost',
+    tag: writeRatio > 30 ? 'high' : writeRatio > 20 ? 'med' : 'low',
+    tagLabel: writeRatio > 30 ? 'High Impact' : writeRatio > 20 ? 'Medium' : 'Optimized',
+    body: 'Cache writes cost <strong>' + fmt$(cacheWriteCost) + '</strong> vs reads at <strong>' + fmt$(cacheReadCost) + '</strong>. '
+      + 'Every new session or context compaction rebuilds the cache from scratch at <span class="insight-stat">$18.75/MTok</span>, '
+      + 'while subsequent calls in the same session read from cache at <span class="insight-stat">$1.875/MTok</span> (10x cheaper).'
+      + '<br><br><strong>Action:</strong> Prefer longer sessions over many short ones. '
+      + 'Use <code>/compact</code> sparingly — each compact triggers a full cache rebuild. '
+      + 'Resume existing sessions with <code>claude --resume</code> instead of starting new ones when continuing the same task.'
+  });
+
+  // 3. Session cost distribution
+  const sessionCosts = d.sessions.map(s => s.cost).sort((a, b) => b - a);
+  const top5Cost = sessionCosts.slice(0, 5).reduce((a, b) => a + b, 0);
+  const top5Pct = d.totalCost ? (top5Cost / d.totalCost * 100) : 0;
+  const medianCost = sessionCosts[Math.floor(sessionCosts.length / 2)] || 0;
+
+  insights.push({
+    title: 'Top 5 sessions account for ' + top5Pct.toFixed(0) + '% of total cost',
+    tag: top5Pct > 40 ? 'med' : 'low',
+    tagLabel: top5Pct > 40 ? 'Medium' : 'Normal',
+    body: 'Your top 5 most expensive sessions cost <strong>' + fmt$(top5Cost) + '</strong> combined. '
+      + 'Median session cost is <strong>' + fmt$(medianCost) + '</strong>. '
+      + 'High-cost sessions are usually long design/architecture sessions with many tool calls.'
+      + '<br><br><strong>Action:</strong> For sessions that will be long (design overhauls, multi-file refactors), '
+      + 'consider using a plan-then-execute pattern: plan on Sonnet, execute on Opus. '
+      + 'Dispatch planning to cheaper models, reserve Opus for the implementation.'
+  });
+
+  // 4. Output token analysis
+  const outputCost = d.costBreakdown.output;
+  const outputPct = d.totalCost ? (outputCost / d.totalCost * 100) : 0;
+
+  if (outputPct > 5) {
+    insights.push({
+      title: 'Output tokens are ' + outputPct.toFixed(0) + '% of total cost',
+      tag: outputPct > 15 ? 'med' : 'low',
+      tagLabel: outputPct > 15 ? 'Medium' : 'Minor',
+      body: 'Output costs <strong>' + fmt$(outputCost) + '</strong> at <span class="insight-stat">$75/MTok</span> for Opus. '
+        + 'This is driven by verbose responses, large code generation, and thinking tokens.'
+        + '<br><br><strong>Action:</strong> Concise prompts produce concise responses. '
+        + 'The CLAUDE.md "Keep it simple, stupid" rule helps here — agents that don\'t over-explain cost less.'
+    });
+  }
+
+  // 5. Daily trend insight
+  const days = Object.keys(d.daily).sort();
+  if (days.length >= 3) {
+    const recentDays = days.slice(-3);
+    const olderDays = days.slice(0, Math.min(3, days.length - 3));
+    const recentAvg = recentDays.reduce((a, day) => a + calcDailyCost(d.daily[day]), 0) / recentDays.length;
+    const olderAvg = olderDays.length ? olderDays.reduce((a, day) => a + calcDailyCost(d.daily[day]), 0) / olderDays.length : recentAvg;
+    const trend = olderAvg > 0 ? ((recentAvg - olderAvg) / olderAvg * 100) : 0;
+
+    insights.push({
+      title: 'Daily spend trend: ' + (trend > 0 ? '+' : '') + trend.toFixed(0) + '%',
+      tag: Math.abs(trend) > 30 ? 'med' : 'low',
+      tagLabel: trend > 30 ? 'Increasing' : trend < -30 ? 'Decreasing' : 'Stable',
+      body: 'Recent 3-day average: <strong>' + fmt$(recentAvg) + '/day</strong> vs earlier average: <strong>' + fmt$(olderAvg) + '/day</strong>. '
+        + (trend > 30 ? 'Cost is trending up — likely due to more concurrent agents or longer sessions.' :
+           trend < -30 ? 'Cost is trending down — workflow improvements are working.' :
+           'Cost is relatively stable.')
+    });
+  }
+
+  body.innerHTML = insights.map(i =>
+    '<div class="insight">'
+    + '<div class="insight-title">' + i.title + ' <span class="tag tag-' + i.tag + '">' + i.tagLabel + '</span></div>'
+    + '<div class="insight-body">' + i.body + '</div>'
+    + '</div>'
+  ).join('');
+}
+
+// Hook analysis into render
+const _origRender = render;
+render = function() { _origRender(); renderAnalysis(); };
+
+loadData(false);
+</script>
+</body>
+</html>

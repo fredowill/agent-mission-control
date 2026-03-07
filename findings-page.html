@@ -50,6 +50,7 @@
   .section-eyebrow.t2 { background:var(--blue-bg); color:var(--blue) }
   .section-eyebrow.t3 { background:var(--cyan-bg); color:var(--cyan) }
   .section-eyebrow.t4 { background:var(--amber-bg); color:var(--amber) }
+  .section-eyebrow.t5 { background:rgba(249,115,22,0.08); color:#ea580c }
   .section-title { font-family:'Plus Jakarta Sans',sans-serif; font-size:18px; font-weight:700; letter-spacing:-0.03em }
 
   /* ── Card Grid ── */
@@ -63,9 +64,14 @@
   .finding-card .card-tag.design { background:var(--blue-bg); color:var(--blue) }
   .finding-card .card-tag.architecture { background:var(--cyan-bg); color:var(--cyan) }
   .finding-card .card-tag.operations { background:var(--amber-bg); color:var(--amber) }
+  .finding-card .card-tag.pain-point { background:rgba(249,115,22,0.08); color:#ea580c }
   .finding-card .card-title { font-family:'Plus Jakarta Sans',sans-serif; font-size:13px; font-weight:700; letter-spacing:-0.02em; line-height:1.35; margin-bottom:6px }
   .finding-card .card-preview { font-size:12px; color:var(--text3); line-height:1.5; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden }
   .finding-card .card-session { font-family:'DM Mono',monospace; font-size:10px; color:var(--text3); margin-top:8px; opacity:0.6 }
+  /* Critical findings — visually elevated */
+  .finding-card.critical { border-left:3px solid var(--purple); box-shadow:0 2px 12px rgba(139,92,246,0.08) }
+  .finding-card.critical .card-title { font-size:14px }
+  .finding-card.critical::after { content:''; position:absolute; top:12px; right:12px; width:8px; height:8px; border-radius:50%; background:var(--purple); opacity:0.6 }
 
   /* ── Detail Modal ── */
   .modal-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.3); backdrop-filter:blur(4px); z-index:100; justify-content:center; align-items:center; padding:24px }
@@ -79,6 +85,7 @@
   .modal .m-tag.design { background:var(--blue-bg); color:var(--blue) }
   .modal .m-tag.architecture { background:var(--cyan-bg); color:var(--cyan) }
   .modal .m-tag.operations { background:var(--amber-bg); color:var(--amber) }
+  .modal .m-tag.pain-point { background:rgba(249,115,22,0.08); color:#ea580c }
   .modal .m-title { font-family:'Plus Jakarta Sans',sans-serif; font-size:18px; font-weight:700; letter-spacing:-0.03em; line-height:1.3; margin-bottom:16px }
   .modal .m-quote { border-left:3px solid var(--purple); padding:10px 14px; margin-bottom:14px; background:var(--surface); border-radius:0 8px 8px 0; font-style:italic; font-size:13px; color:var(--text2); line-height:1.6 }
   .modal .m-body { font-size:13px; line-height:1.7; color:var(--text2); margin-bottom:14px }
@@ -103,6 +110,8 @@
     <a href="/tools" class="nav-link">Toolbox</a>
     <a href="/logic" class="nav-link">Logic</a>
     <a href="/radar" class="nav-link">Radar</a>
+    <a href="/campaigns" class="nav-link">Campaigns</a>
+    <a href="/health" class="nav-link">Health</a>
   </nav>
   <div class="header-right"></div>
 </header>
@@ -116,6 +125,14 @@
     <div class="stat-card"><div class="stat-value">30</div><div class="stat-label">Sessions Reviewed</div></div>
     <div class="stat-card"><div class="stat-value">8</div><div class="stat-label">Core Principles</div></div>
     <div class="stat-card"><div class="stat-value">4</div><div class="stat-label">Categories</div></div>
+  </div>
+
+  <div class="section">
+    <div class="section-header">
+      <span class="section-eyebrow t5">Pain Points</span>
+      <span class="section-title">Active Friction &amp; Workflow Blockers</span>
+    </div>
+    <div class="card-grid" id="tier5"></div>
   </div>
 
   <div class="section">
@@ -179,7 +196,7 @@ function renderCards() {
   // Filter by context: show shared (null) + current mode
   const visible = findings.filter(f => f.context === null || f.context === undefined || f.context === mode);
 
-  const tiers = { tier1:[], tier2:[], tier3:[], tier4:[] };
+  const tiers = { tier1:[], tier2:[], tier3:[], tier4:[], tier5:[] };
   visible.forEach((f, i) => { f._idx = findings.indexOf(f); if (tiers[f.tier]) tiers[f.tier].push(f); });
 
   // Update stats
@@ -201,7 +218,7 @@ function renderCards() {
     } else {
       container.closest('.section').style.display = '';
       container.innerHTML = items.map(f => `
-        <div class="finding-card" onclick="openModal(${f._idx})">
+        <div class="finding-card${f.importance === 'critical' ? ' critical' : ''}" onclick="openModal(${f._idx})">
           <span class="card-tag ${esc(f.tag)}">${esc(f.tag)}</span>
           <div class="card-title">${esc(f.title)}</div>
           <div class="card-preview">${esc(f.lesson)}</div>

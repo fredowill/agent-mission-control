@@ -1,0 +1,328 @@
+[
+  {
+    "id": "campaign-001",
+    "name": "MC Evolution Sprint",
+    "status": "active",
+    "created": "2026-03-06",
+    "description": "First coordinated 4-agent sprint. Goal: evolve MC from 'it works' to 'it's genuinely powerful.' 4 agents ran simultaneously, each owning a piece. This is the campaign that proved the concept.",
+    "objectives": [
+      "Dispatch UX: priority sorting, backlog collapse, mission report panel",
+      "Campaigns page: coordinated multi-agent sprint tracking",
+      "Terminal identity: know which window is which agent at a glance",
+      "Session retrospective: capture what happened before context is lost",
+      "Value proposition: articulate what MC is and why it matters",
+      "Agent interface: investigate ChatGPT-style agent manager",
+      "Video dissection: process 44-min demo for value prop insights"
+    ],
+    "agents": [
+      {
+        "slot": "orchestrator",
+        "name": "Orchestrator",
+        "focus": "Dispatch improvements + Campaigns page + coordination",
+        "sessionId": null,
+        "status": "completed",
+        "brief": null
+      },
+      {
+        "slot": "beacon",
+        "name": "Beacon",
+        "focus": "Terminal Identity + Session Retrospective",
+        "sessionId": null,
+        "status": "completed",
+        "brief": ".claude/agent-hub/coordinated-sprint/agent-a-terminal-identity.md"
+      },
+      {
+        "slot": "compass",
+        "name": "Compass",
+        "focus": "Strategic Evaluator + Value Prop + /why page + Video dissection",
+        "sessionId": null,
+        "status": "completed",
+        "brief": ".claude/agent-hub/coordinated-sprint/agent-b-strategic-evaluator.md"
+      },
+      {
+        "slot": "overwatch",
+        "name": "Overwatch",
+        "focus": "Agent Interface + Dashboard improvements + UX research",
+        "sessionId": null,
+        "status": "completed",
+        "brief": ".claude/agent-hub/coordinated-sprint/agent-c-agent-interface.md"
+      },
+      {
+        "slot": "polisher",
+        "name": "Polisher",
+        "focus": "Polish /why page + create /demo-guide (Sprint 2)",
+        "sessionId": "d92dd20b-b59c-4b7d-b524-f9287e92550d",
+        "status": "completed",
+        "brief": null,
+        "sprint": 2
+      },
+      {
+        "slot": "retrospector",
+        "name": "Retrospector",
+        "focus": "Campaign retrospective: what worked, what to improve, broadly applicable lessons",
+        "sessionId": null,
+        "status": "completed",
+        "brief": null,
+        "sprint": 2
+      },
+      {
+        "slot": "integrator",
+        "name": "Integrator",
+        "focus": "Add Retrospective tab to Dashboard agent cards + /end-session integration",
+        "sessionId": "9298399d-fe99-4930-b73c-53e6b01c199e",
+        "status": "completed",
+        "brief": null,
+        "sprint": 2
+      },
+      {
+        "slot": "analyst",
+        "name": "Analyst",
+        "focus": "Session analytics: talk time, prompt metrics, agent/skill usage per card",
+        "sessionId": "ce794c20-903b-4efe-bcd3-6cc75d762cbf",
+        "status": "active",
+        "brief": null,
+        "sprint": 2
+      },
+      {
+        "slot": "video-analyzer",
+        "name": "Video Analyzer",
+        "focus": "Intake 2-hour demo recording: transcribe, extract gems, create dispatch items",
+        "sessionId": "702b0cd6-0a33-4d4a-a15a-18d90c3be1ca",
+        "status": "active",
+        "brief": null,
+        "sprint": 2
+      },
+      {
+        "slot": "findings-analyst",
+        "name": "Findings Analyst",
+        "focus": "Deep analysis of 2-hour demo transcript: extract findings, dispatch items, value prop gems",
+        "sessionId": "e08175d5-8d9d-46bc-ab49-bc16ee946032",
+        "status": "active",
+        "brief": null,
+        "sprint": 2
+      },
+      {
+        "slot": "medic",
+        "name": "Medic",
+        "focus": "Build /health page: system integrity, API status, diagnostics dashboard",
+        "sessionId": "3a61359e-0906-412f-b12b-a573811187a7",
+        "status": "active",
+        "brief": null,
+        "sprint": 2
+      }
+    ],
+    "debrief": {
+      "wins": [
+        {
+          "agent": "Orchestrator",
+          "text": "Campaigns page: coordinated sprint view with agent status and wins/losses debrief",
+          "link": "/campaigns"
+        },
+        {
+          "agent": "Orchestrator",
+          "text": "Sprint Prompts page: 1-click copy buttons, no more drag-selecting prompts from terminal",
+          "link": "/prompts"
+        },
+        {
+          "agent": "Orchestrator",
+          "text": "Pain Points now tracked in Findings as actionable items, not just complaints",
+          "link": "/findings"
+        },
+        {
+          "agent": "Orchestrator",
+          "text": "Page load: 18.5s down to 1.4s (13x faster)",
+          "link": "/"
+        },
+        {
+          "agent": "Orchestrator",
+          "text": "5 new findings captured, preventing repeat mistakes",
+          "link": "/findings"
+        },
+        {
+          "agent": "Beacon",
+          "text": "Terminal auto-naming: new sessions read your first message and set the tab title automatically"
+        },
+        {
+          "agent": "Beacon",
+          "text": "/name command: manually rename any terminal tab on the fly"
+        },
+        {
+          "agent": "Beacon",
+          "text": "/end-session command: structured summary of accomplishments, unfinished work, and decisions before closing"
+        },
+        {
+          "agent": "Compass",
+          "text": "Elevator pitch: 'Air traffic control for AI agents'"
+        },
+        {
+          "agent": "Compass",
+          "text": "/why page: dark-mode landing page explaining MC to someone new",
+          "link": "/why"
+        },
+        {
+          "agent": "Compass",
+          "text": "Key insight: the learning loop (mistake to finding to enforcement) is the killer feature, not the Dashboard"
+        },
+        {
+          "agent": "Compass",
+          "text": "7 ranked recommendations for what to build next"
+        },
+        {
+          "agent": "Overwatch",
+          "text": "Inspector panel spec: slide-out detail view on Dashboard, click any card for depth without leaving the page"
+        },
+        {
+          "agent": "Overwatch",
+          "text": "Approach validated against Kubernetes Lens, Jenkins Blue Ocean, and Slack threads"
+        },
+        {
+          "agent": "Overwatch",
+          "text": "Campaign activity feed concept: war-room timeline of all agents' actions interleaved"
+        }
+      ],
+      "losses": [
+        {
+          "text": "Prompts dumped inline — wrong prompt pasted into two terminals, wasted a session"
+        },
+        {
+          "text": "Orchestrator flew past deliverables — user couldn't find prompts as they scrolled off"
+        },
+        {
+          "text": "Terminal title unverified — couldn't test from within Claude Code session"
+        },
+        {
+          "text": "18s page loads existed before sprint — discovered and fixed, but painful while active"
+        },
+        {
+          "text": "Agent Selection Blindness PM was falsely marked done"
+        },
+        {
+          "text": "44-min demo video dissection never prepared — user wanted to hand off the video but no agent set up the workflow to receive and process it. Reduced to a file assessment instead of the actual task."
+        },
+        {
+          "text": "No setup-phase action item checklist — agents launched without a verified list of what the user actually asked for. Items from the original prompt were paraphrased and reduced, causing video dissection and /why page wiring to be missed. A setup state with explicit action items would have caught this."
+        }
+      ],
+      "remaining": [
+        {
+          "text": "Dispatch improvements: priority sorting, backlog collapse, mission report panel"
+        },
+        {
+          "text": "Inspector panel — Overwatch's #1 recommendation, not built yet"
+        },
+        {
+          "text": "Campaign activity feed — interleaved agent timeline"
+        },
+        {
+          "text": "Wins & Losses view on Campaign page"
+        },
+        {
+          "text": "Agent routing protocol — actual fix for agent selection blindness"
+        },
+        {
+          "text": "Dissect 44-min demo video — adapt dissect-video for home machine, receive video, extract value prop insights"
+        },
+        {
+          "text": "Test terminal identity on actual Windows Terminal"
+        },
+        {
+          "text": "Campaign states: Setup (action items) → Active (live tracking) → Retrospective (review) → Done"
+        },
+        {
+          "text": "Wire /why page into campaign agent cards as viewable deliverable"
+        },
+        {
+          "text": "View buttons on all debrief items that have linkable pages or outputs"
+        },
+        {
+          "text": "Self-updating profile v2: general-purpose profile leveraging MC's rich session data"
+        },
+        {
+          "text": "/demo-guide page: practical 'how to demo MC' guide, separate from /why"
+        },
+        {
+          "text": "Web interface for MC: browser-based chat UI instead of terminal, investigate feasibility"
+        },
+        {
+          "text": "Campaign metrics: define what makes a 'great' session/campaign, surface standout wins"
+        },
+        {
+          "text": "Update /why with self-evolving product narrative and research project framing"
+        },
+        {
+          "text": "Sprint iteration tracking: remaining items tagged with which sprint they were added in (sprint 1, sprint 2, follow-up)"
+        },
+        {
+          "text": "Agent-to-remaining linking: when an agent is working on a remaining item, both pulse/highlight to show the connection"
+        },
+        {
+          "text": "Polish /why page: color-friendly, screen-share ready, Apple keynote quality",
+          "agent": "Polisher"
+        },
+        {
+          "text": "Create /demo-guide page: practical how-to-demo guide for Ephratah",
+          "agent": "Polisher"
+        },
+        {
+          "text": "Campaign retrospective: broadly applicable lessons from the first coordinated sprint",
+          "agent": "Retrospector"
+        },
+        {
+          "text": "Retrospective tab on Dashboard agent cards: see what each agent accomplished after /end-session",
+          "agent": "Integrator"
+        },
+        {
+          "text": "Split server.js into modules: 3600+ lines is too large for agents to read"
+        },
+        {
+          "text": "Campaign close-out flow: button to mark campaign done, surface what moves to next campaign"
+        },
+        {
+          "text": "Auto-dispatch from campaigns page: open CLI terminals programmatically"
+        },
+        {
+          "text": "Demo hooks to teammates (P0, Monday deadline) — show hooks in CARES guide context without revealing MC. Reference: IndyDevDan 'I'm HOOKED on Claude Code Hooks' (https://www.youtube.com/watch?v=J5B9UGTuNoM, Jul 2025) — covers hooks saving codebase from rogue rm -rf, parallel agent communication, practical hook patterns. Use as presentation inspiration and example material."
+        },
+        {
+          "text": "Connect campaign agent cards to Dashboard hooks for live status tracking"
+        },
+        {
+          "text": "Follow-Up debrief: add wins/losses for Polisher, Retrospector, Integrator once they finish"
+        },
+        {
+          "text": "Workflow diagram: visual flow explainable to others + Toolbox section showing agent/skill routing"
+        },
+        {
+          "text": "Refer to CLAUDE.md as 'The Ten Commandments' in Workflow and /why pages"
+        },
+        {
+          "text": "Session analytics: talk time estimate, prompt count, token spend per agent card (dispatch to agent)",
+          "agent": "Analyst"
+        },
+        {
+          "text": "Intake 2-hour demo recording: transcript, analysis, gem extraction, new dispatch items"
+        },
+        {
+          "text": "President's Report page: vision, direction, roadmap — the 'why we're doing this' strategic view"
+        },
+        {
+          "text": "Default sub-agents to Sonnet to save tokens — Opus for orchestrator only"
+        },
+        {
+          "text": "Create reusable Orchestrator agent/skill from this session's patterns"
+        },
+        {
+          "text": "Video preprocessing: extract audio from 15GB MP4, transcribe, then analyze"
+        },
+        {"text": "Dashboard-Campaign backward link: agent cards show campaign badge + click to go back"},
+        {"text": "Kill switch: Stop Agent button on campaign cards (kills PID with confirmation)"},
+        {"text": "Deep video findings analytics page with data cards", "agent": "Findings Analyst"},
+        {"text": "Refresh retrospective before final campaign review — retro is stale, doesn't cover follow-up sprint work"},
+        {"text": "P0: Sub-agent tool visibility — Claude Code doesn't persist sidechain transcripts. Sub-agent tool usage (what Read/Edit/Bash calls a design or scout agent made) is invisible. Need to either: (1) hook into sub-agent tool events via PostToolUse hook, (2) parse temp output files before cleanup, or (3) request Claude Code to expose sidechain data in transcripts. Critical for understanding what agents actually DO vs just seeing they were spawned.", "agent": "Analyst"},
+        {"text": "Study IndyDevDan's 'Claude Code Hooks for Multi Agent Observability' video (https://www.youtube.com/watch?v=9ijnN985O_c, Jul 2025) — closest competitor. Extract their UI/UX patterns, dashboard design, event model, and positioning. Identify what MC does better and what to learn from their surface layer. Feed insights into /why competitive section and product direction.", "agent": "Compass"},
+        {"text": "Watch IndyDevDan's 'I Studied Stripe's AI Agents... Vibe Coding Is Already Dead' (https://www.youtube.com/watch?v=V5A1IU8VVp4) — breakdown of Stripe Minions shipping 1,300 PRs/week with zero human-written code. Ties to the HN Stripe Minions article on radar. Relevant for enterprise positioning and understanding where the industry is headed.", "agent": "Compass"}
+      ]
+    },
+    "context": null
+  }
+]

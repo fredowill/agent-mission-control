@@ -1,0 +1,91 @@
+[
+  {
+    "id": "f036",
+    "tier": "tier1",
+    "tag": "principle",
+    "title": "MC compounds improvements exponentially -- the self-evolving loop is the moat",
+    "quote": "\"Every time I make some changes I'm exponentially getting better -- exponentially producing more, in a very systematic way.\"",
+    "body": "The core competitive advantage of MC is not dashboards or agent tracking -- it's the self-improvement cycle: encounter problem -> post-mortem -> finding -> CLAUDE.md rule -> prevention hook -> never happens again. Each iteration makes the entire system permanently better. No other tool does this. This was the most powerful concept demonstrated in the 2-hour demo session, described via Dr. Stone/Civ 6 analogies ('entering new eras').",
+    "lesson": "The exponential improvement loop should be the centerpiece of any MC pitch. Document and protect this cycle. Every feature decision should ask: does this strengthen or weaken the learning loop?",
+    "meta": "Demo session 2026-03-07, [01:24:01]. Articulated to friend during live demo.",
+    "context": null,
+    "importance": "critical"
+  },
+  {
+    "id": "f037",
+    "tier": "tier2",
+    "tag": "operations",
+    "title": "Cost-aware model routing -- Opus for groceries is a Ferrari to the corner store",
+    "quote": "\"It's like I'm heading to the grocery store in a Ferrari bro -- I don't need to -- it's down the street.\"",
+    "body": "The /cost page revealed 34 single-prompt sessions that used Opus for quick lookups. These don't need the most powerful model. Estimated savings: $300/month by routing simple tasks to Sonnet. The Ferrari/grocery metaphor perfectly captures the waste. 51% of prompts were classified as vague, only 1% as specific action references -- suggesting prompt quality itself is a cost lever.",
+    "lesson": "Build cost-aware routing into the workflow. Simple tasks (single prompt, quick lookup) should default to Sonnet. Reserve Opus for multi-step, context-heavy work. Prompt quality directly impacts cost -- vague prompts burn more tokens.",
+    "meta": "Demo session 2026-03-07, [01:46:54]. Concrete $300/mo savings identified live.",
+    "context": null
+  },
+  {
+    "id": "f038",
+    "tier": "tier2",
+    "tag": "design",
+    "title": "MC has an onboarding problem -- even technical friends need a 'What is Claude Code?' primer",
+    "quote": "\"I saw eight tabs I was like hold on.\" (friend's reaction)",
+    "body": "During the live demo, the friend (OSU CS background, technically savvy) had no idea what Claude Code was. Ephratah spent ~5 minutes explaining the prerequisite before the MC demo could begin. The friend was also overwhelmed by 8+ tabs. MC currently assumes deep Claude Code familiarity. For any external audience -- even technical peers -- there must be a 30-second 'here's what this sits on top of' primer.",
+    "lesson": "Version 1 needs an onboarding path: a brief 'What is Claude Code?' explainer, a guided tour of tabs (not all at once), and progressive disclosure. Don't show 8 tabs to someone who doesn't know what a CLI agent is.",
+    "meta": "Demo session 2026-03-07, [01:29:51], [01:00:00-01:05:00].",
+    "context": null
+  },
+  {
+    "id": "f039",
+    "tier": "tier2",
+    "tag": "architecture",
+    "title": "Recording pipeline is a force multiplier -- spoken data is richer than typed",
+    "quote": "\"The next frontier is being like I'm gonna start recording everything and just have a pipeline.\"",
+    "body": "This demo session itself proved the concept: a 2-hour recording yielded 15+ value proposition quotes, 16 future ideas, 12 pain points, and 7 strategic insights -- far more than any typed session captures. Spoken interaction reveals priorities (what gets repeated), emotional intensity (what causes frustration), and ideas that flash by too fast to type. The user explicitly called this 'the next frontier.'",
+    "lesson": "Build a record -> transcribe -> extract -> dispatch pipeline. Prioritize this as infrastructure, not a feature. The ROI is immediate: every meeting, every brainstorm, every demo becomes a structured data source that feeds findings, dispatch, and campaigns.",
+    "meta": "Demo session 2026-03-07, [01:52:48]. The session itself is proof of concept.",
+    "context": null
+  },
+  {
+    "id": "f040",
+    "tier": "tier3",
+    "tag": "architecture",
+    "title": "Stealth mode -- MC should be invisible to outsiders (Tony Stark principle)",
+    "quote": "\"I don't want someone to be able to infer that I had mission control. I wanted to think that I just was coding this in a CLI -- like I'm Tony Stark and I built some shit in a cave with a box of scraps.\"",
+    "body": "The user explicitly wants MC to be invisible in professional contexts. When showing work to managers or peers, the output should look like impressive individual CLI work, not reveal a management layer. This has design implications: any work-mode features must produce clean outputs with no MC branding. The 'stealth value' is part of the product appeal.",
+    "lesson": "Work mode needs a sanitized output layer. Reports, summaries, and deliverables produced via MC should strip all MC branding and framing. The user is Tony Stark; MC is JARVIS -- powerful but invisible to the audience.",
+    "meta": "Demo session 2026-03-07, [01:49:47].",
+    "context": null
+  },
+  {
+    "id": "f041",
+    "tier": "tier3",
+    "tag": "architecture",
+    "title": "Work/home dual use creates lock-in -- mode switch is a retention feature",
+    "quote": "\"My work is gonna be so easy and fun... I can push this, it goes to my work laptop and I just switch -- and now I'm in work mode.\"",
+    "body": "The home/work mode switch was demonstrated during the live demo. The friend reacted with surprise ('and also your work mode -- one agent'). Once MC manages both personal projects and work contexts, leaving becomes extremely costly -- all institutional knowledge, agent workflows, and cost data live in one system. The mode switch is understated but strategic.",
+    "lesson": "Prioritize work/home mode for v1. It's not just a feature -- it's a retention mechanism. The more contexts MC manages, the harder it is to replace. Make the mode switch seamless and the cross-context data valuable.",
+    "meta": "Demo session 2026-03-07, [01:28:48], [01:41:47].",
+    "context": null
+  },
+  {
+    "id": "f042",
+    "tier": "tier2",
+    "tag": "principle",
+    "title": "The data is the money -- prompt quality and analytics are core value",
+    "quote": "\"The data is the money.\"",
+    "body": "During the cost discussion, the user identified prompt analytics as 'the next big task.' Having a smart index of prompts that can recognize patterns ('a-frada has this unique style of doing XYZ'), track quality over time, and suggest improvements would be transformative. Currently, prompts are fire-and-forget. They should be a trackable, improvable asset.",
+    "lesson": "Build a prompt analytics system: track prompt specificity, length, model used, and outcome quality. Surface patterns. Suggest improvements. This is where MC moves from management tool to intelligence system.",
+    "meta": "Demo session 2026-03-07, [01:37:26], [01:37:05].",
+    "context": null
+  },
+  {
+    "id": "f043",
+    "tier": "tier3",
+    "tag": "operations",
+    "title": "Demoing MC is itself a high-value activity -- the presenter learns more than the audience",
+    "quote": "\"This session helped -- you helped me a lot and I helped myself a whole lot... I learned a lot about how to present this to people.\"",
+    "body": "The 2-hour demo session yielded more actionable insights than weeks of solo development. Explaining MC to a non-user forced clarity on: what matters, what's confusing, what's missing, and what the real value proposition is. The friend's questions surfaced blind spots (onboarding, cost suggestions). The user recognized this: 'I think I work better when I'm imaginary talking to myself trying to showcase.'",
+    "lesson": "Schedule regular demo sessions as a development practice, not just marketing. Each demo surfaces pain points, clarifies priorities, and generates dispatch items. The recording -> transcribe -> extract pipeline makes this systematic.",
+    "meta": "Demo session 2026-03-07, [01:50:36], [00:00:39].",
+    "context": null
+  }
+]

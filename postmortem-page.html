@@ -81,6 +81,7 @@
 
   .pm-header-content { flex:1; min-width:0 }
   .pm-title { font-family:'Plus Jakarta Sans',sans-serif; font-size:14px; font-weight:700; letter-spacing:-0.02em; line-height:1.35 }
+  .pm-impact { font-size:12px; color:var(--text2); line-height:1.5; margin-top:4px; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden }
   .pm-meta { display:flex; align-items:center; gap:6px; margin-top:3px; flex-wrap:wrap }
   .pm-date { font-family:'DM Mono',monospace; font-size:10px; color:var(--text3) }
   .pm-tag { font-size:8px; font-weight:700; text-transform:uppercase; letter-spacing:0.05em; padding:2px 6px; border-radius:4px; background:var(--surface); color:var(--text3) }
@@ -174,6 +175,8 @@
     <a href="/tools" class="nav-link">Toolbox</a>
     <a href="/logic" class="nav-link">Logic</a>
     <a href="/radar" class="nav-link">Radar</a>
+    <a href="/campaigns" class="nav-link">Campaigns</a>
+    <a href="/health" class="nav-link">Health</a>
   </nav>
   <div style="width:120px"></div>
 </header>
@@ -223,9 +226,18 @@ function parsePM(item) {
   const actionLines = (sections['Action items'] || []).filter(l => l.match(/^\d+\./));
   const actions = actionLines.map(l => ({ text: l.replace(/^\d+\.\s*/, ''), done: false }));
 
+  // Extract a one-line impact statement: first real sentence from "What actually happened" or intro
+  const whatText = (sections['What actually happened'] || []).join(' ').trim();
+  const introText = Object.values(sections).flat().join(' ').trim();
+  const sourceText = whatText || introText;
+  // Get first sentence that's substantive (>20 chars)
+  const sentences = sourceText.split(/(?<=[.!?])\s+/).filter(s => s.length > 20);
+  const impact = sentences.length > 0 ? sentences[0].replace(/^- /, '').trim() : '';
+
   return {
     id: item.id, title: item.title, date: item.created, status: item.status,
     tags: item.tags || [], session: item.linkedSession,
+    impact: impact,
     intro: (sections['Incident (2026-03-05)'] || sections['_intro'] || []).join('\n').trim(),
     whatHappened: (sections['What actually happened'] || []).join('\n').trim(),
     failures, actions,
@@ -287,6 +299,7 @@ function renderPM(pm, idx) {
         <div class="pm-sev-badge ${sev}">${sev === 'critical' ? '!' : '?'}</div>
         <div class="pm-header-content">
           <div class="pm-title">${esc(pm.title)}</div>
+          ${pm.impact ? `<div class="pm-impact">${esc(pm.impact)}</div>` : ''}
           <div class="pm-meta">
             <span class="pm-date">${fmtDate(pm.date)}</span>
             <span class="pm-status ${statusCls}">${statusLabel}</span>

@@ -1,0 +1,1232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Video Findings &mdash; Mission Control</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=DM+Sans:wght@400;500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#fff;--bg2:#fafafa;--surface:#f4f4f5;--surface2:#e4e4e7;
+  --text:#09090b;--text2:#52525b;--text3:#a1a1aa;--sep:#e4e4e7;
+  --purple:#8b5cf6;--purple-bg:rgba(139,92,246,0.06);--purple-border:rgba(139,92,246,0.15);
+  --blue:#3b82f6;--blue-bg:rgba(59,130,246,0.06);
+  --green:#22c55e;--green-bg:rgba(34,197,94,0.06);
+  --amber:#f59e0b;--amber-bg:rgba(245,158,11,0.06);
+  --rose:#ef4444;--rose-bg:rgba(239,68,68,0.05);
+  --teal:#14b8a6;--teal-bg:rgba(20,184,166,0.06);
+  --radius:12px;
+}
+body{background:var(--bg2);color:var(--text);font-family:'DM Sans',-apple-system,sans-serif;-webkit-font-smoothing:antialiased;overflow-x:hidden;min-height:100vh}
+
+/* Header */
+header{display:flex;align-items:center;justify-content:space-between;padding:0 clamp(24px,4vw,48px);height:64px;background:var(--bg);border-bottom:1px solid var(--sep);position:sticky;top:0;z-index:50}
+.logo{display:flex;align-items:center;gap:10px}
+.logo-dot{width:8px;height:8px;border-radius:50%;background:var(--purple)}
+.logo-text{font-family:'Plus Jakarta Sans',sans-serif;font-size:14px;font-weight:700;letter-spacing:-0.02em}
+.header-nav{display:flex;gap:2px;padding:3px;background:var(--surface);border-radius:8px;position:absolute;left:50%;transform:translateX(-50%)}
+.nav-link{padding:5px 14px;border-radius:6px;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;color:var(--text3);text-decoration:none;transition:all .15s;white-space:nowrap}
+.nav-link:hover{color:var(--text2)}
+.nav-link.active{background:var(--bg);color:var(--text);box-shadow:0 1px 3px rgba(0,0,0,.06)}
+
+/* Content */
+.page-wrap{max-width:1200px;margin:0 auto;padding:32px 24px 80px}
+.page-title{font-family:'Plus Jakarta Sans',sans-serif;font-size:28px;font-weight:800;letter-spacing:-0.04em;margin-bottom:4px}
+.page-sub{font-size:13px;color:var(--text3);margin-bottom:28px}
+
+/* Summary cards */
+.cards{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:32px}
+.card{background:var(--bg);border:1px solid var(--sep);border-radius:var(--radius);padding:20px 22px;transition:border-color .15s}
+.card:hover{border-color:var(--purple-border)}
+.card-label{font-size:11px;font-weight:500;color:var(--text3);text-transform:uppercase;letter-spacing:0.04em;margin-bottom:8px}
+.card-value{font-family:'Plus Jakarta Sans',sans-serif;font-size:32px;font-weight:800;letter-spacing:-0.04em;line-height:1}
+.card-value.green{color:var(--green)}
+.card-value.blue{color:var(--blue)}
+.card-value.purple{color:var(--purple)}
+.card-value.rose{color:var(--rose)}
+.card-value.amber{color:var(--amber)}
+.card-value.teal{color:var(--teal)}
+.card-detail{font-family:'DM Mono',monospace;font-size:11px;color:var(--text3);margin-top:6px}
+
+/* Sections */
+.section{background:var(--bg);border:1px solid var(--sep);border-radius:var(--radius);padding:24px;margin-bottom:20px}
+.section-title{font-family:'Plus Jakarta Sans',sans-serif;font-size:16px;font-weight:700;letter-spacing:-0.02em;margin-bottom:16px;display:flex;align-items:center;gap:8px}
+.section-badge{font-family:'DM Mono',monospace;font-size:10px;color:var(--text3);background:var(--surface);padding:2px 8px;border-radius:100px}
+.section-icon{width:20px;height:20px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:11px;flex-shrink:0}
+
+/* Key metric badge */
+.key-metric{display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:100px;font-family:'DM Mono',monospace;font-size:10px;font-weight:600;letter-spacing:0.02em;text-transform:uppercase}
+.km-purple{background:var(--purple-bg);color:var(--purple);border:1px solid var(--purple-border)}
+.km-green{background:var(--green-bg);color:#059669;border:1px solid rgba(34,197,94,0.2)}
+.km-rose{background:var(--rose-bg);color:var(--rose);border:1px solid rgba(239,68,68,0.15)}
+.km-amber{background:var(--amber-bg);color:#d97706;border:1px solid rgba(245,158,11,0.2)}
+.km-blue{background:var(--blue-bg);color:var(--blue);border:1px solid rgba(59,130,246,0.2)}
+.km-teal{background:var(--teal-bg);color:var(--teal);border:1px solid rgba(20,184,166,0.2)}
+
+/* Finding cards */
+.finding-card{padding:16px 18px;background:var(--surface);border-radius:10px;margin-bottom:10px;border-left:3px solid var(--purple)}
+.finding-card.new{border-left-color:var(--green)}
+.finding-card.exists{border-left-color:var(--surface2);opacity:0.7}
+.finding-title{font-family:'Plus Jakarta Sans',sans-serif;font-size:13px;font-weight:700;margin-bottom:6px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.finding-body{font-size:12px;color:var(--text2);line-height:1.6;margin-bottom:6px}
+.finding-quote{font-size:12px;color:var(--text);line-height:1.5;font-style:italic;padding:8px 12px;background:var(--bg);border-radius:6px;border-left:2px solid var(--purple);margin-bottom:8px}
+.finding-meta{font-family:'DM Mono',monospace;font-size:10px;color:var(--text3)}
+
+/* Quote gems */
+.quote-gem{padding:18px 20px;background:var(--bg);border:1px solid var(--sep);border-radius:10px;margin-bottom:12px;position:relative;overflow:hidden}
+.quote-gem::before{content:'';position:absolute;top:0;left:0;width:3px;height:100%;background:var(--purple)}
+.quote-text{font-family:'Plus Jakarta Sans',sans-serif;font-size:15px;font-weight:600;letter-spacing:-0.01em;line-height:1.5;margin-bottom:8px;color:var(--text)}
+.quote-context{font-size:12px;color:var(--text2);line-height:1.5;margin-bottom:6px}
+.quote-use{font-family:'DM Mono',monospace;font-size:10px;color:var(--purple);font-weight:500}
+.quote-time{font-family:'DM Mono',monospace;font-size:10px;color:var(--text3);position:absolute;top:18px;right:18px}
+
+/* Dispatch items */
+.dispatch-item{display:flex;align-items:flex-start;gap:12px;padding:14px 16px;background:var(--surface);border-radius:10px;margin-bottom:8px}
+.dispatch-priority{font-family:'DM Mono',monospace;font-size:10px;font-weight:600;padding:2px 8px;border-radius:4px;flex-shrink:0;margin-top:2px}
+.dp-p0{background:rgba(239,68,68,0.1);color:var(--rose)}
+.dp-p1{background:rgba(245,158,11,0.1);color:#d97706}
+.dp-p2{background:rgba(59,130,246,0.1);color:var(--blue)}
+.dispatch-content{flex:1}
+.dispatch-title{font-family:'Plus Jakarta Sans',sans-serif;font-size:13px;font-weight:700;margin-bottom:3px}
+.dispatch-desc{font-size:11px;color:var(--text2);line-height:1.5}
+.dispatch-status{font-family:'DM Mono',monospace;font-size:10px;padding:2px 8px;border-radius:4px;flex-shrink:0;margin-top:2px}
+.ds-new{background:var(--green-bg);color:#059669;border:1px solid rgba(34,197,94,0.2)}
+.ds-exists{background:var(--surface);color:var(--text3);border:1px solid var(--sep)}
+
+/* Reaction grid */
+.reaction-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.reaction-col-title{font-family:'Plus Jakarta Sans',sans-serif;font-size:13px;font-weight:700;margin-bottom:10px;display:flex;align-items:center;gap:6px}
+.reaction-item{padding:12px 14px;background:var(--surface);border-radius:8px;margin-bottom:8px}
+.reaction-item.landed{border-left:3px solid var(--green)}
+.reaction-item.missed{border-left:3px solid var(--amber)}
+.reaction-moment{font-size:12px;font-weight:600;color:var(--text);margin-bottom:3px}
+.reaction-detail{font-size:11px;color:var(--text2);line-height:1.5}
+.reaction-implication{font-family:'DM Mono',monospace;font-size:10px;color:var(--purple);margin-top:4px}
+
+/* Pain points */
+.pain-item{display:flex;align-items:flex-start;gap:10px;padding:12px 14px;background:var(--surface);border-radius:8px;margin-bottom:8px}
+.pain-severity{font-family:'DM Mono',monospace;font-size:9px;font-weight:600;padding:2px 7px;border-radius:4px;flex-shrink:0;margin-top:2px;text-transform:uppercase}
+.ps-critical{background:rgba(239,68,68,0.1);color:var(--rose)}
+.ps-high{background:rgba(245,158,11,0.1);color:#d97706}
+.ps-medium{background:rgba(59,130,246,0.1);color:var(--blue)}
+.ps-solved{background:var(--green-bg);color:#059669}
+.pain-content{flex:1}
+.pain-title{font-size:12px;font-weight:600;color:var(--text);margin-bottom:2px}
+.pain-detail{font-size:11px;color:var(--text2);line-height:1.4}
+.pain-time{font-family:'DM Mono',monospace;font-size:10px;color:var(--text3)}
+
+/* Timeline */
+.timeline{position:relative;padding-left:24px}
+.timeline::before{content:'';position:absolute;left:7px;top:6px;bottom:6px;width:2px;background:var(--sep)}
+.tl-item{position:relative;padding:8px 0 8px 16px;display:flex;gap:12px;align-items:flex-start}
+.tl-dot{position:absolute;left:-20px;top:12px;width:10px;height:10px;border-radius:50%;border:2px solid var(--bg);flex-shrink:0}
+.tl-dot.solo{background:var(--purple)}
+.tl-dot.demo{background:var(--green)}
+.tl-dot.break{background:var(--amber)}
+.tl-dot.outro{background:var(--text3)}
+.tl-time{font-family:'DM Mono',monospace;font-size:11px;color:var(--text3);min-width:52px;flex-shrink:0;padding-top:1px}
+.tl-phase{font-family:'DM Mono',monospace;font-size:9px;font-weight:600;text-transform:uppercase;letter-spacing:0.04em;padding:2px 7px;border-radius:4px;flex-shrink:0}
+.tl-phase.solo{background:var(--purple-bg);color:var(--purple)}
+.tl-phase.demo{background:var(--green-bg);color:#059669}
+.tl-phase.break{background:var(--amber-bg);color:#d97706}
+.tl-phase.outro{background:var(--surface);color:var(--text3)}
+.tl-desc{font-size:12px;color:var(--text2);line-height:1.4}
+
+/* Future vision */
+.vision-card{padding:14px 16px;background:var(--surface);border-radius:10px;margin-bottom:8px;display:flex;gap:12px;align-items:flex-start}
+.vision-signal{font-family:'DM Mono',monospace;font-size:9px;font-weight:600;padding:2px 7px;border-radius:4px;flex-shrink:0;margin-top:2px;text-transform:uppercase}
+.vs-p0{background:rgba(239,68,68,0.1);color:var(--rose)}
+.vs-high{background:rgba(245,158,11,0.1);color:#d97706}
+.vs-med{background:rgba(59,130,246,0.1);color:var(--blue)}
+.vs-low{background:var(--surface2);color:var(--text3)}
+.vision-content{flex:1}
+.vision-title{font-size:12px;font-weight:600;color:var(--text);margin-bottom:2px}
+.vision-detail{font-size:11px;color:var(--text2);line-height:1.4}
+.vision-time{font-family:'DM Mono',monospace;font-size:10px;color:var(--text3)}
+
+/* Strategic insights */
+.insight-card{padding:16px 18px;background:var(--bg);border:1px solid var(--sep);border-radius:10px;margin-bottom:12px}
+.insight-number{font-family:'DM Mono',monospace;font-size:10px;font-weight:600;color:var(--purple);margin-bottom:4px}
+.insight-title{font-family:'Plus Jakarta Sans',sans-serif;font-size:14px;font-weight:700;margin-bottom:6px}
+.insight-body{font-size:12px;color:var(--text2);line-height:1.6}
+
+/* Stats row */
+.stat-row{display:flex;gap:20px;padding:12px 0;flex-wrap:wrap}
+.stat-item{display:flex;flex-direction:column;gap:2px}
+.stat-label{font-family:'DM Mono',monospace;font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:0.03em}
+.stat-value{font-family:'DM Mono',monospace;font-size:13px;font-weight:500;color:var(--text)}
+
+/* Cross-ref tag */
+.xref{font-family:'DM Mono',monospace;font-size:9px;padding:1px 6px;border-radius:3px;background:var(--surface);color:var(--text3);border:1px solid var(--sep)}
+
+/* Tabs */
+.tab-bar{display:flex;gap:2px;padding:3px;background:var(--surface);border-radius:8px;margin-bottom:16px;width:fit-content}
+.tab-btn{padding:6px 16px;border-radius:6px;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:500;color:var(--text3);border:none;background:transparent;cursor:pointer;transition:all .15s}
+.tab-btn:hover{color:var(--text2)}
+.tab-btn.active{background:var(--bg);color:var(--text);box-shadow:0 1px 3px rgba(0,0,0,.06)}
+.tab-content{display:none}
+.tab-content.active{display:block}
+
+/* Divider */
+.divider{height:1px;background:var(--sep);margin:16px 0}
+
+@media(max-width:900px){
+  .cards{grid-template-columns:repeat(2,1fr)}
+  .reaction-grid{grid-template-columns:1fr}
+  .header-nav{display:none}
+}
+@media(max-width:600px){
+  .cards{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">
+    <div class="logo-dot"></div>
+    <div class="logo-text">Mission Control</div>
+  </div>
+  <nav class="header-nav">
+    <a href="/" class="nav-link">Dashboard</a>
+    <a href="/dispatch" class="nav-link">Dispatch</a>
+    <a href="/workflow" class="nav-link">Workflow</a>
+    <a href="/tools" class="nav-link">Toolbox</a>
+    <a href="/findings" class="nav-link">Findings</a>
+  </nav>
+  <div style="width:120px"></div>
+</header>
+
+<div class="page-wrap">
+
+  <!-- Page header -->
+  <div style="display:flex;align-items:baseline;justify-content:space-between;margin-bottom:4px">
+    <h1 class="page-title">Video Findings</h1>
+    <span class="key-metric km-purple">Deep Analytics</span>
+  </div>
+  <p class="page-sub" style="margin-bottom:28px">
+    Data-science pass on 2-hour demo session (2026-03-07 00:20&ndash;02:16 AM) &mdash; 1,168 transcript segments, Whisper medium model
+  </p>
+
+  <!-- ═══ SESSION OVERVIEW ═══ -->
+  <div class="cards">
+    <div class="card">
+      <div class="card-label">Duration</div>
+      <div class="card-value purple">1h 56m</div>
+      <div class="card-detail">Solo: 59m &middot; Demo: 54m &middot; Outro: 3m</div>
+    </div>
+    <div class="card">
+      <div class="card-label">Transcript Segments</div>
+      <div class="card-value blue">1,168</div>
+      <div class="card-detail">~80KB raw text &middot; Whisper medium</div>
+    </div>
+    <div class="card">
+      <div class="card-label">Topics Covered</div>
+      <div class="card-value teal">18</div>
+      <div class="card-detail">Cost, campaigns, findings, /why, hooks, work...</div>
+    </div>
+    <div class="card">
+      <div class="card-label">Extracted Items</div>
+      <div class="card-value green">52</div>
+      <div class="card-detail">8 findings &middot; 16 ideas &middot; 15 quotes &middot; 12 pain points</div>
+    </div>
+  </div>
+
+  <div class="cards" style="grid-template-columns:repeat(3,1fr)">
+    <div class="card">
+      <div class="card-label">New Findings</div>
+      <div class="card-value green">8</div>
+      <div class="card-detail">Cross-referenced against 35 existing &middot; 0 duplicates</div>
+    </div>
+    <div class="card">
+      <div class="card-label">New Dispatch Items</div>
+      <div class="card-value amber">11</div>
+      <div class="card-detail">Cross-referenced against 44 existing tasks</div>
+    </div>
+    <div class="card">
+      <div class="card-label">Ideas Already Tracked</div>
+      <div class="card-value" style="color:var(--text3)">7</div>
+      <div class="card-detail">Notifications, talk time, campaign lifecycle, etc.</div>
+    </div>
+  </div>
+
+  <!-- ═══ VALUE PROPOSITION GEMS ═══ -->
+  <div class="section">
+    <div class="section-title">
+      <div class="section-icon" style="background:var(--purple-bg);color:var(--purple)">&#9733;</div>
+      Value Proposition Gems
+      <span class="key-metric km-purple">Best Articulations</span>
+      <span class="section-badge">for /why &middot; President's Report &middot; pitches</span>
+    </div>
+
+    <div class="quote-gem">
+      <div class="quote-text">"This is basically an interface layer built on top of my IDE... I don't need to look at files &mdash; that's not my job. My job is to create."</div>
+      <div class="quote-context"><strong>The Interface Layer Thesis.</strong> Cleanest articulation of MC's core value. MC elevates the user above the code level. Not a dev tool &mdash; a management interface.</div>
+      <div class="quote-use">USE: /why elevator pitch &middot; Positioning statement</div>
+      <div class="quote-time">[01:14:52]</div>
+    </div>
+
+    <div class="quote-gem">
+      <div class="quote-text">"You can make mistakes once. If you know how to utilize your workflow you don't have to make the same mistakes again."</div>
+      <div class="quote-context"><strong>The Mistake Prevention Engine.</strong> MC's deepest value prop. Other tools show you what's happening. MC ensures the same problem never happens twice. The post-mortem &#8594; finding &#8594; rule &#8594; hook cycle.</div>
+      <div class="quote-use">USE: /why &mdash; the learning system pitch &middot; Killer feature framing</div>
+      <div class="quote-time">[01:11:06]</div>
+    </div>
+
+    <div class="quote-gem">
+      <div class="quote-text">"This is basically a big ass crib &mdash; putting all my agents in this baby crib and making sure I can watch them."</div>
+      <div class="quote-context"><strong>The Baby Crib Metaphor.</strong> Raw, memorable, visceral. Agents need watching. You're the parent. MC is the nursery with cameras.</div>
+      <div class="quote-use">USE: Identity / branding &middot; Memorable one-liner</div>
+      <div class="quote-time">[01:07:18]</div>
+    </div>
+
+    <div class="quote-gem">
+      <div class="quote-text">"MC is air traffic control for your AI agents &mdash; not the planes, not the destination."</div>
+      <div class="quote-context"><strong>ATC Framing.</strong> Crystal clear role definition in one sentence. Pre-written for /why page, but Ephratah paused on it during demo &mdash; it resonates.</div>
+      <div class="quote-use">USE: Tagline &middot; Positioning &middot; One-line pitch</div>
+      <div class="quote-time">[01:31:26]</div>
+    </div>
+
+    <div class="quote-gem">
+      <div class="quote-text">"Every time I make some changes I'm exponentially getting better &mdash; exponentially producing more, in a very systematic way."</div>
+      <div class="quote-context"><strong>The Civ 6 Thesis.</strong> MC doesn't just manage &mdash; it compounds. Each post-mortem, finding, and rule makes the entire system permanently better. Referenced Dr. Stone, then Civ 6 as better analogy.</div>
+      <div class="quote-use">USE: President's Report &middot; Growth thesis &middot; Investor pitch</div>
+      <div class="quote-time">[01:24:01]</div>
+    </div>
+  </div>
+
+  <!-- ═══ TOP FINDINGS ═══ -->
+  <div class="section">
+    <div class="section-title">
+      <div class="section-icon" style="background:var(--green-bg);color:var(--green)">&#9679;</div>
+      New Findings from Session
+      <span class="key-metric km-green">8 New</span>
+      <span class="section-badge">cross-referenced against 35 existing</span>
+    </div>
+
+    <div class="finding-card new">
+      <div class="finding-title">
+        MC compounds improvements exponentially &mdash; the self-evolving loop is the moat
+        <span class="key-metric km-green" style="font-size:9px">New &middot; f036</span>
+        <span class="key-metric km-rose" style="font-size:9px">Critical</span>
+      </div>
+      <div class="finding-quote">"Every time I make some changes I'm exponentially getting better &mdash; exponentially producing more, in a very systematic way."</div>
+      <div class="finding-body">The cycle: encounter problem &#8594; post-mortem &#8594; finding &#8594; CLAUDE.md rule &#8594; prevention hook &#8594; never happens again. No other tool does this. This is MC's true competitive advantage.</div>
+      <div class="finding-meta">[01:24:01] &middot; Tier 1 Principle</div>
+    </div>
+
+    <div class="finding-card new">
+      <div class="finding-title">
+        Cost-aware model routing &mdash; Opus for groceries is a Ferrari to the corner store
+        <span class="key-metric km-green" style="font-size:9px">New &middot; f037</span>
+      </div>
+      <div class="finding-quote">"It's like I'm heading to the grocery store in a Ferrari bro &mdash; I don't need to &mdash; it's down the street."</div>
+      <div class="finding-body">34 single-prompt sessions used Opus for quick lookups. Estimated savings: $300/month by routing to Sonnet. 51% of prompts classified as vague.</div>
+      <div class="finding-meta">[01:46:54] &middot; Tier 2 Operations &middot; $300/mo impact</div>
+    </div>
+
+    <div class="finding-card new">
+      <div class="finding-title">
+        MC has an onboarding problem &mdash; even technical friends need a primer
+        <span class="key-metric km-green" style="font-size:9px">New &middot; f038</span>
+      </div>
+      <div class="finding-quote">"I saw eight tabs I was like hold on." &mdash; Friend</div>
+      <div class="finding-body">Friend didn't know what Claude Code was. ~5 minutes of preamble before the demo could begin. MC assumes deep Claude Code familiarity. Needs a 30-second "what this sits on top of" primer.</div>
+      <div class="finding-meta">[01:29:51] &middot; Tier 2 Design &middot; Version 1 blocker</div>
+    </div>
+
+    <div class="finding-card new">
+      <div class="finding-title">
+        Recording pipeline is a force multiplier &mdash; spoken data is richer than typed
+        <span class="key-metric km-green" style="font-size:9px">New &middot; f039</span>
+      </div>
+      <div class="finding-quote">"The next frontier is being like I'm gonna start recording everything and just have a pipeline."</div>
+      <div class="finding-body">This session itself is proof: 2hr recording yielded 8 findings, 15+ quotes, 16 ideas, 12 pain points. Far more than any typed session captures.</div>
+      <div class="finding-meta">[01:52:48] &middot; Tier 2 Architecture &middot; This session is the POC</div>
+    </div>
+
+    <div class="finding-card new">
+      <div class="finding-title">
+        Stealth mode &mdash; MC should be invisible to outsiders (Tony Stark principle)
+        <span class="key-metric km-green" style="font-size:9px">New &middot; f040</span>
+      </div>
+      <div class="finding-quote">"I don't want someone to infer that I had mission control. I built some shit in a cave with a box of scraps."</div>
+      <div class="finding-body">Work outputs should look like impressive individual CLI work, not reveal a management layer. Sanitized output for professional contexts.</div>
+      <div class="finding-meta">[01:49:47] &middot; Tier 3 Architecture</div>
+    </div>
+
+    <div class="finding-card new">
+      <div class="finding-title">
+        Work/home dual use creates lock-in &mdash; mode switch is a retention feature
+        <span class="key-metric km-green" style="font-size:9px">New &middot; f041</span>
+      </div>
+      <div class="finding-quote">"I can push this, it goes to my work laptop and I just switch &mdash; and now I'm in work mode."</div>
+      <div class="finding-body">Once MC manages both contexts, leaving becomes extremely costly. The mode switch is understated but strategic. Friend reacted with surprise.</div>
+      <div class="finding-meta">[01:28:48] &middot; Tier 3 Architecture &middot; Retention mechanism</div>
+    </div>
+
+    <div class="finding-card new">
+      <div class="finding-title">
+        The data is the money &mdash; prompt quality and analytics are core value
+        <span class="key-metric km-green" style="font-size:9px">New &middot; f042</span>
+      </div>
+      <div class="finding-quote">"The data is the money."</div>
+      <div class="finding-body">Prompt analytics identified as "the next big task." A smart index that tracks prompt quality, recognizes patterns, and suggests improvements would transform MC from management tool to intelligence system.</div>
+      <div class="finding-meta">[01:37:26] &middot; Tier 2 Principle</div>
+    </div>
+
+    <div class="finding-card new">
+      <div class="finding-title">
+        Demoing MC is itself a high-value development activity
+        <span class="key-metric km-green" style="font-size:9px">New &middot; f043</span>
+      </div>
+      <div class="finding-quote">"This session helped &mdash; you helped me a lot and I helped myself a whole lot."</div>
+      <div class="finding-body">Explaining MC to a non-user forced clarity on what matters, what's confusing, and what's missing. The friend's questions surfaced blind spots. Demo sessions should be a regular practice.</div>
+      <div class="finding-meta">[01:50:36] &middot; Tier 3 Operations</div>
+    </div>
+  </div>
+
+  <!-- ═══ NEW DISPATCH ITEMS ═══ -->
+  <div class="section">
+    <div class="section-title">
+      <div class="section-icon" style="background:var(--amber-bg);color:var(--amber)">&#9654;</div>
+      Dispatch Items
+      <span class="key-metric km-amber">11 New</span>
+      <span class="key-metric km-blue">7 Already Tracked</span>
+    </div>
+
+    <div class="tab-bar">
+      <button class="tab-btn active" onclick="switchTab(this,'new-tasks')">New Tasks (11)</button>
+      <button class="tab-btn" onclick="switchTab(this,'existing-tasks')">Already Tracked (7)</button>
+    </div>
+
+    <div class="tab-content active" id="new-tasks">
+      <div class="dispatch-item">
+        <span class="dispatch-priority dp-p0">P0</span>
+        <div class="dispatch-content">
+          <div class="dispatch-title">Prepare hooks demo for FHL week at work</div>
+          <div class="dispatch-desc">FHL (Fix Hack Learn) week at Microsoft. All meetings cancelled. Need compelling hooks demo for work context. "I don't know what's a good application of hooks in the context of work." <span class="xref">[01:48:46]</span></div>
+        </div>
+        <span class="dispatch-status ds-new">New</span>
+      </div>
+
+      <div class="dispatch-item">
+        <span class="dispatch-priority dp-p1">P1</span>
+        <div class="dispatch-content">
+          <div class="dispatch-title">Build recording &#8594; transcribe &#8594; extract &#8594; dispatch pipeline</div>
+          <div class="dispatch-desc">End-to-end pipeline for turning recordings into structured MC data. This session is proof of concept. User called it "the next frontier." <span class="xref">[01:52:48]</span></div>
+        </div>
+        <span class="dispatch-status ds-new">New</span>
+      </div>
+
+      <div class="dispatch-item">
+        <span class="dispatch-priority dp-p1">P1</span>
+        <div class="dispatch-content">
+          <div class="dispatch-title">Prompt analytics: track quality, patterns, suggest improvements</div>
+          <div class="dispatch-desc">Smart index of prompts, quality trends, cost impact. Friend validated: "did it give suggestions based off the prompts?" User: "the next big task." <span class="xref">[01:37:05]</span></div>
+        </div>
+        <span class="dispatch-status ds-new">New</span>
+      </div>
+
+      <div class="dispatch-item">
+        <span class="dispatch-priority dp-p1">P1</span>
+        <div class="dispatch-content">
+          <div class="dispatch-title">Add prompt engineering for cost reduction card on /cost page</div>
+          <div class="dispatch-desc">Analyze prompt patterns that drive cost. Suggest Sonnet for simple tasks. "The money lens." 34 single-prompt sessions = $300/mo savings. <span class="xref">[01:40:00]</span></div>
+        </div>
+        <span class="dispatch-status ds-new">New</span>
+      </div>
+
+      <div class="dispatch-item">
+        <span class="dispatch-priority dp-p1">P1</span>
+        <div class="dispatch-content">
+          <div class="dispatch-title">Add priority hierarchy to findings page</div>
+          <div class="dispatch-desc">Bold/important levels, not flat categories. "Findings is just hard to see what findings are better than others." <span class="xref">[00:15:18]</span></div>
+        </div>
+        <span class="dispatch-status ds-new">New</span>
+      </div>
+
+      <div class="dispatch-item">
+        <span class="dispatch-priority dp-p1">P1</span>
+        <div class="dispatch-content">
+          <div class="dispatch-title">Click-to-copy agent prompt modal from agent cards</div>
+          <div class="dispatch-desc">"I should be able to click into a modal to get the prompt... click, click and paste." Workflow friction reducer. <span class="xref">[00:08:54]</span></div>
+        </div>
+        <span class="dispatch-status ds-new">New</span>
+      </div>
+
+      <div class="dispatch-item">
+        <span class="dispatch-priority dp-p2">P2</span>
+        <div class="dispatch-content">
+          <div class="dispatch-title">Campaign debrief: toggle initial push vs follow-up runs</div>
+          <div class="dispatch-desc">"I should be able to switch between initial push and follow-up campaign debrief." Separate wins/losses per push. <span class="xref">[00:34:19]</span></div>
+        </div>
+        <span class="dispatch-status ds-new">New</span>
+      </div>
+
+      <div class="dispatch-item">
+        <span class="dispatch-priority dp-p2">P2</span>
+        <div class="dispatch-content">
+          <div class="dispatch-title">Pulsing indicator for remaining items being actively worked on</div>
+          <div class="dispatch-desc">"Any agent that's working on a remaining should have some color pulse happening." Visual sync between agent card and remaining item. <span class="xref">[00:06:31]</span></div>
+        </div>
+        <span class="dispatch-status ds-new">New</span>
+      </div>
+
+      <div class="dispatch-item">
+        <span class="dispatch-priority dp-p2">P2</span>
+        <div class="dispatch-content">
+          <div class="dispatch-title">Work presentation mode: sanitized MC view, no branding</div>
+          <div class="dispatch-desc">Tony Stark principle: outputs look like impressive individual work. Strip MC branding for professional contexts. <span class="xref">[01:49:47]</span></div>
+        </div>
+        <span class="dispatch-status ds-new">New</span>
+      </div>
+
+      <div class="dispatch-item">
+        <span class="dispatch-priority dp-p2">P2</span>
+        <div class="dispatch-content">
+          <div class="dispatch-title">Auto-dispatch agents from MC browser interface</div>
+          <div class="dispatch-desc">Long-term: launch sessions from browser instead of manually opening CLI terminals. "When I'm ready to be like OK go dispatch it." <span class="xref">[00:22:05]</span></div>
+        </div>
+        <span class="dispatch-status ds-new">New</span>
+      </div>
+
+      <div class="dispatch-item">
+        <span class="dispatch-priority dp-p2">P2</span>
+        <div class="dispatch-content">
+          <div class="dispatch-title">Discord community for MC knowledge sharing (2-3 OSU peers)</div>
+          <div class="dispatch-desc">Already in progress. Share before/after screenshots, prompt techniques, workflow tips. <span class="xref">[01:44:23]</span></div>
+        </div>
+        <span class="dispatch-status ds-new">New</span>
+      </div>
+    </div>
+
+    <div class="tab-content" id="existing-tasks">
+      <div class="dispatch-item" style="opacity:0.75">
+        <span class="dispatch-priority dp-p0">P0</span>
+        <div class="dispatch-content">
+          <div class="dispatch-title">Notification sound when agent needs approval <span class="xref">aglp45t4</span> <span class="xref">agent-notifications</span></div>
+          <div class="dispatch-desc">Said twice [00:31:52] and [01:10:06]. Called it "pretty crucial" and "P-zero." Already tracked as existing dispatch items.</div>
+        </div>
+        <span class="dispatch-status ds-exists">Exists</span>
+      </div>
+
+      <div class="dispatch-item" style="opacity:0.75">
+        <span class="dispatch-priority dp-p1">P1</span>
+        <div class="dispatch-content">
+          <div class="dispatch-title">Estimated talk time per agent card <span class="xref">session-analytics</span></div>
+          <div class="dispatch-desc">Infer talk time from WhisperFlow usage. Dispatched an agent during the session. [01:51:16]</div>
+        </div>
+        <span class="dispatch-status ds-exists">Exists</span>
+      </div>
+
+      <div class="dispatch-item" style="opacity:0.75">
+        <span class="dispatch-priority dp-p1">P1</span>
+        <div class="dispatch-content">
+          <div class="dispatch-title">Campaign close/done workflow <span class="xref">camp-lifecycle</span></div>
+          <div class="dispatch-desc">Mark campaigns as complete. Mentioned multiple times. [00:25:42]</div>
+        </div>
+        <span class="dispatch-status ds-exists">Exists</span>
+      </div>
+
+      <div class="dispatch-item" style="opacity:0.75">
+        <span class="dispatch-priority dp-p1">P1</span>
+        <div class="dispatch-content">
+          <div class="dispatch-title">Agent workflow diagram &mdash; make it explainable <span class="xref">workflow-diagram</span></div>
+          <div class="dispatch-desc">"I need to make this better" &mdash; even the creator can't explain it clearly. [01:22:40]</div>
+        </div>
+        <span class="dispatch-status ds-exists">Exists</span>
+      </div>
+
+      <div class="dispatch-item" style="opacity:0.75">
+        <span class="dispatch-priority dp-p1">P1</span>
+        <div class="dispatch-content">
+          <div class="dispatch-title">Split server.js into modules <span class="xref">serverjs-split</span></div>
+          <div class="dispatch-desc">"Claude said that the server JS is too large." [00:24:56]</div>
+        </div>
+        <span class="dispatch-status ds-exists">Exists</span>
+      </div>
+
+      <div class="dispatch-item" style="opacity:0.75">
+        <span class="dispatch-priority dp-p1">P1</span>
+        <div class="dispatch-content">
+          <div class="dispatch-title">Default sub-agents to Sonnet <span class="xref">sonnet-subagents</span></div>
+          <div class="dispatch-desc">"34 single-prompt sessions... don't need Opus." Cost-aware model routing. [01:47:28]</div>
+        </div>
+        <span class="dispatch-status ds-exists">Exists</span>
+      </div>
+
+      <div class="dispatch-item" style="opacity:0.75">
+        <span class="dispatch-priority dp-p1">P1</span>
+        <div class="dispatch-content">
+          <div class="dispatch-title">Create /demo-guide page <span class="xref">demo-guide</span></div>
+          <div class="dispatch-desc">Practical guide for showing MC to someone. Reinforced by the demo experience. [01:14:11]</div>
+        </div>
+        <span class="dispatch-status ds-exists">Exists</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ AUDIENCE REACTIONS ═══ -->
+  <div class="section">
+    <div class="section-title">
+      <div class="section-icon" style="background:var(--teal-bg);color:var(--teal)">&#9899;</div>
+      Audience Reactions
+      <span class="section-badge">Friend from OSU &middot; no prior Claude Code knowledge</span>
+    </div>
+
+    <div class="reaction-grid">
+      <div>
+        <div class="reaction-col-title"><span style="color:var(--green)">&#10003;</span> What Landed</div>
+
+        <div class="reaction-item landed">
+          <div class="reaction-moment">/cost page with $200/day estimate</div>
+          <div class="reaction-detail">Friend asked smart follow-up: "Did it give suggestions based off the prompts &mdash; could you be condensing your prompts?"</div>
+          <div class="reaction-implication">Cost visibility is immediately compelling &mdash; even non-users understand the value</div>
+        </div>
+
+        <div class="reaction-item landed">
+          <div class="reaction-moment">Work/home mode switch</div>
+          <div class="reaction-detail">"And also your work mode &mdash; one agent" (impressed)</div>
+          <div class="reaction-implication">Dual context is surprising and immediately understood</div>
+        </div>
+
+        <div class="reaction-item landed">
+          <div class="reaction-moment">Before/after campaign screenshots</div>
+          <div class="reaction-detail">Ephratah lingered, showing progression from V1 to current design</div>
+          <div class="reaction-implication">Visual proof of improvement sells the story</div>
+        </div>
+
+        <div class="reaction-item landed">
+          <div class="reaction-moment">"Bro, that shit's hella cool"</div>
+          <div class="reaction-detail">Overall reaction. Stayed up until 5 AM watching the demo. "I would not be here if I did not find this shit interesting."</div>
+          <div class="reaction-implication">The product is genuinely compelling to watch even without using it</div>
+        </div>
+
+        <div class="reaction-item landed">
+          <div class="reaction-moment">Eight tabs / scope of MC</div>
+          <div class="reaction-detail">"I saw eight tabs I was like hold on"</div>
+          <div class="reaction-implication">Scope is impressive &mdash; but needs guided entry point</div>
+        </div>
+      </div>
+
+      <div>
+        <div class="reaction-col-title"><span style="color:var(--amber)">&#9888;</span> What Didn't Land</div>
+
+        <div class="reaction-item missed">
+          <div class="reaction-moment">Friend didn't know what Claude Code was</div>
+          <div class="reaction-detail">Had to explain from scratch before demo could begin (~5 min preamble)</div>
+          <div class="reaction-implication">MC needs a "What is Claude Code?" prerequisite explainer</div>
+        </div>
+
+        <div class="reaction-item missed">
+          <div class="reaction-moment">Pain points / findings terminology</div>
+          <div class="reaction-detail">Had to explain PM terminology (pain points, post-mortems, findings)</div>
+          <div class="reaction-implication">Jargon barrier &mdash; MC language assumes PM knowledge</div>
+        </div>
+
+        <div class="reaction-item missed">
+          <div class="reaction-moment">Hooks explanation</div>
+          <div class="reaction-detail">Brief, hand-wavy. Hard to convey without showing code</div>
+          <div class="reaction-implication">Hooks need a visual explainer, not text description</div>
+        </div>
+
+        <div class="reaction-item missed">
+          <div class="reaction-moment">Agent workflow diagram</div>
+          <div class="reaction-detail">Ephratah said "I need to make this better" mid-demo</div>
+          <div class="reaction-implication">Even the creator can't explain it clearly to others yet</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ PAIN POINTS ═══ -->
+  <div class="section">
+    <div class="section-title">
+      <div class="section-icon" style="background:var(--rose-bg);color:var(--rose)">&#9888;</div>
+      Pain Points Discussed
+      <span class="key-metric km-rose">3 Critical</span>
+      <span class="section-badge">4 new &middot; 8 known &middot; 1 solved</span>
+    </div>
+
+    <div class="pain-item">
+      <span class="pain-severity ps-critical">Critical</span>
+      <div class="pain-content">
+        <div class="pain-title">No notification when agent needs approval</div>
+        <div class="pain-detail">"An agent asked you a question four minutes ago and I don't get a notification &mdash; that's a big thing." Said twice, called it P-zero. <span class="xref">aglp45t4</span></div>
+      </div>
+      <span class="pain-time">[00:31:52] [01:10:06]</span>
+    </div>
+
+    <div class="pain-item">
+      <span class="pain-severity ps-critical">Critical</span>
+      <div class="pain-content">
+        <div class="pain-title">Can't tell which agents are done</div>
+        <div class="pain-detail">"If I have all these up and I'm flipping between, I'm not looking to see if these are done... that's tiring bro."</div>
+      </div>
+      <span class="pain-time">[00:32:49] [01:10:12]</span>
+    </div>
+
+    <div class="pain-item">
+      <span class="pain-severity ps-critical">Critical</span>
+      <div class="pain-content">
+        <div class="pain-title">Context switching between terminals</div>
+        <div class="pain-detail">"It's kind of hard when I have one task and I'm trying to navigate between different terminal windows." <span class="xref">f026</span></div>
+      </div>
+      <span class="pain-time">[01:05:34]</span>
+    </div>
+
+    <div class="pain-item">
+      <span class="pain-severity ps-high">High</span>
+      <div class="pain-content">
+        <div class="pain-title">Agents don't screenshot before claiming done</div>
+        <div class="pain-detail">"If you took a screenshot of the page then you wouldn't have had this issue." <span class="xref">f002</span></div>
+      </div>
+      <span class="pain-time">[01:14:57]</span>
+    </div>
+
+    <div class="pain-item">
+      <span class="pain-severity ps-high">High</span>
+      <div class="pain-content">
+        <div class="pain-title">Opus overuse for simple tasks ($300/mo waste)</div>
+        <div class="pain-detail">"34 single-prompt sessions... don't need Opus." Ferrari to the grocery store. <span class="xref">f037</span></div>
+      </div>
+      <span class="pain-time">[01:37:43]</span>
+    </div>
+
+    <div class="pain-item">
+      <span class="pain-severity ps-medium">Medium</span>
+      <div class="pain-content">
+        <div class="pain-title">Bypass mode getting lost on agents <span class="key-metric km-amber" style="font-size:8px">New</span></div>
+        <div class="pain-detail">Agents lose their bypass mode settings, requiring reconfiguration.</div>
+      </div>
+      <span class="pain-time">[01:35:19]</span>
+    </div>
+
+    <div class="pain-item">
+      <span class="pain-severity ps-medium">Medium</span>
+      <div class="pain-content">
+        <div class="pain-title">Campaign debrief has no close/done state <span class="key-metric km-amber" style="font-size:8px">New</span></div>
+        <div class="pain-detail">"I want to be able to click on it when I'm done... this campaign is done." <span class="xref">camp-lifecycle</span></div>
+      </div>
+      <span class="pain-time">[00:25:42]</span>
+    </div>
+
+    <div class="pain-item">
+      <span class="pain-severity ps-medium">Medium</span>
+      <div class="pain-content">
+        <div class="pain-title">Can't distinguish initial vs follow-up agent cards <span class="key-metric km-amber" style="font-size:8px">New</span></div>
+        <div class="pain-detail">"These look like the original agents... it should be very notable which agents are from initial vs polisher."</div>
+      </div>
+      <span class="pain-time">[00:09:50]</span>
+    </div>
+
+    <div class="pain-item">
+      <span class="pain-severity ps-medium">Medium</span>
+      <div class="pain-content">
+        <div class="pain-title">Agent card not pulsing for active agents <span class="key-metric km-amber" style="font-size:8px">New</span></div>
+        <div class="pain-detail">"How come I'm refreshing my screen and I don't see the agent card?"</div>
+      </div>
+      <span class="pain-time">[00:08:13]</span>
+    </div>
+
+    <div class="pain-item">
+      <span class="pain-severity ps-medium">Medium</span>
+      <div class="pain-content">
+        <div class="pain-title">server.js too large to read in context</div>
+        <div class="pain-detail">"Claude said that the server JS is too large." Agents can't read the full routing. <span class="xref">serverjs-split</span></div>
+      </div>
+      <span class="pain-time">[00:24:56]</span>
+    </div>
+
+    <div class="pain-item">
+      <span class="pain-severity ps-medium">Medium</span>
+      <div class="pain-content">
+        <div class="pain-title">Retrospective text not UI-friendly</div>
+        <div class="pain-detail">Retrospective output is dense text, not scannable cards. Needs better formatting.</div>
+      </div>
+      <span class="pain-time">[00:51:26]</span>
+    </div>
+
+    <div class="pain-item">
+      <span class="pain-severity ps-solved">Solved</span>
+      <div class="pain-content">
+        <div class="pain-title">Server stale issue</div>
+        <div class="pain-detail">Previously caused the workflow tab disappearing incident. Fixed via hook-based restart detection.</div>
+      </div>
+      <span class="pain-time">[01:18:25]</span>
+    </div>
+  </div>
+
+  <!-- ═══ FUTURE VISION ═══ -->
+  <div class="section">
+    <div class="section-title">
+      <div class="section-icon" style="background:var(--blue-bg);color:var(--blue)">&#9670;</div>
+      Future Vision &amp; Roadmap
+      <span class="section-badge">16 stated &middot; 5 inferred</span>
+    </div>
+
+    <div style="font-size:12px;color:var(--text2);margin-bottom:12px;line-height:1.5">
+      <strong>Stated ideas</strong> (explicitly said "we should do X") and <strong>inferred ideas</strong> (implied by behavior or frustration).
+    </div>
+
+    <div class="vision-card">
+      <span class="vision-signal vs-p0">P0</span>
+      <div class="vision-content">
+        <div class="vision-title">Notification sound when agent needs approval</div>
+        <div class="vision-detail">Said twice, called "pretty crucial." "My time is more valuable than that."</div>
+      </div>
+      <span class="vision-time">[00:31:52] [01:10:06]</span>
+    </div>
+
+    <div class="vision-card">
+      <span class="vision-signal vs-p0">P0</span>
+      <div class="vision-content">
+        <div class="vision-title">Hooks demo for FHL week at work</div>
+        <div class="vision-detail">"I have work on Monday." Need a compelling work-context hooks demonstration.</div>
+      </div>
+      <span class="vision-time">[00:47:12]</span>
+    </div>
+
+    <div class="vision-card">
+      <span class="vision-signal vs-high">High</span>
+      <div class="vision-content">
+        <div class="vision-title">Recording pipeline &mdash; auto-transcribe, extract work items</div>
+        <div class="vision-detail">"The next frontier." Record everything, extract findings/tasks automatically.</div>
+      </div>
+      <span class="vision-time">[01:52:48]</span>
+    </div>
+
+    <div class="vision-card">
+      <span class="vision-signal vs-high">High</span>
+      <div class="vision-content">
+        <div class="vision-title">Prompt database with analytics &mdash; track quality over time</div>
+        <div class="vision-detail">"The next big task." Smart index of prompt patterns and improvements.</div>
+      </div>
+      <span class="vision-time">[01:37:05]</span>
+    </div>
+
+    <div class="vision-card">
+      <span class="vision-signal vs-high">High</span>
+      <div class="vision-content">
+        <div class="vision-title">Auto-dispatch from MC &mdash; reduce terminal-opening friction</div>
+        <div class="vision-detail">Launch agent sessions from browser instead of manual CLI.</div>
+      </div>
+      <span class="vision-time">[00:22:05]</span>
+    </div>
+
+    <div class="vision-card">
+      <span class="vision-signal vs-med">Med</span>
+      <div class="vision-content">
+        <div class="vision-title">Estimated talk time per agent card</div>
+        <div class="vision-detail">Infer from WhisperFlow usage. Dispatched agent for it during session.</div>
+      </div>
+      <span class="vision-time">[01:51:16]</span>
+    </div>
+
+    <div class="vision-card">
+      <span class="vision-signal vs-med">Med</span>
+      <div class="vision-content">
+        <div class="vision-title">Campaign close/done workflow</div>
+        <div class="vision-detail">"I want to click when I'm done. This campaign is done." Multiple mentions.</div>
+      </div>
+      <span class="vision-time">[00:25:42]</span>
+    </div>
+
+    <div class="vision-card">
+      <span class="vision-signal vs-med">Med</span>
+      <div class="vision-content">
+        <div class="vision-title">Prompt engineering for cost &mdash; dedicated analysis</div>
+        <div class="vision-detail">Friend reinforced: "could you be condensing your prompts?" Money lens focus.</div>
+      </div>
+      <span class="vision-time">[01:40:00]</span>
+    </div>
+
+    <div class="vision-card">
+      <span class="vision-signal vs-med">Med</span>
+      <div class="vision-content">
+        <div class="vision-title">Findings hierarchy &mdash; bold/priority levels</div>
+        <div class="vision-detail">"Hard to see what findings are better than others." Repeated frustration.</div>
+      </div>
+      <span class="vision-time">[00:15:18]</span>
+    </div>
+
+    <div class="vision-card">
+      <span class="vision-signal vs-med">Med</span>
+      <div class="vision-content">
+        <div class="vision-title">Campaign debrief toggle &mdash; initial vs follow-up</div>
+        <div class="vision-detail">"Switch between initial push and follow-up campaign debrief."</div>
+      </div>
+      <span class="vision-time">[00:34:19]</span>
+    </div>
+
+    <div class="vision-card">
+      <span class="vision-signal vs-med">Med</span>
+      <div class="vision-content">
+        <div class="vision-title">Click-to-copy agent prompt modal</div>
+        <div class="vision-detail">"Click into a modal to get the prompt. Click, click and paste." Workflow friction.</div>
+      </div>
+      <span class="vision-time">[00:08:54]</span>
+    </div>
+
+    <div class="vision-card">
+      <span class="vision-signal vs-med">Med</span>
+      <div class="vision-content">
+        <div class="vision-title">Retrospective as reviewable cards on campaign page</div>
+        <div class="vision-detail">Structured close ritual, not just text dump. "Super broadly accepted."</div>
+      </div>
+      <span class="vision-time">[00:38:35]</span>
+    </div>
+
+    <div class="divider"></div>
+    <div style="font-size:11px;font-weight:600;color:var(--text3);margin-bottom:10px;text-transform:uppercase;letter-spacing:0.04em">Inferred from behavior</div>
+
+    <div class="vision-card" style="border-left:3px solid var(--surface2)">
+      <span class="vision-signal vs-med">Infer</span>
+      <div class="vision-content">
+        <div class="vision-title">Work presentation mode &mdash; sanitized view hiding MC branding</div>
+        <div class="vision-detail">"I don't want someone to infer I had mission control." Tony Stark stealth.</div>
+      </div>
+    </div>
+
+    <div class="vision-card" style="border-left:3px solid var(--surface2)">
+      <span class="vision-signal vs-med">Infer</span>
+      <div class="vision-content">
+        <div class="vision-title">Demo mode &mdash; guided walkthrough for showing MC to others</div>
+        <div class="vision-detail">Entire demo showed navigation friction. A guided path would help.</div>
+      </div>
+    </div>
+
+    <div class="vision-card" style="border-left:3px solid var(--surface2)">
+      <span class="vision-signal vs-med">Infer</span>
+      <div class="vision-content">
+        <div class="vision-title">Prompt replay/analysis &mdash; visualize improvement over time</div>
+        <div class="vision-detail">"You'll see how much better my workflow has gotten." Implied time-series view.</div>
+      </div>
+    </div>
+
+    <div class="vision-card" style="border-left:3px solid var(--surface2)">
+      <span class="vision-signal vs-med">Infer</span>
+      <div class="vision-content">
+        <div class="vision-title">Cost-aware model routing &mdash; auto-suggest Sonnet for simple tasks</div>
+        <div class="vision-detail">"34 single-prompt sessions... don't need Opus." Automatic not manual.</div>
+      </div>
+    </div>
+
+    <div class="vision-card" style="border-left:3px solid var(--surface2)">
+      <span class="vision-signal vs-med">Infer</span>
+      <div class="vision-content">
+        <div class="vision-title">Real-time agent status sync on campaign page</div>
+        <div class="vision-detail">Didn't know which agents had finished. Should be live.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ STRATEGIC INSIGHTS ═══ -->
+  <div class="section">
+    <div class="section-title">
+      <div class="section-icon" style="background:var(--purple-bg);color:var(--purple)">&#9830;</div>
+      Strategic Insights
+      <span class="key-metric km-purple">Deep Analysis</span>
+    </div>
+
+    <div class="insight-card">
+      <div class="insight-number">INSIGHT 01</div>
+      <div class="insight-title">MC's Identity is Crystallizing Around Three Framings</div>
+      <div class="insight-body">Three metaphors emerged consistently: <strong>Baby Crib</strong> (supervision), <strong>Air Traffic Control</strong> (coordination), <strong>Interface Layer</strong> (elevation above code). The common thread: MC makes you the manager, not the worker. This identity should be locked in for v1 positioning. All three were used naturally during the demo, suggesting they're internalized, not performative.</div>
+    </div>
+
+    <div class="insight-card">
+      <div class="insight-number">INSIGHT 02</div>
+      <div class="insight-title">The Self-Evolving Loop is the Moat</div>
+      <div class="insight-body">The most powerful concept demonstrated: problem &#8594; post-mortem &#8594; finding &#8594; CLAUDE.md rule &#8594; prevention hook &#8594; never happens again. <strong>No competing tool does this.</strong> Other tools show what's happening. MC ensures the same problem never happens twice. This is the centerpiece of any pitch. The Civ 6 "entering new eras" framing captures the compound growth perfectly.</div>
+    </div>
+
+    <div class="insight-card">
+      <div class="insight-number">INSIGHT 03</div>
+      <div class="insight-title">Work/Home Dual Use Creates Strategic Lock-In</div>
+      <div class="insight-body">The mode switch feature is understated but critical. Once MC manages both personal projects and Microsoft work contexts, leaving becomes extremely costly &mdash; all institutional knowledge, workflows, and cost data live in one system. The friend noticed it immediately. <strong>Prioritize for v1.</strong> This is a retention mechanism, not just a feature.</div>
+    </div>
+
+    <div class="insight-card">
+      <div class="insight-number">INSIGHT 04</div>
+      <div class="insight-title">The Demo Revealed an Onboarding Gap</div>
+      <div class="insight-body">~5 minutes of preamble before a technically savvy friend understood the context. MC assumes deep Claude Code familiarity. For any external audience, there needs to be a 30-second primer. The 8-tab overwhelm is real &mdash; progressive disclosure would help. <strong>Implication:</strong> v1 needs guided onboarding, not just a landing page.</div>
+    </div>
+
+    <div class="insight-card">
+      <div class="insight-number">INSIGHT 05</div>
+      <div class="insight-title">Recording Pipeline is a Force Multiplier</div>
+      <div class="insight-body">This session is proof of concept. A 2-hour recording yielded: <strong>8 new findings, 11 new tasks, 15+ usable quotes, 12 pain points, 7 strategic insights.</strong> That's more structured data than weeks of solo development. The record &#8594; transcribe &#8594; extract &#8594; dispatch pipeline would make every meeting, brainstorm, and demo a data source.</div>
+    </div>
+
+    <div class="insight-card">
+      <div class="insight-number">INSIGHT 06</div>
+      <div class="insight-title">Cost Awareness Drives Model Discipline ($300/mo Savings Identified)</div>
+      <div class="insight-body">The /cost page revelation: 34 single-prompt sessions could save $300/mo with Sonnet. 51% of prompts are vague. The friend's question ("could you be condensing your prompts?") validated prompt analytics as a feature. <strong>Cost-aware routing is high-value, low-effort.</strong> The Ferrari/grocery metaphor should be on the /cost page.</div>
+    </div>
+
+    <div class="insight-card">
+      <div class="insight-number">INSIGHT 07</div>
+      <div class="insight-title">The "Tony Stark" Narrative is the Sales Pitch</div>
+      <div class="insight-body">The user explicitly wants outsiders to think: "He just built this in a CLI, that's impressive." The stealth aspect of MC &mdash; it makes you look like a genius, not reveal your tools &mdash; is part of the appeal. <strong>Any public-facing version should lean into this.</strong> The work presentation mode idea directly supports this narrative.</div>
+    </div>
+  </div>
+
+  <!-- ═══ TOPIC FLOW TIMELINE ═══ -->
+  <div class="section">
+    <div class="section-title">
+      <div class="section-icon" style="background:var(--surface);color:var(--text2)">&#9201;</div>
+      Topic Flow Timeline
+      <span class="section-badge">1h 56m &middot; 3 phases</span>
+    </div>
+
+    <div style="display:flex;gap:12px;margin-bottom:16px">
+      <span class="key-metric km-purple">Solo Phase: 59m</span>
+      <span class="key-metric km-green">Demo Phase: 54m</span>
+      <span class="key-metric km-amber">Breaks: ~5m</span>
+    </div>
+
+    <div class="timeline">
+      <div class="tl-item">
+        <div class="tl-dot solo"></div>
+        <div class="tl-time">00:00</div>
+        <span class="tl-phase solo">Solo</span>
+        <div class="tl-desc">Opening thoughts on recording sessions, value of video capture</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot solo"></div>
+        <div class="tl-time">00:02</div>
+        <span class="tl-phase solo">Solo</span>
+        <div class="tl-desc">Cost tracking discussion, API pricing uncertainty, estimation confidence</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot solo"></div>
+        <div class="tl-time">00:04</div>
+        <span class="tl-phase solo">Solo</span>
+        <div class="tl-desc">Campaign review &mdash; /why page improvements, value proposition drafting</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot solo"></div>
+        <div class="tl-time">00:06</div>
+        <span class="tl-phase solo">Solo</span>
+        <div class="tl-desc">Agent card UX: pulsing indicators, click-to-prompt, remaining items tracking</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot solo"></div>
+        <div class="tl-time">00:09</div>
+        <span class="tl-phase solo">Solo</span>
+        <div class="tl-desc">Polish agent naming (polisher, retrospector), sprint naming conventions</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot solo"></div>
+        <div class="tl-time">00:11</div>
+        <span class="tl-phase solo">Solo</span>
+        <div class="tl-desc">Token savings insight: one big conversation + many small conversations model</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot solo"></div>
+        <div class="tl-time">00:14</div>
+        <span class="tl-phase solo">Solo</span>
+        <div class="tl-desc">User stories for work demo, interface layer principle, findings hierarchy</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot solo"></div>
+        <div class="tl-time">00:20</div>
+        <span class="tl-phase solo">Solo</span>
+        <div class="tl-desc">Retrospective workflow, campaign close process, auto-dispatch vision</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot solo"></div>
+        <div class="tl-time">00:24</div>
+        <span class="tl-phase solo">Solo</span>
+        <div class="tl-desc">/cost page bug discovered &mdash; dispatched fix agent. server.js too large finding</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot break"></div>
+        <div class="tl-time">00:29</div>
+        <span class="tl-phase break">Break</span>
+        <div class="tl-desc">Music playing (~2 min)</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot solo"></div>
+        <div class="tl-time">00:30</div>
+        <span class="tl-phase solo">Solo</span>
+        <div class="tl-desc">Campaign document review, cost confidence, notification sounds priority</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot solo"></div>
+        <div class="tl-time">00:45</div>
+        <span class="tl-phase solo">Solo</span>
+        <div class="tl-desc">Follow-up tracking, hooks presentation for work, FHL week planning</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot solo"></div>
+        <div class="tl-time">00:51</div>
+        <span class="tl-phase solo">Solo</span>
+        <div class="tl-desc">Retrospective text UI quality, campaign done state</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot break"></div>
+        <div class="tl-time">00:56</div>
+        <span class="tl-phase break">Break</span>
+        <div class="tl-desc">Music playing (~3 min)</div>
+      </div>
+
+      <div class="tl-item">
+        <div class="tl-dot demo"></div>
+        <div class="tl-time">00:59</div>
+        <span class="tl-phase demo">Demo</span>
+        <div class="tl-desc"><strong>Friend joins Discord.</strong> Demo begins. "What is Claude Code?" explanation</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot demo"></div>
+        <div class="tl-time">01:04</div>
+        <span class="tl-phase demo">Demo</span>
+        <div class="tl-desc">Evolution from single-window to multi-agent. "I don't use IDE anymore."</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot demo"></div>
+        <div class="tl-time">01:07</div>
+        <span class="tl-phase demo">Demo</span>
+        <div class="tl-desc">Baby crib metaphor. Agent supervision model explained</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot demo"></div>
+        <div class="tl-time">01:10</div>
+        <span class="tl-phase demo">Demo</span>
+        <div class="tl-desc">Pain points: notifications, agent status, context switching frustration</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot demo"></div>
+        <div class="tl-time">01:12</div>
+        <span class="tl-phase demo">Demo</span>
+        <div class="tl-desc">Findings page walkthrough. Pain points explained to non-user</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot demo"></div>
+        <div class="tl-time">01:14</div>
+        <span class="tl-phase demo">Demo</span>
+        <div class="tl-desc">Playwright screenshot principle &mdash; deep dive on verification</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot demo"></div>
+        <div class="tl-time">01:17</div>
+        <span class="tl-phase demo">Demo</span>
+        <div class="tl-desc">Post-mortems: the stale server story. Learning from mistakes</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot demo"></div>
+        <div class="tl-time">01:21</div>
+        <span class="tl-phase demo">Demo</span>
+        <div class="tl-desc">CLAUDE.md as "10 commandments." Self-evolving system explanation</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot demo"></div>
+        <div class="tl-time">01:24</div>
+        <span class="tl-phase demo">Demo</span>
+        <div class="tl-desc"><strong>Civ 6 thesis.</strong> Hooks, memory files, exponential improvement</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot demo"></div>
+        <div class="tl-time">01:26</div>
+        <span class="tl-phase demo">Demo</span>
+        <div class="tl-desc">Toolbox: skills, agents, sub-agents. Showing the ecosystem</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot demo"></div>
+        <div class="tl-time">01:28</div>
+        <span class="tl-phase demo">Demo</span>
+        <div class="tl-desc"><strong>Work/home mode switch.</strong> Friend impressed. Dual context demo</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot demo"></div>
+        <div class="tl-time">01:30</div>
+        <span class="tl-phase demo">Demo</span>
+        <div class="tl-desc">Dispatch page tour. /why page reading. "The product evolves itself."</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot demo"></div>
+        <div class="tl-time">01:31</div>
+        <span class="tl-phase demo">Demo</span>
+        <div class="tl-desc">Campaigns: the inception moment. ATC metaphor. Sprint coordination</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot demo"></div>
+        <div class="tl-time">01:34</div>
+        <span class="tl-phase demo">Demo</span>
+        <div class="tl-desc">/cost page demo. <strong>Bug: zeroed out mid-demo.</strong> Fixed live by agent</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot demo"></div>
+        <div class="tl-time">01:37</div>
+        <span class="tl-phase demo">Demo</span>
+        <div class="tl-desc">"The data is the money." Cost analysis. Friend asks about prompt condensing</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot demo"></div>
+        <div class="tl-time">01:42</div>
+        <span class="tl-phase demo">Demo</span>
+        <div class="tl-desc">/cost working. $200/day revelation. Claude Max at $100/mo value discussion</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot demo"></div>
+        <div class="tl-time">01:44</div>
+        <span class="tl-phase demo">Demo</span>
+        <div class="tl-desc">Discord community plan. Before/after screenshots. "Every word is important"</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot demo"></div>
+        <div class="tl-time">01:47</div>
+        <span class="tl-phase demo">Demo</span>
+        <div class="tl-desc">$300 savings from Sonnet routing. Ferrari metaphor. Wrapping up demo</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot demo"></div>
+        <div class="tl-time">01:49</div>
+        <span class="tl-phase demo">Demo</span>
+        <div class="tl-desc">FHL week. Tony Stark narrative. Work application vision</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot demo"></div>
+        <div class="tl-time">01:51</div>
+        <span class="tl-phase demo">Demo</span>
+        <div class="tl-desc"><strong>Recording pipeline vision.</strong> Talk time estimation. "Level 100 mafia boss"</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot outro"></div>
+        <div class="tl-time">01:53</div>
+        <span class="tl-phase outro">Outro</span>
+        <div class="tl-desc">Goodbyes. "Bro, that shit's hella cool." Car shopping tangent. 5 AM daylight check</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot outro"></div>
+        <div class="tl-time">01:56</div>
+        <span class="tl-phase outro">Outro</span>
+        <div class="tl-desc">Recording stopped</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ DATA QUALITY NOTE ═══ -->
+  <div style="text-align:center;padding:20px 0;color:var(--text3);font-family:'DM Mono',monospace;font-size:11px">
+    Deep analytics pass on demo session 2026-03-07 &middot; Source: Whisper medium transcription &middot; 1,168 segments &middot; ~80KB
+    <br>Cross-referenced against 35 existing findings + 44 dispatch items &middot; 0 duplicates introduced
+  </div>
+
+</div>
+
+<script>
+function switchTab(btn, contentId) {
+  const parent = btn.closest('.section');
+  parent.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  parent.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById(contentId).classList.add('active');
+}
+</script>
+</body>
+</html>
