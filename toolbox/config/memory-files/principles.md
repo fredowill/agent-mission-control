@@ -52,6 +52,22 @@ position, coordinates, transforms, or layout — read the current rendering cont
 `getComputedStyle(html)` for zoom/transform, scroll offsets, viewport dimensions.
 Don't assume defaults. Other agents or linters may have changed them.
 
+## Agent Lifecycle (5 stages, mandatory)
+
+Every agent must follow this pipeline. Skipping stages causes iteration waste.
+
+1. **DEFINE** — Understand the requirement. Read the brief. Ask if unclear.
+2. **DISCOVER** — Search for existing skills, sub-agents, and online references.
+   Check `.claude/skills/`, `.claude/agents/`. Use /brainstorming for design work,
+   /enhance-prompt for prompt crafting, /frontend-design for UI. Search online
+   for reference implementations and best practices.
+3. **EXECUTE** — Delegate to the right tool. Use skills/sub-agents, don't freeball.
+   The quality difference between hand-coding and delegating to a specialist is massive.
+4. **REASON** — Evaluate the result. Does it meet the requirement? Is it the right
+   approach? Would the user approve? If unsure, prototype and show before integrating.
+5. **VERIFY** — Playwright screenshot for UI. Run tests for logic. Prove it works.
+   Never claim done without evidence.
+
 ## How to Learn
 
 - **Post-mortem pipeline:** incident → staging → distill into principle/finding
@@ -59,3 +75,7 @@ Don't assume defaults. Other agents or linters may have changed them.
 
 - **Findings over memory bloat.** Lessons go to the Findings page (visible,
   searchable, shareable) not buried in markdown files nobody checks.
+
+- **Calibration between campaigns.** After a campaign ends, analyze misses,
+  update CLAUDE.md, refactor memory, improve prompts, update Workflow page.
+  The system gets sharper each cycle. Campaign → Calibration → Campaign.

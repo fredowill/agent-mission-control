@@ -1,0 +1,868 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Learning Loop &mdash; Mission Control</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=DM+Sans:wght@400;500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { margin:0; padding:0; box-sizing:border-box }
+
+  :root {
+    --bg:#ffffff; --bg-page:#fafafa; --surface:#f4f4f5; --surface2:#e4e4e7;
+    --text:#09090b; --text2:#52525b; --text3:#a1a1aa; --sep:#e4e4e7;
+
+    --rose:#ef4444;     --rose-bg:rgba(239,68,68,0.05);
+    --amber:#f59e0b;    --amber-bg:rgba(245,158,11,0.06);
+    --blue:#3b82f6;     --blue-bg:rgba(59,130,246,0.06);
+    --green:#22c55e;    --green-bg:rgba(34,197,94,0.06);
+    --purple:#8b5cf6;   --purple-bg:rgba(139,92,246,0.06);
+    --cyan:#06b6d4;     --cyan-bg:rgba(6,182,212,0.06);
+
+    --r:12px;
+  }
+
+  body {
+    background:var(--bg-page);
+    color:var(--text);
+    font-family:'DM Sans',-apple-system,system-ui,sans-serif;
+    -webkit-font-smoothing:antialiased;
+    min-height:100vh;
+  }
+
+  .shell {
+    max-width:1140px;
+    margin:0 auto;
+    padding:56px clamp(24px,4vw,48px) 100px;
+  }
+
+  /* ── Page Header ── */
+  .page-eyebrow {
+    font-family:'DM Mono',monospace;
+    font-size:11px;
+    font-weight:500;
+    text-transform:uppercase;
+    letter-spacing:0.1em;
+    color:var(--purple);
+    margin-bottom:8px;
+  }
+  .page-title {
+    font-family:'Plus Jakarta Sans',sans-serif;
+    font-size:clamp(28px,4vw,36px);
+    font-weight:800;
+    letter-spacing:-0.04em;
+    line-height:1.1;
+    margin-bottom:6px;
+  }
+  .page-sub {
+    font-size:15px;
+    color:var(--text3);
+    line-height:1.5;
+    max-width:540px;
+    margin-bottom:56px;
+  }
+
+  /* ═══════════════════════════════════
+     ASCENDING STAIRCASE
+     ═══════════════════════════════════ */
+
+  .staircase-wrap {
+    position:relative;
+    padding:32px 0 0;
+  }
+
+  /* The SVG canvas sits behind everything */
+  .staircase-svg {
+    position:absolute;
+    top:0; left:0;
+    width:100%; height:100%;
+    pointer-events:none;
+    z-index:0;
+    overflow:visible;
+  }
+
+  /* Use CSS grid: 6 columns, cards placed at ascending rows */
+  .staircase-grid {
+    display:grid;
+    grid-template-columns:repeat(6, 1fr);
+    grid-template-rows:repeat(6, auto);
+    gap:0 8px;
+    position:relative;
+    z-index:1;
+  }
+
+  /* Each step placed in its column and row:
+     Step 1 → col 1, row 6 (bottom)
+     Step 2 → col 2, row 5
+     Step 3 → col 3, row 4
+     Step 4 → col 4, row 3
+     Step 5 → col 5, row 2
+     Step 6 → col 6, row 1 (top)
+  */
+  .stair-step:nth-child(1) { grid-column:1; grid-row:6 }
+  .stair-step:nth-child(2) { grid-column:2; grid-row:5 }
+  .stair-step:nth-child(3) { grid-column:3; grid-row:4 }
+  .stair-step:nth-child(4) { grid-column:4; grid-row:3 }
+  .stair-step:nth-child(5) { grid-column:5; grid-row:2 }
+  .stair-step:nth-child(6) { grid-column:6; grid-row:1 }
+
+  .stair-step {
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:flex-end;
+  }
+
+  /* The card */
+  .stair-card {
+    width:100%;
+    max-width:162px;
+    padding:18px 14px 14px;
+    border-radius:var(--r);
+    border:1.5px solid;
+    background:var(--bg);
+    text-align:center;
+    position:relative;
+    z-index:2;
+    transition:transform 0.2s ease, box-shadow 0.2s ease;
+    cursor:default;
+  }
+  .stair-card:hover {
+    transform:translateY(-3px);
+    box-shadow:0 6px 24px rgba(0,0,0,0.06);
+  }
+
+  /* Icon */
+  .stair-icon {
+    width:40px;
+    height:40px;
+    border-radius:10px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    margin:0 auto 10px;
+    font-family:'Plus Jakarta Sans',sans-serif;
+    font-size:16px;
+    font-weight:800;
+    border:1.5px solid;
+  }
+
+  .stair-num {
+    font-family:'DM Mono',monospace;
+    font-size:9px;
+    font-weight:500;
+    text-transform:uppercase;
+    letter-spacing:0.08em;
+    margin-bottom:3px;
+  }
+
+  .stair-name {
+    font-family:'Plus Jakarta Sans',sans-serif;
+    font-size:13px;
+    font-weight:700;
+    letter-spacing:-0.02em;
+    line-height:1.2;
+    margin-bottom:4px;
+  }
+
+  .stair-desc {
+    font-size:11px;
+    color:var(--text3);
+    line-height:1.35;
+  }
+
+  /* ── Step-specific Colors ── */
+  .stair-step[data-step="mistake"] .stair-card { border-color:rgba(239,68,68,0.2) }
+  .stair-step[data-step="mistake"] .stair-icon { background:var(--rose-bg); color:var(--rose); border-color:rgba(239,68,68,0.2) }
+  .stair-step[data-step="mistake"] .stair-num { color:var(--rose) }
+
+  .stair-step[data-step="postmortem"] .stair-card { border-color:rgba(245,158,11,0.2) }
+  .stair-step[data-step="postmortem"] .stair-icon { background:var(--amber-bg); color:var(--amber); border-color:rgba(245,158,11,0.2) }
+  .stair-step[data-step="postmortem"] .stair-num { color:var(--amber) }
+
+  .stair-step[data-step="finding"] .stair-card { border-color:rgba(59,130,246,0.2) }
+  .stair-step[data-step="finding"] .stair-icon { background:var(--blue-bg); color:var(--blue); border-color:rgba(59,130,246,0.2) }
+  .stair-step[data-step="finding"] .stair-num { color:var(--blue) }
+
+  .stair-step[data-step="rule"] .stair-card { border-color:rgba(34,197,94,0.2) }
+  .stair-step[data-step="rule"] .stair-icon { background:var(--green-bg); color:var(--green); border-color:rgba(34,197,94,0.2) }
+  .stair-step[data-step="rule"] .stair-num { color:var(--green) }
+
+  .stair-step[data-step="hook"] .stair-card { border-color:rgba(139,92,246,0.2) }
+  .stair-step[data-step="hook"] .stair-icon { background:var(--purple-bg); color:var(--purple); border-color:rgba(139,92,246,0.2) }
+  .stair-step[data-step="hook"] .stair-num { color:var(--purple) }
+
+  .stair-step[data-step="prevention"] .stair-card { border-color:rgba(6,182,212,0.2) }
+  .stair-step[data-step="prevention"] .stair-icon { background:var(--cyan-bg); color:var(--cyan); border-color:rgba(6,182,212,0.2) }
+  .stair-step[data-step="prevention"] .stair-num { color:var(--cyan) }
+
+  /* ── SVG Connectors ── */
+  .connector-line {
+    fill:none;
+    stroke-width:2;
+    stroke-linecap:round;
+  }
+
+  @keyframes flowDash {
+    to { stroke-dashoffset:-16 }
+  }
+
+  .connector-flow {
+    fill:none;
+    stroke-width:2;
+    stroke-dasharray:6 10;
+    stroke-linecap:round;
+    opacity:0.4;
+    animation:flowDash 1.2s linear infinite;
+  }
+
+  /* ── Ascending background tint — subtle gradient behind staircase ── */
+  .staircase-wrap::before {
+    content:'';
+    position:absolute;
+    inset:0;
+    border-radius:16px;
+    background:linear-gradient(
+      to top right,
+      rgba(239,68,68,0.02) 0%,
+      rgba(245,158,11,0.015) 20%,
+      rgba(59,130,246,0.015) 40%,
+      rgba(34,197,94,0.015) 60%,
+      rgba(139,92,246,0.015) 80%,
+      rgba(6,182,212,0.02) 100%
+    );
+    pointer-events:none;
+    z-index:-1;
+  }
+
+  /* ── Baseline Label — along the bottom ── */
+  .baseline-section {
+    margin-top:32px;
+    display:flex;
+    align-items:center;
+    gap:16px;
+  }
+
+  .baseline-bar {
+    flex:1;
+    height:1.5px;
+    background:linear-gradient(90deg,
+      var(--rose) 0%,
+      var(--amber) 20%,
+      var(--blue) 40%,
+      var(--green) 60%,
+      var(--purple) 80%,
+      var(--cyan) 100%
+    );
+    border-radius:1px;
+    opacity:0.25;
+  }
+
+  .baseline-label {
+    font-family:'DM Mono',monospace;
+    font-size:10px;
+    color:var(--text3);
+    letter-spacing:0.04em;
+    white-space:nowrap;
+    flex-shrink:0;
+  }
+
+  /* ── New Baseline (raised) ── */
+  .new-baseline-section {
+    display:flex;
+    align-items:center;
+    gap:16px;
+    margin-top:12px;
+  }
+
+  .new-baseline-bar {
+    flex:1;
+    height:2px;
+    background:linear-gradient(90deg,
+      var(--purple) 0%,
+      var(--cyan) 100%
+    );
+    border-radius:1px;
+    opacity:0.5;
+  }
+
+  .new-baseline-label {
+    font-family:'DM Mono',monospace;
+    font-size:10px;
+    font-weight:500;
+    color:var(--cyan);
+    letter-spacing:0.04em;
+    white-space:nowrap;
+    flex-shrink:0;
+  }
+
+  /* ── Upward Arrow Between Baselines ── */
+  .baseline-rise {
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:10px;
+    margin:16px 0;
+    position:relative;
+  }
+
+  .baseline-rise-line {
+    flex:1;
+    height:1px;
+    background:var(--sep);
+  }
+
+  .baseline-rise-badge {
+    font-family:'Plus Jakarta Sans',sans-serif;
+    font-size:11px;
+    font-weight:700;
+    color:var(--cyan);
+    background:rgba(6,182,212,0.06);
+    border:1px solid rgba(6,182,212,0.15);
+    padding:4px 14px;
+    border-radius:100px;
+    white-space:nowrap;
+    display:flex;
+    align-items:center;
+    gap:6px;
+  }
+
+  .baseline-rise-badge svg {
+    width:14px;
+    height:14px;
+    flex-shrink:0;
+  }
+
+  /* ── Next Cycle Callout ── */
+  .next-cycle {
+    margin-top:24px;
+    display:flex;
+    align-items:flex-start;
+    gap:14px;
+    padding:16px 20px;
+    background:linear-gradient(135deg, rgba(139,92,246,0.03), rgba(6,182,212,0.04));
+    border:1px solid rgba(6,182,212,0.12);
+    border-radius:var(--r);
+  }
+
+  .next-cycle-icon {
+    width:36px;
+    height:36px;
+    border-radius:10px;
+    background:rgba(6,182,212,0.06);
+    border:1px solid rgba(6,182,212,0.12);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    flex-shrink:0;
+  }
+
+  .next-cycle-icon svg {
+    width:18px;
+    height:18px;
+    color:var(--cyan);
+  }
+
+  .next-cycle-text {
+    font-size:13px;
+    color:var(--text2);
+    line-height:1.55;
+  }
+  .next-cycle-text strong {
+    font-family:'Plus Jakarta Sans',sans-serif;
+    font-weight:700;
+    color:var(--text);
+  }
+
+  /* ═══════════════════════════════════
+     METRICS
+     ═══════════════════════════════════ */
+  .metrics-row {
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:12px;
+    margin-top:40px;
+  }
+
+  .metric-card {
+    background:var(--bg);
+    border:1px solid var(--sep);
+    border-radius:var(--r);
+    padding:18px 20px;
+    text-align:center;
+    transition:all 0.15s;
+  }
+  .metric-card:hover {
+    border-color:var(--surface2);
+    box-shadow:0 2px 8px rgba(0,0,0,0.03);
+  }
+
+  .metric-value {
+    font-family:'Plus Jakarta Sans',sans-serif;
+    font-size:28px;
+    font-weight:800;
+    letter-spacing:-0.03em;
+    line-height:1;
+  }
+
+  .metric-label {
+    font-size:11px;
+    color:var(--text3);
+    margin-top:5px;
+  }
+
+  /* ═══════════════════════════════════
+     EXAMPLE TRACE
+     ═══════════════════════════════════ */
+  .trace-section {
+    margin-top:56px;
+  }
+
+  .trace-eyebrow {
+    font-family:'DM Mono',monospace;
+    font-size:10px;
+    font-weight:500;
+    text-transform:uppercase;
+    letter-spacing:0.08em;
+    color:var(--text3);
+    margin-bottom:12px;
+  }
+
+  .trace-card {
+    background:var(--bg);
+    border:1px solid var(--sep);
+    border-radius:var(--r);
+    padding:22px 24px;
+  }
+
+  .trace-title {
+    font-family:'Plus Jakarta Sans',sans-serif;
+    font-size:15px;
+    font-weight:700;
+    letter-spacing:-0.02em;
+    margin-bottom:16px;
+  }
+
+  .trace-flow {
+    display:flex;
+    align-items:center;
+    gap:0;
+    flex-wrap:wrap;
+    row-gap:8px;
+  }
+
+  .trace-pill {
+    font-family:'DM Mono',monospace;
+    font-size:10px;
+    font-weight:500;
+    padding:4px 10px;
+    border-radius:6px;
+    border:1px solid;
+    white-space:nowrap;
+  }
+
+  .trace-arrow {
+    color:var(--surface2);
+    padding:0 4px;
+    flex-shrink:0;
+  }
+
+  .trace-arrow svg {
+    width:16px;
+    height:16px;
+    display:block;
+  }
+
+  .trace-detail {
+    margin-top:16px;
+    padding-top:16px;
+    border-top:1px solid var(--sep);
+    display:grid;
+    grid-template-columns:repeat(auto-fill, minmax(200px, 1fr));
+    gap:12px;
+  }
+
+  .trace-detail-item {
+    font-size:12px;
+    color:var(--text2);
+    line-height:1.5;
+  }
+
+  .trace-detail-item strong {
+    font-family:'Plus Jakarta Sans',sans-serif;
+    font-weight:600;
+    color:var(--text);
+    display:block;
+    font-size:10px;
+    text-transform:uppercase;
+    letter-spacing:0.04em;
+    margin-bottom:2px;
+  }
+
+  .trace-detail-item code {
+    font-family:'DM Mono',monospace;
+    font-size:11px;
+    background:var(--surface);
+    padding:1px 5px;
+    border-radius:3px;
+  }
+
+  /* ═══════════════════════════════════
+     RESPONSIVE
+     ═══════════════════════════════════ */
+  @media (max-width:960px) {
+    .stair-card { max-width:140px; padding:14px 10px 12px }
+    .stair-icon { width:34px; height:34px; font-size:14px; border-radius:8px }
+    .stair-name { font-size:12px }
+    .stair-desc { font-size:10px }
+    .staircase-grid { gap:0 4px }
+  }
+
+  @media (max-width:700px) {
+    .shell { padding:36px 16px 80px }
+
+    /* Switch staircase to 2 columns on mobile */
+    .staircase-grid {
+      grid-template-columns:1fr 1fr;
+      grid-template-rows:repeat(3, auto);
+      gap:12px;
+    }
+    .stair-step:nth-child(1) { grid-column:1; grid-row:3 }
+    .stair-step:nth-child(2) { grid-column:2; grid-row:3 }
+    .stair-step:nth-child(3) { grid-column:1; grid-row:2 }
+    .stair-step:nth-child(4) { grid-column:2; grid-row:2 }
+    .stair-step:nth-child(5) { grid-column:1; grid-row:1 }
+    .stair-step:nth-child(6) { grid-column:2; grid-row:1 }
+
+    .stair-card { max-width:none; padding:14px 12px 12px }
+    .stair-icon { width:32px; height:32px; font-size:13px; border-radius:8px; margin-bottom:8px }
+    .stair-name { font-size:12px }
+    .stair-desc { font-size:10px }
+    .stair-num { font-size:8px }
+
+    /* Hide SVG connectors on mobile — the grid layout communicates order */
+    .staircase-svg { display:none }
+
+    .metrics-row { grid-template-columns:1fr }
+    .trace-flow { gap:4px; row-gap:6px }
+    .next-cycle { flex-direction:column; text-align:left }
+  }
+
+  /* ── Reduced Motion ── */
+  @media (prefers-reduced-motion:reduce) {
+    .connector-flow { animation:none }
+    .stair-card { transition:none }
+    .stair-card:hover { transform:none }
+    .metric-card { transition:none }
+  }
+</style>
+</head>
+<body>
+
+<div class="shell">
+
+  <!-- Header -->
+  <div class="page-eyebrow">System Architecture</div>
+  <h1 class="page-title">The Learning Loop</h1>
+  <p class="page-sub">Every mistake makes the system stronger. Six steps transform failures into permanent immunity &mdash; each cycle raises the baseline.</p>
+
+  <!-- ═══════════════════════════════════
+       ASCENDING STAIRCASE
+       ═══════════════════════════════════ -->
+  <div class="staircase-wrap" id="staircaseWrap">
+    <svg class="staircase-svg" id="connectorSvg" aria-hidden="true"></svg>
+
+    <div class="staircase-grid" id="staircaseGrid">
+
+      <!-- Step 1: Mistake -->
+      <div class="stair-step" data-step="mistake" data-index="0">
+        <div class="stair-card">
+          <div class="stair-icon">!</div>
+          <div class="stair-num">Step 1</div>
+          <div class="stair-name">Mistake</div>
+          <div class="stair-desc">Agent does something wrong</div>
+        </div>
+      </div>
+
+      <!-- Step 2: Post-Mortem -->
+      <div class="stair-step" data-step="postmortem" data-index="1">
+        <div class="stair-card">
+          <div class="stair-icon">?</div>
+          <div class="stair-num">Step 2</div>
+          <div class="stair-name">Post-Mortem</div>
+          <div class="stair-desc">Investigate root cause</div>
+        </div>
+      </div>
+
+      <!-- Step 3: Finding -->
+      <div class="stair-step" data-step="finding" data-index="2">
+        <div class="stair-card">
+          <div class="stair-icon">F</div>
+          <div class="stair-num">Step 3</div>
+          <div class="stair-name">Finding</div>
+          <div class="stair-desc">Extract the lesson</div>
+        </div>
+      </div>
+
+      <!-- Step 4: Rule -->
+      <div class="stair-step" data-step="rule" data-index="3">
+        <div class="stair-card">
+          <div class="stair-icon">R</div>
+          <div class="stair-num">Step 4</div>
+          <div class="stair-name">Rule</div>
+          <div class="stair-desc">Encode in CLAUDE.md</div>
+        </div>
+      </div>
+
+      <!-- Step 5: Hook -->
+      <div class="stair-step" data-step="hook" data-index="4">
+        <div class="stair-card">
+          <div class="stair-icon">H</div>
+          <div class="stair-num">Step 5</div>
+          <div class="stair-name">Hook</div>
+          <div class="stair-desc">Automate enforcement</div>
+        </div>
+      </div>
+
+      <!-- Step 6: Prevention -->
+      <div class="stair-step" data-step="prevention" data-index="5">
+        <div class="stair-card">
+          <div class="stair-icon">&#10003;</div>
+          <div class="stair-num">Step 6</div>
+          <div class="stair-name">Prevention</div>
+          <div class="stair-desc">Never happens again</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Baseline Indicators -->
+  <div class="baseline-section">
+    <div class="baseline-label">Previous baseline</div>
+    <div class="baseline-bar"></div>
+  </div>
+
+  <div class="baseline-rise">
+    <div class="baseline-rise-line"></div>
+    <div class="baseline-rise-badge">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"/></svg>
+      Baseline raised
+    </div>
+    <div class="baseline-rise-line"></div>
+  </div>
+
+  <div class="new-baseline-section">
+    <div class="new-baseline-label">New baseline</div>
+    <div class="new-baseline-bar"></div>
+  </div>
+
+  <!-- Next Cycle Callout -->
+  <div class="next-cycle">
+    <div class="next-cycle-icon">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="18 15 12 9 6 15"/>
+      </svg>
+    </div>
+    <div class="next-cycle-text">
+      <strong>The next cycle starts higher.</strong> The same class of mistake is now structurally impossible &mdash; not just discouraged, but prevented by automated enforcement.
+    </div>
+  </div>
+
+  <!-- Metrics -->
+  <div class="metrics-row">
+    <div class="metric-card">
+      <div class="metric-value" style="color:var(--rose)">12</div>
+      <div class="metric-label">Post-Mortems conducted</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-value" style="color:var(--green)">10</div>
+      <div class="metric-label">Rules in CLAUDE.md</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-value" style="color:var(--purple)">7</div>
+      <div class="metric-label">Hooks enforcing</div>
+    </div>
+  </div>
+
+  <!-- Example Trace -->
+  <div class="trace-section">
+    <div class="trace-eyebrow">Example Trace</div>
+    <div class="trace-card">
+      <div class="trace-title">PM-003: Agent shipped workaround that bypassed intentional design</div>
+      <div class="trace-flow">
+        <span class="trace-pill" style="background:var(--rose-bg);color:var(--rose);border-color:rgba(239,68,68,0.15)">Mistake</span>
+        <div class="trace-arrow"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 8h10m-3.5-3.5L13 8l-3.5 3.5"/></svg></div>
+        <span class="trace-pill" style="background:var(--amber-bg);color:var(--amber);border-color:rgba(245,158,11,0.15)">Post-Mortem</span>
+        <div class="trace-arrow"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 8h10m-3.5-3.5L13 8l-3.5 3.5"/></svg></div>
+        <span class="trace-pill" style="background:var(--blue-bg);color:var(--blue);border-color:rgba(59,130,246,0.15)">Finding</span>
+        <div class="trace-arrow"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 8h10m-3.5-3.5L13 8l-3.5 3.5"/></svg></div>
+        <span class="trace-pill" style="background:var(--green-bg);color:var(--green);border-color:rgba(34,197,94,0.15)">Rule #1</span>
+        <div class="trace-arrow"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 8h10m-3.5-3.5L13 8l-3.5 3.5"/></svg></div>
+        <span class="trace-pill" style="background:var(--purple-bg);color:var(--purple);border-color:rgba(139,92,246,0.15)">Hook</span>
+        <div class="trace-arrow"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 8h10m-3.5-3.5L13 8l-3.5 3.5"/></svg></div>
+        <span class="trace-pill" style="background:var(--cyan-bg);color:var(--cyan);border-color:rgba(6,182,212,0.15)">Immune</span>
+      </div>
+      <div class="trace-detail">
+        <div class="trace-detail-item">
+          <strong>Trigger</strong>
+          Agent added CSS fallback overriding design-system variable
+        </div>
+        <div class="trace-detail-item">
+          <strong>Root Cause</strong>
+          No rule against bypassing existing design patterns
+        </div>
+        <div class="trace-detail-item">
+          <strong>Rule Added</strong>
+          <code>CLAUDE.md</code> Rule #1: Root cause first. Never workaround.
+        </div>
+        <div class="trace-detail-item">
+          <strong>Hook</strong>
+          <code>anti-rationalization</code> fires on Stop event
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+(function() {
+  'use strict';
+
+  var COLORS = [
+    '#ef4444', // rose
+    '#f59e0b', // amber
+    '#3b82f6', // blue
+    '#22c55e', // green
+    '#8b5cf6', // purple
+    '#06b6d4', // cyan
+  ];
+
+  function drawConnectors() {
+    var wrap = document.getElementById('staircaseWrap');
+    var svg = document.getElementById('connectorSvg');
+    var grid = document.getElementById('staircaseGrid');
+    var steps = grid.querySelectorAll('.stair-step');
+    if (steps.length < 2) return;
+
+    // Size the SVG to the wrap
+    var wrapRect = wrap.getBoundingClientRect();
+    svg.setAttribute('viewBox', '0 0 ' + wrapRect.width + ' ' + wrapRect.height);
+    svg.style.width = wrapRect.width + 'px';
+    svg.style.height = wrapRect.height + 'px';
+
+    svg.innerHTML = '';
+
+    // Defs: gradients + arrowhead markers
+    var defs = document.createElementNS('http://www.w3.org/2000/svg', 'defs');
+
+    for (var m = 0; m < COLORS.length; m++) {
+      var marker = document.createElementNS('http://www.w3.org/2000/svg', 'marker');
+      marker.setAttribute('id', 'ah-' + m);
+      marker.setAttribute('markerWidth', '8');
+      marker.setAttribute('markerHeight', '6');
+      marker.setAttribute('refX', '7');
+      marker.setAttribute('refY', '3');
+      marker.setAttribute('orient', 'auto');
+      var poly = document.createElementNS('http://www.w3.org/2000/svg', 'polygon');
+      poly.setAttribute('points', '0 0, 8 3, 0 6');
+      poly.setAttribute('fill', COLORS[m]);
+      poly.setAttribute('opacity', '0.5');
+      marker.appendChild(poly);
+      defs.appendChild(marker);
+    }
+    svg.appendChild(defs);
+
+    // Get card rects relative to the wrap
+    // Steps are DOM-ordered (1-6), but visually placed by CSS grid
+    var ordered = [];
+    steps.forEach(function(step) {
+      var idx = parseInt(step.getAttribute('data-index'));
+      var card = step.querySelector('.stair-card');
+      var cr = card.getBoundingClientRect();
+      ordered[idx] = {
+        cx: cr.left - wrapRect.left + cr.width / 2,
+        cy: cr.top - wrapRect.top + cr.height / 2,
+        right: cr.left - wrapRect.left + cr.width,
+        left: cr.left - wrapRect.left,
+        top: cr.top - wrapRect.top,
+        bottom: cr.top - wrapRect.top + cr.height,
+        w: cr.width,
+        h: cr.height,
+      };
+    });
+
+    // Draw connector from each step to the next
+    for (var i = 0; i < ordered.length - 1; i++) {
+      var a = ordered[i];
+      var b = ordered[i + 1];
+      if (!a || !b) continue;
+
+      // From right-center of A to left-center of B
+      var x1 = a.right + 1;
+      var y1 = a.cy;
+      var x2 = b.left - 1;
+      var y2 = b.cy;
+
+      // Control points for a smooth S-curve
+      var dx = Math.abs(x2 - x1);
+      var cpx1 = x1 + dx * 0.45;
+      var cpx2 = x2 - dx * 0.45;
+
+      var d = 'M' + x1 + ',' + y1 + ' C' + cpx1 + ',' + y1 + ' ' + cpx2 + ',' + y2 + ' ' + x2 + ',' + y2;
+
+      // Gradient for this connector
+      var gid = 'cg' + i;
+      var lg = document.createElementNS('http://www.w3.org/2000/svg', 'linearGradient');
+      lg.setAttribute('id', gid);
+      lg.setAttribute('gradientUnits', 'userSpaceOnUse');
+      lg.setAttribute('x1', x1); lg.setAttribute('y1', y1);
+      lg.setAttribute('x2', x2); lg.setAttribute('y2', y2);
+
+      var s1 = document.createElementNS('http://www.w3.org/2000/svg', 'stop');
+      s1.setAttribute('offset', '0%');
+      s1.setAttribute('stop-color', COLORS[i]);
+      s1.setAttribute('stop-opacity', '0.4');
+      var s2 = document.createElementNS('http://www.w3.org/2000/svg', 'stop');
+      s2.setAttribute('offset', '100%');
+      s2.setAttribute('stop-color', COLORS[i + 1]);
+      s2.setAttribute('stop-opacity', '0.4');
+      lg.appendChild(s1);
+      lg.appendChild(s2);
+      defs.appendChild(lg);
+
+      // Main line
+      var path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+      path.setAttribute('d', d);
+      path.setAttribute('class', 'connector-line');
+      path.setAttribute('stroke', 'url(#' + gid + ')');
+      path.setAttribute('marker-end', 'url(#ah-' + (i + 1) + ')');
+      svg.appendChild(path);
+
+      // Animated flow overlay
+      var flow = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+      flow.setAttribute('d', d);
+      flow.setAttribute('class', 'connector-flow');
+      flow.setAttribute('stroke', COLORS[i + 1]);
+      svg.appendChild(flow);
+    }
+  }
+
+  // Draw after layout settles
+  window.addEventListener('load', function() {
+    setTimeout(drawConnectors, 80);
+  });
+
+  var debounce;
+  window.addEventListener('resize', function() {
+    clearTimeout(debounce);
+    debounce = setTimeout(drawConnectors, 120);
+  });
+})();
+</script>
+
+</body>
+</html>

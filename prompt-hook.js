@@ -139,11 +139,15 @@ process.stdin.on('end', () => {
       let claudePid = null;
       let resumeCount = 0;
       let displayName = null;
+      let parentSessionId = null;  // Preserved from /api/launch pre-created state
+      let dispatchMeta = null;
       try {
         const prev = JSON.parse(fs.readFileSync(stateFile, 'utf8'));
         claudePid = prev.claudePid || null;
         resumeCount = prev.resumeCount || 0;
         displayName = prev.displayName || null;
+        parentSessionId = prev.parentSessionId || null;
+        dispatchMeta = prev.dispatchMeta || null;
       } catch {}
 
       // If stored PID exists, check liveness. Dead PID = /resume in new terminal.
@@ -175,6 +179,8 @@ process.stdin.on('end', () => {
         claudePid,
         resumeCount,
         displayName,
+        parentSessionId,
+        dispatchMeta,
         state: 'thinking',
         emoji: '💭',
         label: 'THINKING',

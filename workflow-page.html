@@ -8,231 +8,424 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=DM+Sans:wght@400;500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
-  *, *::before, *::after { margin:0; padding:0; box-sizing:border-box }
-  :root {
-    --bg:#fff; --bg2:#fafafa; --surface:#f4f4f5; --surface2:#e4e4e7;
-    --text:#09090b; --text2:#52525b; --text3:#a1a1aa; --sep:#e4e4e7;
-    --purple:#8b5cf6; --purple-bg:rgba(139,92,246,0.06);
-    --blue:#3b82f6; --blue-bg:rgba(59,130,246,0.06);
-    --green:#22c55e; --green-bg:rgba(34,197,94,0.06);
-    --amber:#f59e0b; --amber-bg:rgba(245,158,11,0.06);
-    --rose:#ef4444; --rose-bg:rgba(239,68,68,0.05);
-    --cyan:#06b6d4; --cyan-bg:rgba(6,182,212,0.06);
-    --r:12px;
-  }
-  body { background:var(--bg2); color:var(--text); font-family:'DM Sans',-apple-system,system-ui,sans-serif; -webkit-font-smoothing:antialiased }
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#fff;--bg2:#fafafa;--surface:#f4f4f5;--surface2:#e4e4e7;
+  --text:#09090b;--text2:#52525b;--text3:#a1a1aa;--sep:#e4e4e7;
+  --purple:#8b5cf6;--purple-bg:rgba(139,92,246,0.06);
+  --blue:#3b82f6;--blue-bg:rgba(59,130,246,0.06);
+  --green:#22c55e;--green-bg:rgba(34,197,94,0.06);
+  --amber:#f59e0b;--amber-bg:rgba(245,158,11,0.06);
+  --rose:#ef4444;--rose-bg:rgba(239,68,68,0.05);
+  --cyan:#06b6d4;--cyan-bg:rgba(6,182,212,0.06);
+  --radius:12px;
+}
+body{background:var(--bg2);color:var(--text);font-family:'DM Sans',-apple-system,sans-serif;-webkit-font-smoothing:antialiased;min-height:100vh}
 
-  /* ── Header ── */
-  header { display:flex; align-items:center; justify-content:space-between; padding:0 clamp(24px,4vw,48px); height:64px; background:var(--bg); border-bottom:1px solid var(--sep); position:sticky; top:0; z-index:10 }
-  .logo { display:flex; align-items:center; gap:12px }
-  .logo-dot { width:8px; height:8px; border-radius:50%; background:var(--purple) }
-  .logo-text { font-family:'Plus Jakarta Sans',sans-serif; font-size:15px; font-weight:600; letter-spacing:-0.02em }
-  .header-nav { display:flex; gap:4px; padding:3px; background:var(--surface); border-radius:8px; position:absolute; left:50%; transform:translateX(-50%) }
-  .nav-link { padding:5px 14px; border-radius:6px; font-family:'DM Sans',sans-serif; font-size:13px; font-weight:500; color:var(--text3); text-decoration:none; transition:all .15s }
-  .nav-link:hover { color:var(--text2) }
-  .nav-link.active { background:var(--bg); color:var(--text); box-shadow:0 1px 3px rgba(0,0,0,.06) }
+/* ── Header ── */
+header{display:flex;align-items:center;justify-content:space-between;padding:0 clamp(24px,4vw,48px);height:64px;background:var(--bg);border-bottom:1px solid var(--sep);position:sticky;top:0;z-index:50}
+.logo{display:flex;align-items:center;gap:10px}
+.logo-dot{width:8px;height:8px;border-radius:50%;background:var(--purple)}
+.logo-text{font-family:'Plus Jakarta Sans',sans-serif;font-size:14px;font-weight:700;letter-spacing:-0.02em}
+.header-nav{display:flex;gap:2px;padding:3px;background:var(--surface);border-radius:8px;position:absolute;left:50%;transform:translateX(-50%)}
+.nav-link{padding:5px 14px;border-radius:6px;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;color:var(--text3);text-decoration:none;transition:all .15s;white-space:nowrap}
+.nav-link:hover{color:var(--text2)}
+.nav-link.active{background:var(--bg);color:var(--text);box-shadow:0 1px 3px rgba(0,0,0,.06)}
+.header-right{display:flex;align-items:center;gap:8px}
 
-  .shell { max-width:1060px; margin:0 auto; padding:36px clamp(24px,4vw,48px) 80px }
-  .page-title { font-family:'Plus Jakarta Sans',sans-serif; font-size:32px; font-weight:800; letter-spacing:-0.04em; line-height:1.1 }
-  .page-sub { font-size:14px; color:var(--text3); margin:4px 0 32px }
+/* ── Shell ── */
+.shell{max-width:1200px;margin:0 auto;padding:32px 20px 60px}
 
-  /* ════════════════════════════════════
-     PIPELINE — vertical stepper
-     ════════════════════════════════════ */
-  .pipeline { margin-bottom:44px }
-  .sec-label { font-family:'Plus Jakarta Sans',sans-serif; font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.1em; color:var(--text3); margin-bottom:16px }
+/* ── Hero Card ── */
+.hero{background:var(--bg);border:1px solid var(--sep);border-radius:16px;padding:0;margin-bottom:24px;overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,.04)}
+.hero-gradient{height:4px;background:linear-gradient(90deg,var(--purple),var(--blue),var(--cyan))}
+.hero-inner{padding:32px 36px 28px}
+.hero-name{font-family:'Plus Jakarta Sans',sans-serif;font-size:32px;font-weight:800;letter-spacing:-0.04em;line-height:1.2;margin-bottom:8px}
+.hero-desc{font-size:14px;line-height:1.7;color:var(--text2);max-width:700px}
 
-  .steps { display:flex; flex-direction:column; gap:0; position:relative }
-  .step { display:grid; grid-template-columns:48px 1fr; min-height:72px }
-  .step-rail { display:flex; flex-direction:column; align-items:center }
-  .step-dot {
-    width:36px; height:36px; border-radius:10px; display:flex; align-items:center; justify-content:center;
-    font-family:'Plus Jakarta Sans',sans-serif; font-size:13px; font-weight:800; flex-shrink:0; z-index:1;
-  }
-  .step-line { width:2px; flex:1; min-height:12px }
-  .step:last-child .step-line { display:none }
+/* ── Tab System ── */
+.tabs-bar{display:flex;gap:2px;padding:3px;background:var(--surface);border-radius:10px;margin-bottom:24px;overflow-x:auto}
+.tab-btn{padding:8px 20px;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;color:var(--text3);background:none;border:none;cursor:pointer;transition:all .15s;white-space:nowrap}
+.tab-btn:hover{color:var(--text2)}
+.tab-btn.active{background:var(--bg);color:var(--text);font-weight:600;box-shadow:0 1px 3px rgba(0,0,0,.06)}
+.tab-content{display:none}
+.tab-content.active{display:block}
 
-  /* phase colors */
-  .phase-boot .step-dot { background:#f3f0ff; color:var(--purple); border:1.5px solid rgba(139,92,246,0.2) }
-  .phase-boot .step-line { background:linear-gradient(var(--purple), var(--blue)) }
-  .phase-context .step-dot { background:#eff6ff; color:var(--blue); border:1.5px solid rgba(59,130,246,0.2) }
-  .phase-context .step-line { background:var(--blue) }
-  .phase-arm .step-dot { background:#f0fdf4; color:var(--green); border:1.5px solid rgba(34,197,94,0.2) }
-  .phase-arm .step-line { background:linear-gradient(var(--green), var(--amber)) }
-  .phase-run .step-dot { background:#fffbeb; color:var(--amber); border:1.5px solid rgba(245,158,11,0.2) }
+/* ── Section Titles ── */
+.sec-title{font-family:'Plus Jakarta Sans',sans-serif;font-size:18px;font-weight:700;letter-spacing:-0.03em;margin-bottom:16px;display:flex;align-items:center;gap:8px}
+.sec-title .count{font-family:'DM Mono',monospace;font-size:11px;color:var(--text3);background:var(--surface);padding:2px 8px;border-radius:100px}
 
-  .step-body { padding:6px 0 20px 0 }
-  .step-phase { font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:0.08em; margin-bottom:1px }
-  .step-phase.boot { color:var(--purple) }
-  .step-phase.context { color:var(--blue) }
-  .step-phase.arm { color:var(--green) }
-  .step-phase.run { color:var(--amber) }
-  .step-title { font-family:'Plus Jakarta Sans',sans-serif; font-size:15px; font-weight:700; letter-spacing:-0.02em }
-  .step-desc { font-size:12px; color:var(--text3); line-height:1.5; margin-top:2px }
-  .step-pills { display:flex; flex-wrap:wrap; gap:5px; margin-top:6px }
-  .pill { font-family:'DM Mono',monospace; font-size:10px; padding:2px 8px; border-radius:5px; background:var(--surface); color:var(--text2) }
-  .pill.lit { background:var(--blue-bg); color:var(--blue); border:1px solid rgba(59,130,246,0.12) }
-  .pill.lit-green { background:var(--green-bg); color:var(--green); border:1px solid rgba(34,197,94,0.12) }
+/* ── Expandable Sections ── */
+.expand-section{background:var(--bg);border:1px solid var(--sep);border-radius:var(--radius);overflow:hidden;margin-bottom:12px}
+.expand-head{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;cursor:pointer;user-select:none;transition:background .12s}
+.expand-head:hover{background:var(--bg2)}
+.expand-left{display:flex;align-items:center;gap:10px}
+.expand-icon{width:28px;height:28px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0}
+.expand-label{font-family:'Plus Jakarta Sans',sans-serif;font-size:14px;font-weight:700;letter-spacing:-0.02em}
+.expand-count{font-family:'DM Mono',monospace;font-size:10px;color:var(--text3);background:var(--surface);padding:2px 8px;border-radius:100px;margin-left:auto;margin-right:12px}
+.expand-chev{width:20px;height:20px;display:flex;align-items:center;justify-content:center;color:var(--text3);flex-shrink:0}
+.expand-body{overflow:hidden}
+/* Height controlled entirely by GSAP — no CSS height rules */
+.expand-inner{padding:0 18px 18px;border-top:1px solid var(--sep);padding-top:14px}
 
-  /* ════════════════════════════════════
-     SECTIONS
-     ════════════════════════════════════ */
-  .section { margin-bottom:36px }
-  .sec-head { display:flex; align-items:center; justify-content:space-between; margin-bottom:12px }
-  .sec-title { font-family:'Plus Jakarta Sans',sans-serif; font-size:18px; font-weight:800; letter-spacing:-0.03em }
-  .sec-badge { font-family:'DM Mono',monospace; font-size:11px; color:var(--text3); background:var(--surface); padding:2px 10px; border-radius:100px }
+/* ── Pipeline (Tab 1) ── */
+.pipeline-card{background:var(--bg);border:1px solid var(--sep);border-radius:var(--radius);padding:24px 28px;margin-bottom:20px;box-shadow:0 1px 4px rgba(0,0,0,.02)}
+.pipeline-label{font-family:'Plus Jakarta Sans',sans-serif;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--text3);margin-bottom:18px}
+.pipe-steps{display:flex;flex-direction:column;gap:0}
+.pipe-step{display:grid;grid-template-columns:48px 1fr;min-height:68px}
+.pipe-rail{display:flex;flex-direction:column;align-items:center}
+.pipe-dot{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-family:'Plus Jakarta Sans',sans-serif;font-size:13px;font-weight:800;flex-shrink:0;z-index:1;border:1.5px solid}
+.pipe-line{width:2px;flex:1;min-height:8px}
+.pipe-step:last-child .pipe-line{display:none}
+.pipe-body{padding:4px 0 18px 0;display:flex;align-items:flex-start;gap:10px}
+.pipe-emoji{font-size:16px;margin-top:1px;flex-shrink:0}
+.pipe-phase{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;margin-bottom:1px}
+.pipe-title{font-family:'Plus Jakarta Sans',sans-serif;font-size:15px;font-weight:700;letter-spacing:-0.02em}
+.pipe-desc{font-size:12px;color:var(--text3);line-height:1.5;margin-top:2px}
 
-  /* ════════════════════════════════════
-     HOOKS — compact table-style rows
-     ════════════════════════════════════ */
-  .hook-group { margin-bottom:16px }
-  .hook-group-head { display:flex; align-items:center; gap:8px; margin-bottom:8px }
-  .hg-dot { width:7px; height:7px; border-radius:50% }
-  .hg-dot.mc { background:var(--purple) }
-  .hg-dot.quality { background:var(--green) }
-  .hg-dot.safety { background:var(--rose) }
-  .hg-dot.system { background:var(--amber) }
-  .hg-label { font-family:'Plus Jakarta Sans',sans-serif; font-size:12px; font-weight:700 }
-  .hg-count { font-family:'DM Mono',monospace; font-size:10px; color:var(--text3) }
+/* ── Lifecycle Stepper (Tab 2) ── */
+.lifecycle-card{background:var(--bg);border:1px solid var(--sep);border-radius:var(--radius);padding:28px;margin-bottom:20px;box-shadow:0 1px 4px rgba(0,0,0,.02)}
+.lifecycle-label{font-family:'Plus Jakarta Sans',sans-serif;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--text3);margin-bottom:20px}
+.lc-stepper{display:flex;align-items:flex-start;gap:0;position:relative}
+.lc-stage{flex:1;text-align:center;position:relative;padding:0 6px}
+.lc-stage:not(:last-child)::after{content:'';position:absolute;top:22px;right:-2px;width:calc(100% - 50px);height:2px;background:var(--surface2);left:calc(50% + 25px);z-index:0}
+.lc-dot-main{width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 10px;position:relative;z-index:1;font-size:20px;border:2px solid;transition:transform .2s,box-shadow .2s;cursor:default}
+.lc-dot-main:hover{transform:scale(1.1);box-shadow:0 4px 16px rgba(0,0,0,.1)}
+.lc-name{font-family:'Plus Jakarta Sans',sans-serif;font-size:12px;font-weight:700;letter-spacing:-0.01em;margin-bottom:2px}
+.lc-desc{font-size:10px;color:var(--text3);line-height:1.3}
 
-  .hook-list { display:flex; flex-direction:column; gap:4px }
-  .hook-row {
-    display:grid; grid-template-columns:160px 1fr 120px auto;
-    align-items:center; gap:12px;
-    background:var(--bg); border:1px solid var(--sep); border-radius:8px;
-    padding:8px 14px; font-size:12px; transition:all .12s;
-    cursor:pointer;
-  }
-  .hook-row:hover { border-color:var(--surface2); box-shadow:0 1px 4px rgba(0,0,0,.03); background:#fcfcfc }
-  .hook-name { font-family:'Plus Jakarta Sans',sans-serif; font-weight:700; font-size:12px }
-  .hook-desc { color:var(--text3); font-size:11px; line-height:1.3 }
-  .hook-trigger { font-family:'DM Mono',monospace; font-size:10px; color:var(--purple) }
-  .hook-scope { font-size:9px; font-weight:600; text-transform:uppercase; letter-spacing:0.05em; padding:1px 6px; border-radius:4px; background:var(--surface); color:var(--text3); text-align:center }
-  @media (max-width:720px) {
-    .hook-row { grid-template-columns:1fr; gap:4px }
-  }
+/* ── Callout Box ── */
+.callout{border-radius:10px;padding:14px 18px;margin-bottom:20px;font-size:13px;line-height:1.6;display:flex;align-items:flex-start;gap:10px}
+.callout.rose{background:var(--rose-bg);border:1px solid rgba(239,68,68,0.12);color:var(--text)}
+.callout.rose strong{color:var(--rose)}
+.callout.green{background:var(--green-bg);border:1px solid rgba(34,197,94,0.12);color:var(--text)}
+.callout.green strong{color:var(--green)}
+.callout-icon{font-size:16px;flex-shrink:0;margin-top:1px}
 
-  /* ════════════════════════════════════
-     GAP BANNER
-     ════════════════════════════════════ */
-  .gap { background:linear-gradient(135deg,rgba(245,158,11,0.04),rgba(239,68,68,0.03)); border:1px solid rgba(245,158,11,0.15); border-radius:10px; padding:12px 16px; margin-bottom:28px; display:flex; align-items:center; gap:10px; font-size:12px; color:var(--text2) }
-  .gap-dot { width:6px; height:6px; border-radius:50%; background:var(--amber); flex-shrink:0 }
-  .gap strong { color:var(--amber) }
+/* ── Compare Cards (Tab 2) ── */
+.compare-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:12px}
+.compare-card{background:var(--bg);border:1px solid var(--sep);border-radius:10px;padding:16px 18px;position:relative;overflow:hidden}
+.compare-card .bar{height:3px;position:absolute;top:0;left:0;right:0}
+.compare-card .grade-big{font-family:'Plus Jakarta Sans',sans-serif;font-size:28px;font-weight:800;margin-bottom:2px}
+.compare-card .agent-label{font-family:'DM Sans',sans-serif;font-size:13px;font-weight:700;margin-bottom:8px}
+.compare-card .lc-mini{display:flex;align-items:center;gap:3px;margin-bottom:8px}
+.compare-card .lc-mini .dot{width:8px;height:8px;border-radius:50%}
+.compare-card .lc-mini .conn{width:10px;height:2px;background:var(--surface2)}
+.compare-card .detail{font-size:11px;color:var(--text2);line-height:1.6}
+.compare-card .detail strong{color:var(--text)}
 
-  /* ════════════════════════════════════
-     MEMORY — compact cards
-     ════════════════════════════════════ */
-  .mem-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(200px,1fr)); gap:6px }
-  .mem-card {
-    background:var(--bg); border:1px solid var(--sep); border-radius:10px;
-    padding:12px 14px; cursor:pointer; transition:all .12s;
-  }
-  .mem-card:hover { border-color:var(--surface2); box-shadow:0 2px 8px rgba(0,0,0,.03); transform:translateY(-1px) }
-  .mem-card.primary { border-color:var(--blue); background:linear-gradient(135deg,#fff,var(--blue-bg)) }
-  .mem-card.rules { border-color:var(--green); background:linear-gradient(135deg,#fff,var(--green-bg)) }
-  .mem-name { font-family:'DM Mono',monospace; font-size:12px; font-weight:500 }
-  .mem-role { font-size:10px; color:var(--text3); margin-top:1px; line-height:1.3 }
-  .mem-stats { font-family:'DM Mono',monospace; font-size:9px; color:var(--text3); margin-top:4px }
+/* ── Skill Report (Tab 2) ── */
+.skill-table{width:100%;border-collapse:collapse;font-size:12px}
+.skill-table th{text-align:left;padding:8px 10px;background:var(--surface);font-family:'Plus Jakarta Sans',sans-serif;font-weight:700;font-size:11px;text-transform:uppercase;letter-spacing:.04em;color:var(--text3);border:1px solid var(--sep)}
+.skill-table td{padding:8px 10px;border:1px solid var(--sep)}
+.skill-table .skill-name{font-family:'DM Mono',monospace;font-size:11px;font-weight:600;color:var(--purple)}
+.skill-table .metric{font-family:'DM Mono',monospace;font-weight:700}
+.skill-table .metric.good{color:var(--green)}
+.skill-table .metric.bad{color:var(--rose)}
 
-  /* ════════════════════════════════════
-     CLAUDE.MD — rendered, collapsible
-     ════════════════════════════════════ */
-  .rules-card {
-    background:var(--bg); border:1px solid var(--sep); border-radius:var(--r); overflow:hidden;
-  }
-  .rules-header {
-    padding:14px 18px; cursor:pointer; display:flex; align-items:center; justify-content:space-between;
-    user-select:none; transition:background .12s;
-  }
-  .rules-header:hover { background:var(--surface) }
-  .rules-header-left { display:flex; align-items:center; gap:10px }
-  .rules-icon { width:28px; height:28px; border-radius:8px; background:var(--green-bg); color:var(--green); display:flex; align-items:center; justify-content:center; font-size:14px; font-weight:700; border:1px solid rgba(34,197,94,0.12) }
-  .rules-label { font-family:'Plus Jakarta Sans',sans-serif; font-size:14px; font-weight:700 }
-  .rules-meta { font-family:'DM Mono',monospace; font-size:10px; color:var(--text3) }
-  .rules-chevron { color:var(--text3); font-size:12px; transition:transform .2s }
-  .rules-chevron.open { transform:rotate(180deg) }
-  .rules-body { display:none; padding:0 18px 18px; border-top:1px solid var(--sep) }
-  .rules-body.open { display:block; padding-top:14px }
-  .rules-content { font-size:13px; line-height:1.8; color:var(--text2) }
-  .rules-content h1 { font-family:'Plus Jakarta Sans',sans-serif; font-size:16px; font-weight:800; color:var(--text); margin:0 0 10px; letter-spacing:-0.02em }
-  .rules-content h2 { font-family:'Plus Jakarta Sans',sans-serif; font-size:14px; font-weight:700; color:var(--text); margin:16px 0 6px; letter-spacing:-0.02em }
-  .rules-content p { margin-bottom:6px }
-  .rules-content ul { margin:4px 0 8px 18px }
-  .rules-content li { margin-bottom:3px }
+/* ── Orchestrator Flowchart (Tab 3) ── */
+.orch-flow{background:var(--bg);border:1px solid var(--sep);border-radius:var(--radius);padding:32px 24px;margin-bottom:20px;box-shadow:0 1px 4px rgba(0,0,0,.02);overflow:hidden}
+.orch-flow-label{font-family:'Plus Jakarta Sans',sans-serif;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--text3);margin-bottom:24px;text-align:center}
+.orch-hero-node{background:linear-gradient(135deg,#7c3aed 0%,#8b5cf6 40%,#a78bfa 100%);border-radius:16px;padding:22px 32px;text-align:center;margin:0 auto;max-width:380px;position:relative;box-shadow:0 8px 32px rgba(139,92,246,0.3),0 0 0 1px rgba(139,92,246,0.1)}
+.orch-hero-emoji{font-size:28px;margin-bottom:2px}
+.orch-hero-title{font-family:'Plus Jakarta Sans',sans-serif;font-size:22px;font-weight:800;color:#fff;letter-spacing:-0.03em}
+.orch-hero-sub{font-family:'DM Sans',sans-serif;font-size:12px;color:rgba(255,255,255,0.8);margin-top:4px}
+.flow-vline{width:2px;height:18px;background:var(--sep);margin:0 auto}
+.flow-phases{display:flex;flex-direction:column;align-items:center;gap:0}
+.flow-phase-card{display:flex;align-items:center;gap:12px;background:var(--bg);border:1.5px solid var(--sep);border-radius:12px;padding:12px 18px;max-width:520px;width:100%;transition:all .15s;position:relative}
+.flow-phase-card:hover{box-shadow:0 4px 16px rgba(0,0,0,.06);transform:translateY(-1px)}
+.flow-phase-num{width:32px;height:32px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-family:'Plus Jakarta Sans',sans-serif;font-size:13px;font-weight:800;color:#fff;flex-shrink:0}
+.flow-phase-emoji{font-size:18px;flex-shrink:0}
+.flow-phase-name{font-family:'Plus Jakarta Sans',sans-serif;font-size:14px;font-weight:700;letter-spacing:-0.02em}
+.flow-phase-desc{font-size:11px;color:var(--text3);line-height:1.4;margin-top:1px}
+/* Dispatch section: phases 5-6 with agent branch */
+.flow-dispatch-section{display:grid;grid-template-columns:1fr 80px 1fr;gap:0;align-items:center;max-width:820px;width:100%;margin:0 auto}
+.flow-dispatch-left{display:flex;flex-direction:column;align-items:stretch;gap:0}
+.flow-dispatch-center{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;padding:0 4px}
+.flow-dispatch-arrow{display:flex;align-items:center;gap:4px;font-family:'DM Mono',monospace;font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:.04em;white-space:nowrap}
+.flow-dispatch-arrow svg{width:20px;height:20px;flex-shrink:0}
+.flow-dispatch-arrow.prd{color:var(--rose)}
+.flow-dispatch-arrow.prd svg{color:var(--rose)}
+.flow-dispatch-arrow.grade{color:var(--cyan)}
+.flow-dispatch-arrow.grade svg{color:var(--cyan)}
+.flow-dispatch-right{display:flex;flex-direction:column;gap:6px;justify-content:center}
+.flow-agent-card{background:var(--surface);border:1px solid transparent;border-radius:10px;padding:9px 14px;display:flex;align-items:center;gap:8px;transition:all .12s}
+.flow-agent-card:hover{border-color:var(--surface2);box-shadow:0 2px 8px rgba(0,0,0,.04)}
+.flow-agent-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.flow-agent-name{font-family:'DM Sans',sans-serif;font-size:12px;font-weight:600}
+.flow-agent-grade{font-family:'DM Mono',monospace;font-size:10px;font-weight:700;margin-left:auto}
+/* Animated pulse on dispatch arrow */
+@keyframes dispatchPulse{0%,100%{opacity:.5}50%{opacity:1}}
+.dispatch-pulse{animation:dispatchPulse 2s ease-in-out infinite}
+/* Next Sprint node */
+.flow-next-node{background:var(--surface);border:1.5px dashed var(--sep);border-radius:12px;padding:14px 24px;text-align:center;margin:0 auto;max-width:220px}
+.flow-next-emoji{font-size:20px}
+.flow-next-title{font-family:'Plus Jakarta Sans',sans-serif;font-size:13px;font-weight:700;color:var(--text3);letter-spacing:-0.01em}
+/* Orchestrator Skill expandable content */
+.orch-skill-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px}
+.orch-skill-stat{background:var(--surface);border-radius:8px;padding:12px;text-align:center}
+.orch-skill-stat-val{font-family:'Plus Jakarta Sans',sans-serif;font-size:20px;font-weight:800}
+.orch-skill-stat-label{font-family:'DM Mono',monospace;font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:.04em;margin-top:2px}
+.orch-phases-grid{display:flex;flex-direction:column;gap:3px;margin-bottom:16px}
+.orch-phase-row{display:flex;align-items:flex-start;gap:10px;padding:8px 12px;border-radius:8px;font-size:12px;line-height:1.5;transition:background .1s}
+.orch-phase-row:hover{background:var(--surface)}
+.orch-phase-num{width:22px;height:22px;border-radius:6px;color:#fff;font-family:'Plus Jakarta Sans',sans-serif;font-size:10px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px}
+.orch-phase-emoji{font-size:14px;flex-shrink:0;margin-top:1px}
+.orch-phase-text{flex:1}
+.orch-phase-text strong{color:var(--text)}
+.orch-phase-text span{color:var(--text3);font-size:11px}
+.orch-section-label{font-family:'Plus Jakarta Sans',sans-serif;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text3);margin:16px 0 8px}
+.orch-rules-list{display:flex;flex-direction:column;gap:3px;font-size:12px;color:var(--text2);line-height:1.6}
+.orch-rules-list div{display:flex;gap:8px;padding:2px 0}
+.orch-rule-num{font-family:'DM Mono',monospace;font-size:10px;color:var(--text3);width:22px;text-align:right;flex-shrink:0}
+.orch-toolbox-link{display:inline-flex;align-items:center;gap:6px;padding:8px 18px;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:600;background:var(--purple);color:#fff;text-decoration:none;transition:all .12s;margin-top:12px}
+.orch-toolbox-link:hover{background:#7c3aed}
 
-  /* ════════════════════════════════════
-     SETTINGS — inline row
-     ════════════════════════════════════ */
-  .settings-row { display:flex; flex-wrap:wrap; gap:6px }
-  .setting-chip {
-    background:var(--bg); border:1px solid var(--sep); border-radius:8px;
-    padding:8px 14px; display:flex; align-items:center; gap:8px; font-size:12px;
-  }
-  .setting-k { color:var(--text3); font-weight:500 }
-  .setting-v { font-family:'DM Mono',monospace; font-weight:500 }
+/* ── Version Table (Tab 3) ── */
+.version-table{width:100%;border-collapse:collapse;font-size:12px;margin-bottom:20px}
+.version-table th{text-align:left;padding:8px 12px;background:var(--surface);font-family:'Plus Jakarta Sans',sans-serif;font-weight:700;font-size:11px;text-transform:uppercase;letter-spacing:.04em;color:var(--text3);border:1px solid var(--sep)}
+.version-table td{padding:8px 12px;border:1px solid var(--sep)}
+.version-table .v-grade{font-family:'Plus Jakarta Sans',sans-serif;font-weight:800;font-size:13px;padding:2px 8px;border-radius:6px;display:inline-block}
 
-  /* ════════════════════════════════════
-     MODAL — full content viewer
-     ════════════════════════════════════ */
-  .modal-bg { display:none; position:fixed; inset:0; background:rgba(0,0,0,.2); backdrop-filter:blur(6px); z-index:100; justify-content:center; align-items:center; padding:24px }
-  .modal-bg.open { display:flex }
-  .modal-box {
-    background:var(--bg); border-radius:14px; max-width:700px; width:100%; max-height:70vh;
-    display:flex; flex-direction:column; box-shadow:0 24px 80px rgba(0,0,0,.1);
-    animation:mIn .18s ease; margin:48px 0;
-  }
-  @keyframes mIn { from { opacity:0; transform:translateY(6px) scale(0.98) } to { opacity:1; transform:none } }
-  .modal-top { display:flex; align-items:center; justify-content:space-between; padding:10px 20px; border-bottom:1px solid var(--sep); flex-shrink:0 }
-  .modal-top-title { font-family:'DM Mono',monospace; font-size:14px; font-weight:600 }
-  .modal-x { width:26px; height:26px; border-radius:6px; border:none; background:var(--surface); color:var(--text3); cursor:pointer; font-size:13px; display:flex; align-items:center; justify-content:center }
-  .modal-x:hover { background:var(--surface2); color:var(--text) }
-  .modal-scroll { overflow-y:auto; padding:20px; flex:1 }
-  .modal-text {
-    font-family:'DM Mono',monospace; font-size:12px; line-height:1.7;
-    white-space:pre-wrap; color:var(--text);
-    background:#1e1e2e; color:#cdd6f4; padding:20px; border-radius:10px;
-    tab-size:2;
-  }
-  /* Rendered markdown view */
-  .modal-md {
-    font-family:'DM Sans',sans-serif; font-size:14px; color:var(--text2); line-height:1.7;
-    padding:4px 0;
-  }
-  .modal-md h1,.modal-md h2,.modal-md h3 { font-family:'Plus Jakarta Sans',sans-serif; color:var(--text); margin:18px 0 6px; letter-spacing:-0.02em }
-  .modal-md h1:first-child,.modal-md p:first-child+h1 { margin-top:0 }
-  .modal-md h1 { font-size:22px; font-weight:800; border-bottom:1px solid var(--sep); padding-bottom:8px }
-  .modal-md textarea { display:none !important }
-  .modal-md h2 { font-size:17px; font-weight:700 }
-  .modal-md h3 { font-size:14px; font-weight:600 }
-  .modal-md p { margin:6px 0 }
-  .modal-md ul,.modal-md ol { padding-left:20px; margin:6px 0 }
-  .modal-md li { margin:3px 0 }
-  .modal-md code { font-family:'DM Mono',monospace; font-size:12px; background:var(--surface); padding:1px 5px; border-radius:4px }
-  .modal-md pre { background:#1e1e2e; border-radius:8px; padding:12px 16px; overflow-x:auto; margin:8px 0; color:#cdd6f4 }
-  .modal-md pre code { background:none; padding:0; color:inherit; font-size:12px; line-height:1.5 }
-  .modal-md blockquote { border-left:3px solid var(--purple); padding-left:12px; margin:8px 0; color:var(--text3); font-style:italic }
-  .modal-md strong { color:var(--text); font-weight:600 }
-  .modal-md em { font-style:italic }
-  .modal-md hr { border:none; border-top:1px solid var(--sep); margin:16px 0 }
-  .modal-md table { border-collapse:collapse; width:100%; margin:8px 0 }
-  .modal-md th,.modal-md td { border:1px solid var(--sep); padding:6px 10px; font-size:12px; text-align:left }
-  .modal-md th { background:var(--surface); font-weight:600 }
-  .modal-md a { color:var(--blue); text-decoration:none }
-  .modal-md a:hover { text-decoration:underline }
+/* ── Grade Table (Tab 3) ── */
+.grade-table{width:100%;border-collapse:collapse;font-size:12px;margin-bottom:16px}
+.grade-table th{text-align:left;padding:10px 12px;background:var(--surface);font-family:'Plus Jakarta Sans',sans-serif;font-weight:700;font-size:11px;text-transform:uppercase;letter-spacing:.04em;color:var(--text3);border:1px solid var(--sep)}
+.grade-table td{padding:10px 12px;border:1px solid var(--sep);vertical-align:top}
+.grade-letter{font-family:'Plus Jakarta Sans',sans-serif;font-size:20px;font-weight:800;display:inline-block;width:32px;text-align:center}
+.grade-a{color:#16a34a}.grade-b{color:#2563eb}.grade-c{color:#92400e}.grade-d{color:#dc2626}.grade-f{color:#dc2626}
+.grade-weight{font-family:'DM Mono',monospace;font-size:10px;color:var(--purple);background:var(--purple-bg);padding:1px 6px;border-radius:4px;white-space:nowrap}
+.gpa-card{background:var(--bg);border:1px solid var(--sep);border-radius:var(--radius);padding:20px 24px;display:flex;align-items:center;gap:16px;margin-bottom:20px}
+.gpa-value{font-family:'Plus Jakarta Sans',sans-serif;font-size:36px;font-weight:800;letter-spacing:-0.04em}
+.gpa-label{font-family:'DM Mono',monospace;font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.06em}
+.gpa-link{font-size:12px;color:var(--purple);text-decoration:none;font-weight:600;margin-left:auto;padding:6px 16px;border-radius:8px;background:var(--purple-bg);transition:all .12s}
+.gpa-link:hover{background:rgba(139,92,246,0.12)}
 
-  .modal-text .kw { color:#cba6f7 }
-  .modal-text .fn { color:#89b4fa }
-  .modal-text .str { color:#a6e3a1 }
-  .modal-text .cm { color:#6c7086; font-style:italic }
-  .modal-text .num { color:#fab387 }
-  .modal-text .op { color:#89dceb }
-  .modal-text .prop { color:#f5c2e7 }
+/* ── Campaign Flow Cards (Tab 3) ── */
+.cf-cards{display:flex;flex-direction:column;gap:0;margin-bottom:20px}
+.cf-card{display:flex;align-items:center;gap:12px;background:var(--bg);border:1px solid var(--sep);border-radius:10px;padding:12px 16px;transition:all .12s}
+.cf-card:hover{box-shadow:0 2px 10px rgba(0,0,0,.04);transform:translateY(-1px)}
+.cf-card-num{width:28px;height:28px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-family:'Plus Jakarta Sans',sans-serif;font-size:12px;font-weight:800;color:#fff;flex-shrink:0}
+.cf-card-emoji{font-size:16px;flex-shrink:0}
+.cf-card-name{font-family:'Plus Jakarta Sans',sans-serif;font-size:13px;font-weight:700;letter-spacing:-0.01em}
+.cf-card-desc{font-size:11px;color:var(--text3);line-height:1.4;margin-top:1px}
+.cf-connector{width:2px;height:10px;background:var(--sep);margin:0 0 0 34px}
+
+/* ── Learning Loop (Tab 4) ── */
+.loop-card{background:var(--bg);border:1px solid var(--sep);border-radius:var(--radius);padding:28px;margin-bottom:20px;box-shadow:0 1px 4px rgba(0,0,0,.02);text-align:center}
+.loop-label{font-family:'Plus Jakarta Sans',sans-serif;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--text3);margin-bottom:6px}
+.loop-subtitle{font-family:'Plus Jakarta Sans',sans-serif;font-size:16px;font-weight:800;color:var(--purple);margin-bottom:24px;letter-spacing:-0.02em}
+/* ── Learning Loop Nodes (HTML/CSS, not SVG) ── */
+.loop-nodes{position:relative;display:flex;justify-content:space-between;align-items:flex-start;max-width:680px;margin:0 auto;padding:40px 0 0}
+.loop-node{display:flex;flex-direction:column;align-items:center;flex:1;min-width:0;position:relative;z-index:2}
+/* Arrow between nodes */
+.loop-node:not(:last-child)::after{content:'→';position:absolute;right:-6px;top:24px;font-size:16px;color:var(--text3);font-weight:400;z-index:1;width:24px;text-align:center;opacity:.5}
+.loop-circle{width:64px;height:64px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:28px;border:2px solid;flex-shrink:0;transition:transform .2s,box-shadow .2s}
+.loop-circle:hover{transform:scale(1.08);box-shadow:0 4px 16px rgba(0,0,0,.1)}
+.loop-node-name{font-family:'Plus Jakarta Sans',sans-serif;font-size:12px;font-weight:700;margin-top:10px;text-align:center;letter-spacing:-0.01em}
+.loop-node-sub{font-family:'DM Sans',sans-serif;font-size:10px;color:var(--text3);text-align:center;margin-top:2px}
+/* Loop-back arc — thin dashed half-ellipse from Prevention back to Mistake */
+.loop-arc-wrap{position:absolute;left:8%;right:8%;top:-14px;height:58px;overflow:hidden;pointer-events:none;z-index:0}
+.loop-arc{width:100%;height:116px;border:1.5px dashed rgba(139,92,246,0.4);border-bottom:none;border-radius:50% 50% 0 0;box-sizing:border-box}
+.loop-arc-arrow{position:absolute;bottom:0;left:-1px;width:0;height:0;border-left:4px solid transparent;border-right:4px solid transparent;border-top:6px solid rgba(139,92,246,0.4)}
+/* ── Case Study Timeline (Learning Loop) ── */
+.case-study{margin-top:28px;text-align:left;max-width:600px;margin-left:auto;margin-right:auto}
+.case-header{display:flex;align-items:center;gap:10px;margin-bottom:20px;padding-bottom:14px;border-bottom:1.5px solid var(--sep)}
+.case-badge{font-family:'DM Mono',monospace;font-size:9px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;padding:3px 10px;border-radius:100px;background:var(--surface);color:var(--text3);border:1px solid var(--sep);flex-shrink:0}
+.case-headline{font-family:'Plus Jakarta Sans',sans-serif;font-size:16px;font-weight:800;letter-spacing:-0.03em;color:var(--text)}
+.case-timeline{position:relative;padding-left:32px}
+.case-timeline::before{content:'';position:absolute;left:17px;top:10px;bottom:10px;width:2px;background:linear-gradient(to bottom,var(--rose),var(--amber) 22%,var(--blue) 40%,var(--green) 58%,var(--purple) 76%,var(--cyan));border-radius:2px;opacity:.25;z-index:0}
+.case-tl-step{position:relative;padding-bottom:16px}
+.case-tl-step:last-child{padding-bottom:0}
+.case-tl-dot{position:absolute;left:-26px;top:8px;width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;z-index:2;background:#fff;border:2.5px solid var(--bg);box-shadow:0 0 0 1px var(--sep)}
+.case-tl-card{background:var(--bg);border:1px solid var(--sep);border-radius:10px;padding:12px 16px;border-left:3px solid;transition:box-shadow .2s,transform .2s}
+.case-tl-card:hover{box-shadow:0 4px 16px rgba(0,0,0,.06);transform:translateX(3px)}
+.case-tl-stage{font-family:'DM Mono',monospace;font-size:9px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;margin-bottom:2px}
+.case-tl-desc{font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;color:var(--text);line-height:1.45}
+.case-tl-step.s-mistake .case-tl-dot{background:#fef2f2;color:var(--rose)}
+.case-tl-step.s-mistake .case-tl-card{border-left-color:var(--rose)}
+.case-tl-step.s-mistake .case-tl-stage{color:var(--rose)}
+.case-tl-step.s-postmortem .case-tl-dot{background:#fffbeb;color:#92400e}
+.case-tl-step.s-postmortem .case-tl-card{border-left-color:var(--amber)}
+.case-tl-step.s-postmortem .case-tl-stage{color:#92400e}
+.case-tl-step.s-finding .case-tl-dot{background:#eff6ff;color:var(--blue)}
+.case-tl-step.s-finding .case-tl-card{border-left-color:var(--blue)}
+.case-tl-step.s-finding .case-tl-stage{color:var(--blue)}
+.case-tl-step.s-rule .case-tl-dot{background:#f0fdf4;color:var(--green)}
+.case-tl-step.s-rule .case-tl-card{border-left-color:var(--green)}
+.case-tl-step.s-rule .case-tl-stage{color:var(--green)}
+.case-tl-step.s-hook .case-tl-dot{background:#f5f3ff;color:var(--purple)}
+.case-tl-step.s-hook .case-tl-card{border-left-color:var(--purple)}
+.case-tl-step.s-hook .case-tl-stage{color:var(--purple)}
+.case-tl-step.s-prevention .case-tl-dot{background:#ecfeff;color:var(--cyan);box-shadow:0 0 0 1px rgba(6,182,212,0.3),0 0 14px rgba(6,182,212,0.15)}
+.case-tl-step.s-prevention .case-tl-card{border-left-color:var(--cyan);background:linear-gradient(135deg,rgba(6,182,212,0.04),rgba(34,197,94,0.04));border-color:rgba(6,182,212,0.25);box-shadow:0 2px 20px rgba(6,182,212,0.08)}
+.case-tl-step.s-prevention .case-tl-stage{color:var(--cyan)}
+.case-tl-step.s-prevention .case-tl-desc{font-weight:700;color:#0891b2}
+
+/* ── Stats Bar (Tab 4) ── */
+.stats-bar{display:flex;gap:0;flex-wrap:wrap;border:1px solid var(--sep);border-radius:var(--radius);overflow:hidden;margin-bottom:20px;background:var(--bg)}
+.stat-item{flex:1;min-width:120px;padding:14px 18px;display:flex;flex-direction:column;gap:2px;border-right:1px solid var(--sep);text-align:center}
+.stat-item:last-child{border-right:none}
+.stat-value{font-family:'Plus Jakarta Sans',sans-serif;font-size:24px;font-weight:800;letter-spacing:-0.03em;line-height:1}
+.stat-label{font-family:'DM Mono',monospace;font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;margin-top:2px}
+
+/* ── Compact Table ── */
+.compact-table{width:100%;border-collapse:collapse;font-size:12px}
+.compact-table th{text-align:left;padding:8px 10px;background:var(--surface);font-family:'Plus Jakarta Sans',sans-serif;font-weight:700;font-size:11px;text-transform:uppercase;letter-spacing:.04em;color:var(--text3);border:1px solid var(--sep)}
+.compact-table td{padding:8px 10px;border:1px solid var(--sep)}
+.compact-table .hook-name{font-family:'DM Mono',monospace;font-size:11px;font-weight:600;color:var(--green)}
+.compact-table .event-badge{font-family:'DM Mono',monospace;font-size:10px;padding:1px 6px;border-radius:4px;white-space:nowrap}
+
+/* ── Memory Grid ── */
+.mem-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:8px}
+.mem-card{background:var(--bg);border:1px solid var(--sep);border-radius:10px;padding:12px 14px;cursor:pointer;transition:all .12s}
+.mem-card:hover{border-color:var(--surface2);box-shadow:0 2px 8px rgba(0,0,0,.03);transform:translateY(-1px)}
+.mem-card.primary{border-color:var(--blue);background:linear-gradient(135deg,#fff,var(--blue-bg))}
+.mem-name{font-family:'DM Mono',monospace;font-size:12px;font-weight:500}
+.mem-role{font-size:10px;color:var(--text3);margin-top:1px;line-height:1.3}
+.mem-stats{font-family:'DM Mono',monospace;font-size:9px;color:var(--text3);margin-top:4px}
+
+/* ── Rules Content ── */
+.rules-content{font-size:13px;line-height:1.8;color:var(--text2)}
+.rules-content h1{font-family:'Plus Jakarta Sans',sans-serif;font-size:16px;font-weight:800;color:var(--text);margin:0 0 10px;letter-spacing:-0.02em}
+.rules-content h2{font-family:'Plus Jakarta Sans',sans-serif;font-size:14px;font-weight:700;color:var(--text);margin:16px 0 6px}
+.rules-content p{margin-bottom:6px}
+.rules-content ul{margin:4px 0 8px 18px}
+.rules-content li{margin-bottom:3px}
+
+/* ── Findings list ── */
+.finding-item{display:flex;align-items:flex-start;gap:10px;padding:10px 12px;border-radius:8px;transition:background .12s;cursor:pointer}
+.finding-item:hover{background:var(--surface)}
+.finding-id{font-family:'DM Mono',monospace;font-size:10px;font-weight:600;color:var(--purple);background:var(--purple-bg);padding:2px 6px;border-radius:4px;flex-shrink:0;margin-top:2px}
+.finding-tier{font-family:'DM Mono',monospace;font-size:9px;padding:1px 6px;border-radius:4px;flex-shrink:0;margin-top:3px}
+.finding-tier.t1{background:var(--rose-bg);color:var(--rose)}
+.finding-tier.t2{background:var(--amber-bg);color:#92400e}
+.finding-tier.t3{background:var(--blue-bg);color:var(--blue)}
+.finding-title{font-family:'DM Sans',sans-serif;font-size:12px;font-weight:600;color:var(--text)}
+.finding-lesson{font-size:11px;color:var(--text3);line-height:1.4;margin-top:2px}
+
+/* ── Orchestrator Skill Modal ── */
+.modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.25);backdrop-filter:blur(8px);z-index:200;justify-content:center;align-items:center;padding:24px}
+.modal-bg.open{display:flex}
+.modal-box{background:var(--bg);border-radius:16px;width:92%;max-width:640px;max-height:85vh;overflow:hidden;box-shadow:0 24px 80px rgba(0,0,0,.15);animation:modalIn .2s ease}
+@keyframes modalIn{from{opacity:0;transform:translateY(12px) scale(0.97)}to{opacity:1;transform:none}}
+.modal-top-bar{height:4px;background:linear-gradient(90deg,#a78bfa,#7c3aed)}
+.modal-header{display:flex;align-items:center;justify-content:space-between;padding:20px 24px 16px}
+.modal-title{font-family:'Plus Jakarta Sans',sans-serif;font-size:18px;font-weight:800;letter-spacing:-0.03em}
+.modal-close{width:28px;height:28px;border-radius:6px;border:none;background:var(--surface);color:var(--text3);cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;transition:all .12s}
+.modal-close:hover{background:var(--surface2);color:var(--text)}
+.modal-body{padding:0 24px 24px;overflow-y:auto;max-height:calc(85vh - 60px)}
+.modal-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px}
+.modal-stat{background:var(--surface);border-radius:8px;padding:12px;text-align:center}
+.modal-stat-val{font-family:'Plus Jakarta Sans',sans-serif;font-size:20px;font-weight:800}
+.modal-stat-label{font-family:'DM Mono',monospace;font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:.04em;margin-top:2px}
+.modal-phase-list{display:flex;flex-direction:column;gap:4px;margin-bottom:16px}
+.modal-phase{display:flex;align-items:center;gap:8px;padding:6px 10px;border-radius:6px;font-size:12px;transition:background .1s}
+.modal-phase:hover{background:var(--surface)}
+.modal-phase-num{width:20px;height:20px;border-radius:5px;background:var(--purple);color:#fff;font-family:'Plus Jakarta Sans',sans-serif;font-size:10px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.modal-phase-name{font-weight:600}
+.modal-phase-desc{color:var(--text3);font-size:11px}
+.modal-section-label{font-family:'Plus Jakarta Sans',sans-serif;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text3);margin:16px 0 8px}
+.modal-rule-list{display:flex;flex-direction:column;gap:2px;font-size:12px;color:var(--text2)}
+.modal-rule-list div{padding:4px 0;display:flex;gap:8px}
+.modal-rule-num{font-family:'DM Mono',monospace;font-size:10px;color:var(--text3);width:20px;text-align:right;flex-shrink:0}
+.modal-btn{display:inline-flex;align-items:center;gap:6px;padding:8px 18px;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:600;cursor:pointer;border:none;transition:all .12s;margin-top:12px}
+.modal-btn.primary{background:var(--purple);color:#fff}
+.modal-btn.primary:hover{background:#7c3aed}
+
+/* ── Memory/Rules Modal (reused from old page) ── */
+.content-modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.2);backdrop-filter:blur(6px);z-index:190;justify-content:center;align-items:center;padding:24px}
+.content-modal-bg.open{display:flex}
+.content-modal{background:var(--bg);border-radius:14px;max-width:700px;width:100%;max-height:75vh;display:flex;flex-direction:column;box-shadow:0 24px 80px rgba(0,0,0,.1);animation:modalIn .18s ease}
+.cm-header{display:flex;align-items:center;justify-content:space-between;padding:12px 20px;border-bottom:1px solid var(--sep);flex-shrink:0}
+.cm-title{font-family:'DM Mono',monospace;font-size:14px;font-weight:600}
+.cm-close{width:26px;height:26px;border-radius:6px;border:none;background:var(--surface);color:var(--text3);cursor:pointer;font-size:13px;display:flex;align-items:center;justify-content:center}
+.cm-close:hover{background:var(--surface2);color:var(--text)}
+.cm-body{overflow-y:auto;padding:20px;flex:1;font-family:'DM Sans',sans-serif;font-size:14px;color:var(--text2);line-height:1.7}
+.cm-body h1,.cm-body h2,.cm-body h3{font-family:'Plus Jakarta Sans',sans-serif;color:var(--text);margin:18px 0 6px;letter-spacing:-0.02em}
+.cm-body h1:first-child{margin-top:0}
+.cm-body h1{font-size:20px;font-weight:800}
+.cm-body h2{font-size:16px;font-weight:700}
+.cm-body p{margin:6px 0}
+.cm-body ul,.cm-body ol{padding-left:20px;margin:6px 0}
+.cm-body li{margin:3px 0}
+.cm-body code{font-family:'DM Mono',monospace;font-size:12px;background:var(--surface);padding:1px 5px;border-radius:4px}
+.cm-body strong{color:var(--text);font-weight:600}
+
+/* ── Before/After (Tab 4) ── */
+.ba-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.ba-card{border-radius:10px;padding:16px 18px}
+.ba-card.before{background:var(--rose-bg);border:1px solid rgba(239,68,68,0.1)}
+.ba-card.after{background:var(--green-bg);border:1px solid rgba(34,197,94,0.1)}
+.ba-title{font-family:'Plus Jakarta Sans',sans-serif;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px}
+.ba-card.before .ba-title{color:var(--rose)}
+.ba-card.after .ba-title{color:var(--green)}
+.ba-list{display:flex;flex-direction:column;gap:4px;font-size:12px;color:var(--text2)}
+.ba-list div{display:flex;align-items:center;gap:6px}
+.ba-list .ba-dot{width:5px;height:5px;border-radius:50%;flex-shrink:0}
+.ba-card.before .ba-dot{background:var(--rose)}
+.ba-card.after .ba-dot{background:var(--green)}
+
+/* ── Auto-Dispatch Pipeline (Tab 3) ── */
+.dispatch-pipeline{background:var(--bg);border:1px solid var(--sep);border-radius:var(--radius);padding:32px 24px;margin-bottom:20px;box-shadow:0 1px 4px rgba(0,0,0,.02);overflow:hidden}
+.dispatch-pipeline-label{font-family:'Plus Jakarta Sans',sans-serif;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--text3);margin-bottom:24px;text-align:center}
+.dp-steps{display:flex;flex-direction:column;align-items:center;gap:0;max-width:520px;margin:0 auto}
+.dp-step{display:flex;align-items:center;gap:12px;background:var(--bg);border:1.5px solid var(--sep);border-radius:12px;padding:12px 18px;width:100%;transition:all .15s;position:relative}
+.dp-step:hover{box-shadow:0 4px 16px rgba(0,0,0,.06);transform:translateY(-1px)}
+.dp-emoji{font-size:20px;flex-shrink:0}
+.dp-text{flex:1}
+.dp-title{font-family:'Plus Jakarta Sans',sans-serif;font-size:14px;font-weight:700;letter-spacing:-0.02em}
+.dp-desc{font-size:11px;color:var(--text3);line-height:1.4;margin-top:1px}
+.dp-desc code{font-family:'DM Mono',monospace;font-size:10px;background:var(--surface);padding:1px 5px;border-radius:4px;color:var(--text2)}
+.dp-connector{width:2px;height:12px;background:var(--sep);margin:0 auto;flex-shrink:0}
+
+/* ── Safety Grid (Tab 3) ── */
+.safety-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:20px}
+.safety-card{background:var(--bg);border:1px solid var(--sep);border-radius:10px;padding:14px 16px;display:flex;align-items:flex-start;gap:10px;transition:all .12s}
+.safety-card:hover{box-shadow:0 2px 8px rgba(0,0,0,.04);border-color:var(--surface2)}
+.safety-emoji{font-size:18px;flex-shrink:0;margin-top:1px}
+.safety-title{font-family:'Plus Jakarta Sans',sans-serif;font-size:13px;font-weight:700;letter-spacing:-0.01em}
+.safety-desc{font-size:11px;color:var(--text3);line-height:1.4;margin-top:2px}
+.safety-desc code{font-family:'DM Mono',monospace;font-size:10px;background:var(--surface);padding:1px 5px;border-radius:4px;color:var(--text2)}
+
+/* ── Expand All Button ── */
+.expand-all-btn{position:sticky;top:72px;z-index:10;float:right;margin-bottom:12px;padding:6px 16px;border-radius:8px;background:var(--surface);border:1px solid var(--sep);font-family:'DM Sans',sans-serif;font-size:12px;font-weight:600;color:var(--text2);cursor:pointer;transition:all .15s}
+.expand-all-btn:hover{background:var(--surface2);color:var(--text)}
+
+/* ── Responsive ── */
+@media(max-width:900px){
+  .header-nav{position:relative;left:0;transform:none;overflow-x:auto;max-width:60vw}
+  .hero-inner{padding:24px 20px 20px}
+  .hero-name{font-size:24px}
+  .tabs-bar{overflow-x:auto}
+  .lc-stepper{overflow-x:auto;padding-bottom:8px}
+  .flow-dispatch-section{grid-template-columns:1fr;gap:12px}
+  .flow-dispatch-center{flex-direction:row;padding:8px 0;justify-content:flex-start}
+  .flow-phase-card{max-width:100%}
+  .orch-skill-stats{grid-template-columns:repeat(3,1fr)}
+  .compare-grid{grid-template-columns:1fr}
+  .safety-grid{grid-template-columns:1fr}
+  .ba-grid{grid-template-columns:1fr}
+  .stats-bar{flex-direction:column}
+  .stat-item{border-right:none;border-bottom:1px solid var(--sep);flex-direction:row;gap:8px;align-items:baseline;padding:10px 16px}
+  .stat-item:last-child{border-bottom:none}
+}
+@media(max-width:600px){
+  .header-nav{max-width:55vw;gap:1px;padding:2px}
+  .nav-link{padding:4px 10px;font-size:12px}
+  .pipeline-card{padding:18px 16px}
+  .lifecycle-card{padding:18px 16px}
+  .swimlane{padding:18px 16px}
+}
 </style>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.14.1/dist/gsap.min.js"></script>
 </head>
 <body>
 
 <header>
-  <div class="logo"><div class="logo-dot"></div><div class="logo-text">Mission Control</div></div>
+  <div class="logo">
+    <div class="logo-dot"></div>
+    <div class="logo-text">Mission Control</div>
+  </div>
   <nav class="header-nav">
     <a href="/" class="nav-link">Dashboard</a>
     <a href="/dispatch" class="nav-link">Dispatch</a>
@@ -243,247 +436,949 @@
     <a href="/logic" class="nav-link">Logic</a>
     <a href="/radar" class="nav-link">Radar</a>
     <a href="/campaigns" class="nav-link">Campaigns</a>
-    <a href="/health" class="nav-link">Health</a>
   </nav>
-  <div style="width:120px"></div>
+  <div class="header-right"></div>
 </header>
 
 <div class="shell">
-  <h1 class="page-title">Agent Workflow</h1>
-  <p class="page-sub">The complete agent initialization pipeline, active hooks, memory, and behavioral rules</p>
 
-  <!-- ══ PIPELINE ══ -->
-  <div class="pipeline">
-    <div class="sec-label">Initialization Pipeline</div>
-    <div class="steps">
+  <!-- ═══ Hero ═══ -->
+  <div class="hero">
+    <div class="hero-gradient"></div>
+    <div class="hero-inner">
+      <div class="hero-name">Agent Workflow</div>
+      <div class="hero-desc"><strong>How MC works</strong> — from agent boot to learning loop. The complete system in four chapters: how agents start, how they work, how we coordinate, and how we learn.</div>
+    </div>
+  </div>
 
-      <div class="step phase-boot">
-        <div class="step-rail"><div class="step-dot">1</div><div class="step-line"></div></div>
-        <div class="step-body">
-          <div class="step-phase boot">Boot</div>
-          <div class="step-title">Terminal Opens</div>
-          <div class="step-desc">User runs <strong>claude</strong>. A new claude.exe process starts with a unique session ID and PID.</div>
+  <!-- ═══ Tab Bar ═══ -->
+  <div class="tabs-bar">
+    <button class="tab-btn active" data-tab="start" onclick="switchTab('start')">How Agents Start</button>
+    <button class="tab-btn" data-tab="work" onclick="switchTab('work')">How Agents Work</button>
+    <button class="tab-btn" data-tab="coordinate" onclick="switchTab('coordinate')">How We Coordinate</button>
+    <button class="tab-btn" data-tab="learn" onclick="switchTab('learn')">How We Learn</button>
+  </div>
+
+  <!-- Expand All / Collapse All -->
+  <button class="expand-all-btn" id="expandAllBtn" onclick="toggleAllSections()">Collapse All</button>
+
+  <!-- ══════════════════════════════════════════════════════════
+       TAB 1: HOW AGENTS START
+       ══════════════════════════════════════════════════════════ -->
+  <div class="tab-content active" id="tab-start">
+
+    <!-- Hero: Initialization Pipeline -->
+    <div class="pipeline-card">
+      <div class="pipeline-label">Initialization Pipeline</div>
+      <div class="pipe-steps">
+
+        <div class="pipe-step">
+          <div class="pipe-rail">
+            <div class="pipe-dot" style="background:var(--purple-bg);color:var(--purple);border-color:rgba(139,92,246,0.2)">1</div>
+            <div class="pipe-line" style="background:linear-gradient(var(--purple),var(--blue))"></div>
+          </div>
+          <div class="pipe-body">
+            <div class="pipe-emoji">⚡</div>
+            <div>
+              <div class="pipe-phase" style="color:var(--purple)">Boot</div>
+              <div class="pipe-title">Terminal Opens</div>
+              <div class="pipe-desc">claude.exe starts with unique session ID + PID</div>
+            </div>
+          </div>
         </div>
-      </div>
 
-      <div class="step phase-context">
-        <div class="step-rail"><div class="step-dot">2</div><div class="step-line"></div></div>
-        <div class="step-body">
-          <div class="step-phase context">Context</div>
-          <div class="step-title">CLAUDE.md Loaded</div>
-          <div class="step-desc">Behavioral rules injected into system prompt. Non-negotiable constraints for every task.</div>
-          <div class="step-pills"><span class="pill lit" id="claudemd-pill">CLAUDE.md</span></div>
+        <div class="pipe-step">
+          <div class="pipe-rail">
+            <div class="pipe-dot" style="background:var(--blue-bg);color:var(--blue);border-color:rgba(59,130,246,0.2)">2</div>
+            <div class="pipe-line" style="background:var(--blue)"></div>
+          </div>
+          <div class="pipe-body">
+            <div class="pipe-emoji">📋</div>
+            <div>
+              <div class="pipe-phase" style="color:var(--blue)">Context</div>
+              <div class="pipe-title">CLAUDE.md Loaded</div>
+              <div class="pipe-desc">Behavioral rules injected into system prompt — non-negotiable constraints for every task</div>
+            </div>
+          </div>
         </div>
-      </div>
 
-      <div class="step phase-context">
-        <div class="step-rail"><div class="step-dot">3</div><div class="step-line"></div></div>
-        <div class="step-body">
-          <div class="step-phase context">Context</div>
-          <div class="step-title">Memory Loaded</div>
-          <div class="step-desc">MEMORY.md (first 200 lines always in context) plus topic files loaded on demand. Project knowledge, stack, preferences.</div>
-          <div class="step-pills" id="mem-pills"></div>
+        <div class="pipe-step">
+          <div class="pipe-rail">
+            <div class="pipe-dot" style="background:var(--blue-bg);color:var(--blue);border-color:rgba(59,130,246,0.2)">3</div>
+            <div class="pipe-line" style="background:linear-gradient(var(--blue),var(--green))"></div>
+          </div>
+          <div class="pipe-body">
+            <div class="pipe-emoji">🧠</div>
+            <div>
+              <div class="pipe-phase" style="color:var(--blue)">Memory</div>
+              <div class="pipe-title">Memory Loaded</div>
+              <div class="pipe-desc">MEMORY.md (first 200 lines always in context) + topic files loaded on demand</div>
+            </div>
+          </div>
         </div>
-      </div>
 
-      <div class="step phase-arm">
-        <div class="step-rail"><div class="step-dot">4</div><div class="step-line"></div></div>
-        <div class="step-body">
-          <div class="step-phase arm">Armed</div>
-          <div class="step-title">Hooks Activate</div>
-          <div class="step-desc">Global and project hooks register on lifecycle events. Fire automatically on every tool call, prompt, and session stop.</div>
-          <div class="step-pills">
-            <span class="pill lit-green" id="ghook-pill"></span>
-            <span class="pill lit-green" id="phook-pill"></span>
+        <div class="pipe-step">
+          <div class="pipe-rail">
+            <div class="pipe-dot" style="background:var(--green-bg);color:var(--green);border-color:rgba(34,197,94,0.2)">4</div>
+            <div class="pipe-line" style="background:linear-gradient(var(--green),var(--amber))"></div>
+          </div>
+          <div class="pipe-body">
+            <div class="pipe-emoji">🪝</div>
+            <div>
+              <div class="pipe-phase" style="color:var(--green)">Armed</div>
+              <div class="pipe-title">Hooks Activate</div>
+              <div class="pipe-desc">Global and project hooks register on lifecycle events — fire automatically on every tool call, prompt, and session stop</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="pipe-step">
+          <div class="pipe-rail">
+            <div class="pipe-dot" style="background:var(--amber-bg);color:var(--amber);border-color:rgba(245,158,11,0.2)">5</div>
+            <div class="pipe-line" style="background:linear-gradient(var(--amber),var(--cyan))"></div>
+          </div>
+          <div class="pipe-body">
+            <div class="pipe-emoji">💬</div>
+            <div>
+              <div class="pipe-phase" style="color:var(--amber)">Running</div>
+              <div class="pipe-title">First Prompt</div>
+              <div class="pipe-desc"><strong>UserPromptSubmit</strong> fires — captures prompt, sets display name, auto-links to campaign</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="pipe-step">
+          <div class="pipe-rail">
+            <div class="pipe-dot" style="background:var(--cyan-bg);color:var(--cyan);border-color:rgba(6,182,212,0.2)">6</div>
+          </div>
+          <div class="pipe-body">
+            <div class="pipe-emoji">🔧</div>
+            <div>
+              <div class="pipe-phase" style="color:var(--cyan)">Tracking</div>
+              <div class="pipe-title">Tool Calls Begin</div>
+              <div class="pipe-desc"><strong>PostToolUse</strong> fires — state tracked, Dashboard cards updated live</div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Expandable: Hook Summary -->
+    <div class="expand-section" id="hooks">
+      <div class="expand-head" onclick="toggle('hooks')">
+        <div class="expand-left">
+          <div class="expand-icon" style="background:var(--green-bg);color:var(--green);border:1px solid rgba(34,197,94,0.12)">🪝</div>
+          <div class="expand-label">Hook Summary</div>
+        </div>
+        <div class="expand-count" id="hooks-count"></div>
+        <div class="expand-chev" id="hooks-chevron"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></div>
+      </div>
+      <div class="expand-body" id="hooks-body"><div class="expand-inner" id="hooks-content"></div></div>
+    </div>
+
+    <!-- Expandable: Memory Files -->
+    <div class="expand-section" id="memory">
+      <div class="expand-head" onclick="toggle('memory')">
+        <div class="expand-left">
+          <div class="expand-icon" style="background:var(--blue-bg);color:var(--blue);border:1px solid rgba(59,130,246,0.12)">🧠</div>
+          <div class="expand-label">Memory Files</div>
+        </div>
+        <div class="expand-count" id="memory-count"></div>
+        <div class="expand-chev" id="memory-chevron"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></div>
+      </div>
+      <div class="expand-body" id="memory-body"><div class="expand-inner" id="memory-content"></div></div>
+    </div>
+
+    <!-- Expandable: CLAUDE.md Rules -->
+    <div class="expand-section" id="rules">
+      <div class="expand-head" onclick="toggle('rules')">
+        <div class="expand-left">
+          <div class="expand-icon" style="background:var(--amber-bg);color:var(--amber);border:1px solid rgba(245,158,11,0.12)">📋</div>
+          <div class="expand-label">CLAUDE.md — Behavioral Rules</div>
+        </div>
+        <div class="expand-count" id="rules-count"></div>
+        <div class="expand-chev" id="rules-chevron"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></div>
+      </div>
+      <div class="expand-body" id="rules-body"><div class="expand-inner" id="rules-content"></div></div>
+    </div>
+
+  </div><!-- /tab-start -->
+
+
+  <!-- ══════════════════════════════════════════════════════════
+       TAB 2: HOW AGENTS WORK
+       ══════════════════════════════════════════════════════════ -->
+  <div class="tab-content" id="tab-work">
+
+    <!-- Hero: Agent Lifecycle -->
+    <div class="lifecycle-card">
+      <div class="lifecycle-label">Agent Lifecycle — 5 Mandatory Stages</div>
+      <div class="lc-stepper">
+
+        <div class="lc-stage">
+          <div class="lc-dot-main" style="background:var(--purple-bg);color:var(--purple);border-color:rgba(139,92,246,0.3)">🎯</div>
+          <div class="lc-name" style="color:var(--purple)">DEFINE</div>
+          <div class="lc-desc">Read context, understand requirements, define success</div>
+        </div>
+
+        <div class="lc-stage">
+          <div class="lc-dot-main" style="background:var(--blue-bg);color:var(--blue);border-color:rgba(59,130,246,0.3)">🔍</div>
+          <div class="lc-name" style="color:var(--blue)">DISCOVER</div>
+          <div class="lc-desc">Check skills, MCP servers, available tools</div>
+        </div>
+
+        <div class="lc-stage">
+          <div class="lc-dot-main" style="background:var(--green-bg);color:var(--green);border-color:rgba(34,197,94,0.3)">⚡</div>
+          <div class="lc-name" style="color:var(--green)">EXECUTE</div>
+          <div class="lc-desc">Build using discovered skills, follow constraints</div>
+        </div>
+
+        <div class="lc-stage">
+          <div class="lc-dot-main" style="background:var(--amber-bg);color:var(--amber);border-color:rgba(245,158,11,0.3)">🧠</div>
+          <div class="lc-name" style="color:var(--amber)">REASON</div>
+          <div class="lc-desc">Evaluate output, check edge cases, self-critique</div>
+        </div>
+
+        <div class="lc-stage">
+          <div class="lc-dot-main" style="background:var(--cyan-bg);color:var(--cyan);border-color:rgba(6,182,212,0.3)">✅</div>
+          <div class="lc-name" style="color:var(--cyan)">VERIFY</div>
+          <div class="lc-desc">Playwright screenshot, tests — evidence before assertion</div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Callout: Campaign-001 gap -->
+    <div class="callout rose">
+      <div class="callout-icon">⚠️</div>
+      <div><strong>Campaign-001:</strong> only <strong>4/19</strong> agents reached Verify. Only <strong>4/19</strong> used any skill. This is the gap we're closing.</div>
+    </div>
+
+    <!-- Expandable: A vs D Agent Comparison -->
+    <div class="expand-section" id="compare">
+      <div class="expand-head" onclick="toggle('compare')">
+        <div class="expand-left">
+          <div class="expand-icon" style="background:var(--green-bg);color:var(--green);border:1px solid rgba(34,197,94,0.12)">⚖️</div>
+          <div class="expand-label">What Good Looks Like — A vs D Agent</div>
+        </div>
+        <div class="expand-chev" id="compare-chevron"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></div>
+      </div>
+      <div class="expand-body" id="compare-body">
+        <div class="expand-inner">
+          <div class="compare-grid">
+            <div class="compare-card">
+              <div class="bar" style="background:linear-gradient(90deg,#4ade80,#16a34a)"></div>
+              <div class="grade-big grade-a">A</div>
+              <div class="agent-label">Polisher</div>
+              <div class="lc-mini">
+                <span class="dot" style="background:#22c55e"></span><span class="conn"></span>
+                <span class="dot" style="background:#e4e4e7"></span><span class="conn"></span>
+                <span class="dot" style="background:#22c55e"></span><span class="conn"></span>
+                <span class="dot" style="background:#22c55e"></span><span class="conn"></span>
+                <span class="dot" style="background:#22c55e"></span>
+              </div>
+              <div class="detail">
+                <div><strong>Delivered:</strong> /why polished to screen-share quality, /demo-guide created</div>
+                <div><strong>Missed:</strong> Nothing</div>
+                <div><strong>Lifecycle:</strong> Reached Verify — visual verification before reporting done</div>
+                <div><strong>Why A:</strong> Complete delivery, clean execution, evidence of quality</div>
+              </div>
+            </div>
+            <div class="compare-card">
+              <div class="bar" style="background:linear-gradient(90deg,#f97316,#ef4444)"></div>
+              <div class="grade-big grade-d">D+</div>
+              <div class="agent-label">Workflow Redesign</div>
+              <div class="lc-mini">
+                <span class="dot" style="background:#22c55e"></span><span class="conn"></span>
+                <span class="dot" style="background:#f59e0b"></span><span class="conn"></span>
+                <span class="dot" style="background:#f59e0b"></span><span class="conn"></span>
+                <span class="dot" style="background:#22c55e"></span><span class="conn"></span>
+                <span class="dot" style="background:#f59e0b"></span>
+              </div>
+              <div class="detail">
+                <div><strong>Delivered:</strong> Hook pipeline (partial)</div>
+                <div><strong>Missed:</strong> Full redesign, learning loop, closed early by user</div>
+                <div><strong>Lifecycle:</strong> Failed Discover — 3 iterations before using skills/sub-agents</div>
+                <div><strong>Why D+:</strong> No skill discovery, closed by user, prompt quality insufficient</div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
+    </div>
 
-      <div class="step phase-run">
-        <div class="step-rail"><div class="step-dot">5</div><div class="step-line"></div></div>
-        <div class="step-body">
-          <div class="step-phase run">Running</div>
-          <div class="step-title">First Prompt, First Tool Call</div>
-          <div class="step-desc">UserPromptSubmit fires (captures prompt). Agent thinks, calls tools. PostToolUse fires (state tracking, guards). Agent is live.</div>
+    <!-- Expandable: Skill Effectiveness Report -->
+    <div class="expand-section" id="skills">
+      <div class="expand-head" onclick="toggle('skills')">
+        <div class="expand-left">
+          <div class="expand-icon" style="background:var(--purple-bg);color:var(--purple);border:1px solid rgba(139,92,246,0.12)">📊</div>
+          <div class="expand-label">Skill Effectiveness Report</div>
         </div>
+        <div class="expand-count">campaign-001</div>
+        <div class="expand-chev" id="skills-chevron"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></div>
       </div>
-
-    </div>
-  </div>
-
-  <!-- ══ GAP ══ -->
-  <div class="gap" id="gap" style="display:none">
-    <div class="gap-dot"></div>
-    <div id="gap-text"></div>
-  </div>
-
-  <!-- ══ HOOKS ══ -->
-  <div class="section">
-    <div class="sec-head">
-      <div class="sec-title">Active Hooks</div>
-      <div class="sec-badge" id="hook-total"></div>
-    </div>
-    <div id="hooks-container"></div>
-  </div>
-
-  <!-- ══ MEMORY ══ -->
-  <div class="section">
-    <div class="sec-head">
-      <div class="sec-title">Memory Files</div>
-      <div class="sec-badge" id="mem-total"></div>
-    </div>
-    <div class="mem-grid" id="mem-grid"></div>
-  </div>
-
-  <!-- ══ CLAUDE.MD ══ -->
-  <div class="section" id="rules-section" style="display:none">
-    <div class="rules-card">
-      <div class="rules-header" onclick="toggleRules()">
-        <div class="rules-header-left">
-          <div class="rules-icon">R</div>
-          <div>
-            <div class="rules-label">CLAUDE.md &mdash; Behavioral Rules</div>
-            <div class="rules-meta" id="rules-meta"></div>
+      <div class="expand-body" id="skills-body">
+        <div class="expand-inner">
+          <div class="callout green" style="margin-bottom:14px">
+            <div class="callout-icon">📈</div>
+            <div><strong>Usage rate: 25%</strong> — 5 of 20 agents used at least one skill. 34+ skills available, near-zero organic discovery.</div>
+          </div>
+          <table class="skill-table">
+            <thead><tr><th>Skill</th><th>Used By</th><th>Times</th><th>Impact</th></tr></thead>
+            <tbody>
+              <tr><td class="skill-name">/brainstorming</td><td>Orchestrator v1.1, v1.2, v1.3</td><td class="metric good">3×</td><td>Better design docs, structured decisions</td></tr>
+              <tr><td class="skill-name">/frontend-design</td><td>Campaign Architect</td><td class="metric good">1×</td><td>Polished campaigns page — best visual output</td></tr>
+              <tr><td class="skill-name">/impeccable-polish</td><td>Campaign Architect</td><td class="metric good">1×</td><td>Final quality pass caught alignment issues</td></tr>
+              <tr><td class="skill-name">/impeccable-critique</td><td>Campaign Architect</td><td class="metric good">1×</td><td>Self-evaluation before polish</td></tr>
+            </tbody>
+          </table>
+          <div style="margin-top:14px">
+            <div class="sec-title" style="font-size:13px;margin-bottom:8px">Miss Analysis</div>
+            <div style="font-size:12px;color:var(--text2);line-height:1.7">
+              <div><strong>15 of 20 agents</strong> used zero skills despite 34+ being available</div>
+              <div><strong>Polisher</strong> (A grade) would have benefited from <span style="color:var(--purple);font-family:'DM Mono',monospace;font-size:11px">/impeccable-polish</span> — did great work manually but missed the tooling</div>
+              <div><strong>Pipeline Architect</strong> (A- grade, 3 pages built) used no skills despite building UI — <span style="color:var(--purple);font-family:'DM Mono',monospace;font-size:11px">/frontend-design</span> + <span style="color:var(--purple);font-family:'DM Mono',monospace;font-size:11px">/brainstorming</span> would have helped</div>
+              <div><strong>Root cause:</strong> Agent prompts didn't mandate skill discovery (fixed in f053 — Agent Lifecycle)</div>
+            </div>
           </div>
         </div>
-        <div class="rules-chevron" id="rules-chev">&#9662;</div>
-      </div>
-      <div class="rules-body" id="rules-body">
-        <div class="rules-content" id="rules-content"></div>
       </div>
     </div>
-  </div>
 
-  <!-- ══ SETTINGS ══ -->
-  <div class="section">
-    <div class="sec-head"><div class="sec-title">Settings</div></div>
-    <div class="settings-row" id="settings-row"></div>
-  </div>
-</div>
+    <!-- Expandable: Prompt Parsing Rule -->
+    <div class="expand-section" id="parsing">
+      <div class="expand-head" onclick="toggle('parsing')">
+        <div class="expand-left">
+          <div class="expand-icon" style="background:var(--amber-bg);color:var(--amber);border:1px solid rgba(245,158,11,0.12)">🎤</div>
+          <div class="expand-label">Prompt Parsing Rule (f065)</div>
+        </div>
+        <div class="expand-chev" id="parsing-chevron"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></div>
+      </div>
+      <div class="expand-body" id="parsing-body">
+        <div class="expand-inner">
+          <div style="font-size:13px;color:var(--text2);line-height:1.7">
+            <p><strong>The user dictates via Wispr Flow</strong> (voice-to-text). Prompts are long, stream-of-consciousness. The agent's job is to parse these into structured decisions.</p>
+            <p style="margin-top:10px"><strong>Pattern:</strong> When receiving a voice prompt, extract the structured ask and confirm it back before acting.</p>
+            <div style="background:var(--surface);border-radius:8px;padding:12px 16px;margin-top:10px;font-family:'DM Mono',monospace;font-size:12px;line-height:1.6;color:var(--text2)">
+              <div style="color:var(--text3)"># Bad: act on stream-of-consciousness directly</div>
+              <div style="margin-top:6px;color:var(--text3)"># Good: parse into structured decisions</div>
+              <div style="margin-top:4px"><strong style="color:var(--text)">"I'm reading this as:</strong></div>
+              <div>&nbsp;&nbsp;1. Priority: workflow page redesign</div>
+              <div>&nbsp;&nbsp;2. Approach: 4-tab layout with visualizations</div>
+              <div>&nbsp;&nbsp;3. Constraint: must match campaigns page quality</div>
+              <div><strong style="color:var(--text)">Correct?"</strong></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
 
-<!-- ══ MODAL ══ -->
-<div class="modal-bg" id="modal">
-  <div class="modal-box">
-    <div class="modal-top">
-      <div class="modal-top-title" id="m-title"></div>
-      <button class="modal-x" onclick="closeModal()">&times;</button>
+  </div><!-- /tab-work -->
+
+
+  <!-- ══════════════════════════════════════════════════════════
+       TAB 3: HOW WE COORDINATE
+       ══════════════════════════════════════════════════════════ -->
+  <div class="tab-content" id="tab-coordinate">
+
+    <!-- Hero: Orchestrator Top-Down Flowchart -->
+    <div class="orch-flow">
+      <div class="orch-flow-label">Orchestrator Pattern — One Coordinator, Many Executors</div>
+
+      <!-- Hero Orchestrator Node -->
+      <div class="orch-hero-node">
+        <div class="orch-hero-emoji">🎯</div>
+        <div class="orch-hero-title">ORCHESTRATOR</div>
+        <div class="orch-hero-sub">Long-lived coordinator — plans, dispatches, grades, learns</div>
+      </div>
+
+      <div class="flow-vline"></div>
+
+      <!-- Phases 1–4: Vertical flow -->
+      <div class="flow-phases">
+        <div class="flow-phase-card" style="border-left:3px solid var(--purple)">
+          <div class="flow-phase-num" style="background:var(--purple)">1</div>
+          <div class="flow-phase-emoji">📖</div>
+          <div><div class="flow-phase-name" style="color:var(--purple)">Initialize</div><div class="flow-phase-desc"><strong>Read</strong> handoffs, campaign data, memory, run mandatory skill checklist</div></div>
+        </div>
+        <div class="flow-vline"></div>
+        <div class="flow-phase-card" style="border-left:3px solid var(--blue)">
+          <div class="flow-phase-num" style="background:var(--blue)">2</div>
+          <div class="flow-phase-emoji">❓</div>
+          <div><div class="flow-phase-name" style="color:var(--blue)">Ask Questions</div><div class="flow-phase-desc"><strong>Structured</strong> multiple-choice with recommendations, parse voice prompts</div></div>
+        </div>
+        <div class="flow-vline"></div>
+        <div class="flow-phase-card" style="border-left:3px solid var(--green)">
+          <div class="flow-phase-num" style="background:var(--green)">3</div>
+          <div class="flow-phase-emoji">📋</div>
+          <div><div class="flow-phase-name" style="color:var(--green)">Execution Plan</div><div class="flow-phase-desc"><strong>Clean</strong> table format, user approves before anything is dispatched</div></div>
+        </div>
+        <div class="flow-vline"></div>
+        <div class="flow-phase-card" style="border-left:3px solid var(--amber)">
+          <div class="flow-phase-num" style="background:var(--amber)">4</div>
+          <div class="flow-phase-emoji">📊</div>
+          <div><div class="flow-phase-name" style="color:var(--amber)">Update Data</div><div class="flow-phase-desc"><strong>Enrich</strong> campaigns.json &amp; findings.json — stale data produces stale output</div></div>
+        </div>
+        <div class="flow-vline"></div>
+      </div>
+
+      <!-- Phases 5–6: Dispatch & Monitor with agent branch -->
+      <div class="flow-dispatch-section">
+        <div class="flow-dispatch-left">
+          <div class="flow-phase-card" style="border-left:3px solid var(--rose);width:100%">
+            <div class="flow-phase-num" style="background:var(--rose)">5</div>
+            <div class="flow-phase-emoji">🚀</div>
+            <div><div class="flow-phase-name" style="color:var(--rose)">Auto-Dispatch Agents</div><div class="flow-phase-desc"><strong>Auto-dispatch</strong> via <code style="font-size:10px;background:rgba(239,68,68,0.08);padding:1px 5px;border-radius:4px">/api/launch</code> — PRDs to files, agents launch in new tabs automatically</div></div>
+          </div>
+          <div class="flow-vline" style="height:24px"></div>
+          <div class="flow-phase-card" style="border-left:3px solid var(--cyan);width:100%">
+            <div class="flow-phase-num" style="background:var(--cyan)">6</div>
+            <div class="flow-phase-emoji">📡</div>
+            <div><div class="flow-phase-name" style="color:var(--cyan)">Auto-Monitor &amp; Grade</div><div class="flow-phase-desc"><strong>Live state</strong> via hook.js, <strong>auto-grade</strong> on exit via auto-grade.js, LoL ping notification</div></div>
+          </div>
+        </div>
+
+        <!-- Arrows -->
+        <div class="flow-dispatch-center">
+          <div class="flow-dispatch-arrow prd dispatch-pulse">
+            <span>PRD</span>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+          </div>
+          <div class="flow-dispatch-arrow grade">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="transform:rotate(180deg)"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+            <span>GRADE</span>
+          </div>
+        </div>
+
+        <!-- Agent Cards -->
+        <div class="flow-dispatch-right">
+          <div class="flow-agent-card"><div class="flow-agent-dot" style="background:var(--green)"></div><div class="flow-agent-name">Campaign Architect</div><div class="flow-agent-grade" style="color:var(--blue)">B+</div></div>
+          <div class="flow-agent-card"><div class="flow-agent-dot" style="background:var(--green)"></div><div class="flow-agent-name">Skill Creator</div><div class="flow-agent-grade" style="color:var(--green)">A-</div></div>
+          <div class="flow-agent-card"><div class="flow-agent-dot" style="background:var(--blue)"></div><div class="flow-agent-name">Workflow Builder</div><div class="flow-agent-grade" style="color:var(--blue)">active</div></div>
+          <div class="flow-agent-card"><div class="flow-agent-dot" style="background:var(--green)"></div><div class="flow-agent-name">Polisher</div><div class="flow-agent-grade" style="color:var(--green)">A</div></div>
+          <div class="flow-agent-card"><div class="flow-agent-dot" style="background:var(--text3)"></div><div class="flow-agent-name">+ 17 more</div><div class="flow-agent-grade"></div></div>
+        </div>
+      </div>
+
+      <!-- Phases 7–8: Continue vertical -->
+      <div class="flow-phases">
+        <div class="flow-vline"></div>
+        <div class="flow-phase-card" style="border-left:3px solid var(--blue);max-width:520px;margin:0 auto">
+          <div class="flow-phase-num" style="background:var(--blue)">7</div>
+          <div class="flow-phase-emoji">🔍</div>
+          <div><div class="flow-phase-name" style="color:var(--blue)">Capture Findings</div><div class="flow-phase-desc"><strong>Real-time</strong> extraction — findings.json updated as agents work, not post-hoc</div></div>
+        </div>
+        <div class="flow-vline"></div>
+        <div class="flow-phase-card" style="border-left:3px solid var(--green);max-width:520px;margin:0 auto">
+          <div class="flow-phase-num" style="background:var(--green)">8</div>
+          <div class="flow-phase-emoji">🔄</div>
+          <div><div class="flow-phase-name" style="color:var(--green)">Sprint Transition</div><div class="flow-phase-desc"><strong>Auto-generate</strong> next execution plan, debrief wins/losses, update campaigns page</div></div>
+        </div>
+        <div class="flow-vline"></div>
+
+        <!-- Next Sprint Node -->
+        <div class="flow-next-node">
+          <div class="flow-next-emoji">🔄</div>
+          <div class="flow-next-title">NEXT SPRINT</div>
+        </div>
+      </div>
+
     </div>
-    <div class="modal-scroll">
-      <div class="modal-text" id="m-text"></div>
-      <div class="modal-md" id="m-md" style="display:none"></div>
+
+    <!-- Auto-Dispatch Pipeline -->
+    <div class="dispatch-pipeline">
+      <div class="dispatch-pipeline-label">Auto-Dispatch Pipeline — From Orchestrator to Graded Agent</div>
+
+      <div class="dp-steps">
+        <div class="dp-step" style="border-left:3px solid var(--purple)">
+          <div class="dp-emoji">🎯</div>
+          <div class="dp-text"><div class="dp-title" style="color:var(--purple)">Orchestrator Calls Launch</div><div class="dp-desc"><code>POST /api/launch</code> — generates session UUID, pre-links to campaign, writes temp launcher script</div></div>
+        </div>
+        <div class="dp-connector" style="background:linear-gradient(var(--purple),var(--rose))"></div>
+
+        <div class="dp-step" style="border-left:3px solid var(--rose)">
+          <div class="dp-emoji">🖥️</div>
+          <div class="dp-text"><div class="dp-title" style="color:var(--rose)">Terminal Tab Opens</div><div class="dp-desc"><code>dispatch.sh</code> launches in new Windows Terminal tab — supports <code>auto</code> (headless) and <code>interactive</code> modes</div></div>
+        </div>
+        <div class="dp-connector" style="background:linear-gradient(var(--rose),var(--amber))"></div>
+
+        <div class="dp-step" style="border-left:3px solid var(--amber)">
+          <div class="dp-emoji">⚡</div>
+          <div class="dp-text"><div class="dp-title" style="color:var(--amber)">Agent Executes</div><div class="dp-desc"><code>claude -p</code> runs with PRD (auto mode) or <code>claude</code> (interactive mode) — agent works autonomously</div></div>
+        </div>
+        <div class="dp-connector" style="background:linear-gradient(var(--amber),var(--green))"></div>
+
+        <div class="dp-step" style="border-left:3px solid var(--green)">
+          <div class="dp-emoji">🪝</div>
+          <div class="dp-text"><div class="dp-title" style="color:var(--green)">Live State Tracking</div><div class="dp-desc"><code>hook.js</code> updates state files every tool call — Dashboard shows real-time agent status</div></div>
+        </div>
+        <div class="dp-connector" style="background:linear-gradient(var(--green),var(--blue))"></div>
+
+        <div class="dp-step" style="border-left:3px solid var(--blue)">
+          <div class="dp-emoji">📊</div>
+          <div class="dp-text"><div class="dp-title" style="color:var(--blue)">Auto-Grade on Exit</div><div class="dp-desc"><code>auto-grade.js</code> reads activity log, infers lifecycle stages, calculates score, writes to <code>campaigns.json</code></div></div>
+        </div>
+        <div class="dp-connector" style="background:linear-gradient(var(--blue),var(--cyan))"></div>
+
+        <div class="dp-step" style="border-left:3px solid var(--cyan)">
+          <div class="dp-emoji">📋</div>
+          <div class="dp-text"><div class="dp-title" style="color:var(--cyan)">Campaign Updated</div><div class="dp-desc"><code>campaigns.json</code> receives grade + lifecycle data — Campaigns page reflects results automatically</div></div>
+        </div>
+        <div class="dp-connector" style="background:linear-gradient(var(--cyan),var(--green))"></div>
+
+        <div class="dp-step" style="border-left:3px solid var(--green);background:linear-gradient(135deg,rgba(34,197,94,0.04),rgba(6,182,212,0.04))">
+          <div class="dp-emoji">🔔</div>
+          <div class="dp-text"><div class="dp-title" style="color:var(--green)">LoL Ping Notification</div><div class="dp-desc">Enemy Missing ping at 40% volume — single ping = success, double ping = error</div></div>
+        </div>
+      </div>
     </div>
+
+    <!-- Safety & Tracking -->
+    <div class="sec-title">Safety &amp; Tracking</div>
+    <div class="safety-grid">
+      <div class="safety-card" style="border-left:3px solid var(--rose)">
+        <div class="safety-emoji">🛡️</div>
+        <div>
+          <div class="safety-title" style="color:var(--rose)">Guard Destructive</div>
+          <div class="safety-desc"><code>guard-destructive.sh</code> — PreToolUse hook that blocks <code>rm -r</code>, force push, hard reset, process kills, <code>npm publish</code>, DB drops</div>
+        </div>
+      </div>
+      <div class="safety-card" style="border-left:3px solid var(--purple)">
+        <div class="safety-emoji">🔗</div>
+        <div>
+          <div class="safety-title" style="color:var(--purple)">Parent-Child Tracking</div>
+          <div class="safety-desc"><code>parentSessionId</code> links dispatched agents back to orchestrator — preserved through <code>hook.js</code> and <code>prompt-hook.js</code></div>
+        </div>
+      </div>
+      <div class="safety-card" style="border-left:3px solid var(--green)">
+        <div class="safety-emoji">📡</div>
+        <div>
+          <div class="safety-title" style="color:var(--green)">Live State</div>
+          <div class="safety-desc"><code>hook.js</code> updates state files every tool call — Dashboard shows real-time agent status across all terminals</div>
+        </div>
+      </div>
+      <div class="safety-card" style="border-left:3px solid var(--blue)">
+        <div class="safety-emoji">📊</div>
+        <div>
+          <div class="safety-title" style="color:var(--blue)">Auto-Grading Weights</div>
+          <div class="safety-desc"><span class="grade-weight">40%</span> deliverables · <span class="grade-weight">25%</span> execution · <span class="grade-weight">20%</span> lifecycle · <span class="grade-weight">15%</span> skills</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Version History -->
+    <div class="sec-title">Version History</div>
+    <table class="version-table">
+      <thead><tr><th>Version</th><th>Grade</th><th>Sprint</th><th>Focus</th></tr></thead>
+      <tbody>
+        <tr><td><strong>v1.0</strong></td><td><span class="v-grade" style="background:var(--amber-bg);color:#92400e">C+</span></td><td>1</td><td><strong>First orchestrator</strong> — built campaigns page, 15 agents, but broke Dashboard 3×, no Playwright, 2GB context crash</td></tr>
+        <tr><td><strong>v1.1</strong></td><td><span class="v-grade" style="background:var(--blue-bg);color:var(--blue)">B+</span></td><td>5</td><td><strong>Coordinate-only.</strong> Built /story, /close-out, captured 7 findings. First skill usage (brainstorming)</td></tr>
+        <tr><td><strong>v1.2</strong></td><td><span class="v-grade" style="background:var(--surface);color:var(--text3)">—</span></td><td>6</td><td><strong>Graded all agents,</strong> enriched campaigns.json, wrote design docs, dispatched Campaign Architect + Skill Creator</td></tr>
+        <tr><td><strong>v1.3</strong></td><td><span class="v-grade" style="background:var(--blue-bg);color:var(--blue)">B+</span></td><td>7</td><td><strong>Brainstormed workflow redesign,</strong> captured f064-f067, updated orchestrator skill, dispatched Workflow Builder</td></tr>
+        <tr><td><strong>v1.4</strong></td><td><span class="v-grade" style="background:var(--surface);color:var(--text3)">active</span></td><td>8</td><td><strong>Auto-dispatch infrastructure</strong> — dispatch.sh, /api/launch, auto-grading, safety hooks, LoL notifications, orchestrator tab updated</td></tr>
+      </tbody>
+    </table>
+
+    <!-- Orchestrator Skill (expandable, not modal) -->
+    <div class="expand-section" id="orch-skill">
+      <div class="expand-head" onclick="toggle('orch-skill')">
+        <div class="expand-left">
+          <div class="expand-icon" style="background:var(--purple-bg);color:var(--purple);border:1px solid rgba(139,92,246,0.12)">🎼</div>
+          <div class="expand-label">Orchestrator Skill</div>
+        </div>
+        <div class="expand-count">8 phases · 16 rules · 3 versions</div>
+        <div class="expand-chev" id="orch-skill-chevron"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></div>
+      </div>
+      <div class="expand-body" id="orch-skill-body">
+        <div class="expand-inner">
+
+          <!-- Stats -->
+          <div class="orch-skill-stats">
+            <div class="orch-skill-stat"><div class="orch-skill-stat-val" style="color:var(--purple)">8</div><div class="orch-skill-stat-label">Phases</div></div>
+            <div class="orch-skill-stat"><div class="orch-skill-stat-val" style="color:var(--blue)">16</div><div class="orch-skill-stat-label">Rules</div></div>
+            <div class="orch-skill-stat"><div class="orch-skill-stat-val" style="color:var(--green)">3</div><div class="orch-skill-stat-label">Versions Used</div></div>
+          </div>
+
+          <!-- Description -->
+          <div style="font-size:13px;color:var(--text2);line-height:1.6;margin-bottom:16px;padding:12px 16px;background:var(--surface);border-radius:8px">
+            <strong>Coordinate multi-agent campaigns</strong> with execution plans, agent dispatch, grading, and findings capture. The orchestrator coordinates; it does not build. Every line of code is written by a dispatched agent.
+          </div>
+
+          <!-- Phases -->
+          <div class="orch-section-label">8 Phases</div>
+          <div class="orch-phases-grid">
+            <div class="orch-phase-row"><div class="orch-phase-num" style="background:var(--purple)">1</div><div class="orch-phase-emoji">📖</div><div class="orch-phase-text"><strong>Initialize</strong> <span>— read handoffs, campaign data, memory, mandatory skill checklist (f064)</span></div></div>
+            <div class="orch-phase-row"><div class="orch-phase-num" style="background:var(--blue)">2</div><div class="orch-phase-emoji">❓</div><div class="orch-phase-text"><strong>Ask Questions</strong> <span>— structured multiple-choice with recommendations, parse voice prompts (f065)</span></div></div>
+            <div class="orch-phase-row"><div class="orch-phase-num" style="background:var(--green)">3</div><div class="orch-phase-emoji">📋</div><div class="orch-phase-text"><strong>Execution Plan</strong> <span>— clean table, user approves before dispatch</span></div></div>
+            <div class="orch-phase-row"><div class="orch-phase-num" style="background:var(--amber)">4</div><div class="orch-phase-emoji">📊</div><div class="orch-phase-text"><strong>Update Data</strong> <span>— enrich campaigns.json before dispatch (f057)</span></div></div>
+            <div class="orch-phase-row"><div class="orch-phase-num" style="background:var(--rose)">5</div><div class="orch-phase-emoji">🚀</div><div class="orch-phase-text"><strong>Auto-Dispatch Agents</strong> <span>— POST /api/launch, agents auto-launch in new terminal tabs</span></div></div>
+            <div class="orch-phase-row"><div class="orch-phase-num" style="background:var(--cyan)">6</div><div class="orch-phase-emoji">📡</div><div class="orch-phase-text"><strong>Monitor &amp; Grade</strong> <span>— track progress, grade A–F on completion, detect dead agents</span></div></div>
+            <div class="orch-phase-row"><div class="orch-phase-num" style="background:var(--blue)">7</div><div class="orch-phase-emoji">🔍</div><div class="orch-phase-text"><strong>Capture Findings</strong> <span>— real-time, not post-hoc, tier + tag system</span></div></div>
+            <div class="orch-phase-row"><div class="orch-phase-num" style="background:var(--green)">8</div><div class="orch-phase-emoji">🔄</div><div class="orch-phase-text"><strong>Sprint Transition</strong> <span>— auto-generate next execution plan, debrief, handoff (f061)</span></div></div>
+          </div>
+
+          <!-- Key Rules -->
+          <div class="orch-section-label">Key Rules (16 total)</div>
+          <div class="orch-rules-list">
+            <div><span class="orch-rule-num">1.</span> <strong>Coordinate, don't build.</strong> Every line of code is written by a dispatched agent.</div>
+            <div><span class="orch-rule-num">2.</span> <strong>Pause after deliverables.</strong> User's next action > your next edit.</div>
+            <div><span class="orch-rule-num">3.</span> <strong>Scope discipline.</strong> Close things, don't add more tasks.</div>
+            <div><span class="orch-rule-num">4.</span> <strong>Readability first.</strong> Bold leads, no text walls, scannable in seconds.</div>
+            <div><span class="orch-rule-num">5.</span> <strong>NEVER use Agent tool.</strong> Sub-agents are invisible — write PRD files instead.</div>
+            <div><span class="orch-rule-num">6.</span> <strong>Parse voice prompts.</strong> Extract structured ask, confirm back before acting.</div>
+            <div><span class="orch-rule-num">7.</span> <strong>Never skip skill discovery.</strong> Every agent prompt must include DISCOVER stage.</div>
+            <div><span class="orch-rule-num">8.</span> <strong>Update data before dispatch.</strong> Stale data → stale output (f057).</div>
+            <div><span class="orch-rule-num">9.</span> <strong>Check deep-summaries.</strong> Previous sessions contain user feedback gold.</div>
+            <div><span class="orch-rule-num">10.</span> <strong>Structured questions always.</strong> Multiple-choice with recommendations.</div>
+            <div><span class="orch-rule-num">11.</span> <strong>Bold-lead text pattern.</strong> Every line: bold keyword first, then description.</div>
+            <div><span class="orch-rule-num">12.</span> <strong>Small fixes are OK.</strong> CSS tweaks, data fixes — only big builds get dispatched.</div>
+            <div><span class="orch-rule-num">13.</span> <strong>Never kill a process without asking.</strong> Check session context first.</div>
+            <div><span class="orch-rule-num">14.</span> <strong>Keep campaigns page current.</strong> Verify after every campaigns.json change.</div>
+            <div><span class="orch-rule-num">15.</span> <strong>User loves emojis.</strong> Use them in stages, statuses, labels.</div>
+            <div><span class="orch-rule-num">16.</span> <strong>5-step dispatch checklist.</strong> Write PRD → add card → add to /prompts → verify render → tell user.</div>
+          </div>
+
+          <a href="/tools" class="orch-toolbox-link">View Full Skill in Toolbox →</a>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- Campaign Flow -->
+    <div class="sec-title" style="margin-top:20px">Campaign Flow</div>
+    <div class="cf-cards">
+      <div class="cf-card" style="border-left:3px solid var(--purple)">
+        <div class="cf-card-num" style="background:var(--purple)">1</div>
+        <div class="cf-card-emoji">🎯</div>
+        <div><div class="cf-card-name" style="color:var(--purple)">Setup</div><div class="cf-card-desc"><strong>Define</strong> campaign goals, scope, and success criteria. Orchestrator reads prior sessions and presents structured questions.</div></div>
+      </div>
+      <div class="cf-connector"></div>
+      <div class="cf-card" style="border-left:3px solid var(--blue)">
+        <div class="cf-card-num" style="background:var(--blue)">2</div>
+        <div class="cf-card-emoji">📝</div>
+        <div><div class="cf-card-name" style="color:var(--blue)">Briefs</div><div class="cf-card-desc"><strong>Write</strong> PRD-quality agent prompts with lifecycle stages, constraints, skills to use, and verification steps.</div></div>
+      </div>
+      <div class="cf-connector"></div>
+      <div class="cf-card" style="border-left:3px solid var(--green)">
+        <div class="cf-card-num" style="background:var(--green)">3</div>
+        <div class="cf-card-emoji">🚀</div>
+        <div><div class="cf-card-name" style="color:var(--green)">Auto-Dispatch</div><div class="cf-card-desc"><strong>POST /api/launch</strong> — agents auto-launch in new Windows Terminal tabs with PRD, session UUID, and campaign link.</div></div>
+      </div>
+      <div class="cf-connector"></div>
+      <div class="cf-card" style="border-left:3px solid var(--amber)">
+        <div class="cf-card-num" style="background:var(--amber)">4</div>
+        <div class="cf-card-emoji">📡</div>
+        <div><div class="cf-card-name" style="color:var(--amber)">Auto-Monitor</div><div class="cf-card-desc"><strong>Live state</strong> via hook.js + auto-grading on exit via auto-grade.js. Dashboard updates in real-time.</div></div>
+      </div>
+      <div class="cf-connector"></div>
+      <div class="cf-card" style="border-left:3px solid var(--rose)">
+        <div class="cf-card-num" style="background:var(--rose)">5</div>
+        <div class="cf-card-emoji">📊</div>
+        <div><div class="cf-card-name" style="color:var(--rose)">Debrief</div><div class="cf-card-desc"><strong>Record</strong> wins, losses, delivered items, and missed items per agent. Grade each agent A–F.</div></div>
+      </div>
+      <div class="cf-connector"></div>
+      <div class="cf-card" style="border-left:3px solid var(--cyan)">
+        <div class="cf-card-num" style="background:var(--cyan)">6</div>
+        <div class="cf-card-emoji">🔍</div>
+        <div><div class="cf-card-name" style="color:var(--cyan)">Retro</div><div class="cf-card-desc"><strong>Extract</strong> findings from agent performance. Add new rules to CLAUDE.md. Update hooks to enforce them.</div></div>
+      </div>
+      <div class="cf-connector"></div>
+      <div class="cf-card" style="border-left:3px solid var(--green)">
+        <div class="cf-card-num" style="background:var(--green)">7</div>
+        <div class="cf-card-emoji">✅</div>
+        <div><div class="cf-card-name" style="color:var(--green)">Close</div><div class="cf-card-desc"><strong>Archive</strong> campaign, write handoff doc, carry over unfinished items to next campaign.</div></div>
+      </div>
+    </div>
+
+    <!-- Grading Rubric (data-driven from campaign-001 analysis) -->
+    <div class="sec-title">Grading Rubric</div>
+    <table class="grade-table">
+      <thead><tr><th>Grade</th><th>Criteria</th><th>Score</th></tr></thead>
+      <tbody>
+        <tr><td><span class="grade-letter grade-a">A</span></td><td><strong>All deliverables met,</strong> clean execution, no waste. Full lifecycle with quality at each stage.</td><td style="font-family:'DM Mono',monospace;font-weight:700;color:var(--green)">85+</td></tr>
+        <tr><td><span class="grade-letter grade-b">B</span></td><td><strong>Deliverables met</strong> with minor gaps. Solid lifecycle adherence. Small inefficiencies.</td><td style="font-family:'DM Mono',monospace;font-weight:700;color:var(--blue)">67-84</td></tr>
+        <tr><td><span class="grade-letter grade-c">C</span></td><td><strong>Below expectations.</strong> Delivered with significant waste or process failures.</td><td style="font-family:'DM Mono',monospace;font-weight:700;color:#92400e">47-66</td></tr>
+        <tr><td><span class="grade-letter grade-d">D</span></td><td><strong>Failed.</strong> User intervention required. Minimal usable output. Closed early.</td><td style="font-family:'DM Mono',monospace;font-weight:700;color:var(--rose)">33-46</td></tr>
+        <tr><td><span class="grade-letter grade-f">F</span></td><td><strong>Catastrophic.</strong> Broke things. Ignored constraints. Required cleanup agent.</td><td style="font-family:'DM Mono',monospace;font-weight:700;color:var(--rose)">&lt;33</td></tr>
+      </tbody>
+    </table>
+    <div style="font-size:11px;color:var(--text3);margin-bottom:20px;display:flex;gap:12px;flex-wrap:wrap">
+      <span><span class="grade-weight">40%</span> Deliverables</span>
+      <span><span class="grade-weight">25%</span> Execution quality</span>
+      <span><span class="grade-weight">20%</span> Lifecycle adherence</span>
+      <span><span class="grade-weight">15%</span> Discovery &amp; skills</span>
+    </div>
+
+    <!-- GPA Card -->
+    <div class="gpa-card">
+      <div>
+        <div class="gpa-value" style="color:var(--blue)">3.16</div>
+        <div class="gpa-label">Campaign GPA</div>
+      </div>
+      <div style="font-size:12px;color:var(--text2);line-height:1.5;flex:1;margin-left:8px">
+        <strong>21 agents graded</strong> across 7 sprints. Range: D+ (1.3) to A (4.0). Trend: improving as lifecycle adoption increases.
+      </div>
+      <a href="/campaigns" class="gpa-link">View Campaigns →</a>
+    </div>
+
+  </div><!-- /tab-coordinate -->
+
+
+  <!-- ══════════════════════════════════════════════════════════
+       TAB 4: HOW WE LEARN
+       ══════════════════════════════════════════════════════════ -->
+  <div class="tab-content" id="tab-learn">
+
+    <!-- Hero: Learning Loop -->
+    <div class="loop-card">
+      <div class="loop-label">The Learning Loop</div>
+      <div class="loop-subtitle">Self-Evolving System</div>
+
+      <!-- HTML nodes with native emojis + CSS arc (zero SVG) -->
+      <div class="loop-nodes">
+        <!-- Loop-back arc: pure CSS dashed half-ellipse -->
+        <div class="loop-arc-wrap">
+          <div class="loop-arc"></div>
+          <div class="loop-arc-arrow"></div>
+        </div>
+
+        <div class="loop-node">
+          <div class="loop-circle" style="background:var(--rose-bg);border-color:rgba(239,68,68,0.25)">❌</div>
+          <div class="loop-node-name" style="color:var(--rose)">Mistake</div>
+          <div class="loop-node-sub">Agent errs</div>
+        </div>
+        <div class="loop-node">
+          <div class="loop-circle" style="background:var(--amber-bg);border-color:rgba(245,158,11,0.25)">🔍</div>
+          <div class="loop-node-name" style="color:#b45309">Post-Mortem</div>
+          <div class="loop-node-sub">Root cause</div>
+        </div>
+        <div class="loop-node">
+          <div class="loop-circle" style="background:var(--blue-bg);border-color:rgba(59,130,246,0.25)">💡</div>
+          <div class="loop-node-name" style="color:var(--blue)">Finding</div>
+          <div class="loop-node-sub">Extract lesson</div>
+        </div>
+        <div class="loop-node">
+          <div class="loop-circle" style="background:var(--green-bg);border-color:rgba(34,197,94,0.25)">📋</div>
+          <div class="loop-node-name" style="color:var(--green)">Rule</div>
+          <div class="loop-node-sub">CLAUDE.md</div>
+        </div>
+        <div class="loop-node">
+          <div class="loop-circle" style="background:var(--purple-bg);border-color:rgba(139,92,246,0.25)">⚙️</div>
+          <div class="loop-node-name" style="color:var(--purple)">Hook</div>
+          <div class="loop-node-sub">Enforce auto</div>
+        </div>
+        <div class="loop-node">
+          <div class="loop-circle" style="background:var(--cyan-bg);border-color:rgba(6,182,212,0.25)">✅</div>
+          <div class="loop-node-name" style="color:var(--cyan)">Prevention</div>
+          <div class="loop-node-sub">Never again</div>
+        </div>
+      </div>
+
+      <!-- Case Study: The Dashboard Story -->
+      <div class="case-study">
+        <div class="case-header">
+          <span class="case-badge">Case Study</span>
+          <span class="case-headline">The Dashboard Story</span>
+        </div>
+        <div class="case-timeline">
+          <div class="case-tl-step s-mistake">
+            <div class="case-tl-dot">💥</div>
+            <div class="case-tl-card">
+              <div class="case-tl-stage">Mistake</div>
+              <div class="case-tl-desc">Agent broke Dashboard <strong>3 times</strong> in one session — pushed changes without ever looking at the page</div>
+            </div>
+          </div>
+          <div class="case-tl-step s-postmortem">
+            <div class="case-tl-dot">🔍</div>
+            <div class="case-tl-card">
+              <div class="case-tl-stage">Post-Mortem</div>
+              <div class="case-tl-desc">Investigated why it kept happening — DOM assertions passed but layout was <strong>visually broken</strong></div>
+            </div>
+          </div>
+          <div class="case-tl-step s-finding">
+            <div class="case-tl-dot">💡</div>
+            <div class="case-tl-card">
+              <div class="case-tl-stage">Finding</div>
+              <div class="case-tl-desc">Every UI change must be <strong>visually verified</strong> via Playwright screenshot — not just "did it render"</div>
+            </div>
+          </div>
+          <div class="case-tl-step s-rule">
+            <div class="case-tl-dot">📜</div>
+            <div class="case-tl-card">
+              <div class="case-tl-stage">Rule</div>
+              <div class="case-tl-desc">Added as <strong>CLAUDE.md Rule 7</strong> — mandatory for every agent, every session, no exceptions</div>
+            </div>
+          </div>
+          <div class="case-tl-step s-hook">
+            <div class="case-tl-dot">⚙️</div>
+            <div class="case-tl-card">
+              <div class="case-tl-stage">Hook</div>
+              <div class="case-tl-desc">Built anti-rationalization hook that fires on Stop — reminds agent to <strong>verify before claiming done</strong></div>
+            </div>
+          </div>
+          <div class="case-tl-step s-prevention">
+            <div class="case-tl-dot">✅</div>
+            <div class="case-tl-card">
+              <div class="case-tl-stage">Prevention</div>
+              <div class="case-tl-desc">Zero Dashboard breaks since — the loop closed itself ✓</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Stats Bar -->
+    <div class="stats-bar">
+      <div class="stat-item"><div class="stat-value" style="color:var(--blue)" id="stat-findings">—</div><div class="stat-label">Findings</div></div>
+      <div class="stat-item"><div class="stat-value" style="color:var(--green)">16</div><div class="stat-label">CLAUDE.md Rules</div></div>
+      <div class="stat-item"><div class="stat-value" style="color:var(--purple)" id="stat-hooks">—</div><div class="stat-label">Active Hooks</div></div>
+      <div class="stat-item"><div class="stat-value" style="color:var(--amber)">21</div><div class="stat-label">Agents Graded</div></div>
+    </div>
+
+    <!-- Expandable: Calibration -->
+    <div class="expand-section" id="calibration">
+      <div class="expand-head" onclick="toggle('calibration')">
+        <div class="expand-left">
+          <div class="expand-icon" style="background:var(--purple-bg);color:var(--purple);border:1px solid rgba(139,92,246,0.12)">🔧</div>
+          <div class="expand-label">Calibration (f054)</div>
+        </div>
+        <div class="expand-chev" id="calibration-chevron"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></div>
+      </div>
+      <div class="expand-body" id="calibration-body">
+        <div class="expand-inner">
+          <div style="font-size:13px;color:var(--text2);line-height:1.7">
+            <p><strong>Calibration</strong> is the phase between campaigns — the time to analyze misses, update CLAUDE.md, refactor memory, improve prompts, and update the Workflow page.</p>
+            <p style="margin-top:8px"><strong>The principle:</strong> "Each version discovers → next version automates."</p>
+            <div style="background:var(--surface);border-radius:8px;padding:12px 16px;margin-top:12px;font-size:12px;line-height:1.7;color:var(--text2)">
+              <div><strong>v1.0 discovered:</strong> agents need Playwright verification → v1.1 added CLAUDE.md Rule 7</div>
+              <div><strong>v1.1 discovered:</strong> agents don't use skills → v1.2 added Agent Lifecycle with mandatory DISCOVER stage</div>
+              <div><strong>v1.2 discovered:</strong> agents need grades → v1.3 enriched campaigns.json with grading data</div>
+              <div><strong>v1.3 discovered:</strong> orchestrator must use its own skills on init → orchestrator skill updated with mandatory checklist</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Expandable: Recent Findings -->
+    <div class="expand-section" id="findings">
+      <div class="expand-head" onclick="toggle('findings')">
+        <div class="expand-left">
+          <div class="expand-icon" style="background:var(--blue-bg);color:var(--blue);border:1px solid rgba(59,130,246,0.12)">💡</div>
+          <div class="expand-label">Recent Findings</div>
+        </div>
+        <div class="expand-count" id="findings-count"></div>
+        <div class="expand-chev" id="findings-chevron"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></div>
+      </div>
+      <div class="expand-body" id="findings-body"><div class="expand-inner" id="findings-content"></div></div>
+    </div>
+
+    <!-- Expandable: Before/After -->
+    <div class="expand-section" id="beforeafter">
+      <div class="expand-head" onclick="toggle('beforeafter')">
+        <div class="expand-left">
+          <div class="expand-icon" style="background:var(--green-bg);color:var(--green);border:1px solid rgba(34,197,94,0.12)">📈</div>
+          <div class="expand-label">What's Changed Since Campaign Start</div>
+        </div>
+        <div class="expand-chev" id="beforeafter-chevron"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></div>
+      </div>
+      <div class="expand-body" id="beforeafter-body">
+        <div class="expand-inner">
+          <div class="ba-grid">
+            <div class="ba-card before">
+              <div class="ba-title">Before Campaign-001</div>
+              <div class="ba-list">
+                <div><div class="ba-dot"></div>Skill usage: <strong>0/16 agents</strong></div>
+                <div><div class="ba-dot"></div>Dashboard breaks: <strong>3× in one session</strong></div>
+                <div><div class="ba-dot"></div>Prompt delivery: <strong>inline (caused wrong paste)</strong></div>
+                <div><div class="ba-dot"></div>Memory: <strong>bloated with implementation details</strong></div>
+                <div><div class="ba-dot"></div>Agent grading: <strong>none</strong></div>
+                <div><div class="ba-dot"></div>Orchestrator: <strong>built features instead of coordinating</strong></div>
+              </div>
+            </div>
+            <div class="ba-card after">
+              <div class="ba-title">After Campaign-001</div>
+              <div class="ba-list">
+                <div><div class="ba-dot"></div>Skill usage: <strong>5/20 agents (25%)</strong></div>
+                <div><div class="ba-dot"></div>Dashboard breaks: <strong>0 since Rule 7</strong></div>
+                <div><div class="ba-dot"></div>Prompt delivery: <strong>file-based PRDs</strong></div>
+                <div><div class="ba-dot"></div>Memory: <strong>cleaned, high-level only</strong></div>
+                <div><div class="ba-dot"></div>Agent grading: <strong>systematic A-F rubric</strong></div>
+                <div><div class="ba-dot"></div>Orchestrator: <strong>coordinate-only with skill</strong></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /tab-learn -->
+
+</div><!-- /shell -->
+
+<!-- ═══ Content Modal (memory files, rules) ═══ -->
+<div class="content-modal-bg" id="contentModal">
+  <div class="content-modal" onclick="event.stopPropagation()">
+    <div class="cm-header">
+      <div class="cm-title" id="cm-title"></div>
+      <button class="cm-close" onclick="closeContentModal()">×</button>
+    </div>
+    <div class="cm-body" id="cm-body"></div>
   </div>
 </div>
 
 <script>
-/* ── Hook metadata ── */
-const hookMeta = {
-  'hook.js':                    { cat:'mc',     name:'State Tracker',         desc:'Writes agent state to dashboard cards' },
-  'prompt-hook.js':             { cat:'mc',     name:'Prompt Capture',        desc:'Records user prompts for history & search' },
-  'session-start-compact.js':   { cat:'mc',     name:'Context Restore',       desc:'Injects "where you left off" briefing after compaction' },
-  'check-code-change.sh':       { cat:'safety', name:'Stale Build Guard',     desc:'Warns if server runs prod build after edits' },
-  'check-file-conflict.js':     { cat:'safety', name:'File Conflict Check',   desc:'Detects conflicting file edits across agents' },
-  'check-server.sh':            { cat:'quality',name:'Server Health',         desc:'Verifies dev server after shell commands' },
-  'verify-deploy.sh':           { cat:'quality',name:'Deploy Verifier',       desc:'Checks deployment state after shell commands' },
-};
-const catInfo = {
-  mc:      { label:'MC Telemetry',  order:0 },
-  quality: { label:'Code Quality',  order:1 },
-  safety:  { label:'Safety Guards', order:2 },
-  system:  { label:'System',        order:3 },
-};
-
-function classify(cmd) {
-  if (cmd.includes('VERIFY BEFORE DONE')) return { cat:'safety', name:'Anti-Rationalization', desc:'Reminds agent to verify work before claiming done' };
-  const key = cmd.split(/[\/\\]/).pop();
-  return hookMeta[key] || { cat:'system', name:key, desc:'Custom hook' };
+/* ═══ Tab Switching ═══ */
+function switchTab(id) {
+  document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+  document.getElementById('tab-' + id).classList.add('active');
+  document.querySelector('[data-tab="' + id + '"]').classList.add('active');
+}
+// Arc pulse — runs on page load, animates even when tab is hidden
+if (typeof gsap !== 'undefined') {
+  gsap.to('.loop-arc', { borderColor: 'rgba(139,92,246,0.6)', duration: 2, ease: 'sine.inOut', repeat: -1, yoyo: true });
+  gsap.to('.loop-arc-arrow', { borderTopColor: 'rgba(139,92,246,0.6)', duration: 2, ease: 'sine.inOut', repeat: -1, yoyo: true });
 }
 
-function parseHooks(data, scope) {
-  const out = [];
-  for (const [ev, matchers] of Object.entries(data.hooks || {})) {
-    for (const m of matchers) for (const h of (m.hooks||[])) {
-      const meta = classify(h.command||'');
-      const matcher = m.matcher||'';
-      const trigger = ev + (matcher && matcher !== '.*' ? ' ['+matcher+']' : '');
-      out.push({ ...meta, scope, trigger, command:h.command||'' });
-    }
-  }
-  return out;
-}
-
-function renderHooks(all) {
-  document.getElementById('hook-total').textContent = all.length + ' hooks';
-  const groups = {};
-  for (const h of all) { (groups[h.cat] = groups[h.cat]||[]).push(h); }
-  const sorted = Object.entries(groups).sort((a,b) => (catInfo[a[0]]?.order??99) - (catInfo[b[0]]?.order??99));
-
-  document.getElementById('hooks-container').innerHTML = sorted.map(([cat, hooks]) => `
-    <div class="hook-group">
-      <div class="hook-group-head">
-        <div class="hg-dot ${cat}"></div>
-        <div class="hg-label">${catInfo[cat]?.label||cat}</div>
-        <div class="hg-count">${hooks.length}</div>
-      </div>
-      <div class="hook-list">
-        ${hooks.map(h => `
-          <div class="hook-row" onclick="openHook('${h.name}', \`${h.command.replace(/`/g,'\\`').replace(/\\/g,'\\\\')}\`)">
-            <div class="hook-name">${h.name}</div>
-            <div class="hook-desc">${h.desc}</div>
-            <div class="hook-trigger">${h.trigger}</div>
-            <div class="hook-scope">${h.scope}</div>
-          </div>
-        `).join('')}
-      </div>
-    </div>
-  `).join('');
-
-  // Gap detection — check for missing categories
-  const hasSafety = all.some(h => h.cat === 'safety');
-  if (!hasSafety) {
-    document.getElementById('gap').style.display = 'flex';
-    document.getElementById('gap-text').innerHTML = '<strong>Gap:</strong> No safety hooks active. Agents can claim completion without verification.';
+/* ═══ Expand/Collapse with GSAP (matches campaigns page pattern) ═══ */
+function toggle(id) {
+  const body = document.getElementById(id + '-body');
+  const chevron = document.getElementById(id + '-chevron');
+  const chevSvg = chevron ? chevron.querySelector('svg') : null;
+  if (body.classList.contains('open')) {
+    body.classList.remove('open');
+    gsap.to(body, { height: 0, duration: 0.3, ease: 'power2.inOut' });
+    if (chevSvg) gsap.to(chevSvg, { rotation: 0, duration: 0.25, ease: 'power2.inOut' });
+  } else {
+    body.classList.add('open');
+    gsap.to(body, { height: 'auto', duration: 0.35, ease: 'power2.out' });
+    if (chevSvg) gsap.to(chevSvg, { rotation: 180, duration: 0.25, ease: 'power2.inOut' });
   }
 }
 
-/* ── Memory ── */
-const memRoles = {
-  'MEMORY.md':'Always in context (first 200 lines)',
-  'principles.md':'Design principles & anti-patterns',
-  'design-context.md':'Visual direction & aesthetics',
-  'phredomade.md':'Architecture deep-dive',
-  'security-audit.md':'Security findings checklist',
-  'resend-setup.md':'Email/Resend configuration',
-  'promo-video-pipeline.md':'Video render pipeline',
-  'local-ports.md':'Dev server port assignments',
-};
-
+/* ═══ Content Modal (memory, rules) ═══ */
 let memCache = {};
-function renderMemory(data) {
-  document.getElementById('mem-total').textContent = data.files.length + ' files';
-  // Cache full content
-  data.files.forEach(f => { memCache[f.name] = f.content || f.preview; });
-
-  // Pipeline pills
-  document.getElementById('mem-pills').innerHTML = data.files.map(f =>
-    `<span class="pill ${f.name==='MEMORY.md'?'lit':''}">${f.name}</span>`
-  ).join('');
-
-  // Grid
-  document.getElementById('mem-grid').innerHTML = data.files.map(f => `
-    <div class="mem-card ${f.name==='MEMORY.md'?'primary':''} ${f.name==='principles.md'?'rules':''}" onclick="openMem('${f.name}')">
-      <div class="mem-name">${f.name}</div>
-      <div class="mem-role">${memRoles[f.name]||'Topic file'}</div>
-      <div class="mem-stats">${f.lines} lines &middot; ${(f.size/1024).toFixed(1)}KB</div>
-    </div>
-  `).join('');
+function openContentModal(title, content) {
+  document.getElementById('cm-title').textContent = title;
+  document.getElementById('cm-body').innerHTML = renderMd(content);
+  document.getElementById('contentModal').classList.add('open');
 }
+function closeContentModal() {
+  document.getElementById('contentModal').classList.remove('open');
+}
+document.getElementById('contentModal').addEventListener('click', function(e) { if (e.target === this) closeContentModal(); });
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') { closeContentModal(); }
+});
 
+/* ═══ Markdown Renderer ═══ */
 function escHtml(s) { return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 function renderMd(md) {
   md = md.replace(/^---\n[\s\S]*?\n---\n?/, '');
-  md = md.replace(/```(\w*)\n([\s\S]*?)```/g, (_, lang, code) => '<pre><code>' + escHtml(code) + '</code></pre>');
-  md = md.replace(/`([^`]+)`/g, (_, code) => '<code>' + escHtml(code) + '</code>');
+  md = md.replace(/```(\w*)\n([\s\S]*?)```/g, (_, l, c) => '<pre><code>' + escHtml(c) + '</code></pre>');
+  md = md.replace(/`([^`]+)`/g, (_, c) => '<code>' + escHtml(c) + '</code>');
   md = md.replace(/^### (.+)$/gm, '<h3>$1</h3>');
   md = md.replace(/^## (.+)$/gm, '<h2>$1</h2>');
   md = md.replace(/^# (.+)$/gm, '<h1>$1</h1>');
@@ -493,99 +1388,94 @@ function renderMd(md) {
   md = md.replace(/^- (.+)$/gm, '<li>$1</li>');
   md = md.replace(/(<li>[\s\S]*?<\/li>)/g, '<ul>$1</ul>');
   md = md.replace(/<\/ul>\s*<ul>/g, '');
-  md = md.replace(/^---$/gm, '<hr>');
-  md = md.replace(/^\|(.+)\|\s*\n\|[-| ]+\|\s*\n((?:\|.+\|\s*\n?)*)/gm, (_, hdr, body) => {
-    const ths = hdr.split('|').filter(Boolean).map(c => '<th>' + c.trim() + '</th>').join('');
-    const rows = body.trim().split('\n').map(r => {
-      const tds = r.split('|').filter(Boolean).map(c => '<td>' + c.trim() + '</td>').join('');
-      return '<tr>' + tds + '</tr>';
-    }).join('');
-    return '<table><thead><tr>' + ths + '</tr></thead><tbody>' + rows + '</tbody></table>';
-  });
   md = md.replace(/\n{2,}/g, '</p><p>');
-  md = '<p>' + md + '</p>';
-  md = md.replace(/<p>\s*(<h[123]|<pre|<ul|<blockquote|<hr|<table)/g, '$1');
-  md = md.replace(/(<\/h[123]>|<\/pre>|<\/ul>|<\/blockquote>|<hr>|<\/table>)\s*<\/p>/g, '$1');
-  return md;
+  return '<p>' + md + '</p>';
 }
 
-function openMem(name) {
-  document.getElementById('m-title').textContent = name;
-  const code = document.getElementById('m-text');
-  const md = document.getElementById('m-md');
-  const content = memCache[name] || 'No content';
-  // Show rendered markdown, hide code view
-  code.style.display = 'none';
-  md.style.display = 'block';
-  md.innerHTML = renderMd(content);
-  document.getElementById('modal').classList.add('open');
-}
-function highlightCode(code) {
-  // Escape HTML first
-  let h = code.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-  // Comments (// and #)
-  h = h.replace(/(\/\/.*$|#.*$)/gm, '<span class="cm">$1</span>');
-  // Strings (single and double quoted)
-  h = h.replace(/('(?:[^'\\]|\\.)*')/g, '<span class="str">$1</span>');
-  h = h.replace(/("(?:[^"\\]|\\.)*")/g, '<span class="str">$1</span>');
-  // Template literals
-  h = h.replace(/(`(?:[^`\\]|\\.)*`)/g, '<span class="str">$1</span>');
-  // Keywords
-  h = h.replace(/\b(const|let|var|function|return|if|else|for|of|in|try|catch|require|new|process|module|exports|async|await|throw|class|import|from|true|false|null|undefined)\b/g, '<span class="kw">$1</span>');
-  // Numbers
-  h = h.replace(/\b(\d+)\b/g, '<span class="num">$1</span>');
-  // Function calls
-  h = h.replace(/\b([a-zA-Z_]\w*)\s*\(/g, '<span class="fn">$1</span>(');
-  // Operators
-  h = h.replace(/(===|!==|=>|&&|\|\||\.\.\.)/g, '<span class="op">$1</span>');
-  return h;
+/* ═══ Hook Summary Rendering ═══ */
+const hookMeta = {
+  'hook.js': { name:'State Tracker', desc:'Writes agent state to dashboard cards' },
+  'prompt-hook.js': { name:'Prompt Capture', desc:'Records prompts, sets display name, auto-links campaigns' },
+  'session-start-compact.js': { name:'Context Restore', desc:'Injects "where you left off" briefing after compaction' },
+  'check-code-change.sh': { name:'Stale Build Guard', desc:'Warns if server runs prod build after edits' },
+  'check-file-conflict.js': { name:'File Conflict Check', desc:'Detects conflicting file edits across agents' },
+  'check-server.sh': { name:'Server Health', desc:'Verifies dev server after shell commands' },
+  'verify-deploy.sh': { name:'Deploy Verifier', desc:'Checks deployment state after shell commands' },
+};
+const eventColors = {
+  PostToolUse: { bg:'var(--amber-bg)', color:'#92400e' },
+  UserPromptSubmit: { bg:'var(--blue-bg)', color:'var(--blue)' },
+  SessionStart: { bg:'var(--green-bg)', color:'var(--green)' },
+  Stop: { bg:'var(--rose-bg)', color:'var(--rose)' },
+};
+
+function classifyHook(cmd) {
+  if (cmd.includes('VERIFY BEFORE DONE')) return { name:'Anti-Rationalization', desc:'Reminds agent to verify work before claiming done' };
+  const key = cmd.split(/[\/\\]/).pop();
+  return hookMeta[key] || { name:key, desc:'Custom hook' };
 }
 
-async function openHook(name, command) {
-  document.getElementById('m-title').textContent = name;
-  document.getElementById('m-text').style.display = 'block';
-  document.getElementById('m-md').style.display = 'none';
-  const mt = document.getElementById('m-text');
-  // For echo-based hooks, show the echo content directly
-  if (command.includes('echo ') && !command.includes('.js') && !command.includes('.sh')) {
-    const text = command.replace(/&&/g, '\n').replace(/echo\s+'?/g, '').replace(/'$/gm, '').replace(/━/g, '─').trim();
-    mt.innerHTML = highlightCode('// Type: Inline echo command\n\n' + text);
-    document.getElementById('modal').classList.add('open');
-    return;
-  }
-  // For script hooks, extract file path and fetch content
-  const pathMatch = command.match(/(?:node|bash)\s+(.+?)(?:\s|$)/);
-  if (pathMatch) {
-    mt.innerHTML = '<span class="cm">// Loading...</span>';
-    document.getElementById('modal').classList.add('open');
-    try {
-      const r = await fetch('/api/hook-file/' + encodeURIComponent(pathMatch[1]));
-      const d = await r.json();
-      if (d.error) throw new Error(d.error);
-      mt.innerHTML = highlightCode(d.content);
-    } catch (e) {
-      mt.innerHTML = highlightCode('// File: ' + pathMatch[1] + '\n// Could not load: ' + e.message + '\n\n// Raw command:\n' + command);
+function renderHookTable(projectSettings, globalSettings) {
+  const hooks = [];
+  for (const [settings, scope] of [[projectSettings, 'Project'], [globalSettings, 'Global']]) {
+    for (const [event, matchers] of Object.entries(settings.hooks || {})) {
+      for (const m of matchers) {
+        for (const h of (m.hooks || [])) {
+          const meta = classifyHook(h.command || '');
+          hooks.push({ ...meta, scope, event });
+        }
+      }
     }
-    return;
   }
-  // Fallback — show raw command
-  mt.innerHTML = highlightCode('// Raw command:\n\n' + command);
-  document.getElementById('modal').classList.add('open');
+
+  document.getElementById('hooks-count').textContent = hooks.length + ' hooks';
+  document.getElementById('stat-hooks').textContent = hooks.length;
+
+  let html = '<table class="compact-table"><thead><tr><th>Hook</th><th>Fires On</th><th>What It Does</th></tr></thead><tbody>';
+  for (const h of hooks) {
+    const ec = eventColors[h.event] || { bg:'var(--surface)', color:'var(--text3)' };
+    html += '<tr>';
+    html += '<td class="hook-name">' + h.name + '</td>';
+    html += '<td><span class="event-badge" style="background:' + ec.bg + ';color:' + ec.color + '">' + h.event + '</span></td>';
+    html += '<td>' + h.desc + '</td>';
+    html += '</tr>';
+  }
+  html += '</tbody></table>';
+  document.getElementById('hooks-content').innerHTML = html;
 }
 
-function closeModal() { document.getElementById('modal').classList.remove('open'); }
-document.getElementById('modal').addEventListener('click', function(e) { if (e.target === this) closeModal(); });
-document.addEventListener('keydown', function(e) { if (e.key === 'Escape') closeModal(); });
+/* ═══ Memory Rendering ═══ */
+const memRoles = {
+  'MEMORY.md':'Always in context (first 200 lines)',
+  'principles.md':'Engineering principles & anti-patterns',
+  'design-context.md':'Visual direction & aesthetics',
+  'phredomade.md':'Architecture deep-dive',
+  'security-audit.md':'Security findings checklist',
+  'mcp-setup.md':'MCP server installation on Windows',
+  'local-ports.md':'Port registry',
+};
 
-/* ── CLAUDE.md ── */
+function renderMemory(data) {
+  document.getElementById('memory-count').textContent = data.files.length + ' files';
+  data.files.forEach(f => { memCache[f.name] = f.content || f.preview; });
+  let html = '<div class="mem-grid">';
+  for (const f of data.files) {
+    const cls = f.name === 'MEMORY.md' ? ' primary' : '';
+    html += '<div class="mem-card' + cls + '" onclick="openContentModal(\'' + f.name + '\', memCache[\'' + f.name + '\'])">';
+    html += '<div class="mem-name">' + f.name + '</div>';
+    html += '<div class="mem-role">' + (memRoles[f.name] || 'Topic file') + '</div>';
+    html += '<div class="mem-stats">' + f.lines + ' lines · ' + (f.size/1024).toFixed(1) + 'KB</div>';
+    html += '</div>';
+  }
+  html += '</div>';
+  document.getElementById('memory-content').innerHTML = html;
+}
+
+/* ═══ Rules Rendering ═══ */
 function renderRules(data) {
   if (!data.content) return;
-  document.getElementById('rules-section').style.display = 'block';
   const lines = data.content.split('\n').length;
-  document.getElementById('rules-meta').textContent = lines + ' lines';
-  document.getElementById('claudemd-pill').textContent = 'CLAUDE.md (' + lines + ' lines)';
-
-  // Render markdown
+  document.getElementById('rules-count').textContent = lines + ' lines';
   let html = data.content
     .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
     .replace(/^# (.+)$/gm, '<h1>$1</h1>')
@@ -594,45 +1484,97 @@ function renderRules(data) {
     .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
     .replace(/\n\n/g, '</p><p>')
     .replace(/\n/g, '<br>');
-  document.getElementById('rules-content').innerHTML = '<p>' + html + '</p>';
+  document.getElementById('rules-content').innerHTML = '<div class="rules-content"><p>' + html + '</p></div>';
 }
 
-let rulesOpen = false;
-function toggleRules() {
-  rulesOpen = !rulesOpen;
-  document.getElementById('rules-body').classList.toggle('open', rulesOpen);
-  document.getElementById('rules-chev').classList.toggle('open', rulesOpen);
+/* ═══ Findings Rendering ═══ */
+function renderFindings(findings) {
+  document.getElementById('stat-findings').textContent = findings.length;
+  document.getElementById('findings-count').textContent = 'last 10';
+
+  const recent = findings.slice(-10).reverse();
+  let html = '';
+  for (const f of recent) {
+    const tierCls = f.tier === 'tier1' ? 't1' : f.tier === 'tier2' ? 't2' : 't3';
+    html += '<div class="finding-item">';
+    html += '<span class="finding-id">' + f.id + '</span>';
+    html += '<span class="finding-tier ' + tierCls + '">' + (f.tier || '').replace('tier','T') + '</span>';
+    html += '<div>';
+    html += '<div class="finding-title">' + f.title + '</div>';
+    if (f.lesson) html += '<div class="finding-lesson">' + f.lesson.substring(0, 120) + (f.lesson.length > 120 ? '...' : '') + '</div>';
+    html += '</div>';
+    html += '</div>';
+  }
+  html += '<a href="/findings" style="display:inline-block;margin-top:10px;font-size:12px;color:var(--purple);text-decoration:none;font-weight:600;padding:6px 14px;border-radius:6px;background:var(--purple-bg)">View all findings →</a>';
+  document.getElementById('findings-content').innerHTML = html;
 }
 
-/* ── Settings ── */
-function renderSettings(gs, ps) {
-  const gsd = gs.data||{}, psd = ps.data||{};
-  const gCount = Object.values(gsd.hooks||{}).flat().reduce((s,m)=>s+(m.hooks||[]).length,0);
-  const pCount = Object.values(psd.hooks||{}).flat().reduce((s,m)=>s+(m.hooks||[]).length,0);
-  document.getElementById('ghook-pill').textContent = gCount + ' global hooks';
-  document.getElementById('phook-pill').textContent = pCount + ' project hooks';
-
-  const items = [
-    ['Model', gsd.model||'default'],
-    ['Permissions', gsd.permissions?.defaultMode||'normal'],
-    ['Plugins', Object.keys(psd.enabledPlugins||{}).map(p=>p.split('@')[0]).join(', ')||'none'],
-    ['Updates', gsd.autoUpdatesChannel||'stable'],
-  ];
-  document.getElementById('settings-row').innerHTML = items.map(([k,v]) =>
-    `<div class="setting-chip"><span class="setting-k">${k}</span><span class="setting-v">${v}</span></div>`
-  ).join('');
-}
-
-/* ── Load ── */
+/* ═══ Load Data ═══ */
 async function load() {
-  const r = await fetch('/api/workflow');
-  const d = await r.json();
-  renderHooks([...parseHooks(d.projectSettings.data,'Project'), ...parseHooks(d.globalSettings.data,'Global')]);
-  renderMemory(d.memoryFiles);
-  renderRules(d.claudeMd);
-  renderSettings(d.globalSettings, d.projectSettings);
+  try {
+    const [wfRes, fRes] = await Promise.all([
+      fetch('/api/workflow'),
+      fetch('/api/findings')
+    ]);
+    const workflow = await wfRes.json();
+    const findings = await fRes.json();
+
+    renderHookTable(workflow.projectSettings.data, workflow.globalSettings.data);
+    renderMemory(workflow.memoryFiles);
+    renderRules(workflow.claudeMd);
+    renderFindings(findings);
+  } catch (e) {
+    console.error('Failed to load workflow data:', e);
+  }
 }
-load();
+load().then(() => {
+  // Default: all expandable sections start open (GSAP controls height)
+  document.querySelectorAll('.expand-body').forEach(b => {
+    b.classList.add('open');
+    gsap.set(b, { height: 'auto' });
+  });
+  document.querySelectorAll('.expand-chev').forEach(c => {
+    c.classList.add('open');
+    const svg = c.querySelector('svg');
+    if (svg) gsap.set(svg, { rotation: 180 });
+  });
+});
+
+/* ═══ Expand All / Collapse All ═══ */
+let allExpanded = true; // default state: all open
+function toggleAllSections() {
+  const activeTab = document.querySelector('.tab-content.active');
+  if (!activeTab) return;
+  const bodies = activeTab.querySelectorAll('.expand-body');
+  const chevrons = activeTab.querySelectorAll('.expand-chev');
+  const btn = document.getElementById('expandAllBtn');
+
+  if (allExpanded) {
+    // Collapse all
+    bodies.forEach(b => {
+      b.classList.remove('open');
+      gsap.to(b, { height: 0, duration: 0.3, ease: 'power2.inOut' });
+    });
+    chevrons.forEach(c => {
+      const svg = c.querySelector('svg');
+      if (svg) gsap.to(svg, { rotation: 0, duration: 0.25, ease: 'power2.inOut' });
+    });
+    btn.textContent = 'Expand All';
+    allExpanded = false;
+  } else {
+    // Expand all
+    bodies.forEach(b => {
+      b.classList.add('open');
+      gsap.to(b, { height: 'auto', duration: 0.35, ease: 'power2.out' });
+    });
+    chevrons.forEach(c => {
+      const svg = c.querySelector('svg');
+      if (svg) gsap.to(svg, { rotation: 180, duration: 0.25, ease: 'power2.inOut' });
+    });
+    btn.textContent = 'Collapse All';
+    allExpanded = true;
+  }
+}
 </script>
 </body>
 </html>

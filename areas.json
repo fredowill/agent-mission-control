@@ -15,7 +15,8 @@
     { "id": "search", "name": "Search", "icon": "\ud83d\udd0e", "color": "#2563eb", "pattern": "\\bsearch\\b" },
     { "id": "notifications", "name": "Notifications", "icon": "\ud83d\udd14", "color": "#f59e0b", "pattern": "\\bnotification|sound cue" },
     { "id": "infra", "name": "Infra", "icon": "\ud83c\udfd7\ufe0f", "color": "#78716c", "pattern": "\\binfrastructure\\b|\\brepo structure\\b" },
-    { "id": "demo", "name": "Demo", "icon": "\ud83c\udfac", "color": "#8b5cf6", "pattern": "\\bdemo\\b|\\bwalkthrough\\b" }
+    { "id": "demo", "name": "Demo", "icon": "\ud83c\udfac", "color": "#8b5cf6", "pattern": "\\bdemo\\b|\\bwalkthrough\\b" },
+    { "id": "life", "name": "Life", "icon": "\ud83c\udf3f", "color": "#22c55e", "pattern": "\\bappointment\\b|\\bdoctor\\b|\\bdermatolog\\b|\\berrand\\b|\\bgrocery\\b|\\bpersonal task\\b|\\blife\\b" }
   ],
   "work": [
     { "id": "aqg", "name": "AQG", "icon": "\ud83d\udcd0", "color": "#f59e0b", "pattern": "\\baqg\\b" },

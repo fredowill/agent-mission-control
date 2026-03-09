@@ -1,0 +1,599 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Close-Out &mdash; Mission Control</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=DM+Sans:wght@400;500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#fff;--bg2:#fafafa;--surface:#f4f4f5;--surface2:#e4e4e7;
+  --text:#09090b;--text2:#52525b;--text3:#a1a1aa;--sep:#e4e4e7;
+  --purple:#8b5cf6;--purple-bg:rgba(139,92,246,0.06);
+  --blue:#3b82f6;--blue-bg:rgba(59,130,246,0.06);
+  --green:#22c55e;--green-bg:rgba(34,197,94,0.06);
+  --amber:#f59e0b;--amber-bg:rgba(245,158,11,0.06);
+  --rose:#ef4444;--rose-bg:rgba(239,68,68,0.05);
+  --cyan:#06b6d4;--cyan-bg:rgba(6,182,212,0.06);
+  --indigo:#6366f1;--indigo-bg:rgba(99,102,241,0.06);
+  --pink:#ec4899;--pink-bg:rgba(236,72,153,0.06);
+  --orange:#f97316;--orange-bg:rgba(249,115,22,0.06);
+  --radius:12px;
+}
+body{background:var(--bg2);color:var(--text);font-family:'DM Sans',-apple-system,sans-serif;-webkit-font-smoothing:antialiased;min-height:100vh}
+
+/* Header */
+header{display:flex;align-items:center;justify-content:space-between;padding:0 clamp(24px,4vw,48px);height:64px;background:var(--bg);border-bottom:1px solid var(--sep);position:sticky;top:0;z-index:50}
+.logo{display:flex;align-items:center;gap:10px}
+.logo-dot{width:8px;height:8px;border-radius:50%;background:var(--purple)}
+.logo-text{font-family:'Plus Jakarta Sans',sans-serif;font-size:14px;font-weight:700;letter-spacing:-0.02em}
+.header-nav{display:flex;gap:2px;padding:3px;background:var(--surface);border-radius:8px;position:absolute;left:50%;transform:translateX(-50%)}
+.nav-link{padding:5px 14px;border-radius:6px;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;color:var(--text3);text-decoration:none;transition:all .15s;white-space:nowrap}
+.nav-link:hover{color:var(--text2)}
+.nav-link.active{background:var(--bg);color:var(--text);box-shadow:0 1px 3px rgba(0,0,0,.06)}
+.header-right{display:flex;align-items:center;gap:8px}
+
+/* Shell */
+.shell{max-width:1200px;margin:0 auto;padding:32px 20px 80px}
+
+/* Back link */
+.back-link{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:500;color:var(--text3);text-decoration:none;margin-bottom:16px;transition:color .15s}
+.back-link:hover{color:var(--text2)}
+.back-link svg{width:14px;height:14px}
+
+/* Hero */
+.hero{background:var(--bg);border:1px solid var(--sep);border-radius:16px;padding:32px 36px;margin-bottom:28px;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;top:0;left:0;right:0;height:4px;background:linear-gradient(90deg,var(--rose),var(--amber),var(--purple))}
+.hero-eyebrow{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--amber);margin-bottom:10px;display:flex;align-items:center;gap:8px}
+.hero-eyebrow::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--amber);animation:pulse 2s ease infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+.hero-title{font-family:'Plus Jakarta Sans',sans-serif;font-size:32px;font-weight:800;letter-spacing:-0.04em;line-height:1.2;margin-bottom:8px}
+.hero-subtitle{font-size:14px;line-height:1.7;color:var(--text2);max-width:700px;margin-bottom:20px}
+.hero-stats{display:flex;gap:24px;flex-wrap:wrap}
+.hero-stat{display:flex;flex-direction:column;gap:2px}
+.hero-stat-value{font-family:'Plus Jakarta Sans',sans-serif;font-size:22px;font-weight:800;letter-spacing:-0.03em}
+.hero-stat-label{font-family:'DM Mono',monospace;font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.06em}
+.hero-stat-value.purple{color:var(--purple)}
+.hero-stat-value.green{color:var(--green)}
+.hero-stat-value.rose{color:var(--rose)}
+.hero-stat-value.blue{color:var(--blue)}
+.hero-stat-value.text3{color:var(--text3)}
+
+/* Section headers */
+.section-title{font-family:'Plus Jakarta Sans',sans-serif;font-size:18px;font-weight:700;letter-spacing:-0.03em;margin-bottom:16px;display:flex;align-items:center;gap:8px}
+.section-title .count{font-family:'DM Mono',monospace;font-size:11px;color:var(--text3);background:var(--surface);padding:2px 8px;border-radius:100px}
+
+/* Agent Grid — compact */
+.agent-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px;margin-bottom:32px}
+.ag-card{background:var(--bg);border:1px solid var(--sep);border-radius:var(--radius);overflow:hidden;transition:all .2s;box-shadow:0 1px 4px rgba(0,0,0,.03)}
+.ag-card:hover{box-shadow:0 4px 16px rgba(0,0,0,.06);transform:translateY(-1px)}
+.ag-bar{height:3px}
+.ag-inner{padding:12px 14px}
+.ag-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;gap:6px}
+.ag-name{font-family:'Plus Jakarta Sans',sans-serif;font-size:13px;font-weight:700;letter-spacing:-0.02em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ag-badge{font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;padding:2px 8px;border-radius:100px;flex-shrink:0;white-space:nowrap}
+.ag-badge.completed{background:var(--blue-bg);color:var(--blue)}
+.ag-badge.active{background:var(--green-bg);color:#16a34a}
+.ag-badge.active::before{content:'';display:inline-block;width:5px;height:5px;border-radius:50%;background:#22c55e;margin-right:4px;animation:pulse 2s ease infinite}
+.ag-desc{font-size:11px;color:var(--text2);line-height:1.5;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+
+/* Agent color bars */
+.ag-bar.purple{background:linear-gradient(90deg,#a78bfa,#7c3aed)}
+.ag-bar.amber{background:linear-gradient(90deg,#fbbf24,#d97706)}
+.ag-bar.blue{background:linear-gradient(90deg,#60a5fa,#2563eb)}
+.ag-bar.cyan{background:linear-gradient(90deg,#22d3ee,#0891b2)}
+.ag-bar.pink{background:linear-gradient(90deg,#f472b6,#db2777)}
+.ag-bar.green{background:linear-gradient(90deg,#4ade80,#16a34a)}
+.ag-bar.orange{background:linear-gradient(90deg,#fbbf24,#ea580c)}
+.ag-bar.indigo{background:linear-gradient(90deg,#a78bfa,#6366f1)}
+.ag-bar.rose{background:linear-gradient(90deg,#f97316,#ef4444)}
+
+/* Agent name colors */
+.ag-name.purple{color:#7c3aed}
+.ag-name.amber{color:#d97706}
+.ag-name.blue{color:#2563eb}
+.ag-name.cyan{color:#0891b2}
+.ag-name.pink{color:#db2777}
+.ag-name.green{color:#16a34a}
+.ag-name.orange{color:#ea580c}
+.ag-name.indigo{color:#6366f1}
+.ag-name.rose{color:#ea580c}
+
+/* Remaining Items — Group Cards */
+.groups-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(360px,1fr));gap:16px;margin-bottom:32px;align-items:start}
+.group-card{background:var(--bg);border:1px solid var(--sep);border-radius:var(--radius);overflow:hidden;transition:box-shadow .2s;box-shadow:0 1px 4px rgba(0,0,0,.03)}
+.group-card:hover{box-shadow:0 4px 16px rgba(0,0,0,.06)}
+/* Colored left border per priority */
+.group-card.priority-must-close{border-left:4px solid var(--rose)}
+.group-card.priority-important{border-left:4px solid var(--amber)}
+.group-card.priority-can-wait{border-left:4px solid var(--blue)}
+.group-card.priority-defer{border-left:4px solid var(--text3)}
+.group-header{display:flex;align-items:center;gap:12px;padding:16px 20px;cursor:pointer;user-select:none;transition:background .12s}
+.group-header:hover{background:var(--bg2)}
+.group-name{font-family:'Plus Jakarta Sans',sans-serif;font-size:15px;font-weight:700;letter-spacing:-0.02em;flex:1}
+.group-count{font-family:'DM Mono',monospace;font-size:10px;color:var(--text3);background:var(--surface);padding:2px 8px;border-radius:100px}
+.group-priority{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;padding:3px 10px;border-radius:100px}
+/* Priority badges — strongly differentiated */
+.group-priority.must-close{background:rgba(239,68,68,0.14);color:#dc2626;border:1.5px solid rgba(239,68,68,0.25)}
+.group-priority.important{background:rgba(245,158,11,0.14);color:#92400e;border:1.5px solid rgba(245,158,11,0.25)}
+.group-priority.can-wait{background:transparent;color:var(--blue);border:1.5px solid rgba(59,130,246,0.3)}
+.group-priority.defer{background:transparent;color:var(--text3);border:1.5px solid var(--surface2)}
+.group-chevron{width:20px;height:20px;display:flex;align-items:center;justify-content:center;color:var(--text3);transition:transform .2s ease;flex-shrink:0}
+.group-chevron.open{transform:rotate(180deg)}
+.group-body{max-height:0;overflow:hidden;transition:max-height .3s ease,padding .3s ease}
+.group-body.open{max-height:1000px}
+.group-items{padding:0 20px 16px;display:flex;flex-direction:column;gap:2px}
+.g-item{display:flex;align-items:flex-start;gap:10px;padding:9px 10px;border-radius:8px;font-size:12.5px;line-height:1.65;color:var(--text);transition:background .12s}
+.g-item:hover{background:var(--surface)}
+.g-num{font-family:'DM Mono',monospace;font-size:10px;font-weight:500;min-width:20px;padding-top:3px;text-align:right;color:var(--text3)}
+.g-text{flex:1}
+.g-key{font-weight:600;color:var(--text)}
+
+/* Deferred section */
+.deferred{background:var(--bg);border:1px solid var(--sep);border-radius:var(--radius);padding:0;margin-bottom:24px;overflow:hidden}
+.deferred-header{display:flex;align-items:center;gap:10px;padding:16px 20px;border-bottom:1px solid transparent}
+.deferred-header.has-border{border-bottom-color:var(--sep)}
+.deferred-dot{width:8px;height:8px;border-radius:50%;background:var(--text3)}
+.deferred-title{font-family:'Plus Jakarta Sans',sans-serif;font-size:15px;font-weight:700;letter-spacing:-0.02em;color:var(--text2)}
+.deferred-count{font-family:'DM Mono',monospace;font-size:10px;color:var(--text3);background:var(--surface);padding:2px 8px;border-radius:100px;margin-left:auto}
+.deferred-list{padding:4px 20px 16px;display:flex;flex-direction:column;gap:2px}
+.def-item{display:flex;align-items:center;gap:8px;padding:6px 10px;border-radius:6px;font-size:12.5px;color:var(--text2);line-height:1.5;transition:background .12s}
+.def-item:hover{background:var(--surface)}
+.def-item::before{content:'';width:5px;height:5px;border-radius:50%;background:var(--surface2);flex-shrink:0}
+
+/* Completed section — collapsible */
+.completed-section{background:var(--bg);border:1px solid var(--sep);border-radius:var(--radius);overflow:hidden;margin-bottom:24px}
+.completed-header{display:flex;align-items:center;gap:10px;padding:16px 20px;cursor:pointer;user-select:none;transition:background .12s}
+.completed-header:hover{background:var(--bg2)}
+.completed-dot{width:8px;height:8px;border-radius:50%;background:var(--green)}
+.completed-title{font-family:'Plus Jakarta Sans',sans-serif;font-size:15px;font-weight:700;letter-spacing:-0.02em}
+.completed-count{font-family:'DM Mono',monospace;font-size:10px;color:var(--text3);background:var(--surface);padding:2px 8px;border-radius:100px;margin-left:auto}
+.completed-chevron{width:20px;height:20px;display:flex;align-items:center;justify-content:center;color:var(--text3);transition:transform .2s ease;flex-shrink:0}
+.completed-chevron.open{transform:rotate(180deg)}
+.completed-body{max-height:0;overflow:hidden;transition:max-height .3s ease}
+.completed-body.open{max-height:600px}
+.completed-list{padding:4px 20px 16px;display:flex;flex-direction:column;gap:2px}
+.comp-item{display:flex;align-items:flex-start;gap:8px;padding:6px 10px;border-radius:6px;font-size:12.5px;color:var(--text);line-height:1.5;transition:background .12s}
+.comp-item:hover{background:var(--surface)}
+.comp-check{width:14px;height:14px;border-radius:4px;background:var(--green);flex-shrink:0;margin-top:3px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:8px;font-weight:700}
+.comp-check::after{content:'\2713'}
+.comp-agent{font-family:'DM Mono',monospace;font-size:9px;font-weight:600;padding:2px 6px;border-radius:4px;flex-shrink:0;margin-top:1px}
+.comp-agent.purple{background:rgba(139,92,246,0.1);color:#7c3aed}
+.comp-agent.pink{background:rgba(236,72,153,0.1);color:#db2777}
+.comp-agent.green{background:rgba(34,197,94,0.1);color:#16a34a}
+.comp-agent.orange{background:rgba(249,115,22,0.1);color:#ea580c}
+.comp-agent.rose{background:rgba(220,38,38,0.1);color:#dc2626}
+.comp-agent.amber{background:rgba(245,158,11,0.1);color:#92400e}
+
+/* Mobile responsive */
+@media(max-width:900px){
+  .header-nav{position:relative;left:0;transform:none;overflow-x:auto;max-width:60vw;-webkit-overflow-scrolling:touch}
+  .hero{padding:24px 20px}
+  .hero-title{font-size:24px}
+  .hero-stats{gap:16px}
+  .hero-stat-value{font-size:18px}
+  .agent-grid{grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:8px}
+  .groups-grid{grid-template-columns:1fr}
+}
+@media(max-width:600px){
+  .header-nav{max-width:55vw;gap:1px;padding:2px}
+  .nav-link{padding:4px 10px;font-size:12px}
+  .hero-stats{flex-direction:column;gap:10px}
+  .hero-stat{flex-direction:row;gap:8px;align-items:baseline}
+  .agent-grid{grid-template-columns:1fr 1fr;gap:6px}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">
+    <div class="logo-dot"></div>
+    <div class="logo-text">Mission Control</div>
+  </div>
+  <nav class="header-nav">
+    <a href="/" class="nav-link">Dashboard</a>
+    <a href="/dispatch" class="nav-link">Dispatch</a>
+    <a href="/campaigns" class="nav-link">Campaigns</a>
+    <a href="/findings" class="nav-link">Findings</a>
+    <a href="/close-out" class="nav-link active">Close-Out</a>
+  </nav>
+  <div class="header-right"></div>
+</header>
+
+<div class="shell">
+
+  <a href="/campaigns" class="back-link">
+    <svg viewBox="0 0 14 14" fill="none"><path d="M9 3L5 7l4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    Back to Campaigns
+  </a>
+
+  <!-- Hero -->
+  <div class="hero">
+    <div class="hero-eyebrow">Campaign Close-Out</div>
+    <h1 class="hero-title">MC Evolution Sprint</h1>
+    <p class="hero-subtitle">What to finish, what to defer. Review the current state of campaign-001 and decide the path forward for each remaining item.</p>
+    <div class="hero-stats">
+      <div class="hero-stat">
+        <span class="hero-stat-value purple">15</span>
+        <span class="hero-stat-label">Agents</span>
+      </div>
+      <div class="hero-stat">
+        <span class="hero-stat-value green">27</span>
+        <span class="hero-stat-label">Wins</span>
+      </div>
+      <div class="hero-stat">
+        <span class="hero-stat-value rose">10</span>
+        <span class="hero-stat-label">Losses</span>
+      </div>
+      <div class="hero-stat">
+        <span class="hero-stat-value blue">52</span>
+        <span class="hero-stat-label">Findings</span>
+      </div>
+      <div class="hero-stat">
+        <span class="hero-stat-value text3">Mar 6</span>
+        <span class="hero-stat-label">Started</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Section 1: Agent Status -->
+  <h2 class="section-title">Agent Status <span class="count">16</span></h2>
+  <div class="agent-grid">
+    <!-- ACTIVE -->
+    <div class="ag-card">
+      <div class="ag-bar purple"></div>
+      <div class="ag-inner">
+        <div class="ag-top">
+          <span class="ag-name purple">Orchestrator v1.1</span>
+          <span class="ag-badge active">Active</span>
+        </div>
+        <div class="ag-desc">Coordinate-only. Parsing, dispatching, capturing findings.</div>
+      </div>
+    </div>
+    <!-- COMPLETED -->
+    <div class="ag-card">
+      <div class="ag-bar purple"></div>
+      <div class="ag-inner">
+        <div class="ag-top">
+          <span class="ag-name purple">Orchestrator v1.0</span>
+          <span class="ag-badge completed">Completed</span>
+        </div>
+        <div class="ag-desc">Built campaign infra, coordinated 15 agents, 10hr session</div>
+      </div>
+    </div>
+    <div class="ag-card">
+      <div class="ag-bar amber"></div>
+      <div class="ag-inner">
+        <div class="ag-top">
+          <span class="ag-name amber">Beacon</span>
+          <span class="ag-badge completed">Completed</span>
+        </div>
+        <div class="ag-desc">Terminal auto-naming, /name, /end-session</div>
+      </div>
+    </div>
+    <div class="ag-card">
+      <div class="ag-bar blue"></div>
+      <div class="ag-inner">
+        <div class="ag-top">
+          <span class="ag-name blue">Compass</span>
+          <span class="ag-badge completed">Completed</span>
+        </div>
+        <div class="ag-desc">Value prop, /why page, 7 recommendations</div>
+      </div>
+    </div>
+    <div class="ag-card">
+      <div class="ag-bar cyan"></div>
+      <div class="ag-inner">
+        <div class="ag-top">
+          <span class="ag-name cyan">Overwatch</span>
+          <span class="ag-badge completed">Completed</span>
+        </div>
+        <div class="ag-desc">Inspector panel spec, competitive analysis</div>
+      </div>
+    </div>
+    <div class="ag-card">
+      <div class="ag-bar pink"></div>
+      <div class="ag-inner">
+        <div class="ag-top">
+          <span class="ag-name pink">Polisher</span>
+          <span class="ag-badge completed">Completed</span>
+        </div>
+        <div class="ag-desc">/why polished, /demo-guide created</div>
+      </div>
+    </div>
+    <div class="ag-card">
+      <div class="ag-bar green"></div>
+      <div class="ag-inner">
+        <div class="ag-top">
+          <span class="ag-name green">Retrospector</span>
+          <span class="ag-badge completed">Completed</span>
+        </div>
+        <div class="ag-desc">Campaign retrospective, 7 lessons</div>
+      </div>
+    </div>
+    <div class="ag-card">
+      <div class="ag-bar orange"></div>
+      <div class="ag-inner">
+        <div class="ag-top">
+          <span class="ag-name orange">Integrator</span>
+          <span class="ag-badge completed">Completed</span>
+        </div>
+        <div class="ag-desc">Retro tab on Dashboard cards</div>
+      </div>
+    </div>
+    <div class="ag-card">
+      <div class="ag-bar indigo"></div>
+      <div class="ag-inner">
+        <div class="ag-top">
+          <span class="ag-name indigo">Analyst</span>
+          <span class="ag-badge completed">Completed</span>
+        </div>
+        <div class="ag-desc">Session analytics infra, sub-agent visibility gap</div>
+      </div>
+    </div>
+    <div class="ag-card">
+      <div class="ag-bar purple"></div>
+      <div class="ag-inner">
+        <div class="ag-top">
+          <span class="ag-name purple">Video Analyzer</span>
+          <span class="ag-badge completed">Completed</span>
+        </div>
+        <div class="ag-desc">2hr demo &rarr; 80KB transcript, 15 quotes</div>
+      </div>
+    </div>
+    <div class="ag-card">
+      <div class="ag-bar blue"></div>
+      <div class="ag-inner">
+        <div class="ag-top">
+          <span class="ag-name blue">Findings Analyst</span>
+          <span class="ag-badge completed">Completed</span>
+        </div>
+        <div class="ag-desc">8 findings, 12 dispatch items from transcript</div>
+      </div>
+    </div>
+    <div class="ag-card">
+      <div class="ag-bar green"></div>
+      <div class="ag-inner">
+        <div class="ag-top">
+          <span class="ag-name green">Medic</span>
+          <span class="ag-badge completed">Completed</span>
+        </div>
+        <div class="ag-desc">/health diagnostics page</div>
+      </div>
+    </div>
+    <div class="ag-card">
+      <div class="ag-bar cyan"></div>
+      <div class="ag-inner">
+        <div class="ag-top">
+          <span class="ag-name cyan">Pipeline Architect</span>
+          <span class="ag-badge completed">Completed</span>
+        </div>
+        <div class="ag-desc">/capture, /president v1, Discord triage</div>
+      </div>
+    </div>
+    <div class="ag-card">
+      <div class="ag-bar amber"></div>
+      <div class="ag-inner">
+        <div class="ag-top">
+          <span class="ag-name amber">Dashboard Fix</span>
+          <span class="ag-badge completed">Completed</span>
+        </div>
+        <div class="ag-desc">Blank card bug fixed</div>
+      </div>
+    </div>
+    <div class="ag-card">
+      <div class="ag-bar blue"></div>
+      <div class="ag-inner">
+        <div class="ag-top">
+          <span class="ag-name blue">Morning Brief</span>
+          <span class="ag-badge completed">Completed</span>
+        </div>
+        <div class="ag-desc">Wake-up summary written</div>
+      </div>
+    </div>
+    <div class="ag-card">
+      <div class="ag-bar rose"></div>
+      <div class="ag-inner">
+        <div class="ag-top">
+          <span class="ag-name rose">Workflow Redesign</span>
+          <span class="ag-badge completed">Completed</span>
+        </div>
+        <div class="ag-desc">Partial: hook flow + collapsibles. Loop prototype needs circle layout. Closed by user.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Section 2: Remaining Items -->
+  <h2 class="section-title">Remaining Items <span class="count">37</span></h2>
+  <div class="groups-grid">
+
+    <!-- Group A: Campaigns Page Overhaul -->
+    <div class="group-card priority-must-close">
+      <div class="group-header" onclick="toggleGroup('group-a')">
+
+        <div class="group-name">Campaigns Page Overhaul</div>
+        <div class="group-count">10</div>
+        <div class="group-priority must-close">Must Close</div>
+        <div class="group-chevron" id="chevron-group-a"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M3 4.5L6 7.5L9 4.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+      </div>
+      <div class="group-body" id="body-group-a">
+        <div class="group-items">
+          <div class="g-item"><span class="g-num">1</span><span class="g-text"><span class="g-key">Campaign states:</span> setup &rarr; active &rarr; retro &rarr; done</span></div>
+          <div class="g-item"><span class="g-num">2</span><span class="g-text"><span class="g-key">Close-out flow</span> &mdash; button to mark done, surface what moves forward</span></div>
+          <div class="g-item"><span class="g-num">3</span><span class="g-text"><span class="g-key">Activity feed</span> &mdash; interleaved agent timeline</span></div>
+          <div class="g-item"><span class="g-num">4</span><span class="g-text"><span class="g-key">Wins/Losses view</span></span></div>
+          <div class="g-item"><span class="g-num">5</span><span class="g-text"><span class="g-key">View buttons</span> on debrief items with linkable pages</span></div>
+          <div class="g-item"><span class="g-num">6</span><span class="g-text"><span class="g-key">Wire /why</span> as viewable deliverable</span></div>
+          <div class="g-item"><span class="g-num">7</span><span class="g-text"><span class="g-key">Sprint iteration</span> tracking</span></div>
+          <div class="g-item"><span class="g-num">8</span><span class="g-text"><span class="g-key">Agent-to-remaining linking</span> &mdash; pulse/highlight</span></div>
+          <div class="g-item"><span class="g-num">9</span><span class="g-text"><span class="g-key">Refresh retrospective</span> &mdash; stale, v1.0 wrote it</span></div>
+          <div class="g-item"><span class="g-num">10</span><span class="g-text"><span class="g-key">Embed story + video-findings</span> into campaign page</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Group B: Dashboard Upgrades -->
+    <div class="group-card priority-can-wait">
+      <div class="group-header" onclick="toggleGroup('group-b')">
+
+        <div class="group-name">Dashboard Upgrades</div>
+        <div class="group-count">5</div>
+        <div class="group-priority can-wait">Can Wait</div>
+        <div class="group-chevron" id="chevron-group-b"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M3 4.5L6 7.5L9 4.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+      </div>
+      <div class="group-body" id="body-group-b">
+        <div class="group-items">
+          <div class="g-item"><span class="g-num">1</span><span class="g-text"><span class="g-key">Inspector panel</span> &mdash; Overwatch's #1 rec</span></div>
+          <div class="g-item"><span class="g-num">2</span><span class="g-text"><span class="g-key">Dead agent auto-detection</span></span></div>
+          <div class="g-item"><span class="g-num">3</span><span class="g-text"><span class="g-key">Dashboard-Campaign backward link</span></span></div>
+          <div class="g-item"><span class="g-num">4</span><span class="g-text"><span class="g-key">Agent card modals</span> &mdash; click to expand, prompt + metrics</span></div>
+          <div class="g-item"><span class="g-num">5</span><span class="g-text"><span class="g-key">Capture button</span> on Dashboard</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Group C: Infrastructure -->
+    <div class="group-card priority-important">
+      <div class="group-header" onclick="toggleGroup('group-c')">
+
+        <div class="group-name">Infrastructure</div>
+        <div class="group-count">5</div>
+        <div class="group-priority important">Important</div>
+        <div class="group-chevron" id="chevron-group-c"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M3 4.5L6 7.5L9 4.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+      </div>
+      <div class="group-body" id="body-group-c">
+        <div class="group-items">
+          <div class="g-item"><span class="g-num">1</span><span class="g-text"><span class="g-key">Split server.js</span> into modules (3600+ lines)</span></div>
+          <div class="g-item"><span class="g-num">2</span><span class="g-text"><span class="g-key">Default sub-agents to Sonnet</span> &mdash; save tokens</span></div>
+          <div class="g-item"><span class="g-num">3</span><span class="g-text"><span class="g-key">Sub-agent tool visibility</span> &mdash; P0, platform limitation</span></div>
+          <div class="g-item"><span class="g-num">4</span><span class="g-text"><span class="g-key">Connect campaign cards</span> to Dashboard hooks</span></div>
+          <div class="g-item"><span class="g-num">5</span><span class="g-text"><span class="g-key">Kill switch</span> on campaign cards</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Group D: Nav + UX -->
+    <div class="group-card priority-can-wait">
+      <div class="group-header" onclick="toggleGroup('group-d')">
+
+        <div class="group-name">Nav + UX</div>
+        <div class="group-count">3</div>
+        <div class="group-priority can-wait">Can Wait</div>
+        <div class="group-chevron" id="chevron-group-d"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M3 4.5L6 7.5L9 4.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+      </div>
+      <div class="group-body" id="body-group-d">
+        <div class="group-items">
+          <div class="g-item"><span class="g-num">1</span><span class="g-text"><span class="g-key">Nav redesign</span> &mdash; Approach A, dropdown, animated, 3 prototypes</span></div>
+          <div class="g-item"><span class="g-num">2</span><span class="g-text"><span class="g-key">Findings two-tier toggle</span> &mdash; TLDR/full</span></div>
+          <div class="g-item"><span class="g-num">3</span><span class="g-text"><span class="g-key">Notification sound</span> (PM007)</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Group E: Content & Research -->
+    <div class="group-card priority-can-wait">
+      <div class="group-header" onclick="toggleGroup('group-e')">
+
+        <div class="group-name">Content &amp; Research</div>
+        <div class="group-count">5</div>
+        <div class="group-priority can-wait">Can Wait</div>
+        <div class="group-chevron" id="chevron-group-e"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M3 4.5L6 7.5L9 4.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+      </div>
+      <div class="group-body" id="body-group-e">
+        <div class="group-items">
+          <div class="g-item"><span class="g-num">1</span><span class="g-text"><span class="g-key">Update /why</span> with self-evolving narrative</span></div>
+          <div class="g-item"><span class="g-num">2</span><span class="g-text"><span class="g-key">"Ten Commandments"</span> reference in Workflow/Why</span></div>
+          <div class="g-item"><span class="g-num">3</span><span class="g-text"><span class="g-key">Study 2 IndyDevDan videos</span> &mdash; competitive intel</span></div>
+          <div class="g-item"><span class="g-num">4</span><span class="g-text"><span class="g-key">Starter guide</span> polish</span></div>
+          <div class="g-item"><span class="g-num">5</span><span class="g-text"><span class="g-key">FHL hooks demo prep</span> &mdash; P1, not MC-focused</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Group F: Analytics & Meta -->
+    <div class="group-card priority-important">
+      <div class="group-header" onclick="toggleGroup('group-f')">
+
+        <div class="group-name">Analytics &amp; Meta</div>
+        <div class="group-count">4</div>
+        <div class="group-priority important">Important</div>
+        <div class="group-chevron" id="chevron-group-f"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M3 4.5L6 7.5L9 4.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+      </div>
+      <div class="group-body" id="body-group-f">
+        <div class="group-items">
+          <div class="g-item"><span class="g-num">1</span><span class="g-text"><span class="g-key">Session analytics</span> per card</span></div>
+          <div class="g-item"><span class="g-num">2</span><span class="g-text"><span class="g-key">Campaign metrics</span> &mdash; what makes a "great" session</span></div>
+          <div class="g-item"><span class="g-num">3</span><span class="g-text"><span class="g-key">Agent quality metrics</span> &mdash; track completion rate, feed back into toolbox</span></div>
+          <div class="g-item"><span class="g-num">4</span><span class="g-text"><span class="g-key">Reusable Orchestrator skill</span> from v1.1 patterns</span></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Section 3: Deferred to Campaign-002 -->
+  <h2 class="section-title">Deferred to Campaign-002 <span class="count">5</span></h2>
+  <div class="deferred">
+    <div class="deferred-header has-border">
+      <div class="deferred-dot"></div>
+      <div class="deferred-title">Parked for next sprint</div>
+      <div class="deferred-count">5 items</div>
+    </div>
+    <div class="deferred-list">
+      <div class="def-item">Web interface for MC</div>
+      <div class="def-item">Auto-dispatch from browser</div>
+      <div class="def-item">Auto-dispatch via CLI flags</div>
+      <div class="def-item">Self-updating profile v2</div>
+      <div class="def-item">Dispatch improvements (own campaign)</div>
+    </div>
+  </div>
+
+  <!-- Section 4: Items Completed This Sprint -->
+  <h2 class="section-title">Completed This Sprint <span class="count">8</span></h2>
+  <div class="completed-section">
+    <div class="completed-header" onclick="toggleCompleted()">
+      <div class="completed-dot"></div>
+      <div class="completed-title">8 items completed and removed</div>
+      <div class="completed-count">click to expand</div>
+      <div class="completed-chevron" id="completedChevron"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M3 4.5L6 7.5L9 4.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+    </div>
+    <div class="completed-body" id="completedBody">
+      <div class="completed-list">
+        <div class="comp-item"><div class="comp-check"></div><span class="comp-agent pink">Polisher</span><span>/demo-guide page</span></div>
+        <div class="comp-item"><div class="comp-check"></div><span class="comp-agent pink">Polisher</span><span>Polish /why page</span></div>
+        <div class="comp-item"><div class="comp-check"></div><span class="comp-agent green">Retrospector</span><span>Campaign retrospective</span></div>
+        <div class="comp-item"><div class="comp-check"></div><span class="comp-agent orange">Integrator</span><span>Retrospective tab on Dashboard</span></div>
+        <div class="comp-item"><div class="comp-check"></div><span class="comp-agent rose">Video Analyzer</span><span>Intake 2-hour demo recording</span></div>
+        <div class="comp-item"><div class="comp-check"></div><span class="comp-agent rose">Video Analyzer</span><span>Video preprocessing</span></div>
+        <div class="comp-item"><div class="comp-check"></div><span class="comp-agent amber">Orchestrator</span><span>Follow-up debrief wins/losses (partial)</span></div>
+        <div class="comp-item"><div class="comp-check"></div><span class="comp-agent purple">Orchestrator</span><span>Duplicate items merged (President page x2, /demo-guide x2)</span></div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+/* Toggle group by unique ID — each card operates independently */
+function toggleGroup(groupId) {
+  const body = document.getElementById('body-' + groupId);
+  const chevron = document.getElementById('chevron-' + groupId);
+  if (!body || !chevron) return;
+  body.classList.toggle('open');
+  chevron.classList.toggle('open');
+}
+
+function toggleCompleted() {
+  const body = document.getElementById('completedBody');
+  const chevron = document.getElementById('completedChevron');
+  body.classList.toggle('open');
+  chevron.classList.toggle('open');
+}
+</script>
+
+</body>
+</html>

@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>Capture &mdash; Mission Control</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=DM+Sans:wght@400;500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#fff;--bg2:#fafafa;--surface:#f4f4f5;--surface2:#e4e4e7;
+  --text:#09090b;--text2:#52525b;--text3:#a1a1aa;--sep:#e4e4e7;
+  --purple:#8b5cf6;--purple-bg:rgba(139,92,246,0.06);
+  --green:#22c55e;--green-bg:rgba(34,197,94,0.06);
+  --blue:#3b82f6;--blue-bg:rgba(59,130,246,0.06);
+  --amber:#f59e0b;--amber-bg:rgba(245,158,11,0.06);
+  --rose:#ef4444;--rose-bg:rgba(239,68,68,0.05);
+  --cyan:#06b6d4;--cyan-bg:rgba(6,182,212,0.06);
+  --radius:12px;
+}
+body{background:var(--bg2);color:var(--text);font-family:'DM Sans',-apple-system,sans-serif;-webkit-font-smoothing:antialiased;min-height:100vh;min-height:100dvh}
+
+/* Header */
+header{display:flex;align-items:center;justify-content:space-between;padding:0 clamp(16px,4vw,48px);height:56px;background:var(--bg);border-bottom:1px solid var(--sep);position:sticky;top:0;z-index:50}
+.logo{display:flex;align-items:center;gap:10px}
+.logo-dot{width:8px;height:8px;border-radius:50%;background:var(--cyan)}
+.logo-text{font-family:'Plus Jakarta Sans',sans-serif;font-size:14px;font-weight:700;letter-spacing:-0.02em}
+.header-nav{display:flex;gap:2px;padding:3px;background:var(--surface);border-radius:8px}
+.nav-link{padding:6px 12px;font-size:11px;font-weight:500;color:var(--text3);text-decoration:none;border-radius:6px;transition:all .15s}
+.nav-link:hover{color:var(--text2);background:var(--bg)}
+.nav-link.active{color:var(--text);background:var(--bg);box-shadow:0 1px 3px rgba(0,0,0,.06)}
+
+/* Main content */
+.wrap{padding:16px clamp(16px,4vw,48px) 100px;max-width:640px;margin:0 auto}
+
+/* Capture card */
+.capture-card{background:var(--bg);border:1px solid var(--sep);border-radius:16px;overflow:hidden;margin-bottom:16px;position:relative}
+.capture-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--cyan),var(--purple))}
+.capture-inner{padding:20px}
+.capture-title{font-family:'Plus Jakarta Sans',sans-serif;font-size:18px;font-weight:800;letter-spacing:-0.03em;margin-bottom:4px}
+.capture-sub{font-size:12px;color:var(--text3);margin-bottom:16px}
+
+/* Input area */
+.input-wrap{position:relative;margin-bottom:12px}
+.idea-input{width:100%;min-height:100px;padding:14px 16px;border:1.5px solid var(--sep);border-radius:var(--radius);font-family:'DM Sans',sans-serif;font-size:15px;line-height:1.6;color:var(--text);background:var(--bg);resize:vertical;transition:border-color .2s,box-shadow .2s;outline:none}
+.idea-input:focus{border-color:var(--cyan);box-shadow:0 0 0 3px rgba(6,182,212,0.1)}
+.idea-input::placeholder{color:var(--text3)}
+.char-count{position:absolute;bottom:8px;right:12px;font-family:'DM Mono',monospace;font-size:10px;color:var(--text3)}
+
+/* Type badges */
+.type-row{display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap}
+.type-btn{padding:6px 14px;border-radius:100px;font-size:12px;font-weight:600;border:1.5px solid var(--sep);background:var(--bg);color:var(--text2);cursor:pointer;transition:all .15s;-webkit-tap-highlight-color:transparent}
+.type-btn:hover,.type-btn.active{border-color:var(--cyan);background:var(--cyan-bg);color:#0891b2}
+.type-btn.active{box-shadow:0 0 0 2px rgba(6,182,212,0.15)}
+
+/* Voice button */
+.voice-btn{width:48px;height:48px;border-radius:50%;border:2px solid var(--sep);background:var(--bg);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .2s;-webkit-tap-highlight-color:transparent;flex-shrink:0}
+.voice-btn:hover{border-color:var(--purple);background:var(--purple-bg)}
+.voice-btn.recording{border-color:var(--rose);background:var(--rose-bg);animation:pulse 1.5s ease infinite}
+.voice-btn svg{width:22px;height:22px;color:var(--text2)}
+.voice-btn.recording svg{color:var(--rose)}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(239,68,68,0.3)}50%{box-shadow:0 0 0 10px rgba(239,68,68,0)}}
+
+/* Submit row */
+.submit-row{display:flex;gap:10px;align-items:center}
+.submit-btn{flex:1;padding:14px 20px;border-radius:var(--radius);border:none;background:linear-gradient(135deg,var(--cyan),var(--purple));color:#fff;font-family:'Plus Jakarta Sans',sans-serif;font-size:15px;font-weight:700;cursor:pointer;transition:all .2s;-webkit-tap-highlight-color:transparent;letter-spacing:-0.01em}
+.submit-btn:hover{transform:translateY(-1px);box-shadow:0 4px 16px rgba(139,92,246,0.25)}
+.submit-btn:active{transform:scale(0.98)}
+.submit-btn:disabled{opacity:0.5;cursor:not-allowed;transform:none;box-shadow:none}
+
+/* AI Reasoning panel */
+.reasoning-card{background:var(--bg);border:1px solid var(--sep);border-radius:var(--radius);overflow:hidden;margin-bottom:16px;display:none}
+.reasoning-card.visible{display:block;animation:slideIn .3s ease}
+@keyframes slideIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.reasoning-header{padding:12px 16px;background:linear-gradient(135deg,var(--purple-bg),var(--cyan-bg));border-bottom:1px solid rgba(139,92,246,0.1);display:flex;align-items:center;gap:8px}
+.reasoning-dot{width:8px;height:8px;border-radius:50%;background:var(--purple)}
+.reasoning-label{font-family:'Plus Jakarta Sans',sans-serif;font-size:12px;font-weight:700;color:var(--purple)}
+.reasoning-body{padding:14px 16px}
+.reasoning-text{font-size:13px;line-height:1.7;color:var(--text2)}
+.reasoning-text strong{color:var(--text);font-weight:600}
+.reasoning-loading{display:flex;align-items:center;gap:10px;padding:14px 16px;font-size:12px;color:var(--text3)}
+.reasoning-loading .dots{display:inline-flex;gap:3px}
+.reasoning-loading .dots span{width:5px;height:5px;border-radius:50%;background:var(--purple);animation:dotPulse .8s ease infinite}
+.reasoning-loading .dots span:nth-child(2){animation-delay:.15s}
+.reasoning-loading .dots span:nth-child(3){animation-delay:.3s}
+@keyframes dotPulse{0%,100%{opacity:.3;transform:scale(.8)}50%{opacity:1;transform:scale(1.1)}}
+
+/* Action buttons */
+.action-row{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap}
+.action-btn{padding:8px 16px;border-radius:8px;font-size:12px;font-weight:600;border:1.5px solid var(--sep);background:var(--bg);color:var(--text2);cursor:pointer;transition:all .15s;display:flex;align-items:center;gap:6px;-webkit-tap-highlight-color:transparent}
+.action-btn:hover{transform:translateY(-1px);box-shadow:0 2px 8px rgba(0,0,0,.06)}
+.action-btn.dispatch{border-color:var(--blue);color:var(--blue);background:var(--blue-bg)}
+.action-btn.dispatch:hover{background:var(--blue);color:#fff}
+.action-btn.radar{border-color:var(--cyan);color:#0891b2;background:var(--cyan-bg)}
+.action-btn.radar:hover{background:var(--cyan);color:#fff}
+.action-btn.archive{border-color:var(--surface2);color:var(--text3)}
+.action-btn.archive:hover{background:var(--surface);color:var(--text2)}
+
+/* Recent captures list */
+.section-title{font-family:'Plus Jakarta Sans',sans-serif;font-size:14px;font-weight:800;letter-spacing:-0.01em;margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.section-title .count{font-family:'DM Mono',monospace;font-size:10px;color:var(--text3);background:var(--surface);padding:1px 7px;border-radius:100px}
+
+.capture-list{display:flex;flex-direction:column;gap:8px}
+.capture-item{background:var(--bg);border:1px solid var(--sep);border-radius:var(--radius);padding:14px 16px;transition:all .15s;position:relative;overflow:hidden}
+.capture-item:hover{box-shadow:0 2px 12px rgba(0,0,0,.04);transform:translateY(-1px)}
+.capture-item-top{display:flex;align-items:center;gap:8px;margin-bottom:6px}
+.capture-type-badge{font-family:'DM Mono',monospace;font-size:9px;font-weight:600;padding:2px 8px;border-radius:100px;text-transform:uppercase;letter-spacing:.04em}
+.capture-type-badge.link{background:var(--blue-bg);color:var(--blue)}
+.capture-type-badge.idea{background:var(--purple-bg);color:var(--purple)}
+.capture-type-badge.task{background:var(--amber-bg);color:var(--amber)}
+.capture-type-badge.research{background:var(--cyan-bg);color:#0891b2}
+.capture-time{font-family:'DM Mono',monospace;font-size:10px;color:var(--text3)}
+.capture-item-text{font-size:13px;line-height:1.6;color:var(--text);display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.capture-item-reasoning{font-size:11px;color:var(--text3);margin-top:6px;line-height:1.5;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.capture-item-actions{display:flex;gap:6px;margin-top:10px}
+.capture-item-actions .action-btn{padding:5px 12px;font-size:11px}
+
+/* Status badges */
+.status-badge{font-family:'DM Mono',monospace;font-size:9px;padding:2px 8px;border-radius:100px;text-transform:uppercase;letter-spacing:.04em;margin-left:auto}
+.status-badge.staged{background:var(--amber-bg);color:var(--amber)}
+.status-badge.promoted{background:var(--green-bg);color:var(--green)}
+.status-badge.archived{background:var(--surface);color:var(--text3)}
+
+/* Empty state */
+.empty-state{text-align:center;padding:40px 20px;color:var(--text3)}
+.empty-icon{font-size:32px;margin-bottom:8px;opacity:.4}
+.empty-text{font-size:13px;line-height:1.6}
+
+/* Toast notification */
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(100px);background:var(--text);color:#fff;padding:10px 20px;border-radius:100px;font-size:13px;font-weight:500;z-index:100;transition:transform .3s cubic-bezier(.4,0,.2,1);box-shadow:0 4px 20px rgba(0,0,0,.2)}
+.toast.show{transform:translateX(-50%) translateY(0)}
+
+/* URL preview */
+.url-preview{display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--surface);border-radius:8px;margin-bottom:12px;display:none}
+.url-preview.visible{display:flex;animation:slideIn .2s ease}
+.url-icon{width:32px;height:32px;border-radius:8px;background:var(--bg);display:flex;align-items:center;justify-content:center;flex-shrink:0;border:1px solid var(--sep)}
+.url-icon svg{width:16px;height:16px;color:var(--blue)}
+.url-meta{flex:1;min-width:0}
+.url-domain{font-family:'DM Mono',monospace;font-size:10px;color:var(--text3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.url-title-preview{font-size:12px;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+/* Responsive — already mobile-first, but enhance desktop */
+@media(min-width:768px){
+  .wrap{padding:24px 32px 80px}
+  header{height:64px;padding:0 clamp(24px,4vw,48px)}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">
+    <div class="logo-dot"></div>
+    <span class="logo-text">Mission Control</span>
+  </div>
+  <div class="header-nav">
+    <a href="/" class="nav-link">Dashboard</a>
+    <a href="/dispatch" class="nav-link">Dispatch</a>
+    <a href="/capture" class="nav-link active">Capture</a>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <!-- Capture Input Card -->
+  <div class="capture-card">
+    <div class="capture-inner">
+      <div class="capture-title">Capture an Idea</div>
+      <div class="capture-sub">Paste a link, describe an idea, or dictate a thought. AI will reason about it.</div>
+
+      <div class="url-preview" id="urlPreview">
+        <div class="url-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/></svg></div>
+        <div class="url-meta">
+          <div class="url-domain" id="urlDomain"></div>
+          <div class="url-title-preview" id="urlTitle">Link detected</div>
+        </div>
+      </div>
+
+      <div class="input-wrap">
+        <textarea class="idea-input" id="ideaInput" placeholder="Paste a URL, type an idea, or describe what you saw..." rows="4"></textarea>
+        <div class="char-count" id="charCount">0</div>
+      </div>
+
+      <div class="type-row">
+        <button class="type-btn active" data-type="auto">Auto-detect</button>
+        <button class="type-btn" data-type="link">Link</button>
+        <button class="type-btn" data-type="idea">Idea</button>
+        <button class="type-btn" data-type="task">Task</button>
+        <button class="type-btn" data-type="research">Research</button>
+      </div>
+
+      <div class="submit-row">
+        <button class="submit-btn" id="submitBtn" disabled>Capture &amp; Reason</button>
+        <button class="voice-btn" id="voiceBtn" title="Voice input">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1a3 3 0 00-3 3v8a3 3 0 006 0V4a3 3 0 00-3-3z"/><path d="M19 10v2a7 7 0 01-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- AI Reasoning Panel (appears after submit) -->
+  <div class="reasoning-card" id="reasoningCard">
+    <div class="reasoning-header">
+      <div class="reasoning-dot"></div>
+      <div class="reasoning-label">AI Analysis</div>
+    </div>
+    <div class="reasoning-loading" id="reasoningLoading">
+      Thinking<span class="dots"><span></span><span></span><span></span></span>
+    </div>
+    <div class="reasoning-body" id="reasoningBody" style="display:none">
+      <div class="reasoning-text" id="reasoningText"></div>
+      <div class="action-row" id="actionRow">
+        <button class="action-btn dispatch" onclick="promoteCapture('dispatch')">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/></svg>
+          Send to Dispatch
+        </button>
+        <button class="action-btn radar" onclick="promoteCapture('radar')">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>
+          Send to Radar
+        </button>
+        <button class="action-btn archive" onclick="promoteCapture('archive')">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6"/></svg>
+          Archive
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Recent Captures -->
+  <div class="section-title">Recent Captures <span class="count" id="captureCount">0</span></div>
+  <div class="capture-list" id="captureList">
+    <div class="empty-state" id="emptyState">
+      <div class="empty-icon">&#x1F4E1;</div>
+      <div class="empty-text">No captures yet. Paste a link or type an idea above.</div>
+    </div>
+  </div>
+
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+(function(){
+  // State
+  let captures = [];
+  let currentCapture = null;
+  let selectedType = 'auto';
+  let isRecording = false;
+  let recognition = null;
+
+  const input = document.getElementById('ideaInput');
+  const charCount = document.getElementById('charCount');
+  const submitBtn = document.getElementById('submitBtn');
+  const reasoningCard = document.getElementById('reasoningCard');
+  const reasoningLoading = document.getElementById('reasoningLoading');
+  const reasoningBody = document.getElementById('reasoningBody');
+  const reasoningText = document.getElementById('reasoningText');
+  const captureList = document.getElementById('captureList');
+  const captureCount = document.getElementById('captureCount');
+  const emptyState = document.getElementById('emptyState');
+  const urlPreview = document.getElementById('urlPreview');
+  const urlDomain = document.getElementById('urlDomain');
+  const urlTitle = document.getElementById('urlTitle');
+  const voiceBtn = document.getElementById('voiceBtn');
+  const toast = document.getElementById('toast');
+
+  // URL regex
+  const URL_RE = /https?:\/\/[^\s<>"{}|\\^`\[\]]+/i;
+
+  // Type buttons
+  document.querySelectorAll('.type-btn').forEach(btn => {
+    btn.addEventListener('click', function() {
+      document.querySelectorAll('.type-btn').forEach(b => b.classList.remove('active'));
+      this.classList.add('active');
+      selectedType = this.dataset.type;
+    });
+  });
+
+  // Input handling
+  input.addEventListener('input', function() {
+    charCount.textContent = this.value.length;
+    submitBtn.disabled = this.value.trim().length === 0;
+
+    // URL detection
+    const match = this.value.match(URL_RE);
+    if (match) {
+      try {
+        const url = new URL(match[0]);
+        urlDomain.textContent = url.hostname;
+        urlTitle.textContent = url.pathname.length > 1 ? decodeURIComponent(url.pathname.slice(1,60)) : 'Link detected';
+        urlPreview.classList.add('visible');
+        if (selectedType === 'auto') {
+          document.querySelectorAll('.type-btn').forEach(b => b.classList.remove('active'));
+          document.querySelector('[data-type="link"]').classList.add('active');
+        }
+      } catch(e) { urlPreview.classList.remove('visible'); }
+    } else {
+      urlPreview.classList.remove('visible');
+    }
+  });
+
+  // Paste handling — auto-detect and fill
+  input.addEventListener('paste', function(e) {
+    setTimeout(() => {
+      input.dispatchEvent(new Event('input'));
+    }, 50);
+  });
+
+  // Voice input
+  if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    recognition = new SpeechRecognition();
+    recognition.continuous = true;
+    recognition.interimResults = true;
+    recognition.lang = 'en-US';
+
+    recognition.onresult = function(e) {
+      let transcript = '';
+      for (let i = e.resultIndex; i < e.results.length; i++) {
+        transcript += e.results[i][0].transcript;
+      }
+      if (input.value && !input.value.endsWith(' ')) input.value += ' ';
+      // Replace interim with final
+      const base = input.dataset.preVoice || '';
+      input.value = base + transcript;
+      input.dispatchEvent(new Event('input'));
+    };
+
+    recognition.onend = function() {
+      isRecording = false;
+      voiceBtn.classList.remove('recording');
+      delete input.dataset.preVoice;
+    };
+
+    voiceBtn.addEventListener('click', function() {
+      if (isRecording) {
+        recognition.stop();
+      } else {
+        input.dataset.preVoice = input.value;
+        recognition.start();
+        isRecording = true;
+        voiceBtn.classList.add('recording');
+      }
+    });
+  } else {
+    voiceBtn.style.display = 'none';
+  }
+
+  // Submit
+  submitBtn.addEventListener('click', async function() {
+    const text = input.value.trim();
+    if (!text) return;
+
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Capturing...';
+
+    // Detect type
+    let type = selectedType;
+    if (type === 'auto') {
+      if (URL_RE.test(text)) type = 'link';
+      else if (/\b(todo|do|apply|submit|fix|build|create|make|add|update)\b/i.test(text)) type = 'task';
+      else if (/\b(research|look into|explore|study|investigate|read)\b/i.test(text)) type = 'research';
+      else type = 'idea';
+    }
+
+    // Extract URL if present
+    const urlMatch = text.match(URL_RE);
+    const url = urlMatch ? urlMatch[0] : null;
+
+    // Save capture
+    try {
+      const resp = await fetch('/api/captures', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ text, type, url })
+      });
+      const data = await resp.json();
+      currentCapture = data.capture;
+
+      // Show reasoning panel
+      reasoningCard.classList.add('visible');
+      reasoningLoading.style.display = 'flex';
+      reasoningBody.style.display = 'none';
+
+      // Get AI reasoning
+      try {
+        const aiResp = await fetch('/api/captures/' + data.capture.id + '/reason', { method: 'POST' });
+        const aiData = await aiResp.json();
+        reasoningText.innerHTML = aiData.reasoning || 'Could not analyze this idea. You can still route it manually.';
+        currentCapture.reasoning = aiData.reasoning;
+      } catch(e) {
+        reasoningText.innerHTML = '<strong>AI unavailable.</strong> Route this idea manually using the buttons below.';
+      }
+
+      reasoningLoading.style.display = 'none';
+      reasoningBody.style.display = 'block';
+
+      // Reset input
+      input.value = '';
+      charCount.textContent = '0';
+      urlPreview.classList.remove('visible');
+      document.querySelectorAll('.type-btn').forEach(b => b.classList.remove('active'));
+      document.querySelector('[data-type="auto"]').classList.add('active');
+      selectedType = 'auto';
+
+    } catch(e) {
+      showToast('Failed to capture. Try again.');
+    }
+
+    submitBtn.disabled = false;
+    submitBtn.textContent = 'Capture & Reason';
+    loadCaptures();
+  });
+
+  // Promote capture
+  window.promoteCapture = async function(destination) {
+    if (!currentCapture) return;
+    try {
+      await fetch('/api/captures/' + currentCapture.id + '/promote', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ destination })
+      });
+
+      const labels = { dispatch: 'Dispatch', radar: 'Radar', archive: 'Archive' };
+      showToast('Sent to ' + labels[destination]);
+      reasoningCard.classList.remove('visible');
+      currentCapture = null;
+      loadCaptures();
+    } catch(e) {
+      showToast('Failed to promote.');
+    }
+  };
+
+  // Promote from list
+  window.promoteItem = async function(id, destination, e) {
+    if (e) e.stopPropagation();
+    try {
+      await fetch('/api/captures/' + id + '/promote', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ destination })
+      });
+      const labels = { dispatch: 'Dispatch', radar: 'Radar', archive: 'Archive' };
+      showToast('Sent to ' + labels[destination]);
+      loadCaptures();
+    } catch(e) {
+      showToast('Failed.');
+    }
+  };
+
+  // Load captures
+  async function loadCaptures() {
+    try {
+      const resp = await fetch('/api/captures');
+      captures = await resp.json();
+      renderCaptures();
+    } catch(e) {
+      console.error('Failed to load captures', e);
+    }
+  }
+
+  function renderCaptures() {
+    const staged = captures.filter(c => c.status === 'staged');
+    captureCount.textContent = staged.length;
+
+    if (!staged.length) {
+      captureList.innerHTML = '<div class="empty-state"><div class="empty-icon">&#x1F4E1;</div><div class="empty-text">No captures yet. Paste a link or type an idea above.</div></div>';
+      return;
+    }
+
+    captureList.innerHTML = staged.map(c => {
+      const typeClass = c.type || 'idea';
+      const time = new Date(c.created).toLocaleString('en-US', { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' });
+      const reasoningSnippet = c.reasoning ? '<div class="capture-item-reasoning">' + escHtml(c.reasoning.replace(/<[^>]+>/g, '').slice(0, 150)) + '</div>' : '';
+
+      return '<div class="capture-item">'
+        + '<div class="capture-item-top">'
+        + '<span class="capture-type-badge ' + typeClass + '">' + typeClass + '</span>'
+        + '<span class="capture-time">' + time + '</span>'
+        + '<span class="status-badge staged">Staged</span>'
+        + '</div>'
+        + '<div class="capture-item-text">' + escHtml(c.text.slice(0, 300)) + '</div>'
+        + reasoningSnippet
+        + '<div class="capture-item-actions">'
+        + '<button class="action-btn dispatch" onclick="promoteItem(\'' + c.id + '\',\'dispatch\',event)">Dispatch</button>'
+        + '<button class="action-btn radar" onclick="promoteItem(\'' + c.id + '\',\'radar\',event)">Radar</button>'
+        + '<button class="action-btn archive" onclick="promoteItem(\'' + c.id + '\',\'archive\',event)">Archive</button>'
+        + '</div>'
+        + '</div>';
+    }).join('');
+  }
+
+  function escHtml(s) {
+    return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+
+  function showToast(msg) {
+    toast.textContent = msg;
+    toast.classList.add('show');
+    setTimeout(() => toast.classList.remove('show'), 2500);
+  }
+
+  // Initial load
+  loadCaptures();
+
+  // Poll for updates (other devices might be capturing too)
+  setInterval(loadCaptures, 15000);
+})();
+</script>
+
+</body>
+</html>

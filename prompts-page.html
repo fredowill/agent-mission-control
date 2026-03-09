@@ -50,6 +50,32 @@ h1{font-family:'Plus Jakarta Sans',sans-serif;font-size:28px;font-weight:800;let
 <script>
 const prompts = [
   {
+    name: 'Orchestrator v1.1',
+    focus: 'Fresh orchestrator with full campaign context',
+    text: `You are Orchestrator v1.1 for the MC Evolution Sprint campaign. The previous orchestrator (v1.0) ran for 10+ hours, coordinated 15 agents, and hit 2GB context limits. You're picking up where it left off with fresh context.
+
+Read these files in order:
+1. C:\\Users\\ephra\\phredomade\\CLAUDE.md (the 10 rules that govern everything)
+2. C:\\Users\\ephra\\phredomade\\.claude\\agent-hub\\coordinated-sprint\\orchestrator-handoff.md (full campaign context, active agents, P0s, user work style)
+3. C:\\Users\\ephra\\phredomade\\.claude\\agent-hub\\coordinated-sprint\\orchestrator-v1.0-retrospective.md (what v1.0 did well and badly, what you must improve)
+4. C:\\Users\\ephra\\phredomade\\.claude\\agent-hub\\campaigns.json (campaign status, agent phases, debrief)
+
+Your first tasks after reading:
+1. Check which agents are currently running (read recent state files in .claude/agent-hub/states/)
+2. Tell me: what's running, what's the top priority, what do you need from me
+3. Create a visual "Orchestrator v1.0 Story" on the campaigns page or its own page. This should be a visually clean, scannable timeline of the v1.0 session: what was built, what broke, key decisions, the arc from start to finish. Think of it as a visual retrospective that makes the 10-hour session understandable in 2 minutes. Not a wall of text. Visual. Timeline. Color-coded.
+
+Key lessons from v1.0 (internalize these):
+- ALWAYS Playwright test UI changes. If at high context, dispatch a sub-agent.
+- Pause after delivering what the user asked for. Don't fly off.
+- Readability is sacred. Bold leads, no scroll prisons, aligned columns.
+- Lightweight above all. MC's biggest risk is information overload.
+- User's next action > your next edit. Always.
+- One long orchestrator + many short executors. Don't do everything yourself.
+
+Tell me your plan after reading everything.`
+  },
+  {
     name: 'Beacon',
     focus: 'Terminal Identity + Session Retrospective',
     text: `Hey, I need you to work on two critical things for my workflow. This is part of a coordinated sprint I'm running right now \u2014 I have 4 agents working simultaneously on different parts of Mission Control. You're the Beacon agent.
@@ -165,6 +191,205 @@ DON'T touch dispatch-page.html, campaigns-page.html, hook.js, or prompt-hook.js.
 Design: Plus Jakarta Sans headings, DM Sans body, DM Mono data. Purple #8b5cf6. Apple-inspired. CLAUDE.md Rule #10: every UI must be human-centered and polished.
 
 Tell me your plan before building.`
+  },
+  {
+    name: 'Workflow Builder',
+    focus: 'Full /workflow page redesign — 4 tabs, hero visualizations, expandable sections (Sprint 7)',
+    text: `You are **Workflow Builder**, a P0 agent for the MC Evolution Sprint (campaign-001), Sprint 7. Your mission: redesign the /workflow page with a tabbed layout, hero visualizations, and expandable deep dives.
+
+---
+
+## AGENT LIFECYCLE (mandatory, follow in order)
+
+### Stage 1: 🎯 DEFINE
+
+**Read these files in this order:**
+1. docs/plans/2026-03-08-workflow-page-redesign-design.md — THE design doc. Every section, tab, visualization, and interaction is specified here. This is your blueprint. Read the ENTIRE thing.
+2. .claude/agent-hub/campaigns-page.html — the campaigns page. Match this design system exactly (tab bar, cards, colors, fonts, spacing). This is your visual reference.
+3. .claude/agent-hub/campaigns.json — campaign-001 data. You will pull real stats: GPA, agent count, skill usage rates, grades.
+4. .claude/skills/orchestrator/SKILL.md — the orchestrator skill (8 phases, 15 rules). Tab 3 visualizes this.
+5. .claude/agent-hub/findings.json — findings database. Tab 4 pulls recent findings + stats.
+6. CLAUDE.md — behavioral rules. Tab 1 shows these collapsible.
+
+**Find the current workflow page:**
+- Check if it is inline in .claude/agent-hub/server.js (search for /workflow route and readPage)
+- Or check .claude/agent-hub/pages/workflow.html
+- The page is a single HTML file served by readPage() from server.js
+
+**Success looks like:** User opens /workflow, sees 4 tabs, each with a hero visualization and expandable sections. Page feels like the campaigns page — same design quality. Scannable in 60 seconds per tab.
+
+**Constraints:**
+- Do NOT modify server.js. Only modify the workflow page HTML file.
+- Match campaigns page design system exactly (CSS vars, fonts, spacing, card patterns)
+- Single HTML file, no external JS libraries
+- All campaign data can be hardcoded (this is documentation, not a live dashboard)
+- Apple Design philosophy: minimal, obvious, considered
+
+### Stage 2: 🔍 DISCOVER
+
+Check available skills: ls .claude/skills/
+
+**You MUST use these skills:**
+- /frontend-design — for the page layout and visual design. This is mandatory.
+- /impeccable-polish — final quality pass before declaring done. Also mandatory.
+
+Also check: /impeccable-critique (self-evaluate before polish), /impeccable-animate (for the learning loop arrow animation)
+
+Check what MCP servers and tools are available.
+
+### Stage 3: ⚡ EXECUTE
+
+**The design doc specifies 4 tabs. Build them in order:**
+
+**Tab bar:** Light gray bg pill bar, active tab white with shadow. Exact same HTML/CSS pattern as campaigns page .tabs-bar / .tab-btn classes.
+
+**Tab 1: "How Agents Start"**
+- Hero: vertical rail pipeline (6 steps: Boot, Context, Memory, Hooks, First Prompt, Tool Calls)
+- Each step: numbered dot + emoji + bold title + 1-line description
+- Expandable: hook summary (compact table), memory files (interactive), CLAUDE.md rules (collapsible)
+
+**Tab 2: "How Agents Work"**
+- Hero: 5-stage lifecycle horizontal stepper (🎯 DEFINE, 🔍 DISCOVER, ⚡ EXECUTE, 🧠 REASON, ✅ VERIFY)
+- Each stage: colored card with icon, connected by arrows
+- Callout box (rose bg): "Campaign-001: only 4/19 agents reached Verify. Only 4/19 used any skill."
+- Expandable: A vs D agent comparison, skill effectiveness report (top used, miss analysis), prompt parsing rule (f065)
+
+**Tab 3: "How We Coordinate"**
+- Hero: orchestrator swimlane diagram (left: orchestrator 8 phases, right: agents dispatched/reporting)
+- Below: version history table, orchestrator skill modal (click for metrics modal then inline full skill), campaign flow (7 steps with detail), grading rubric (A-F table, colored, prominent), GPA with link
+- Orchestrator skill interaction: clicking opens a MODAL first showing usage metrics. From modal, "View Full Skill" button opens inline rendered content. Two levels: summary then deep dive.
+
+**Tab 4: "How We Learn"**
+- Hero: horizontal learning loop (Mistake, PM, Finding, Rule, Hook, Prevention) with animated dashed loop-back arrow curving back from Prevention to Mistake
+- Concrete example: v1.0 Dashboard breaks 3x, PM008, f029, CLAUDE.md Rule 7, hook enforcement, zero breaks since
+- Stats bar: findings count, rules count, hooks count, agents graded
+- Expandable: calibration concept (f054), recent findings (last 5-10), before/after comparison
+
+**Design system reference (from campaigns page):**
+--bg:#fff; --bg2:#fafafa; --surface:#f4f4f5; --surface2:#e4e4e7;
+--text:#09090b; --text2:#52525b; --text3:#a1a1aa; --sep:#e4e4e7;
+--purple:#8b5cf6; --blue:#3b82f6; --green:#22c55e;
+--amber:#f59e0b; --rose:#ef4444; --cyan:#06b6d4;
+--radius:12px;
+Fonts: Plus Jakarta Sans (headings, 700-800), DM Sans (body, 400-500), DM Mono (code/stats, 400)
+
+**Bold-lead text pattern (f059):** Every label/description starts with bold keyword first, then concise description. No paragraph walls.
+
+**Emojis:** Use in stage labels, status indicators, and anywhere they add clarity.
+
+### Stage 4: 🧠 REASON
+- Does each tab tell a complete story?
+- Is the Agent Lifecycle the most visually prominent element on the page?
+- Can someone who has never seen MC understand the system in 60 seconds per tab?
+- Does the orchestrator swimlane clearly show "one coordinator, many executors"?
+- Is the learning loop horizontal timeline clearer than the old broken circle?
+- Do expandable sections add depth without cluttering the default view?
+- Does the page match campaigns page design quality?
+
+### Stage 5: ✅ VERIFY
+- Take a Playwright screenshot of EACH TAB (4 screenshots minimum)
+- Verify tab switching works
+- Verify expandable sections open/close smoothly
+- Verify orchestrator skill modal opens and shows content
+- Check that the page matches campaigns page design quality
+- Test at narrow viewport (mobile) — tabs should scroll, content should stack
+- Verify all links work (/campaigns, /tools, /findings)
+
+## Constraints
+- ONE deliverable: the redesigned workflow page HTML file
+- Do NOT touch server.js, campaigns.json, findings.json, or any other file
+- The page should feel like it belongs next to the campaigns page — same family, same quality
+- No external JS libraries. Vanilla HTML/CSS/JS only.
+- Animations should be subtle and purposeful (learning loop arrow, tab transitions)
+
+## Visualization Research (from research scout)
+- Lifecycle stepper: Material Design stepper pattern — numbered circles connected by lines, active step highlighted
+- Swimlane: Orchestrator left lane (purple, vertical), agents right lane (various colors). Arrows labeled between lanes.
+- Learning loop: Horizontal timeline with SVG curved arrow using stroke-dasharray animation looping back
+- Tabs: Stripe/MkDocs pattern — light gray bg, active tab bottom border + bold + white bg + shadow
+- Expandable sections: Chevron toggle, smooth CSS height transition, same pattern as campaigns page`
+  },
+  {
+    name: 'Memory Cleanup',
+    focus: 'Strip stale content from memory files, keep only stable architecture + patterns (Sprint 7)',
+    text: `You are **Memory Cleanup**, a P0 agent for the MC Evolution Sprint (campaign-001), Sprint 7. Your mission: strip stale content from memory files and reorganize them around stable patterns only.
+
+Read the full PRD at: .claude/agent-hub/coordinated-sprint/memory-cleanup-prompt.md
+
+Key principle (f071): Memory must contain ONLY stable patterns. NEVER volatile data (agent counts, finding counts, GPAs). If it changes every sprint, don't write it.
+
+Tasks:
+1. Strip phredomade details to one line (it's shipped, not the focus)
+2. Remove volatile data (counts, session-specific state)
+3. Keep stable architecture (orchestrator pattern, dispatch checklist, lifecycle)
+4. Don't duplicate CLAUDE.md or orchestrator skill
+5. Clean up topic files (principles.md, design-context.md, etc.)
+6. Stay under 150 lines in MEMORY.md
+
+Read the full PRD first, then tell me your plan.`
+  },
+  {
+    name: 'Lifecycle Enforcer',
+    focus: 'Embed Agent Lifecycle in CLAUDE.md, audit prompts, create reference card (Sprint 7)',
+    text: `You are **Lifecycle Enforcer**, a P0 agent for the MC Evolution Sprint (campaign-001), Sprint 7. Your mission: ensure the 5-stage Agent Lifecycle is embedded in every agent-facing document.
+
+Read the full PRD at: .claude/agent-hub/coordinated-sprint/lifecycle-in-prompts-prompt.md
+
+The problem: only 4/21 agents used skills (Discover stage), only 2/21 reached Verify. The lifecycle exists but agents still skip stages.
+
+Tasks:
+1. Update CLAUDE.md with explicit lifecycle rule
+2. Verify orchestrator skill template includes all 5 stages
+3. Audit all existing prompts in coordinated-sprint/ — scorecard table
+4. Create lifecycle-reference.md with what passed/partial/failed means per stage
+
+Read the full PRD first, then tell me your plan.`
+  },
+  {
+    name: 'Grading Analyst',
+    focus: 'Analyze 21 agents + findings, build grading skill, redesign report card modal (Sprint 7)',
+    text: `You are **Grading Analyst**, a P0 agent for the MC Evolution Sprint (campaign-001), Sprint 7. Your mission: analyze what makes agents good vs bad, refactor the grading rubric into a proper skill, and redesign the agent report card UI on the campaigns page.
+
+Read the full PRD at: .claude/agent-hub/coordinated-sprint/grading-analyst-prompt.md
+
+Three deliverables:
+1. RESEARCH — analyze all 21 agents in campaigns.json + findings. What separates A from D? Do lifecycle weights make sense? Does skill usage actually correlate with quality?
+2. GRADING SKILL — create .claude/skills/agent-grading/SKILL.md with precise criteria per grade, lifecycle stage definitions, auto-grade checklist, weight justification with data
+3. REPORT CARD UI — redesign the modal in campaigns-page.html: clickable lifecycle stages with reasoning, score breakdown bars (Lifecycle: 32/40 + Deliverables: 25/25 etc), formatted delivered/missed with bold + symbols + color, skill gap visualization
+
+You MUST use: /frontend-design and /impeccable-polish skills.
+
+Read the full PRD first, then tell me your plan.`
+  },
+  {
+    name: 'Workflow Polisher',
+    focus: 'Overhaul orchestrator section (top-down flowchart), expand skill from modal to dropdown, polish all tabs (Sprint 7)',
+    text: `You are **Workflow Polisher**, a follow-up agent for the Workflow Builder (Sprint 7). The Workflow Builder just delivered the /workflow page redesign with 4 tabs. Your job: revise the "How We Coordinate" tab and polish smaller details across all tabs.
+
+Read the full PRD at: .claude/agent-hub/coordinated-sprint/workflow-polisher-prompt.md
+
+Key changes:
+1. Replace the orchestrator swimlane with a TOP-DOWN FLOWCHART: Orchestrator at top flowing down through 8 phases, branching right at Dispatch to show agents, arrows back at Monitor/Grade
+2. Replace the orchestrator skill modal with an EXPANDABLE DROPDOWN section within the page (not a popup)
+3. Polish all 4 tabs: color consistency, spacing, font consistency, stats accuracy (69 findings, 16 rules, 21 agents)
+
+You MUST use: /frontend-design and /impeccable-polish skills.
+
+Read the full PRD first, then tell me your plan.`
+  },
+  {
+    name: 'Plugin Audit',
+    focus: 'Audit 41+ Claude Code plugins, research online, deliver enable/skip/remove decisions',
+    text: `Read the full PRD at: C:\\Users\\ephra\\phredomade\\.claude\\agent-hub\\coordinated-sprint\\plugin-audit-prompt.md
+
+Then tell me your plan. We have 2 plugin marketplaces with 41+ plugins but only 1 is enabled. Many overlap with our custom skills and hooks. The briefing doc with full inventory is at docs/plans/plugin-audit-briefing.md. Online research is mandatory — check what the community says, what Anthropic recommends, and whether plugins cost context tokens.`
+  },
+  {
+    name: 'Dashboard Perf v2',
+    focus: 'Fix 7-second /api/cost via per-session cost cache (v1 agent failed F)',
+    text: `Read the full PRD at: C:\\Users\\ephra\\phredomade\\.claude\\agent-hub\\coordinated-sprint\\dashboard-perf-v2-prompt.md
+
+Then tell me your plan. This is a re-dispatch — the v1 agent delivered nothing. The bottleneck has been pre-profiled for you: /api/cost reads 164 transcript files (657MB) and blocks the event loop for 7 seconds. The fix is a per-session cost cache that skips unchanged files. All profiling data is in the PRD.`
   }
 ];
 

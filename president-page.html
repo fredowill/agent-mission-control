@@ -1,0 +1,644 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>President's Report &mdash; Mission Control</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=DM+Sans:wght@400;500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#fff;--bg2:#fafafa;--surface:#f4f4f5;--surface2:#e4e4e7;
+  --text:#09090b;--text2:#52525b;--text3:#a1a1aa;--sep:#e4e4e7;
+  --purple:#8b5cf6;--purple-bg:rgba(139,92,246,0.06);
+  --green:#22c55e;--green-bg:rgba(34,197,94,0.06);
+  --blue:#3b82f6;--blue-bg:rgba(59,130,246,0.06);
+  --amber:#f59e0b;--amber-bg:rgba(245,158,11,0.06);
+  --rose:#ef4444;--rose-bg:rgba(239,68,68,0.05);
+  --cyan:#06b6d4;--cyan-bg:rgba(6,182,212,0.06);
+  --radius:12px;
+}
+body{background:var(--bg2);color:var(--text);font-family:'DM Sans',-apple-system,sans-serif;-webkit-font-smoothing:antialiased;min-height:100vh}
+
+/* Header */
+header{display:flex;align-items:center;justify-content:space-between;padding:0 clamp(24px,4vw,48px);height:64px;background:var(--bg);border-bottom:1px solid var(--sep);position:sticky;top:0;z-index:50}
+.logo{display:flex;align-items:center;gap:10px}
+.logo-dot{width:8px;height:8px;border-radius:50%;background:var(--purple)}
+.logo-text{font-family:'Plus Jakarta Sans',sans-serif;font-size:14px;font-weight:700;letter-spacing:-0.02em}
+.header-nav{display:flex;gap:2px;padding:3px;background:var(--surface);border-radius:8px}
+.nav-link{padding:6px 14px;font-size:12px;font-weight:500;color:var(--text3);text-decoration:none;border-radius:6px;transition:all .15s}
+.nav-link:hover{color:var(--text2);background:var(--bg)}
+.nav-link.active{color:var(--text);background:var(--bg);box-shadow:0 1px 3px rgba(0,0,0,.06)}
+
+.wrap{padding:24px clamp(24px,4vw,48px) 48px;max-width:960px;margin:0 auto}
+
+/* Hero — compact greeting + inline mood */
+.hero{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:12px}
+.hero-left{display:flex;flex-direction:column;gap:2px}
+.date-line{font-family:'DM Mono',monospace;font-size:11px;color:var(--text3);display:flex;align-items:center;gap:6px}
+.mode-pip{width:6px;height:6px;border-radius:50%}
+.mode-pip.home{background:var(--green)}.mode-pip.work{background:var(--blue)}
+.greeting{font-family:'Plus Jakarta Sans',sans-serif;font-size:24px;font-weight:800;letter-spacing:-0.03em}
+.hero-right{display:flex;align-items:center;gap:10px;padding:8px 16px;border-radius:100px;border:1px solid var(--sep);background:var(--bg)}
+.mood-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+.mood-dot.green{background:var(--green);box-shadow:0 0 8px rgba(34,197,94,0.4)}
+.mood-dot.amber{background:var(--amber);box-shadow:0 0 8px rgba(245,158,11,0.4)}
+.mood-dot.red{background:var(--rose);box-shadow:0 0 8px rgba(239,68,68,0.4)}
+.mood-text{font-family:'DM Mono',monospace;font-size:11px;font-weight:600}
+.mood-text.green{color:var(--green)}.mood-text.amber{color:var(--amber)}.mood-text.red{color:var(--rose)}
+.mood-detail{font-size:11px;color:var(--text3)}
+
+/* Summary sentence */
+.summary{font-size:13.5px;color:var(--text2);line-height:1.6;margin-bottom:20px}
+.summary strong{color:var(--text);font-weight:600}
+
+/* Workstream grid */
+.ws-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px;margin-bottom:20px}
+.ws-card{background:var(--bg);border:1px solid var(--sep);border-radius:var(--radius);overflow:hidden;transition:all .2s;cursor:pointer;display:flex;flex-direction:column}
+.ws-card:hover{box-shadow:0 4px 16px rgba(0,0,0,.06);transform:translateY(-2px);border-color:rgba(0,0,0,.12)}
+.ws-card.selected{box-shadow:0 4px 20px rgba(0,0,0,.08);transform:none;cursor:default}
+.ws-bar{height:3px;transition:height .2s}
+.ws-card.selected .ws-bar{height:4px}
+.ws-inner{padding:14px 16px;flex:1;display:flex;flex-direction:column}
+.ws-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:8px;gap:8px}
+.ws-name{font-family:'Plus Jakarta Sans',sans-serif;font-size:14px;font-weight:700;letter-spacing:-0.01em;white-space:nowrap}
+.ws-counts{font-family:'DM Mono',monospace;font-size:10px;color:var(--text3);text-align:right;line-height:1.5}
+.ws-card .ws-expand-hint{font-size:10px;color:var(--text3);margin-top:auto;padding-top:8px;opacity:0;transition:opacity .15s}
+.ws-card:hover .ws-expand-hint{opacity:1}
+.ws-card.selected .ws-expand-hint{display:none}
+
+/* Status mini-bar in each card */
+.ws-status-row{display:flex;gap:4px;margin-bottom:8px;align-items:center}
+.ws-status-pip{height:12px;border-radius:2px;min-width:3px;transition:width .4s ease}
+.ws-status-legend{display:flex;gap:8px;margin-top:2px;flex-wrap:wrap}
+.ws-status-legend-item{display:flex;align-items:center;gap:3px;font-family:'DM Mono',monospace;font-size:9px;color:var(--text3)}
+.ws-status-legend-dot{width:6px;height:6px;border-radius:2px}
+
+/* Progress bar */
+.progress-track{height:4px;background:var(--surface);border-radius:2px;margin-bottom:10px;overflow:hidden}
+.progress-fill{height:100%;border-radius:2px;transition:width .5s ease}
+
+/* Hot items in workstream */
+.ws-hot{display:flex;flex-direction:column;gap:4px}
+.ws-hot-item{display:flex;align-items:center;gap:6px;font-size:11.5px;line-height:1.4;color:var(--text2)}
+.ws-hot-dot{width:4px;height:4px;border-radius:50%;flex-shrink:0}
+.ws-hot-badge{font-family:'DM Mono',monospace;font-size:8px;font-weight:700;padding:1px 5px;border-radius:100px;text-transform:uppercase;flex-shrink:0}
+.ws-hot-badge.p0{background:var(--rose-bg);color:var(--rose)}
+.ws-hot-badge.p1{background:var(--amber-bg);color:var(--amber)}
+.ws-hot-badge.active{background:var(--blue-bg);color:var(--blue)}
+.ws-hot-title{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ws-empty{font-size:11px;color:var(--text3);font-style:italic}
+
+/* Drill-down panel */
+.drill{background:var(--bg);border:1px solid var(--sep);border-radius:var(--radius);margin-bottom:20px;overflow:hidden;animation:drillIn .25s ease}
+@keyframes drillIn{from{opacity:0;max-height:0;margin-bottom:0}to{opacity:1;max-height:600px;margin-bottom:20px}}
+.drill-bar{height:4px}
+.drill-inner{padding:20px 24px}
+.drill-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+.drill-title{font-family:'Plus Jakarta Sans',sans-serif;font-size:18px;font-weight:800;letter-spacing:-0.02em}
+.drill-close{width:28px;height:28px;border-radius:50%;border:1px solid var(--sep);background:var(--bg);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:14px;color:var(--text3);transition:all .15s;flex-shrink:0}
+.drill-close:hover{background:var(--surface);color:var(--text)}
+
+/* Assessment section */
+.drill-assessment{background:var(--surface);border-radius:8px;padding:12px 16px;margin-bottom:16px}
+.drill-assessment-label{font-family:'DM Mono',monospace;font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);margin-bottom:6px}
+.drill-assessment-text{font-size:13px;line-height:1.75;color:var(--text2)}
+.drill-assessment-text strong{color:var(--text);font-weight:700}
+.drill-assessment-text .num{font-family:'DM Mono',monospace;font-weight:700}
+.drill-assessment-text .num-green{color:var(--green)}
+.drill-assessment-text .num-blue{color:var(--blue)}
+.drill-assessment-text .num-amber{color:var(--amber)}
+.drill-assessment-text .num-rose{color:var(--rose)}
+.drill-assessment-text .num-purple{color:var(--purple)}
+.drill-assessment-text .verdict-good{color:var(--green);font-weight:700}
+.drill-assessment-text .verdict-warn{color:var(--amber);font-weight:700}
+.drill-assessment-text .verdict-bad{color:var(--rose);font-weight:700}
+.drill-assessment-text .verdict-neutral{color:var(--blue);font-weight:700}
+.drill-assessment-text .action{background:rgba(59,130,246,0.08);color:var(--blue);padding:1px 6px;border-radius:4px;font-weight:600;font-size:12px}
+
+/* Drill stats row */
+.drill-stats{display:flex;gap:12px;margin-bottom:16px;flex-wrap:wrap}
+.drill-stat{display:flex;flex-direction:column;align-items:center;padding:8px 14px;border-radius:8px;background:var(--bg);border:1px solid var(--sep);min-width:64px}
+.drill-stat-val{font-family:'Plus Jakarta Sans',sans-serif;font-size:20px;font-weight:800;letter-spacing:-0.02em}
+.drill-stat-lbl{font-size:10px;color:var(--text3);font-weight:500}
+
+/* Drill items grid — constrained so items don't overflow */
+.drill-cols{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:12px;overflow:hidden}
+@media(max-width:640px){.drill-cols{grid-template-columns:1fr}}
+.drill-col{display:flex;flex-direction:column;gap:2px;min-width:0}
+.drill-col-title{font-family:'DM Mono',monospace;font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--text3);margin-bottom:4px;display:flex;align-items:center;gap:6px}
+.drill-col-title .cnt{font-family:'DM Mono',monospace;font-size:9px;background:var(--surface);padding:1px 6px;border-radius:100px}
+.drill-item{display:flex;align-items:flex-start;gap:8px;padding:7px 10px;border-radius:8px;font-size:12.5px;line-height:1.55;color:var(--text);transition:background .12s;min-width:0}
+.drill-item:hover{background:var(--surface)}
+.drill-item-dot{width:5px;height:5px;border-radius:50%;flex-shrink:0;margin-top:7px}
+.drill-item-dot.active{background:var(--blue)}
+.drill-item-dot.p0{background:var(--rose)}
+.drill-item-dot.p1{background:var(--amber)}
+.drill-item-dot.p2{background:var(--surface2)}
+.drill-item-dot.done{background:var(--green)}
+.drill-item-badge{font-family:'DM Mono',monospace;font-size:9px;font-weight:600;padding:2px 7px;border-radius:4px;flex-shrink:0;margin-top:1px;letter-spacing:.02em;min-width:50px;text-align:center;display:inline-block}
+.drill-item-badge.p0{background:var(--rose-bg);color:var(--rose)}
+.drill-item-badge.p1{background:var(--amber-bg);color:var(--amber)}
+.drill-item-badge.p2{background:var(--surface);color:var(--text3)}
+.drill-item-badge.active{background:var(--blue-bg);color:var(--blue)}
+.drill-item-badge.done{background:var(--green-bg);color:var(--green)}
+.drill-item-text{min-width:0;color:var(--text)}
+.drill-item-text strong{font-weight:700}
+.drill-item-text .detail{color:var(--text2);font-weight:400}
+.drill-item-text .metric{font-family:'DM Mono',monospace;font-weight:700;color:var(--green);font-size:11px}
+.drill-item-text .metric.warn{color:var(--amber)}
+.drill-item-text .metric.bad{color:var(--rose)}
+.drill-item-text a{color:var(--purple);text-decoration:none;font-weight:600;margin-left:4px;font-size:11px;padding:1px 6px;border-radius:4px;background:var(--purple-bg);transition:all .12s}
+.drill-item-text a:hover{background:rgba(139,92,246,0.12)}
+.drill-overflow{font-size:11px;color:var(--text3);padding:4px 10px}
+
+/* Insights */
+.drill-insights{display:flex;flex-direction:column;gap:6px;margin-bottom:12px}
+.drill-insight{display:flex;align-items:flex-start;gap:8px;font-size:12px;line-height:1.5;color:var(--text2);padding:6px 10px;border-radius:8px;background:var(--surface)}
+.drill-insight-icon{flex-shrink:0;font-size:13px;margin-top:1px}
+.drill-insight strong{color:var(--text);font-weight:600}
+
+.drill-link{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:600;color:var(--blue);text-decoration:none;padding:6px 12px;border:1px solid var(--blue);border-radius:100px;transition:all .15s}
+.drill-link:hover{background:var(--blue);color:#fff}
+
+/* Campaign strip */
+.campaign-strip{display:flex;align-items:center;gap:12px;padding:12px 16px;background:var(--bg);border:1px solid var(--sep);border-radius:var(--radius);margin-bottom:20px}
+.campaign-strip-label{font-family:'DM Mono',monospace;font-size:10px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;flex-shrink:0}
+.campaign-strip-name{font-family:'Plus Jakarta Sans',sans-serif;font-size:13px;font-weight:700;flex-shrink:0}
+.campaign-strip-bar{flex:1;height:6px;background:var(--surface);border-radius:3px;overflow:hidden;min-width:60px}
+.campaign-strip-fill{height:100%;border-radius:3px;background:linear-gradient(90deg,var(--purple),var(--blue))}
+.campaign-strip-pct{font-family:'DM Mono',monospace;font-size:12px;font-weight:700;color:var(--purple);flex-shrink:0}
+.campaign-agents-row{display:flex;gap:4px;flex-shrink:0}
+.campaign-agent-dot{width:8px;height:8px;border-radius:50%;border:1.5px solid var(--sep)}
+.campaign-agent-dot.done{background:var(--green);border-color:var(--green)}
+.campaign-agent-dot.active{background:var(--amber);border-color:var(--amber)}
+
+/* Quick links */
+.quick-row{display:flex;gap:8px;flex-wrap:wrap}
+.qlink{padding:8px 16px;background:var(--bg);border:1px solid var(--sep);border-radius:100px;text-decoration:none;color:var(--text2);font-size:12px;font-weight:500;transition:all .15s;display:flex;align-items:center;gap:6px}
+.qlink:hover{color:var(--text);border-color:var(--purple);box-shadow:0 2px 8px rgba(0,0,0,.04)}
+.qlink-dot{width:5px;height:5px;border-radius:50%}
+
+@media(max-width:640px){
+  .hero{flex-direction:column;align-items:flex-start}
+  .ws-grid{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">
+    <div class="logo-dot"></div>
+    <span class="logo-text">Mission Control</span>
+  </div>
+  <div class="header-nav">
+    <a href="/" class="nav-link">Dashboard</a>
+    <a href="/dispatch" class="nav-link">Dispatch</a>
+    <a href="/capture" class="nav-link">Capture</a>
+    <a href="/president" class="nav-link active">President</a>
+  </div>
+</header>
+
+<div class="wrap" id="app">
+  <div style="text-align:center;padding:60px 20px;color:var(--text3)">Loading report...</div>
+</div>
+
+<script>
+(function(){
+  const app = document.getElementById('app');
+  let _data = null;
+  let _expandedWs = null;
+
+  function getMode() { return localStorage.getItem('mc-mode') || 'home'; }
+
+  async function loadData() {
+    const [dispatch, campaigns, captures, agents, workstreams] = await Promise.all([
+      fetch('/api/dispatch').then(r => r.json()).catch(() => []),
+      fetch('/api/campaigns').then(r => r.json()).catch(() => []),
+      fetch('/api/captures').then(r => r.json()).catch(() => []),
+      fetch('/api/agents').then(r => r.json()).catch(() => ({ sessions: [] })),
+      fetch('/api/workstreams').then(r => r.json()).catch(() => [])
+    ]);
+    return { dispatch, campaigns, captures, agents, workstreams };
+  }
+
+  function getGreeting() {
+    const h = new Date().getHours();
+    if (h < 12) return 'Good morning';
+    if (h < 17) return 'Good afternoon';
+    return 'Good evening';
+  }
+
+  function esc(s) {
+    return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  }
+
+  const WS_META = {
+    'mission-control': { name: 'Mission Control', color: '#8b5cf6', context: null },
+    'portfolio-site':  { name: 'Portfolio Site',  color: '#3b82f6', context: 'home' },
+    'personal':        { name: 'Personal',        color: '#22c55e', context: 'home' },
+    'aqg':             { name: 'AQG',             color: '#f59e0b', context: 'work' },
+    'cares':           { name: 'CARES',           color: '#14b8a6', context: 'work' },
+    'matching':        { name: 'Matching',        color: '#f43f5e', context: 'work' },
+    'api':             { name: 'API',             color: '#06b6d4', context: 'work' },
+  };
+
+  // ── Smart assessment generator (rich color-coded HTML) ──
+  function n(val, color) { return '<span class="num num-' + color + '">' + val + '</span>'; }
+
+  function assessWorkstream(items, meta) {
+    const todo = items.filter(i => i.status === 'todo');
+    const done = items.filter(i => i.status === 'done');
+    const active = items.filter(i => i.status === 'in-progress' || i.status === 'in_progress');
+    const blocked = items.filter(i => i.status === 'blocked');
+    const backlog = items.filter(i => i.status === 'backlog');
+    const p0s = todo.filter(i => i.priority === 'p0');
+    const total = items.length;
+    const pct = total > 0 ? Math.round(done.length / total * 100) : 0;
+
+    const lines = [];
+
+    // Health verdict
+    if (blocked.length > 0) {
+      lines.push('<span class="verdict-bad">Blocked.</span> ' + n(blocked.length, 'rose') + ' item' + (blocked.length!==1?'s':'') + ' stuck. Unblock before adding more work.');
+    } else if (active.length > 0 && pct > 40) {
+      lines.push('<span class="verdict-good">Healthy.</span> Good velocity with ' + n(active.length, 'blue') + ' in flight and ' + n(pct + '%', 'green') + ' complete.');
+    } else if (active.length > 0) {
+      lines.push('<span class="verdict-neutral">Moving.</span> ' + n(active.length, 'blue') + ' in progress but completion is low at ' + n(pct + '%', 'amber') + '.');
+    } else if (todo.length > 0 && active.length === 0) {
+      lines.push('<span class="verdict-warn">Stalled.</span> ' + n(todo.length, 'amber') + ' items queued but nothing in progress. <span class="action">Pick one and start</span>');
+    } else if (total === 0) {
+      lines.push('<span class="verdict-neutral">Empty.</span> No items filed yet.');
+    } else if (pct === 100) {
+      lines.push('<span class="verdict-good">Complete.</span> All ' + n(total, 'green') + ' items done.');
+    } else {
+      lines.push(n(pct + '%', 'purple') + ' complete. ' + n(todo.length, 'amber') + ' remaining.');
+    }
+
+    // P0 check
+    if (p0s.length > 3) {
+      lines.push(n(p0s.length, 'rose') + ' items tagged P0 — likely over-prioritized. <span class="action">Demote stale P0s to P1</span>');
+    } else if (p0s.length > 0) {
+      lines.push(n(p0s.length, 'rose') + ' P0' + (p0s.length!==1?'s':'') + ' need attention: ' + p0s.slice(0,2).map(i => '<strong>"' + esc(i.title.slice(0,35)) + '"</strong>').join(', ') + '.');
+    }
+
+    // Backlog size
+    if (backlog.length > 5) {
+      lines.push(n(backlog.length, 'amber') + ' items in backlog. <span class="action">Triage pass needed</span>');
+    }
+
+    // Age check
+    const openItems = [...todo, ...active].filter(i => i.created);
+    if (openItems.length > 0) {
+      const oldest = openItems.sort((a,b) => new Date(a.created) - new Date(b.created))[0];
+      const daysOld = Math.round((Date.now() - new Date(oldest.created).getTime()) / 86400000);
+      if (daysOld > 7) {
+        lines.push('Oldest open item is ' + n(daysOld + ' days', 'amber') + ' old: <strong>"' + esc(oldest.title.slice(0,35)) + '"</strong>. Still relevant?');
+      }
+    }
+
+    return lines;
+  }
+
+  // ── Rich item renderer (campaigns-style) ──
+  function richItem(item, badge, dotClass) {
+    // Split title: bold the first meaningful phrase, rest is detail
+    const title = item.title || '';
+    let lead = title, detail = '';
+    // Split at first colon, dash, or after ~40 chars at a word boundary
+    const colonIdx = title.indexOf(':');
+    const dashIdx = title.indexOf(' — ');
+    if (colonIdx > 0 && colonIdx < 60) {
+      lead = title.slice(0, colonIdx);
+      detail = title.slice(colonIdx + 1).trim();
+    } else if (dashIdx > 0 && dashIdx < 60) {
+      lead = title.slice(0, dashIdx);
+      detail = title.slice(dashIdx + 3).trim();
+    }
+
+    // Age metric
+    let ageMeta = '';
+    if (item.created) {
+      const days = Math.round((Date.now() - new Date(item.created).getTime()) / 86400000);
+      if (days > 14) ageMeta = '<span class="metric warn">' + days + 'd old</span>';
+      else if (days > 0) ageMeta = '<span class="metric">' + days + 'd</span>';
+    }
+
+    let h = '<div class="drill-item">';
+    h += '<div class="drill-item-dot ' + dotClass + '"></div>';
+    h += '<span class="drill-item-badge ' + badge + '">' + (badge === 'active' ? 'Active' : badge === 'done' ? 'Done' : badge.toUpperCase()) + '</span>';
+    h += '<div class="drill-item-text"><strong>' + esc(lead) + '</strong>';
+    if (detail) h += ': <span class="detail">' + esc(detail) + '</span>';
+    if (ageMeta) h += ' ' + ageMeta;
+    h += '</div>';
+    h += '</div>';
+    return h;
+  }
+
+  // ── Drill-down panel HTML ──
+  function buildDrill(wsId, items, meta) {
+    const todo = items.filter(i => i.status === 'todo');
+    const done = items.filter(i => i.status === 'done');
+    const active = items.filter(i => i.status === 'in-progress' || i.status === 'in_progress');
+    const blocked = items.filter(i => i.status === 'blocked');
+    const backlog = items.filter(i => i.status === 'backlog');
+    const total = items.length;
+    const pct = total > 0 ? Math.round(done.length / total * 100) : 0;
+
+    let d = '';
+    d += '<div class="drill" id="drillPanel">';
+    d += '<div class="drill-bar" style="background:' + meta.color + '"></div>';
+    d += '<div class="drill-inner">';
+
+    // Header
+    d += '<div class="drill-header">';
+    d += '<span class="drill-title" style="color:' + meta.color + '">' + esc(meta.name) + '</span>';
+    d += '<span class="drill-close" onclick="window.__closeDrill()">&times;</span>';
+    d += '</div>';
+
+    // Stats row
+    d += '<div class="drill-stats">';
+    d += '<div class="drill-stat"><div class="drill-stat-val" style="color:var(--amber)">' + todo.length + '</div><div class="drill-stat-lbl">To Do</div></div>';
+    d += '<div class="drill-stat"><div class="drill-stat-val" style="color:var(--blue)">' + active.length + '</div><div class="drill-stat-lbl">Active</div></div>';
+    d += '<div class="drill-stat"><div class="drill-stat-val" style="color:var(--green)">' + done.length + '</div><div class="drill-stat-lbl">Done</div></div>';
+    if (blocked.length > 0) d += '<div class="drill-stat"><div class="drill-stat-val" style="color:var(--rose)">' + blocked.length + '</div><div class="drill-stat-lbl">Blocked</div></div>';
+    if (backlog.length > 0) d += '<div class="drill-stat"><div class="drill-stat-val" style="color:var(--text3)">' + backlog.length + '</div><div class="drill-stat-lbl">Backlog</div></div>';
+    d += '<div class="drill-stat"><div class="drill-stat-val" style="color:' + meta.color + '">' + pct + '%</div><div class="drill-stat-lbl">Complete</div></div>';
+    d += '</div>';
+
+    // Assessment
+    const assessment = assessWorkstream(items, meta);
+    d += '<div class="drill-assessment">';
+    d += '<div class="drill-assessment-label">Assessment</div>';
+    d += '<div class="drill-assessment-text">' + assessment.join(' ') + '</div>';
+    d += '</div>';
+
+    // Two columns: In Flight + Next Up
+    d += '<div class="drill-cols">';
+
+    // In flight
+    d += '<div class="drill-col">';
+    d += '<div class="drill-col-title">In Flight <span class="cnt">' + active.length + '</span></div>';
+    if (active.length === 0) {
+      d += '<div class="drill-item"><div class="drill-item-dot p2"></div><div class="drill-item-text" style="color:var(--text3);font-style:italic">Nothing in progress</div></div>';
+    }
+    active.slice(0, 5).forEach(i => { d += richItem(i, 'active', 'active'); });
+    if (active.length > 5) d += '<div class="drill-overflow">+' + (active.length - 5) + ' more in flight</div>';
+    d += '</div>';
+
+    // Next up
+    d += '<div class="drill-col">';
+    d += '<div class="drill-col-title">Next Up <span class="cnt">' + todo.length + '</span></div>';
+    const nextUp = todo.sort((a,b) => (a.priority||'p2').localeCompare(b.priority||'p2')).slice(0, 5);
+    if (nextUp.length === 0) {
+      d += '<div class="drill-item"><div class="drill-item-dot p2"></div><div class="drill-item-text" style="color:var(--text3);font-style:italic">Queue empty</div></div>';
+    }
+    nextUp.forEach(i => { d += richItem(i, i.priority || 'p2', i.priority || 'p2'); });
+    if (todo.length > 5) d += '<div class="drill-overflow">+' + (todo.length - 5) + ' more in queue</div>';
+    d += '</div>';
+
+    d += '</div>'; // drill-cols
+
+    // Recently completed (last 3)
+    if (done.length > 0) {
+      const recent = done.sort((a,b) => new Date(b.updated||0) - new Date(a.updated||0)).slice(0, 3);
+      d += '<div class="drill-col" style="margin-bottom:12px">';
+      d += '<div class="drill-col-title">Recently Done <span class="cnt">' + done.length + '</span></div>';
+      recent.forEach(i => { d += richItem(i, 'done', 'done'); });
+      d += '</div>';
+    }
+
+    // Link to dispatch
+    d += '<div style="margin-top:8px"><a class="drill-link" href="/dispatch">View all in Dispatch &rarr;</a></div>';
+
+    d += '</div></div>';
+    return d;
+  }
+
+  // ── Toggle drill-down ──
+  window.__openDrill = function(wsId) {
+    if (_expandedWs === wsId) { window.__closeDrill(); return; }
+    _expandedWs = wsId;
+    render(_data);
+    // Scroll drill into view
+    setTimeout(() => {
+      var el = document.getElementById('drillPanel');
+      if (el) el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }, 50);
+  };
+  window.__closeDrill = function() {
+    _expandedWs = null;
+    render(_data);
+  };
+
+  function render(data) {
+    _data = data;
+    const mode = getMode();
+    const allItems = data.dispatch || [];
+
+    const visibleWs = Object.entries(WS_META).filter(([id, meta]) => {
+      if (meta.context === null) return true;
+      return meta.context === mode;
+    });
+
+    const groups = {};
+    for (const [id] of visibleWs) groups[id] = [];
+    const ungrouped = [];
+
+    for (const item of allItems) {
+      const ws = item.workstream;
+      if (ws && groups[ws] !== undefined) groups[ws].push(item);
+      else if (!ws) ungrouped.push(item);
+    }
+
+    const sessions = (data.agents || {}).sessions || [];
+    const activeAgents = sessions.filter(s => s.status === 'active').length;
+
+    const activeCampaign = (data.campaigns || []).find(c => c.status === 'active');
+    let campaignPct = 0;
+    if (activeCampaign && activeCampaign.agents) {
+      const total = activeCampaign.agents.length;
+      const completed = activeCampaign.agents.filter(a => a.status === 'completed').length;
+      campaignPct = total > 0 ? Math.round(completed / total * 100) : 0;
+    }
+
+    const staged = (data.captures || []).filter(c => c.status === 'staged');
+
+    let totalTodo = 0, totalDone = 0, totalActive = 0, totalBlocked = 0;
+    for (const [id] of visibleWs) {
+      const g = groups[id];
+      totalTodo += g.filter(i => i.status === 'todo').length;
+      totalDone += g.filter(i => i.status === 'done').length;
+      totalActive += g.filter(i => i.status === 'in-progress' || i.status === 'in_progress').length;
+      totalBlocked += g.filter(i => i.status === 'blocked').length;
+    }
+
+    let mood = 'green', moodWord = 'Clear';
+    if (totalBlocked > 0) { mood = 'red'; moodWord = 'Blocked'; }
+    else if (totalActive === 0 && totalTodo > 15) { mood = 'amber'; moodWord = 'Stalled'; }
+    else if (totalTodo > 20) { mood = 'amber'; moodWord = 'Busy'; }
+
+    const dateStr = new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' });
+
+    let h = '';
+
+    // Hero
+    h += '<div class="hero">';
+    h += '<div class="hero-left">';
+    h += '<div class="date-line"><span class="mode-pip ' + mode + '"></span>' + dateStr + ' &middot; ' + mode.charAt(0).toUpperCase() + mode.slice(1) + '</div>';
+    h += '<div class="greeting">' + getGreeting() + ', Ephratah.</div>';
+    h += '</div>';
+    h += '<div class="hero-right">';
+    h += '<div class="mood-dot ' + mood + '"></div>';
+    h += '<span class="mood-text ' + mood + '">' + moodWord + '</span>';
+    h += '<span class="mood-detail">' + totalActive + ' active &middot; ' + totalDone + ' done &middot; ' + totalTodo + ' queued</span>';
+    h += '</div></div>';
+
+    // Summary
+    const sumParts = [];
+    if (activeAgents > 0) sumParts.push('<strong>' + activeAgents + ' agent' + (activeAgents!==1?'s':'') + '</strong> running');
+    if (activeCampaign) sumParts.push('<strong>' + activeCampaign.name + '</strong> is ' + campaignPct + '% complete');
+    if (staged.length > 0) sumParts.push('<strong>' + staged.length + '</strong> idea' + (staged.length!==1?'s':'') + ' in Capture');
+    sumParts.push('<strong>' + (totalTodo + totalDone + totalActive) + '</strong> items across ' + visibleWs.length + ' workstreams');
+    h += '<div class="summary">' + sumParts.join('. ') + '.</div>';
+
+    // Campaign strip
+    if (activeCampaign) {
+      h += '<div class="campaign-strip">';
+      h += '<span class="campaign-strip-label">Campaign</span>';
+      h += '<span class="campaign-strip-name">' + esc(activeCampaign.name) + '</span>';
+      h += '<div class="campaign-strip-bar"><div class="campaign-strip-fill" style="width:' + campaignPct + '%"></div></div>';
+      h += '<span class="campaign-strip-pct">' + campaignPct + '%</span>';
+      h += '<div class="campaign-agents-row">';
+      (activeCampaign.agents || []).forEach(a => {
+        const cls = a.status === 'completed' ? 'done' : a.status === 'active' ? 'active' : '';
+        h += '<div class="campaign-agent-dot ' + cls + '" title="' + esc(a.name) + '"></div>';
+      });
+      h += '</div></div>';
+    }
+
+    // ── Workstream card builder ──
+    function buildWsCard(wsId, items, meta, isSelected) {
+      const wsDone = items.filter(i => i.status === 'done');
+      const wsActive = items.filter(i => i.status === 'in-progress' || i.status === 'in_progress');
+      const wsBlocked = items.filter(i => i.status === 'blocked');
+      const wsTodo = items.filter(i => i.status === 'todo');
+      const wsBacklog = items.filter(i => i.status === 'backlog');
+      const total = items.length;
+
+      // Segmented status bar widths (proportional)
+      const dPct = total > 0 ? (wsDone.length / total * 100) : 0;
+      const aPct = total > 0 ? (wsActive.length / total * 100) : 0;
+      const bPct = total > 0 ? (wsBlocked.length / total * 100) : 0;
+      const tPct = total > 0 ? (wsTodo.length / total * 100) : 0;
+
+      // Hot items: active first, then P0, then P1 (max 2)
+      const hot = [
+        ...wsActive.map(i => ({ ...i, _badge: 'active' })),
+        ...wsBlocked.map(i => ({ ...i, _badge: 'p0' })),
+        ...wsTodo.filter(i => i.priority === 'p0').slice(0, 1).map(i => ({ ...i, _badge: 'p0' })),
+        ...wsTodo.filter(i => i.priority === 'p1').slice(0, 1).map(i => ({ ...i, _badge: 'p1' })),
+      ].slice(0, 2);
+
+      // One-line verdict
+      let verdict = '';
+      if (wsBlocked.length > 0) verdict = 'Blocked';
+      else if (wsActive.length > 0 && dPct > 40) verdict = 'Healthy';
+      else if (wsActive.length > 0) verdict = 'Moving';
+      else if (wsTodo.length > 0) verdict = 'Queued';
+      else if (total === 0) verdict = 'Empty';
+      else verdict = 'Done';
+
+      const verdictColors = { Blocked: 'var(--rose)', Healthy: 'var(--green)', Moving: 'var(--blue)', Queued: 'var(--amber)', Empty: 'var(--text3)', Done: 'var(--green)' };
+
+      let c = '';
+      c += '<div class="ws-card' + (isSelected ? ' selected' : '') + '" onclick="window.__openDrill(\'' + wsId + '\')">';
+      c += '<div class="ws-bar" style="background:' + meta.color + '"></div>';
+      c += '<div class="ws-inner">';
+
+      // Top: name + verdict
+      c += '<div class="ws-top">';
+      c += '<span class="ws-name" style="color:' + meta.color + '">' + esc(meta.name) + '</span>';
+      c += '<span class="ws-counts"><span style="color:' + verdictColors[verdict] + ';font-weight:600">' + verdict + '</span> &middot; ' + total + ' items</span>';
+      c += '</div>';
+
+      // Segmented status bar
+      if (total > 0) {
+        c += '<div class="ws-status-row">';
+        if (dPct > 0) c += '<div class="ws-status-pip" style="width:' + dPct + '%;background:var(--green)"></div>';
+        if (aPct > 0) c += '<div class="ws-status-pip" style="width:' + aPct + '%;background:var(--blue)"></div>';
+        if (bPct > 0) c += '<div class="ws-status-pip" style="width:' + bPct + '%;background:var(--rose)"></div>';
+        if (tPct > 0) c += '<div class="ws-status-pip" style="width:' + tPct + '%;background:var(--surface2)"></div>';
+        c += '</div>';
+        // Legend
+        c += '<div class="ws-status-legend">';
+        if (wsDone.length > 0) c += '<span class="ws-status-legend-item"><span class="ws-status-legend-dot" style="background:var(--green)"></span>' + wsDone.length + ' done</span>';
+        if (wsActive.length > 0) c += '<span class="ws-status-legend-item"><span class="ws-status-legend-dot" style="background:var(--blue)"></span>' + wsActive.length + ' active</span>';
+        if (wsBlocked.length > 0) c += '<span class="ws-status-legend-item"><span class="ws-status-legend-dot" style="background:var(--rose)"></span>' + wsBlocked.length + ' blocked</span>';
+        if (wsTodo.length > 0) c += '<span class="ws-status-legend-item"><span class="ws-status-legend-dot" style="background:var(--surface2)"></span>' + wsTodo.length + ' todo</span>';
+        if (wsBacklog.length > 0) c += '<span class="ws-status-legend-item"><span class="ws-status-legend-dot" style="background:var(--text3)"></span>' + wsBacklog.length + ' backlog</span>';
+        c += '</div>';
+      } else {
+        c += '<div class="progress-track"><div class="progress-fill" style="width:0%;background:' + meta.color + '"></div></div>';
+      }
+
+      // Hot items
+      c += '<div class="ws-hot">';
+      if (hot.length === 0 && total > 0) {
+        c += '<div class="ws-empty">' + wsTodo.length + ' queued, none started yet</div>';
+      } else if (total === 0) {
+        c += '<div class="ws-empty">No items filed</div>';
+      }
+      hot.forEach(item => {
+        c += '<div class="ws-hot-item"><span class="ws-hot-badge ' + item._badge + '">' + (item._badge === 'active' ? 'Active' : item._badge.toUpperCase()) + '</span><span class="ws-hot-title">' + esc(item.title) + '</span></div>';
+      });
+      c += '</div>';
+
+      c += '<div class="ws-expand-hint">Click to dive in</div>';
+      c += '</div></div>';
+      return c;
+    }
+
+    // Workstream grid
+    h += '<div class="ws-grid">';
+    for (const [wsId, meta] of visibleWs) {
+      h += buildWsCard(wsId, groups[wsId], meta, _expandedWs === wsId);
+    }
+    // Ungrouped only if items exist
+    if (ungrouped.length > 0) {
+      h += buildWsCard('__ungrouped', ungrouped, { name: 'Unassigned', color: '#78716c' }, _expandedWs === '__ungrouped');
+    }
+    h += '</div>'; // ws-grid
+
+    // Drill-down panel (if expanded)
+    if (_expandedWs && _expandedWs !== '__ungrouped' && groups[_expandedWs]) {
+      h += buildDrill(_expandedWs, groups[_expandedWs], WS_META[_expandedWs]);
+    } else if (_expandedWs === '__ungrouped' && ungrouped.length > 0) {
+      h += buildDrill('__ungrouped', ungrouped, { name: 'Unassigned', color: '#9ca3af' });
+    }
+
+    // Quick links
+    h += '<div class="quick-row">';
+    h += '<a class="qlink" href="/dispatch"><span class="qlink-dot" style="background:var(--blue)"></span>Dispatch</a>';
+    h += '<a class="qlink" href="/capture"><span class="qlink-dot" style="background:var(--cyan)"></span>Capture</a>';
+    h += '<a class="qlink" href="/campaigns"><span class="qlink-dot" style="background:var(--purple)"></span>Campaigns</a>';
+    h += '<a class="qlink" href="/radar"><span class="qlink-dot" style="background:var(--amber)"></span>Radar</a>';
+    h += '<a class="qlink" href="/findings"><span class="qlink-dot" style="background:var(--green)"></span>Findings</a>';
+    h += '</div>';
+
+    app.innerHTML = h;
+  }
+
+  loadData().then(render).catch(err => {
+    app.innerHTML = '<div style="color:var(--rose)">Failed: ' + err.message + '</div>';
+  });
+
+  window.addEventListener('modechange', () => { _expandedWs = null; loadData().then(render); });
+})();
+</script>
+
+</body>
+</html>

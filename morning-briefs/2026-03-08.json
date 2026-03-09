@@ -1,0 +1,36 @@
+{
+  "date": "2026-03-08",
+  "campaign": "campaign-001",
+  "title": "Morning Brief",
+  "subtitle": "MC Evolution Sprint — 19 agents across 6 sprints — Orchestrator v1.2 session",
+  "tldr": "Big night. Campaigns page overhauled (tabbed, agent report cards with grades/lifecycle/skills, GPA in hero). Orchestrator skill created and critic-reviewed (8 phases, 15 rules). 3 findings captured. 4 tasks remain before campaign close: Workflow Page, Memory Cleanup, Agent Lifecycle in Prompts, Split server.js.",
+  "stats": {
+    "gpa": 3.16,
+    "agents": 19,
+    "wins": 24,
+    "losses": 8,
+    "remaining": 38,
+    "findings": 63,
+    "skillUsage": "4/19",
+    "sprints": 6
+  },
+  "completed_today": [
+    "Campaigns Page Overhaul — tabbed layout, agent report cards, grades, lifecycle dots, skills pills, GPA, metrics guide",
+    "Orchestrator Skill — .claude/skills/orchestrator/SKILL.md (8 phases, 15 rules, critic-reviewed)",
+    "Agent Grading — all 19 agents graded with lifecycle, skills, delivered, missed",
+    "3 Findings — f057 (update data before dispatch), f058 (no sub-agents from orchestrator), f059 (bold-lead text)"
+  ],
+  "next_up": [
+    {"task": "Workflow Page", "priority": "P0", "notes": "THE most important page after Dashboard. Capture orchestrator pattern, agent lifecycle, skill discovery."},
+    {"task": "Memory Cleanup v2", "priority": "P0", "notes": "Strip phredomade from global memory. MC-only."},
+    {"task": "Agent Lifecycle in Prompts", "priority": "P0", "notes": "All future prompts include 5-stage lifecycle with skill discovery."},
+    {"task": "Split server.js", "priority": "P1", "notes": "3600+ lines. Split into modules. End of sprint."}
+  ],
+  "resume_prompt": "You are Orchestrator v1.3. Read `.claude/agent-hub/coordinated-sprint/orchestrator-v1.2-handoff.md` and the orchestrator skill at `.claude/skills/orchestrator/SKILL.md`. Then check campaigns at http://localhost:3033/campaigns. Tell me where we are and what's next.",
+  "key_findings": [
+    {"id": "f057", "title": "Update reference data before dispatching dependent agents"},
+    {"id": "f058", "title": "Orchestrators should not run sub-agents — dispatch to separate CLIs"},
+    {"id": "f059", "title": "All text must use bold-lead pattern — no paragraph walls"}
+  ],
+  "source": "orchestrator-v1.2, sprint 6"
+}

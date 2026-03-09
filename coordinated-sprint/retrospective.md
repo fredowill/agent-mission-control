@@ -269,6 +269,74 @@ The first campaign is always the most expensive because you're building the patt
 
 ---
 
+## 7. Follow-Up Sprint: What 7 More Agents Delivered
+
+After the initial 4-agent push completed, a follow-up sprint dispatched 7 agents to polish, analyze, and extend the campaign's output.
+
+### 7a. What Got Built
+
+| Agent | Deliverable | Impact |
+|-------|------------|--------|
+| **Polisher** | Polished /why page + created /demo-guide | /why is now screen-share quality. /demo-guide provides a practical walkthrough. |
+| **Retrospector** | This retrospective document | 7 broadly applicable lessons, campaign scorecard, orchestrator protocol. |
+| **Integrator** | Retrospective tab on Dashboard agent cards | /end-session data now visible per agent without opening files. |
+| **Analyst** | Session analytics infrastructure | Prompt metrics and skill usage tracking. Surfaced the sub-agent visibility gap (P0). |
+| **Video Analyzer** | 2-hour demo transcript + structured analysis | 80KB transcript, 15 value prop quotes, 16 future ideas, 12 pain points, 7 strategic insights. |
+| **Medic** | /health page | System diagnostics dashboard with API status checks. |
+| **Findings Analyst** | 8 new findings (f036-f043) + 12 dispatch items + /video-findings page | Most valuable output: f036 (self-evolving loop as moat), f037 (cost-aware routing), f039 (recording pipeline). |
+
+### 7b. Follow-Up Patterns That Worked
+
+**Video transcription as a data source.** The 2-hour demo recording yielded more structured insights than weeks of typed sessions. The recording pipeline (record -> transcribe -> extract -> dispatch) is now proven and should become standard infrastructure.
+
+**Specialized agents for analysis.** The Findings Analyst extracted 8 findings and 12 tasks from a transcript that the Video Analyzer had already processed. Two passes with different lenses (extraction vs. analysis) produced richer output than one agent trying to do both.
+
+**Morning Brief agent for continuity.** After an overnight session, context was scattered across 11 agents' outputs. A dedicated catch-up agent that reads everything and produces a prioritized summary prevents the "where was I?" problem.
+
+### 7c. Follow-Up Patterns That Failed
+
+**Debrief tracking went stale.** As follow-up agents completed, nobody was updating campaigns.json with their wins. The campaign page showed stale data for hours. Future campaigns need a hook or protocol where completing agents register their wins.
+
+**Token waste on infrastructure.** The Video Analyzer burned ~30-40% extra tokens on an avoidable CUDA double-install (wrong version first) and progress bar output polluting context. Pre-flight checks for GPU tasks should be a standard principle.
+
+**Scroll/retro bugs emerged from auto-refresh.** The campaigns page rebuilt the entire DOM every 5 seconds, wiping the retrospective section and resetting scroll positions. Auto-refresh must preserve user state -- save/restore inner scroll positions and re-render persistent sections.
+
+### 7d. New Post-Mortems (PM007-PM010)
+
+| PM | Title | Key Lesson |
+|----|-------|------------|
+| **PM007** | Agent waited for input with no notification | Users need audio/visual notifications when agents are blocked. Silent waiting wastes minutes. |
+| **PM008** | Server-side Node.js code injected into client JS | Never mix server-side fs/path calls into browser-served HTML. Architecture boundary violation. |
+| **PM009** | Toolbox utilization blind spot | 34 skills and 13 agents exist but near-zero are actually used. Auto-trigger descriptions need tuning. Sub-agent sidechain transcripts are invisible (platform limitation). |
+| **PM010** | Agent claimed two philosophies were "the same" because they rhymed | Analogies are hypotheses, not facts. "Related" and "the same" are different words. |
+
+### 7e. New Findings (f036-f044)
+
+| ID | Title | Key Insight |
+|----|-------|-------------|
+| f036 | Self-evolving loop is the moat | The mistake->PM->finding->rule->hook->prevention cycle is MC's true competitive advantage. |
+| f037 | Cost-aware model routing | $300/mo savings by routing simple tasks to Sonnet instead of Opus. |
+| f038 | Onboarding problem | Even technical friends need "What is Claude Code?" before MC makes sense. |
+| f039 | Recording pipeline is force multiplier | Spoken data is richer than typed data for capturing ideas and priorities. |
+| f040 | Stealth mode (Tony Stark) | MC should be invisible in work contexts. Outputs look like impressive individual work. |
+| f041 | Work/home dual use creates lock-in | Mode switch is a retention feature, not just a convenience. |
+| f042 | "The data is the money" | Prompt analytics is core value -- track quality, suggest improvements. |
+| f043 | Demoing MC is a high-value activity | The presenter learns more than the audience. Schedule demos as development practice. |
+| f044 | IP sensitivity | MC is personal IP, not work product. Frame accordingly before any work demo. |
+
+---
+
+## 8. Updated Campaign Rating
+
+### Initial Rating: 7/10 (after Sprint 1)
+### Updated Rating: 8/10 (after Sprint 1 + Follow-Up)
+
+The follow-up sprint addressed the initial campaign's biggest gap: no post-sprint analysis. The retrospective, analytics, video transcription, and findings extraction turned raw output into structured knowledge. The campaign now has 27 wins, 10 losses, 44 findings, and 10 post-mortems.
+
+The 1-point upgrade reflects: (a) the follow-up sprint proved the orchestrator pattern works across multiple phases, (b) the video transcription pipeline opened a new data source, and (c) the self-evolving loop was explicitly identified and validated as the product's moat.
+
+---
+
 ## Appendix: Findings Generated by This Campaign
 
 | ID | Title | Tier | Key Lesson |

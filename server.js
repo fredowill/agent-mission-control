@@ -37,6 +37,11 @@ const TOOLBOX_CMDS_DIR    = path.join(__dirname, 'toolbox', 'commands');
 const TOOLBOX_SKILLS_DIR  = path.join(__dirname, 'toolbox', 'skills');
 // Transcript dir — Claude Code stores conversation .jsonl files here
 // Auto-detect transcript dir based on CWD slug (same logic Claude Code uses)
+// CRITICAL: TRANSCRIPTS_DIR depends on process.cwd() at launch time.
+// Server MUST be launched from the project root (C:/Users/ephra/phredomade).
+// Correct command: node .claude/agent-hub/server.js  (from phredomade root)
+// WRONG:           cd .claude/agent-hub && node server.js  (changes cwd, breaks slug)
+// PM009 documents the incident where the wrong launch directory wiped all cost analytics.
 const _cwdSlug = process.cwd().replace(/\\/g, '/').replace(/^([A-Za-z]):\//, (_, d) => d.toUpperCase() + '--').replace(/\//g, '-');
 const TRANSCRIPTS_DIR = path.join(process.env.HOME || process.env.USERPROFILE || '', '.claude', 'projects', _cwdSlug);
 const LOGIC_HTML_F = path.join(__dirname, 'logic-page.html');
@@ -45,6 +50,7 @@ const TOOLS_HTML_F = path.join(__dirname, 'tools-page.html');
 const RADAR_HTML_F = path.join(__dirname, 'radar-page.html');
 const SOURCES_F    = path.join(__dirname, 'sources.json');
 const ICON_HTML_F = path.join(__dirname, 'icon-page.html');
+const DASHBOARD_HTML_F = path.join(__dirname, 'dashboard-page.html');
 const DISPATCH_HTML_F = path.join(__dirname, 'dispatch-page.html');
 const WORKFLOW_HTML_F = path.join(__dirname, 'workflow-page.html');
 const POSTMORTEM_HTML_F = path.join(__dirname, 'postmortem-page.html');
@@ -61,6 +67,9 @@ const TOOLBOX_CTX_F   = path.join(__dirname, 'toolbox-context.json');
 const CAMPAIGNS_HTML_F = path.join(__dirname, 'campaigns-page.html');
 const CAMPAIGNS_F     = path.join(__dirname, 'campaigns.json');
 const HEALTH_HTML_F   = path.join(__dirname, 'health-page.html');
+const CAPTURE_HTML_F  = path.join(__dirname, 'capture-page.html');
+const PRESIDENT_HTML_F = path.join(__dirname, 'president-page.html');
+const CAPTURES_F      = path.join(__dirname, 'captures.json');
 const STALE_MS    = 21_600_000; // 6 hours
 
 // ── Favicon SVG (data URI) ──────────────────────────────────────────────────
@@ -110,29 +119,53 @@ function isValidSid(sid) { return VALID_SID.test(sid); }
 // first fire via PowerShell process-tree walk). Server checks if that PID is
 // still alive via a single `tasklist` call per poll (~130ms for all sessions).
 // Fallback: timestamp-based for sessions that haven't captured a PID yet.
-const { execSync } = require('child_process');
+const { execSync, spawn } = require('child_process');
+const crypto = require('crypto');
 const ACTIVE_THRESHOLD  = 120_000;  // 2 min — fallback for sessions without PID
 
 // Cache live claude.exe PIDs with a short TTL
 let _livePidCache = { pids: new Set(), ts: 0 };
 const PID_CACHE_TTL = 1500; // 1.5 seconds — reduced from 3s to minimize stale PID window
 
+// PERF: Background PID refresh — keeps cache warm without blocking event loop.
+// Only the initial call uses execSync; all subsequent refreshes are async.
+function _refreshLiveClaudePidsAsync() {
+  const { execFile } = require('child_process');
+  execFile('tasklist', ['/FI', 'IMAGENAME eq claude.exe', '/FO', 'CSV', '/NH'],
+    { encoding: 'utf8', timeout: 5000 }, (err, stdout) => {
+      if (err) return; // keep stale cache on error
+      const pids = new Set();
+      for (const line of (stdout || '').trim().split('\n')) {
+        const m = line.match(/"claude\.exe","(\d+)"/i);
+        if (m) pids.add(parseInt(m[1], 10));
+      }
+      _livePidCache = { pids, ts: Date.now() };
+    });
+}
+setInterval(_refreshLiveClaudePidsAsync, PID_CACHE_TTL);
+_refreshLiveClaudePidsAsync(); // kick off immediately
+
 function getLiveClaudePids() {
   const now = Date.now();
   if (now - _livePidCache.ts < PID_CACHE_TTL) return _livePidCache.pids;
-  try {
-    const out = execSync('tasklist /FI "IMAGENAME eq claude.exe" /FO CSV /NH',
-      { encoding: 'utf8', timeout: 5000, stdio: ['pipe', 'pipe', 'pipe'] }).trim();
-    const pids = new Set();
-    for (const line of out.split('\n')) {
-      const m = line.match(/"claude\.exe","(\d+)"/i);
-      if (m) pids.add(parseInt(m[1], 10));
+  // First-ever call (background hasn't completed yet) — do one sync fallback
+  if (_livePidCache.ts === 0) {
+    try {
+      const out = execSync('tasklist /FI "IMAGENAME eq claude.exe" /FO CSV /NH',
+        { encoding: 'utf8', timeout: 5000, stdio: ['pipe', 'pipe', 'pipe'] }).trim();
+      const pids = new Set();
+      for (const line of out.split('\n')) {
+        const m = line.match(/"claude\.exe","(\d+)"/i);
+        if (m) pids.add(parseInt(m[1], 10));
+      }
+      _livePidCache = { pids, ts: now };
+      return pids;
+    } catch (_) {
+      return _livePidCache.pids;
     }
-    _livePidCache = { pids, ts: now };
-    return pids;
-  } catch (_) {
-    return _livePidCache.pids; // return stale cache on error
   }
+  // Cache expired — return stale data (background refresh will update soon)
+  return _livePidCache.pids;
 }
 
 // ── Prompt Reader ────────────────────────────────────────────────────────────
@@ -251,16 +284,17 @@ function getChainedSessions(sid) {
 }
 
 // Read prompts from a session and all its chained sessions (same terminal)
-function readChainedPrompts(sid) {
-  const chain = getChainedSessions(sid);
+// PERF: chainOverride skips getChainedSessions() when caller already knows the chain
+function readChainedPrompts(sid, chainOverride) {
+  const chain = chainOverride || getChainedSessions(sid);
   const all = [];
   for (const s of chain) all.push(...readPrompts(s));
   all.sort((a, b) => a.ts - b.ts);
   return all;
 }
 
-function getPromptsHash(sid) {
-  const prompts = readChainedPrompts(sid);
+function getPromptsHash(sid, chainOverride) {
+  const prompts = readChainedPrompts(sid, chainOverride);
   if (!prompts.length) return '';
   return prompts.length + ':' + prompts[prompts.length - 1].ts;
 }
@@ -610,10 +644,10 @@ setTimeout(runSummarizationLoop, 2000);
 
 // ── Derive Mission (sync, reads cache) ───────────────────────────────────────
 
-function deriveMission(sid) {
+function deriveMission(sid, chainOverride) {
   // Manual override first (check this session and all chained sessions)
   const missions = readJSON(MISSIONS_F, {});
-  const chain = getChainedSessions(sid);
+  const chain = chainOverride || getChainedSessions(sid);
   for (const s of chain) {
     if (missions[s]) return missions[s];
   }
@@ -625,7 +659,7 @@ function deriveMission(sid) {
   }
 
   // No AI summary yet — eagerly trigger summarization in background
-  const hash = getPromptsHash(sid);
+  const hash = getPromptsHash(sid, chainOverride);
   if (hash && AI_READY) {
     summarizeSession(sid); // fire-and-forget, async
   }
@@ -701,9 +735,10 @@ function _readAgentsUncached() {
     merged.sessionId = newest.sessionId; // card identity = newest session
 
     // Mission: use first non-empty mission from any session in chain
+    // PERF: pass allSids as chainOverride to avoid O(N²) re-reading of all state files
     merged.mission = '';
     for (const s of sessions) {
-      const m = deriveMission(s.sessionId);
+      const m = deriveMission(s.sessionId, allSids);
       if (m) { merged.mission = m; break; }
     }
 
@@ -737,7 +772,7 @@ function _readAgentsUncached() {
     if (!merged.stale && !merged.archived && merged._needsPromptCheck) {
       merged.hasPrompts = allSids.some(sid => readPrompts(sid).length > 0);
       if (merged.hasPrompts) {
-        const currentHash = getPromptsHash(newest.sessionId);
+        const currentHash = getPromptsHash(newest.sessionId, allSids);
         const cached = summariesCache[newest.sessionId];
         if (!cached || !cached.summary) {
           merged.isSummarizing = true;
@@ -753,11 +788,12 @@ function _readAgentsUncached() {
   // Orphan sessions (no PID): fallback to timestamp-based liveness
   // Exception: "waiting" state is preserved indefinitely — user hasn't answered yet
   for (const a of orphans) {
+    const orphanChain = [a.sessionId];
     a.active = a.state === 'waiting' || a.ago < ACTIVE_THRESHOLD;
     a.done   = !a.active;
     a.stale    = a.done && a.ago > STALE_MS;
     a.archived = a.done && a.ago > ARCHIVE_MS;
-    a.mission  = deriveMission(a.sessionId);
+    a.mission  = deriveMission(a.sessionId, orphanChain);
     // PERF: Skip expensive prompt reading for stale/archived sessions
     if (a.stale || a.archived) {
       a.hasPrompts = false;
@@ -766,7 +802,7 @@ function _readAgentsUncached() {
       a.hasPrompts = readPrompts(a.sessionId).length > 0;
       a.isSummarizing = false;
       if (a.hasPrompts) {
-        const currentHash = getPromptsHash(a.sessionId);
+        const currentHash = getPromptsHash(a.sessionId, orphanChain);
         const cached = summariesCache[a.sessionId];
         if (!cached || !cached.summary) {
           a.isSummarizing = true;
@@ -1164,1083 +1200,8 @@ const MODE_TOGGLE_SNIPPET = `<script>
 })();
 <\/script>`;
 
-// ── Dashboard HTML ───────────────────────────────────────────────────────────
-
-const DASHBOARD = `<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Mission Control</title>
-<link rel="icon" id="favicon" type="image/svg+xml" href="${FAVICON_DEFAULT}">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=DM+Sans:wght@400;500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
-<style>
-
-  html { zoom: ${UI_ZOOM} }
-  *, *::before, *::after { margin:0; padding:0; box-sizing:border-box }
-
-  :root {
-    --bg: #ffffff;
-    --bg-page: #f8f8f8;
-    --surface: #f2f2f2;
-    --surface2: #e8e8e8;
-    --text: #1a1a1a;
-    --text2: #555;
-    --text3: #999;
-    --sep: #e5e5e5;
-
-    --green: #22c55e;
-    --green-bg: rgba(34, 197, 94, 0.08);
-    --blue: #3b82f6;
-    --blue-bg: rgba(59, 130, 246, 0.08);
-    --amber: #f59e0b;
-    --amber-bg: rgba(245, 158, 11, 0.08);
-    --purple: #8b5cf6;
-    --purple-bg: rgba(139, 92, 246, 0.08);
-    --rose: #ef4444;
-    --rose-bg: rgba(239, 68, 68, 0.06);
-    --gray: #9ca3af;
-  }
-
-  body {
-    background: var(--bg-page);
-    color: var(--text);
-    font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
-    min-height: 100vh;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-  }
-
-  /* ================================================================
-     HEADER
-     ================================================================ */
-  header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 0 clamp(24px, 4vw, 48px);
-    height: 64px;
-    background: var(--bg);
-    border-bottom: 1px solid var(--sep);
-    position: sticky;
-    top: 0;
-    z-index: 10;
-  }
-
-  .logo {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-  }
-  .logo-icon {
-    width: 28px;
-    height: 28px;
-    flex-shrink: 0;
-    color: var(--text);
-  }
-  .logo-icon svg { display: block }
-  .mc-dot {
-    fill: var(--gray);
-    transition: fill 0.4s ease;
-  }
-  .logo-icon.active .mc-dot { fill: var(--green) }
-  .logo-icon.waiting .mc-dot { fill: var(--amber); animation: blink 1.4s ease-in-out infinite }
-  .mc-sweep {
-    transform-origin: 16px 16px;
-    opacity: 0;
-    transition: opacity 0.4s ease;
-  }
-  .logo-icon.active .mc-sweep {
-    opacity: 0.1;
-    animation: sweep 3s linear infinite;
-  }
-
-  .logo-text {
-    font-family: 'Plus Jakarta Sans', sans-serif;
-    font-size: 15px;
-    font-weight: 600;
-    letter-spacing: -0.02em;
-    color: var(--text);
-  }
-
-  .header-nav {
-    display: flex;
-    gap: 4px;
-    padding: 3px;
-    background: var(--surface);
-    border-radius: 8px;
-    position: absolute;
-    left: 50%;
-    transform: translateX(-50%);
-  }
-  .nav-link {
-    padding: 5px 14px;
-    border-radius: 6px;
-    font-family: 'DM Sans', sans-serif;
-    font-size: 13px;
-    font-weight: 500;
-    color: var(--text3);
-    text-decoration: none;
-    transition: all 0.15s ease;
-  }
-  .nav-link:hover { color: var(--text2) }
-  .nav-link.active {
-    background: var(--bg);
-    color: var(--text);
-    box-shadow: 0 1px 3px rgba(0,0,0,0.06);
-  }
-  .header-spacer { flex: 1 }
-
-  .hstats {
-    display: flex;
-    gap: 6px;
-  }
-  .stat-pill {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    padding: 5px 12px;
-    border-radius: 100px;
-    background: var(--surface);
-    font-family: 'DM Sans', sans-serif;
-    font-size: 13px;
-    color: var(--text2);
-  }
-  .stat-pill .count {
-    font-weight: 600;
-    color: var(--text);
-  }
-  .stat-pill.has-waiting {
-    background: var(--amber-bg);
-    color: #92400e;
-  }
-  .stat-pill.has-waiting .count { color: #92400e }
-  .sdot {
-    width: 6px;
-    height: 6px;
-    border-radius: 50%;
-    flex-shrink: 0;
-  }
-  .sdot-on   { background: var(--green) }
-  .sdot-wait { background: var(--amber); animation: blink 1.4s ease-in-out infinite }
-  .sdot-off  { background: var(--gray) }
-  .sdot-done { background: var(--green); opacity: 0.4 }
-
-  @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
-  @keyframes pulse { 0%,100%{opacity:0.4} 50%{opacity:1} }
-  @keyframes sweep { from{transform:rotate(0deg)} to{transform:rotate(360deg)} }
-
-  /* ================================================================
-     LAYOUT
-     ================================================================ */
-  .shell {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: clamp(24px, 4vw, 48px);
-  }
-
-  .page-title {
-    font-family: 'Plus Jakarta Sans', sans-serif;
-    font-size: clamp(28px, 4vw, 38px);
-    font-weight: 700;
-    letter-spacing: -0.035em;
-    color: var(--text);
-    margin-bottom: 8px;
-    line-height: 1.1;
-  }
-  .page-sub {
-    font-size: 15px;
-    color: var(--text3);
-    margin-bottom: 36px;
-  }
-
-  /* ================================================================
-     TOP OF MIND
-     ================================================================ */
-  .tom-section {
-    margin-bottom: 28px;
-    padding: 20px 24px;
-    background: var(--bg);
-    border-radius: 14px;
-    border: 1px solid var(--sep);
-  }
-
-  .tom-head {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 14px;
-  }
-  .tom-label {
-    font-family: 'DM Sans', sans-serif;
-    font-size: 12px;
-    font-weight: 500;
-    text-transform: uppercase;
-    letter-spacing: 0.06em;
-    color: var(--text3);
-  }
-  .tom-ago {
-    font-family: 'DM Mono', monospace;
-    font-size: 11px;
-    color: var(--text3);
-    opacity: 0.5;
-  }
-
-  .tom-text {
-    font-family: 'DM Sans', sans-serif;
-    font-size: 15px;
-    font-weight: 400;
-    line-height: 1.75;
-    color: var(--text2);
-  }
-  .tom-pill {
-    font-weight: 600;
-    color: var(--text);
-  }
-
-  .tom-topics {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    flex-wrap: wrap;
-    margin-top: 16px;
-    padding-top: 16px;
-    border-top: 1px solid var(--sep);
-  }
-  .ns-chip {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    padding: 7px 16px;
-    border-radius: 100px;
-    background: var(--surface);
-    font-family: 'Plus Jakarta Sans', sans-serif;
-    font-size: 14px;
-    font-weight: 500;
-    color: var(--text);
-    letter-spacing: -0.01em;
-    transition: background 0.15s ease;
-  }
-  .ns-chip:hover { background: var(--surface2) }
-  .ns-chip .ns-count {
-    font-family: 'DM Mono', monospace;
-    font-size: 11px;
-    color: var(--text3);
-    background: var(--surface2);
-    padding: 1px 6px;
-    border-radius: 100px;
-  }
-  .ns-chip:hover .ns-count { background: var(--bg) }
-
-  .ns-empty {
-    font-size: 13px;
-    color: var(--text3);
-    font-style: italic;
-  }
-  .ns-noai {
-    font-size: 13px;
-    color: var(--text3);
-    font-style: italic;
-    margin-bottom: 28px;
-  }
-  .ns-noai code {
-    font-size: 11px;
-    background: var(--surface);
-    padding: 1px 5px;
-    border-radius: 3px;
-  }
-  .ns-noai a {
-    color: var(--blue);
-    text-decoration: none;
-  }
-  .ns-noai a:hover { text-decoration: underline }
-
-  /* Filter tabs */
-  .filters {
-    display: flex;
-    gap: 4px;
-    margin-bottom: 24px;
-    padding: 3px;
-    background: var(--surface);
-    border-radius: 10px;
-    width: fit-content;
-  }
-  .filter-btn {
-    padding: 7px 16px;
-    border-radius: 8px;
-    border: none;
-    background: transparent;
-    font-family: 'DM Sans', sans-serif;
-    font-size: 13px;
-    font-weight: 500;
-    color: var(--text3);
-    cursor: pointer;
-    transition: all 0.15s ease;
-  }
-  .filter-btn:hover { color: var(--text2) }
-  .filter-btn.active {
-    background: var(--bg);
-    color: var(--text);
-    box-shadow: 0 1px 3px rgba(0,0,0,0.06);
-  }
-  .filter-count {
-    font-size: 11px;
-    margin-left: 4px;
-    opacity: 0.5;
-  }
-
-  .grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
-    gap: 16px;
-  }
-
-  /* ================================================================
-     AGENT CARD
-     ================================================================ */
-  .card {
-    background: var(--bg);
-    border-radius: 14px;
-    border: 1px solid var(--sep);
-    overflow: hidden;
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
-    position: relative;
-  }
-  .card:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 24px rgba(0,0,0,0.04);
-  }
-
-  .card::before {
-    content: '';
-    position: absolute;
-    left: 0; top: 0; bottom: 0;
-    width: 3px;
-    background: var(--card-accent, var(--gray));
-    border-radius: 3px 0 0 3px;
-    opacity: 0.7;
-    transition: opacity 0.2s ease;
-  }
-  .card:hover::before { opacity: 1 }
-
-  .card-body { padding: 20px 24px }
-
-  .card-top {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 12px;
-  }
-  .state-pill {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    padding: 3px 10px;
-    border-radius: 100px;
-    font-family: 'DM Sans', sans-serif;
-    font-size: 12px;
-    font-weight: 500;
-    letter-spacing: 0.01em;
-  }
-  .state-pill .sdot { width: 5px; height: 5px }
-  .state-pill.s-investigating { background: var(--blue-bg); color: #1d4ed8 }
-  .state-pill.s-investigating .sdot { background: var(--blue) }
-  .state-pill.s-developing { background: var(--amber-bg); color: #92400e }
-  .state-pill.s-developing .sdot { background: var(--amber) }
-  .state-pill.s-planning { background: var(--purple-bg); color: #6d28d9 }
-  .state-pill.s-planning .sdot { background: var(--purple) }
-  .state-pill.s-verifying { background: var(--green-bg); color: #166534 }
-  .state-pill.s-verifying .sdot { background: var(--green) }
-  .state-pill.s-waiting { background: var(--amber-bg); color: #92400e }
-  .state-pill.s-waiting .sdot { background: var(--amber); animation: blink 1.4s ease-in-out infinite }
-  .state-pill.s-thinking { background: var(--purple-bg); color: #6d28d9 }
-  .state-pill.s-thinking .sdot { background: var(--purple); animation: blink 2s ease-in-out infinite }
-  .state-pill.s-done { background: var(--green-bg); color: #166534 }
-  .state-pill.s-done .sdot { background: var(--green); opacity: 0.5 }
-  .state-pill.s-idle { background: var(--surface); color: var(--text3) }
-  .state-pill.s-idle .sdot { background: var(--gray); opacity: 0.4 }
-
-  .card-ago {
-    font-family: 'DM Mono', monospace;
-    font-size: 12px;
-    color: var(--text3);
-  }
-
-  .card-mission {
-    font-family: 'Plus Jakarta Sans', sans-serif;
-    font-size: 17px;
-    font-weight: 600;
-    color: var(--text);
-    line-height: 1.35;
-    margin-bottom: 6px;
-    letter-spacing: -0.02em;
-  }
-
-  .card-no-prompt {
-    font-size: 14px;
-    color: var(--text3);
-    font-style: italic;
-    line-height: 1.5;
-    margin-bottom: 6px;
-  }
-
-  .card-summarizing {
-    font-size: 13px;
-    color: var(--blue);
-    line-height: 1.5;
-    margin-bottom: 6px;
-    animation: pulse 2s ease-in-out infinite;
-  }
-
-  .needs-input {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    padding: 8px 12px;
-    margin-bottom: 12px;
-    border-radius: 8px;
-    background: var(--amber-bg);
-    font-family: 'DM Sans', sans-serif;
-    font-size: 13px;
-    font-weight: 500;
-    color: #92400e;
-  }
-  .needs-input-dot {
-    width: 6px; height: 6px;
-    border-radius: 50%;
-    background: var(--amber);
-    animation: blink 1.4s ease-in-out infinite;
-    flex-shrink: 0;
-  }
-
-  .card-footer {
-    display: flex;
-    align-items: center;
-    justify-content: flex-end;
-    gap: 8px;
-    position: absolute;
-    bottom: 8px;
-    right: 12px;
-  }
-  .card-id {
-    font-family: 'DM Mono', monospace;
-    font-size: 11px;
-    color: var(--text3);
-    opacity: 0.5;
-  }
-
-  .ctx-badge {
-    font-family: 'DM Mono', monospace;
-    font-size: 10px;
-    font-weight: 600;
-    color: var(--purple);
-    background: rgba(139,92,246,0.08);
-    padding: 1px 6px;
-    border-radius: 4px;
-    letter-spacing: 0.02em;
-  }
-  .resume-badge {
-    font-family: 'DM Mono', monospace;
-    font-size: 10px;
-    font-weight: 600;
-    color: var(--blue);
-    background: rgba(59,130,246,0.08);
-    padding: 1px 6px;
-    border-radius: 4px;
-    letter-spacing: 0.02em;
-  }
-  .cost-badge {
-    font-family: 'DM Mono', monospace;
-    font-size: 10px;
-    font-weight: 600;
-    color: #059669;
-    background: rgba(5,150,105,0.08);
-    padding: 1px 6px;
-    border-radius: 4px;
-    letter-spacing: 0.02em;
-  }
-
-  .card-ws {
-    display: flex; align-items: center; gap: 5px;
-    font-size: 11px; font-weight: 500; color: var(--text3);
-    margin-top: 4px;
-  }
-  .card-ws-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0 }
-  .ws-suggest {
-    display: flex; align-items: center; gap: 8px;
-    margin-top: 8px; padding: 6px 10px;
-    background: rgba(139,92,246,0.06); border-radius: 8px;
-    font-size: 11px; color: var(--text2);
-  }
-  .ws-suggest span { flex: 1 }
-  .ws-suggest b { color: var(--purple) }
-  .ws-accept {
-    font-size: 11px; font-weight: 600; color: var(--purple);
-    background: none; border: 1px solid rgba(139,92,246,0.3);
-    border-radius: 4px; padding: 2px 8px; cursor: pointer;
-    font-family: 'DM Sans', sans-serif;
-  }
-  .ws-accept:hover { background: rgba(139,92,246,0.1) }
-  .ws-dismiss {
-    font-size: 13px; color: var(--text3); background: none; border: none;
-    cursor: pointer; padding: 0 4px;
-  }
-  .ws-dismiss:hover { color: var(--text) }
-  .card-tag {
-    font-family: 'DM Mono', monospace; font-size: 9px; font-weight: 500;
-    padding: 1px 6px; border-radius: 100px;
-    background: var(--surface); color: var(--text3);
-  }
-  .card-campaign {
-    display: flex; align-items: center; gap: 5px;
-    font-family: 'DM Mono', monospace; font-size: 10px; font-weight: 600;
-    padding: 3px 10px; border-radius: 6px;
-    background: rgba(139,92,246,0.08); color: #7c3aed;
-    margin-bottom: 8px; text-decoration: none; cursor: pointer;
-    transition: background .12s;
-  }
-  .card-campaign:hover { background: rgba(139,92,246,0.15) }
-  .card-campaign .camp-dot { width: 5px; height: 5px; border-radius: 50%; background: #8b5cf6 }
-  .card-statusline {
-    font-family: 'DM Sans', sans-serif; font-size: 12px; color: var(--text2);
-    margin-bottom: 6px; display: flex; align-items: center; gap: 6px;
-  }
-  .card-statusline .sl-dot { width: 5px; height: 5px; border-radius: 50%; flex-shrink: 0 }
-  .card-statusline .sl-dot.investigating { background: var(--blue) }
-  .card-statusline .sl-dot.developing { background: var(--amber) }
-  .card-statusline .sl-dot.verifying { background: var(--green) }
-  .card-statusline .sl-dot.thinking { background: var(--purple); animation: pulse 2s ease infinite }
-  .card-statusline .sl-dot.planning { background: var(--purple) }
-
-  /* Workstream filter row */
-  .ws-filters {
-    display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; align-items: center;
-  }
-  .ws-fpill {
-    display: flex; align-items: center; gap: 5px;
-    padding: 5px 12px; border-radius: 100px;
-    font-size: 12px; font-weight: 500;
-    background: var(--bg); border: 1px solid var(--sep);
-    color: var(--text3); cursor: pointer;
-    transition: all .15s; user-select: none;
-  }
-  .ws-fpill:hover { border-color: var(--text3) }
-  .ws-fpill.active { border-color: var(--purple); color: var(--purple); background: rgba(139,92,246,0.06) }
-  .ws-fpill .wf-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0 }
-  .ws-fpill .wf-count {
-    font-family: 'DM Mono', monospace; font-size: 10px;
-    padding: 0 5px; border-radius: 100px;
-    background: var(--surface); color: var(--text3);
-  }
-
-  .card.stale { opacity: 0.45; border-color: transparent }
-  .card.stale:hover { opacity: 0.7 }
-  .card.done { opacity: 0.7 }
-
-  /* ================================================================
-     EMPTY STATE
-     ================================================================ */
-  .empty-state {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: 120px 24px;
-    text-align: center;
-  }
-  .empty-state .dot-ring {
-    width: 48px; height: 48px;
-    border-radius: 50%;
-    border: 2px solid var(--sep);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-bottom: 20px;
-  }
-  .empty-state .dot-ring .inner {
-    width: 8px; height: 8px;
-    border-radius: 50%;
-    background: var(--gray);
-    opacity: 0.4;
-  }
-  .empty-state h2 {
-    font-family: 'Plus Jakarta Sans', sans-serif;
-    font-size: 18px;
-    font-weight: 600;
-    letter-spacing: -0.02em;
-    color: var(--text2);
-    margin-bottom: 8px;
-  }
-  .empty-state p {
-    font-size: 14px;
-    color: var(--text3);
-    max-width: 360px;
-    line-height: 1.6;
-  }
-
-  @media (max-width: 800px) {
-    .grid { grid-template-columns: 1fr }
-    .shell { padding: 20px 16px }
-    .page-title { font-size: 24px }
-  }
-</style>
-</head>
-<body>
-
-<header>
-  <div class="logo">
-    <div class="logo-icon" id="logo-icon">
-      <svg viewBox="0 0 32 32" width="28" height="28" fill="none">
-        <circle cx="16" cy="16" r="14" stroke="currentColor" stroke-width="1.4" opacity="0.3"/>
-        <circle cx="16" cy="16" r="8" stroke="currentColor" stroke-width="1.2" opacity="0.2"/>
-        <line x1="16" y1="1" x2="16" y2="6.5" stroke="currentColor" stroke-width="1" opacity="0.3" stroke-linecap="round"/>
-        <line x1="16" y1="25.5" x2="16" y2="31" stroke="currentColor" stroke-width="1" opacity="0.3" stroke-linecap="round"/>
-        <line x1="1" y1="16" x2="6.5" y2="16" stroke="currentColor" stroke-width="1" opacity="0.3" stroke-linecap="round"/>
-        <line x1="25.5" y1="16" x2="31" y2="16" stroke="currentColor" stroke-width="1" opacity="0.3" stroke-linecap="round"/>
-        <path class="mc-sweep" d="M16 16 L16 2 A14 14 0 0 1 29.8 13.2 Z" fill="currentColor"/>
-        <circle class="mc-dot" cx="16" cy="16" r="4"/>
-      </svg>
-    </div>
-    <div class="logo-text">Mission Control</div>
-  </div>
-  <nav class="header-nav">
-    <a href="/" class="nav-link active">Dashboard</a>
-    <a href="/dispatch" class="nav-link">Dispatch</a>
-    <a href="/findings" class="nav-link">Findings</a>
-    <a href="/workflow" class="nav-link">Workflow</a>
-    <a href="/postmortems" class="nav-link">Post-Mortems</a>
-    <a href="/tools" class="nav-link">Toolbox</a>
-    <a href="/logic" class="nav-link">Logic</a>
-    <a href="/radar" class="nav-link">Radar</a>
-    <a href="/campaigns" class="nav-link">Campaigns</a>
-    <a href="/health" class="nav-link">Health</a>
-  </nav>
-  <div class="hstats" id="stats"></div>
-</header>
-
-<div class="shell">
-  <div id="main"></div>
-</div>
-
-<script>
-const STATE_ACCENT = {
-  investigating: 'var(--blue)',
-  developing:    'var(--amber)',
-  planning:      'var(--purple)',
-  waiting:       'var(--amber)',
-  verifying:     'var(--green)',
-  thinking:      'var(--purple)',
-  done:          'var(--green)',
-  idle:          'var(--gray)',
-};
-
-const STATE_LABEL = {
-  investigating: 'Researching',
-  developing:    'Writing',
-  planning:      'Planning',
-  waiting:       'Needs input',
-  verifying:     'Verifying',
-  thinking:      'Thinking',
-  done:          'Done',
-  idle:          'Idle',
-};
-
-if ('Notification' in window && Notification.permission === 'default') {
-  Notification.requestPermission();
-}
-const notifiedSessions = new Set();
-
-function notify(title, body) {
-  if ('Notification' in window && Notification.permission === 'granted') {
-    new Notification(title, { body, tag: 'mc-input' });
-  }
-}
-
-function ago(ms) {
-  if (ms < 5000) return 'now';
-  const s = Math.floor(ms / 1000);
-  if (s < 60) return s + 's ago';
-  const m = Math.floor(s / 60);
-  if (m < 60) return m + 'm ago';
-  const hr = Math.floor(m / 60);
-  if (hr < 24) return hr + 'h ago';
-  return Math.floor(hr / 24) + 'd ago';
-}
-
-function esc(s) {
-  return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;').replace(/"/g, '&quot;');
-}
-
-// Campaign lookup — maps sessionId to campaign info (client-side, uses cached data)
-let _campaignLookup = new Map();
-function buildCampaignLookup(campaigns) {
-  _campaignLookup = new Map();
-  for (const c of campaigns) {
-    if (!c.agents) continue;
-    for (const ag of c.agents) {
-      if (ag.sessionId) {
-        _campaignLookup.set(ag.sessionId, { campaignName: c.name, campaignId: c.id, agentName: ag.name, agentSlot: ag.slot });
-      }
-    }
-  }
-}
-function getCampaignLookup() { return _campaignLookup; }
-
-function renderCard(a) {
-  const isWaiting = a.active && a.state === 'waiting';
-  const stateKey  = a.done ? 'done' : a.state;
-  const accent    = STATE_ACCENT[stateKey] || 'var(--gray)';
-  const label     = STATE_LABEL[stateKey] || stateKey;
-  const sid       = a.sessionId || '???';
-  const short     = sid.slice(-6);
-  const mission   = a.mission || '';
-  const letter    = a.letter || '?';
-  // Campaign info
-  const campLookup = getCampaignLookup();
-  const campInfo = campLookup.get(sid) || (a.chainedSessions ? a.chainedSessions.reduce((found, s) => found || campLookup.get(s), null) : null);
-
-  let cardCls = 'card';
-  if (a.done) cardCls += ' done';
-
-  if (isWaiting && !notifiedSessions.has(sid)) {
-    notifiedSessions.add(sid);
-    notify('Agent needs your input', mission || 'Agent #' + short);
-  }
-  if (!isWaiting) notifiedSessions.delete(sid);
-
-  let inputBanner = '';
-  if (isWaiting) {
-    inputBanner = '<div class="needs-input"><span class="needs-input-dot"></span>Waiting for your input</div>';
-  }
-
-  // Workstream badge
-  let wsHtml = '';
-  if (a.wsName) {
-    wsHtml = '<div class="card-ws"><span class="card-ws-dot" style="background:' + (a.wsColor || '#9ca3af') + '"></span>' + esc(a.wsName) + '</div>';
-  }
-
-  // Campaign badge
-  let campBadge = '';
-  if (campInfo) {
-    campBadge = '<a href="/campaigns" class="card-campaign" onclick="event.stopPropagation()"><span class="camp-dot"></span>' + esc(campInfo.agentName) + ' \u00b7 ' + esc(campInfo.campaignName) + '</a>';
-  }
-
-  // StatusLine (what the agent is currently doing)
-  let statusHtml = '';
-  if (a.active && a.statusLine) {
-    statusHtml = '<div class="card-statusline"><span class="sl-dot ' + esc(a.state || '') + '"></span>' + esc(a.statusLine) + '</div>';
-  }
-
-  let heroHtml = campBadge;
-  if (mission && a.isSummarizing) {
-    heroHtml += '<div class="card-mission">' + esc(mission) + '</div>'
-      + wsHtml + statusHtml
-      + '<div class="card-summarizing">Re-summarizing...</div>';
-  } else if (mission) {
-    heroHtml += '<div class="card-mission">' + esc(mission) + '</div>' + wsHtml + statusHtml;
-  } else if (a.hasPrompts || (a.active && !a.done)) {
-    heroHtml += '<div class="card-summarizing">Summarizing...</div>' + wsHtml + statusHtml;
-  } else {
-    heroHtml += '<div class="card-no-prompt">No prompt captured yet</div>' + wsHtml;
-  }
-
-  // Tag pills
-  let tagPills = '';
-  if (a.wsTags && a.wsTags.length) {
-    tagPills = a.wsTags.map(t => '<span class="card-tag">' + esc(t) + '</span>').join('');
-  }
-
-  return '<a href="/session/' + esc(sid) + '" class="' + cardCls + '" style="--card-accent:' + accent + ';text-decoration:none;color:inherit;display:block" data-sid="' + esc(sid) + '" data-ws="' + (a.workstream || '') + '">'
-    + '<div class="card-body">'
-    + '<div class="card-top">'
-    + '<span class="state-pill s-' + stateKey + '"><span class="sdot"></span>' + esc(label) + '</span>'
-    + '<span class="card-ago">' + ago(a.ago) + '</span>'
-    + '</div>'
-    + inputBanner
-    + heroHtml
-    + '</div>'
-    + '<div class="card-footer">'
-    + tagPills
-    + (a.resumeCount > 0 ? '<span class="resume-badge" title="Resumed ' + a.resumeCount + ' time' + (a.resumeCount > 1 ? 's' : '') + ' in a new terminal">' + a.resumeCount + 'x resume</span>' : '')
-    + (a.contextSwitches > 0 ? '<span class="ctx-badge" title="' + a.contextSwitches + ' context transition' + (a.contextSwitches > 1 ? 's' : '') + ' (/plan, /compact, etc.)">' + a.contextSwitches + 'x ctx</span>' : '')
-    + (costMap[sid] ? '<span class="cost-badge" title="Cost at published Anthropic rates">$' + costMap[sid].toFixed(2) + '</span>' : '')
-    + '<span class="card-id">' + esc(letter) + '</span>'
-    + '</div>'
-    + '</a>';
-}
-
-function renderNorthStar(data) {
-  const PILL_COLORS = ['#22c55e','#3b82f6','#f59e0b','#8b5cf6','#ef4444','#06b6d4','#ec4899','#f97316'];
-
-  function pillColor(idx) {
-    return PILL_COLORS[idx % PILL_COLORS.length];
-  }
-
-  if (!data.aiReady) {
-    return '<div class="ns-noai">Add your Cerebras API key to <code>.claude/agent-hub/.env</code> to enable AI summaries. <a href="https://cloud.cerebras.ai" target="_blank">Get free key</a></div>';
-  }
-
-  let h = '<div class="tom-section">';
-
-  // Header
-  const tsAge = data.ts ? ago(Date.now() - data.ts) : '';
-  h += '<div class="tom-head">';
-  h += '<span class="tom-label">Top of Mind</span>';
-  if (tsAge) h += '<span class="tom-ago">' + tsAge + '</span>';
-  h += '</div>';
-
-  // Briefing text
-  if (data.topOfMind) {
-    let tomHtml = esc(data.topOfMind);
-    tomHtml = tomHtml.replace(/\\{(.+?)\\|(\\d+)\\}/g, (_, phrase, idxStr) => {
-      const color = pillColor(parseInt(idxStr, 10));
-      return '<span class="tom-pill" style="color:' + color + '">' + phrase + '</span>';
-    });
-    h += '<div class="tom-text">' + tomHtml + '</div>';
-  } else {
-    h += '<span class="ns-empty">Generating briefing...</span>';
-  }
-
-  // Topic pills
-  if (data.themes && data.themes.length) {
-    h += '<div class="tom-topics">';
-    data.themes.forEach(t => {
-      h += '<span class="ns-chip">' + esc(t.theme) + '<span class="ns-count">' + t.count + '</span></span>';
-    });
-    h += '</div>';
-  }
-
-  h += '</div>';
-  return h;
-}
-
-function renderStats(agents) {
-  const waiting = agents.filter(a => a.active && a.state === 'waiting').length;
-  const active  = agents.filter(a => a.active && a.state !== 'waiting').length;
-  const done    = agents.filter(a => a.done && !a.archived).length;
-  let h = '';
-
-  if (waiting) h += '<div class="stat-pill has-waiting"><span class="sdot sdot-wait"></span><span class="count">' + waiting + '</span> waiting</div>';
-  if (active)  h += '<div class="stat-pill"><span class="sdot sdot-on"></span><span class="count">' + active + '</span> active</div>';
-  if (done)    h += '<div class="stat-pill"><span class="sdot sdot-done"></span>' + done + ' done</div>';
-  if (!agents.length) h = '<div class="stat-pill" style="color:var(--text3)">No agents</div>';
-
-  const icon = document.getElementById('logo-icon');
-  if (icon) {
-    icon.className = 'logo-icon' + (waiting ? ' waiting' : active ? ' active' : '');
-  }
-
-  // Dynamic favicon color
-  var favColor = waiting ? '%23f59e0b' : active ? '%2322c55e' : '%239ca3af';
-  var fav = document.getElementById('favicon');
-  if (fav) {
-    var svg = "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><circle cx='16' cy='16' r='15' fill='%231a1a1a'/><circle cx='16' cy='16' r='9' fill='none' stroke='rgba(255,255,255,0.2)' stroke-width='1.2'/><line x1='16' y1='1' x2='16' y2='7' stroke='rgba(255,255,255,0.15)' stroke-width='1' stroke-linecap='round'/><line x1='16' y1='25' x2='16' y2='31' stroke='rgba(255,255,255,0.15)' stroke-width='1' stroke-linecap='round'/><line x1='1' y1='16' x2='7' y2='16' stroke='rgba(255,255,255,0.15)' stroke-width='1' stroke-linecap='round'/><line x1='25' y1='16' x2='31' y2='16' stroke='rgba(255,255,255,0.15)' stroke-width='1' stroke-linecap='round'/><circle cx='16' cy='16' r='3.5' fill='" + favColor + "'/></svg>";
-    fav.href = svg;
-  }
-
-  document.title = waiting
-    ? '(' + waiting + ') Mission Control'
-    : active
-    ? 'Mission Control \\u2022 ' + active + ' active'
-    : 'Mission Control';
-
-  return h;
-}
-
-function renderEmpty() {
-  return '<div class="empty-state">'
-    + '<div class="dot-ring"><div class="inner"></div></div>'
-    + '<h2>Listening for agents</h2>'
-    + '<p>Open a Claude Code session in this project. Agent activity will appear here automatically.</p>'
-    + '</div>';
-}
-
-let currentFilter = 'active';
-let currentWsFilter = 'all';
-
-function filterAgents(agents) {
-  let result;
-  if (currentFilter === 'all') result = agents.filter(a => !a.archived);
-  else if (currentFilter === 'done') result = agents.filter(a => a.done && !a.archived);
-  else if (currentFilter === 'archived') result = agents.filter(a => a.archived);
-  else result = agents.filter(a => a.active);
-
-  // Apply workstream filter
-  if (currentWsFilter !== 'all') {
-    if (currentWsFilter === 'unassigned') result = result.filter(a => !a.workstream);
-    else result = result.filter(a => a.workstream === currentWsFilter);
-  }
-  return result;
-}
-
-function renderWsFilters(agents) {
-  const mode = (window.__getMode && window.__getMode()) || 'home';
-  const defs = window.__wsDefs || [];
-  // Only show workstreams matching current mode (shared + mode-specific)
-  const modeWsIds = new Set(defs.filter(w => w.context === null || w.context === undefined || w.context === mode).map(w => w.id));
-
-  const nonArchived = agents.filter(a => !a.archived);
-  const wsCounts = {};
-  let unassigned = 0;
-  nonArchived.forEach(a => {
-    if (a.workstream && modeWsIds.has(a.workstream)) wsCounts[a.workstream] = (wsCounts[a.workstream] || 0) + 1;
-    else if (a.workstream && !modeWsIds.has(a.workstream)) { /* skip — wrong mode */ }
-    else unassigned++;
-  });
-
-  const hasAny = Object.keys(wsCounts).length > 0 || unassigned > 0;
-  if (!hasAny) return '';
-
-  let h = '<div class="ws-filters">';
-  h += '<div class="ws-fpill' + (currentWsFilter === 'all' ? ' active' : '') + '" data-ws="all">All</div>';
-
-  // Show ALL workstreams for current mode (even if 0 agents assigned)
-  defs.filter(w => w.context === null || w.context === undefined || w.context === mode).forEach(w => {
-    const count = wsCounts[w.id] || 0;
-    h += '<div class="ws-fpill' + (currentWsFilter === w.id ? ' active' : '') + '" data-ws="' + esc(w.id) + '">'
-      + '<span class="wf-dot" style="background:' + esc(w.color) + '"></span>'
-      + esc(w.name)
-      + '<span class="wf-count">' + count + '</span></div>';
-  });
-
-  if (unassigned > 0) {
-    h += '<div class="ws-fpill' + (currentWsFilter === 'unassigned' ? ' active' : '') + '" data-ws="unassigned">Unassigned<span class="wf-count">' + unassigned + '</span></div>';
-  }
-
-  h += '</div>';
-  return h;
-}
-
-function renderFilters(agents) {
-  const activeN   = agents.filter(a => a.active).length;
-  const allN      = agents.filter(a => !a.archived).length;
-  const doneN     = agents.filter(a => a.done && !a.archived).length;
-  const archivedN = agents.filter(a => a.archived).length;
-
-  let h = '<div class="filters">';
-  h += '<button class="filter-btn' + (currentFilter === 'active' ? ' active' : '') + '" data-f="active">Active<span class="filter-count">' + activeN + '</span></button>';
-  h += '<button class="filter-btn' + (currentFilter === 'all' ? ' active' : '') + '" data-f="all">All<span class="filter-count">' + allN + '</span></button>';
-  h += '<button class="filter-btn' + (currentFilter === 'done' ? ' active' : '') + '" data-f="done">Done<span class="filter-count">' + doneN + '</span></button>';
-  if (archivedN) h += '<button class="filter-btn' + (currentFilter === 'archived' ? ' active' : '') + '" data-f="archived">Archived<span class="filter-count">' + archivedN + '</span></button>';
-  h += '</div>';
-  return h;
-}
-
-async function refresh() {
-  try {
-    const [agents, nsData, wsDefs, campaigns] = await Promise.all([
-      fetch('/api/agents').then(r => r.json()),
-      fetch('/api/northstar').then(r => r.json()),
-      fetch('/api/workstreams').then(r => r.json()),
-      fetch('/api/campaigns').then(r => r.json()),
-    ]);
-    // Store workstream defs for mode filtering
-    window.__wsDefs = wsDefs;
-    // Build campaign lookup for agent card badges
-    buildCampaignLookup(campaigns);
-
-    document.getElementById('stats').innerHTML = renderStats(agents);
-
-    if (!agents.length) {
-      document.getElementById('main').innerHTML = renderEmpty();
-      return;
-    }
-
-    const filtered = filterAgents(agents);
-    let h = '<h1 class="page-title">Agents</h1>';
-    h += '<p class="page-sub">' + agents.length + ' sessions tracked</p>';
-    h += renderNorthStar(nsData);
-    h += renderFilters(agents);
-    h += renderWsFilters(agents);
-
-    if (filtered.length) {
-      h += '<div class="grid">' + filtered.map(renderCard).join('') + '</div>';
-    } else {
-      h += '<div class="empty-state" style="padding:80px 24px"><h2>No agents in this view</h2><p>Try switching filters above.</p></div>';
-    }
-
-    document.getElementById('main').innerHTML = h;
-
-    document.querySelectorAll('.ws-fpill').forEach(pill => {
-      pill.addEventListener('click', () => {
-        currentWsFilter = pill.dataset.ws;
-        refresh();
-      });
-    });
-
-    document.querySelectorAll('.filter-btn').forEach(btn => {
-      btn.addEventListener('click', () => {
-        currentFilter = btn.dataset.f;
-        refresh();
-      });
-    });
-
-    // AI workstream suggestions for unassigned sessions with prompts
-    agents.forEach(a => {
-      if (!a.workstream && a.hasPrompts && !suggestedSessions.has(a.sessionId)) {
-        suggestedSessions.add(a.sessionId);
-        fetch('/api/suggest-workstream/' + encodeURIComponent(a.sessionId))
-          .then(r => r.json())
-          .then(data => {
-            if (data.workstream && data.confidence > 0.4) {
-              const card = document.querySelector('[data-sid="' + a.sessionId + '"]');
-              if (!card) return;
-              if (card.querySelector('.ws-suggest')) return;
-              const banner = document.createElement('div');
-              banner.className = 'ws-suggest';
-              const span = document.createElement('span');
-              span.innerHTML = 'Looks like <b>' + esc(data.workstream) + '</b>';
-              banner.appendChild(span);
-              const acceptBtn = document.createElement('button');
-              acceptBtn.className = 'ws-accept';
-              acceptBtn.textContent = 'Accept';
-              acceptBtn.onclick = function(e) { e.preventDefault(); e.stopPropagation(); acceptWs(a.sessionId, data.workstream); };
-              banner.appendChild(acceptBtn);
-              const dismissBtn = document.createElement('button');
-              dismissBtn.className = 'ws-dismiss';
-              dismissBtn.textContent = 'x';
-              dismissBtn.onclick = function(e) { e.preventDefault(); e.stopPropagation(); banner.remove(); };
-              banner.appendChild(dismissBtn);
-              card.querySelector('.card-body').appendChild(banner);
-            }
-          }).catch(() => {});
-      }
-    });
-  } catch (e) {
-    console.warn('refresh error', e);
-  }
-}
-
-const suggestedSessions = new Set();
-
-// Cost badge POC — fetch once, populate costMap for card rendering
-let costMap = {};
-fetch('/api/cost').then(r => r.json()).then(data => {
-  if (data.sessions) {
-    data.sessions.forEach(s => { costMap[s.id] = s.cost; });
-    refresh(); // re-render cards with cost badges
-  }
-}).catch(() => {});
-
-function acceptWs(sid, workstream) {
-  fetch('/api/agent-workstreams', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ sessionId: sid, workstream })
-  }).then(() => refresh()).catch(() => {});
-}
-
-refresh();
-setInterval(refresh, 1500);
-// Re-render when mode toggles
-window.addEventListener('modechange', function() { currentWsFilter = 'all'; refresh(); });
-</script>
-${MODE_TOGGLE_SNIPPET}
-</body>
-</html>`;
+// ── Dashboard HTML — extracted to dashboard-page.html (PM011 fix) ────────────
+// Served via readPage() for hot-reload. Prevents server/client boundary bugs.
 
 // ── Detail Page HTML ─────────────────────────────────────────────────────────
 
@@ -2872,6 +1833,18 @@ const COST_DEFAULT = { input: 15, output: 75, cacheWrite: 18.75, cacheRead: 1.87
 let _costCache = { data: null, ts: 0 };
 const COST_CACHE_TTL = 300_000; // 5 minutes — scanning is expensive
 
+// Per-session cost cache — persists to disk so we only re-parse changed transcript files.
+// Structure: { "session-id": { mtime: <epoch-ms>, calls, tokens, models, daily, session } }
+const COST_SESSION_CACHE_F = path.join(__dirname, 'cost-session-cache.json');
+
+function loadSessionCostCache() {
+  return readJSON(COST_SESSION_CACHE_F, {});
+}
+
+function saveSessionCostCache(cache) {
+  try { writeJSON(COST_SESSION_CACHE_F, cache); } catch {}
+}
+
 // Analytics cache: { [sid]: { ...metrics, _ts } } — 30s TTL
 const analyticsCache = {};
 
@@ -2883,7 +1856,7 @@ async function computeCostData(forceRefresh) {
 
   const transcriptFiles = [];
   try {
-    const entries = fs.readdirSync(TRANSCRIPTS_DIR);
+    const entries = await fs.promises.readdir(TRANSCRIPTS_DIR);
     for (const e of entries) {
       if (e.endsWith('.jsonl')) transcriptFiles.push(path.join(TRANSCRIPTS_DIR, e));
     }
@@ -2892,48 +1865,91 @@ async function computeCostData(forceRefresh) {
   // Load summaries for topic names
   const summaries = readJSON(SUMMARIES_F, {});
 
-  // Aggregate
+  // PERF: Per-session cost cache — only re-parse transcript files whose mtime has changed.
+  // On first run, all files are parsed and cached. On subsequent runs (after the 5-min
+  // in-memory TTL expires), we stat each file and skip unchanged ones. This reduces
+  // a 7-second full parse to <200ms for typical usage where only 1-2 files changed.
+  const sessionCache = loadSessionCostCache();
+  const currentSids = new Set();
+
+  // Stat all files and determine which need re-parsing
+  const BATCH_SIZE = 10;
+  for (let i = 0; i < transcriptFiles.length; i += BATCH_SIZE) {
+    const batch = transcriptFiles.slice(i, i + BATCH_SIZE);
+    const statResults = await Promise.all(batch.map(async (f) => {
+      const sid = path.basename(f, '.jsonl');
+      currentSids.add(sid);
+      try {
+        const stat = await fs.promises.stat(f);
+        const mtime = stat.mtimeMs;
+        const cached = sessionCache[sid];
+        if (cached && cached.mtime === mtime) {
+          return { sid, cached: true, result: cached };
+        }
+        // File changed or new — parse it
+        const r = await processTranscriptAsync(f, summaries).catch(() => null);
+        if (r && r.calls > 0) {
+          sessionCache[sid] = { mtime, calls: r.calls, tokens: r.tokens, models: r.models, daily: r.daily, session: r.session };
+          return { sid, cached: false, result: sessionCache[sid] };
+        }
+        // No cost data in this file — remove stale cache entry
+        delete sessionCache[sid];
+        return null;
+      } catch {
+        delete sessionCache[sid];
+        return null;
+      }
+    }));
+
+    // No additional aggregation here — done in single pass below
+    // (statResults stored implicitly in sessionCache)
+  }
+
+  // Remove deleted sessions from cache
+  for (const sid of Object.keys(sessionCache)) {
+    if (!currentSids.has(sid)) delete sessionCache[sid];
+  }
+
+  // Save updated per-session cache to disk
+  saveSessionCostCache(sessionCache);
+
+  // Aggregate from per-session cache (all entries are now up-to-date)
   const models = {};
   const daily = {};
   const sessions = [];
   let totalCalls = 0;
   const totalTokens = { input: 0, output: 0, cacheWrite: 0, cacheRead: 0 };
 
-  // Process files sync (faster than readline streams on Windows)
-  for (const file of transcriptFiles) {
-    try {
-      const r = processTranscriptSync(file, summaries);
-      if (!r || r.calls === 0) continue;
-      totalCalls += r.calls;
-      totalTokens.input += r.tokens.input;
-      totalTokens.output += r.tokens.output;
-      totalTokens.cacheWrite += r.tokens.cacheWrite;
-      totalTokens.cacheRead += r.tokens.cacheRead;
+  for (const entry of Object.values(sessionCache)) {
+    totalCalls += entry.calls;
+    totalTokens.input += entry.tokens.input;
+    totalTokens.output += entry.tokens.output;
+    totalTokens.cacheWrite += entry.tokens.cacheWrite;
+    totalTokens.cacheRead += entry.tokens.cacheRead;
 
-      for (const [model, md] of Object.entries(r.models)) {
-        if (!models[model]) models[model] = { calls: 0, input: 0, output: 0, cacheWrite: 0, cacheRead: 0, cost: 0 };
-        models[model].calls += md.calls;
-        models[model].input += md.input;
-        models[model].output += md.output;
-        models[model].cacheWrite += md.cacheWrite;
-        models[model].cacheRead += md.cacheRead;
-        const p = COST_PRICING[model] || COST_DEFAULT;
-        models[model].cost += md.input * p.input / 1e6 + md.output * p.output / 1e6 +
-          md.cacheWrite * p.cacheWrite / 1e6 + md.cacheRead * p.cacheRead / 1e6;
-      }
+    for (const [model, md] of Object.entries(entry.models)) {
+      if (!models[model]) models[model] = { calls: 0, input: 0, output: 0, cacheWrite: 0, cacheRead: 0, cost: 0 };
+      models[model].calls += md.calls;
+      models[model].input += md.input;
+      models[model].output += md.output;
+      models[model].cacheWrite += md.cacheWrite;
+      models[model].cacheRead += md.cacheRead;
+      const p = COST_PRICING[model] || COST_DEFAULT;
+      models[model].cost += md.input * p.input / 1e6 + md.output * p.output / 1e6 +
+        md.cacheWrite * p.cacheWrite / 1e6 + md.cacheRead * p.cacheRead / 1e6;
+    }
 
-      for (const [day, dd] of Object.entries(r.daily)) {
-        if (!daily[day]) daily[day] = {};
-        for (const [model, md] of Object.entries(dd)) {
-          if (!daily[day][model]) daily[day][model] = { input: 0, output: 0, cacheWrite: 0, cacheRead: 0 };
-          daily[day][model].input += md.input;
-          daily[day][model].output += md.output;
-          daily[day][model].cacheWrite += md.cacheWrite;
-          daily[day][model].cacheRead += md.cacheRead;
-        }
+    for (const [day, dd] of Object.entries(entry.daily)) {
+      if (!daily[day]) daily[day] = {};
+      for (const [model, md] of Object.entries(dd)) {
+        if (!daily[day][model]) daily[day][model] = { input: 0, output: 0, cacheWrite: 0, cacheRead: 0 };
+        daily[day][model].input += md.input;
+        daily[day][model].output += md.output;
+        daily[day][model].cacheWrite += md.cacheWrite;
+        daily[day][model].cacheRead += md.cacheRead;
       }
-      sessions.push(r.session);
-    } catch {}
+    }
+    sessions.push(entry.session);
   }
 
   // Compute cost breakdown
@@ -2953,9 +1969,9 @@ async function computeCostData(forceRefresh) {
   return result;
 }
 
-function processTranscriptSync(file, summaries) {
+async function processTranscriptAsync(file, summaries) {
   const sid = path.basename(file, '.jsonl');
-  const content = fs.readFileSync(file, 'utf8');
+  const content = await fs.promises.readFile(file, 'utf8');
   const lines = content.split('\n');
   const models = {};
   const dailyBuckets = {};
@@ -3076,7 +2092,7 @@ async function computeInsights(forceRefresh) {
     for (const e of entries) {
       if (e.endsWith('.jsonl')) transcriptFiles.push(path.join(TRANSCRIPTS_DIR, e));
     }
-  } catch { return { daily: {}, totals: {}, frustrationExcerpts: [], satisfactionExcerpts: [], feedbackExcerpts: [] }; }
+  } catch { return { daily: {}, totals: { prompts: 0, avgLen: 0, frustrated: 0, satisfied: 0, feedback: 0, frustrationRate: 0, satisfactionRate: 0 }, frustrationExcerpts: [], satisfactionExcerpts: [], feedbackExcerpts: [], sessionPrompts: {} }; }
 
   const daily = {}; // date -> { prompts, totalLen, frustrated, satisfied, feedback, sessions }
   const allExcerpts = { frustrated: [], satisfied: [], feedback: [] };
@@ -3251,6 +2267,133 @@ const server = http.createServer((req, res) => {
     return;
   }
 
+  // ── Captures API (idea capture pipeline) ──
+  if (url === '/api/captures' && req.method === 'GET') {
+    res.writeHead(200, { 'Content-Type': 'application/json', 'Cache-Control': 'no-store' });
+    return res.end(JSON.stringify(readJSON(CAPTURES_F, [])));
+  }
+  if (url === '/api/captures' && req.method === 'POST') {
+    let body = '';
+    req.on('data', c => body += c);
+    req.on('end', () => {
+      try {
+        const { text, type, url: captureUrl } = JSON.parse(body);
+        if (!text) { res.writeHead(400, { 'Content-Type': 'application/json' }); return res.end('{"error":"text required"}'); }
+        const id = 'cap-' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
+        const capture = { id, text, type: type || 'idea', url: captureUrl || null, status: 'staged', reasoning: null, created: new Date().toISOString() };
+        const captures = readJSON(CAPTURES_F, []);
+        captures.unshift(capture);
+        writeJSON(CAPTURES_F, captures);
+        res.writeHead(200, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ ok: true, capture }));
+      } catch (e) { res.writeHead(400, { 'Content-Type': 'application/json' }); res.end(JSON.stringify({ error: e.message })); }
+    });
+    return;
+  }
+  if (url.match(/^\/api\/captures\/[^/]+\/reason$/) && req.method === 'POST') {
+    const id = url.split('/')[3];
+    const captures = readJSON(CAPTURES_F, []);
+    const capture = captures.find(c => c.id === id);
+    if (!capture) { res.writeHead(404, { 'Content-Type': 'application/json' }); return res.end('{"error":"not found"}'); }
+
+    // Use Cerebras to reason about the idea
+    const context = capture.url ? ' (URL: ' + capture.url + ')' : '';
+    callLLM(
+      `You are an idea analyst for a creative technologist named Ephratah who runs a photography portfolio, builds AI agent tools (Mission Control), and works as a software engineer.
+
+Analyze this captured idea and provide brief, actionable reasoning:
+"${capture.text.slice(0, 500)}${context}"
+
+Respond in 2-3 sentences covering:
+1. Why this matters (or doesn't) for Ephratah's projects
+2. Where it should go: "Dispatch" (actionable task), "Radar" (research/inspiration to revisit), or "Archive" (not relevant right now)
+3. Any connection to existing work
+
+Be direct and opinionated. Use <strong> tags for key phrases.`, 256
+    ).then(reasoning => {
+      if (reasoning) {
+        capture.reasoning = reasoning;
+        writeJSON(CAPTURES_F, captures);
+      }
+      res.writeHead(200, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({ reasoning: reasoning || 'AI analysis unavailable. Route manually.' }));
+    }).catch(() => {
+      res.writeHead(200, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({ reasoning: 'AI analysis unavailable. Route manually.' }));
+    });
+    return;
+  }
+  if (url.match(/^\/api\/captures\/[^/]+\/promote$/) && req.method === 'POST') {
+    const id = url.split('/')[3];
+    let body = '';
+    req.on('data', c => body += c);
+    req.on('end', () => {
+      try {
+        const { destination } = JSON.parse(body);
+        const captures = readJSON(CAPTURES_F, []);
+        const idx = captures.findIndex(c => c.id === id);
+        if (idx === -1) { res.writeHead(404, { 'Content-Type': 'application/json' }); return res.end('{"error":"not found"}'); }
+        const capture = captures[idx];
+
+        if (destination === 'dispatch') {
+          // Create dispatch item from capture
+          const mode = readJSON(MODE_F, { mode: 'home' }).mode;
+          const targetFile = mode === 'work' ? DISPATCH_WORK_F : DISPATCH_HOME_F;
+          const items = readJSON(targetFile, []);
+          const now = new Date().toISOString();
+          items.push({
+            id: 'cap-d-' + Math.random().toString(36).slice(2, 10),
+            title: capture.text.slice(0, 120),
+            description: (capture.reasoning || '') + (capture.url ? '\n\nSource: ' + capture.url : ''),
+            status: 'todo',
+            priority: 'p2',
+            workstream: '',
+            tags: ['from-capture'],
+            linkedSession: null,
+            context: mode === 'work' ? 'work' : null,
+            created: now,
+            updated: now
+          });
+          writeJSON(targetFile, items);
+          capture.status = 'promoted';
+          capture.promotedTo = 'dispatch';
+        } else if (destination === 'radar') {
+          // Create radar source from capture
+          const sources = readJSON(SOURCES_F, []);
+          sources.push({
+            id: 'cap-r-' + Math.random().toString(36).slice(2, 10),
+            name: capture.text.slice(0, 80),
+            url: capture.url || '',
+            category: capture.type === 'research' ? 'Research' : 'Inspiration',
+            description: capture.reasoning || capture.text.slice(0, 200),
+            tags: ['from-capture'],
+            added: new Date().toISOString().slice(0, 10),
+            pinned: false
+          });
+          writeJSON(SOURCES_F, sources);
+          capture.status = 'promoted';
+          capture.promotedTo = 'radar';
+        } else if (destination === 'archive') {
+          capture.status = 'archived';
+        }
+
+        captures[idx] = capture;
+        writeJSON(CAPTURES_F, captures);
+        res.writeHead(200, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ ok: true }));
+      } catch (e) { res.writeHead(400, { 'Content-Type': 'application/json' }); res.end(JSON.stringify({ error: e.message })); }
+    });
+    return;
+  }
+  if (url.match(/^\/api\/captures\/[^/]+$/) && req.method === 'DELETE') {
+    const id = url.split('/')[3];
+    let captures = readJSON(CAPTURES_F, []);
+    captures = captures.filter(c => c.id !== id);
+    writeJSON(CAPTURES_F, captures);
+    res.writeHead(200, { 'Content-Type': 'application/json' });
+    return res.end('{"ok":true}');
+  }
+
   // ── Findings API (data-driven findings) ──
   if (url === '/api/findings' && req.method === 'GET') {
     res.writeHead(200, { 'Content-Type': 'application/json', 'Cache-Control': 'no-store' });
@@ -3362,6 +2505,169 @@ const server = http.createServer((req, res) => {
         res.writeHead(200, { 'Content-Type': 'application/json' });
         res.end('{"ok":true}');
       } catch { res.writeHead(400); res.end('{"error":"bad json"}'); }
+    });
+    return;
+  }
+
+  // ── Agent self-debrief: write delivered/missed/lessons ──
+  if (url === '/api/campaigns/agent-debrief' && req.method === 'POST') {
+    let body = '';
+    req.on('data', c => body += c);
+    req.on('end', () => {
+      try {
+        const { campaignId, slot, delivered, missed, lessons, reviewStatus } = JSON.parse(body);
+        const camps = readJSON(CAMPAIGNS_F, []);
+        const campaign = camps.find(c => c.id === (campaignId || 'campaign-001'));
+        if (!campaign) { res.writeHead(404); return res.end('{"error":"campaign not found"}'); }
+        const agent = campaign.agents.find(a => a.slot === slot);
+        if (!agent) { res.writeHead(404); return res.end('{"error":"agent not found"}'); }
+        if (delivered && delivered.length) agent.delivered = delivered;
+        if (missed && missed.length) agent.missed = missed;
+        if (lessons && lessons.length) agent.lessons = lessons;
+        if (reviewStatus !== undefined) agent.reviewStatus = reviewStatus;
+        // Mark debrief lifecycle stage
+        if (!agent.lifecycle) agent.lifecycle = {};
+        agent.lifecycle.debrief = (delivered && delivered.length) ? 'passed' : 'partial';
+        writeJSON(CAMPAIGNS_F, camps);
+        res.writeHead(200, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ ok: true, delivered: (agent.delivered || []).length, missed: (agent.missed || []).length }));
+      } catch { res.writeHead(400); res.end('{"error":"bad json"}'); }
+    });
+    return;
+  }
+
+  // ── Update execution plan item status ──
+  if (url === '/api/campaigns/plan' && req.method === 'POST') {
+    let body = '';
+    req.on('data', c => body += c);
+    req.on('end', () => {
+      try {
+        const { campaignId, itemId, status, agentSlot, note } = JSON.parse(body);
+        const camps = readJSON(CAMPAIGNS_F, []);
+        const campaign = camps.find(c => c.id === (campaignId || 'campaign-001'));
+        if (!campaign || !campaign.executionPlan) { res.writeHead(404); return res.end('{"error":"not found"}'); }
+        const item = campaign.executionPlan.items.find(i => i.id === itemId);
+        if (!item) { res.writeHead(404); return res.end('{"error":"plan item not found"}'); }
+        if (status) item.status = status;
+        if (agentSlot !== undefined) item.agentSlot = agentSlot;
+        if (note !== undefined) item.note = note;
+        writeJSON(CAMPAIGNS_F, camps);
+        res.writeHead(200, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ ok: true, item }));
+      } catch { res.writeHead(400); res.end('{"error":"bad json"}'); }
+    });
+    return;
+  }
+
+  // ── Auto-dispatch: launch agent in new Windows Terminal tab ──
+  if (url === '/api/launch' && req.method === 'POST') {
+    let body = '';
+    req.on('data', c => body += c);
+    req.on('end', () => {
+      try {
+        const { agentName, promptFile, campaignId, slot, mode, autoClose, sprint, focus } = JSON.parse(body);
+        // mode: "auto" (default) = headless -p | "interactive" = full TUI
+        // autoClose: true = close tab on successful completion
+        // sprint, focus: optional — used to auto-create agent card if it doesn't exist
+        if (!agentName || !promptFile) {
+          res.writeHead(400, { 'Content-Type': 'application/json' });
+          return res.end('{"error":"agentName and promptFile required"}');
+        }
+
+        // Generate deterministic session ID so we can pre-link to campaigns
+        const sessionId = crypto.randomUUID();
+
+        // Resolve prompt file path (relative to agent-hub dir)
+        const promptPath = path.join(__dirname, promptFile);
+        if (!fs.existsSync(promptPath)) {
+          res.writeHead(404, { 'Content-Type': 'application/json' });
+          return res.end(JSON.stringify({ error: 'prompt file not found: ' + promptFile }));
+        }
+
+        // Pre-link session to campaign agent card — auto-create if it doesn't exist (PM015 fix)
+        if (campaignId && slot) {
+          const campaigns = readJSON(CAMPAIGNS_F, []);
+          const campaign = campaigns.find(c => c.id === campaignId);
+          if (campaign) {
+            let agent = campaign.agents.find(a => a.slot === slot);
+            if (!agent) {
+              // Auto-create agent card — no more manual JSON editing required
+              agent = {
+                slot,
+                name: agentName,
+                focus: focus || agentName,
+                sessionId,
+                status: 'active',
+                brief: promptFile,
+                sprint: sprint || null,
+                grade: null,
+                gradeReason: null,
+                lifecycle: { define: 'pending', discover: 'pending', execute: 'pending', reason: 'pending', verify: 'pending', debrief: 'pending' },
+                skillsUsed: [],
+                delivered: [],
+                missed: []
+              };
+              campaign.agents.push(agent);
+            } else {
+              agent.sessionId = sessionId;
+              agent.status = 'active';
+            }
+            writeJSON(CAMPAIGNS_F, campaigns);
+          }
+        }
+
+        // Pre-create state file with dispatch metadata.
+        // hook.js preserves parentSessionId and dispatchMeta on subsequent writes.
+        // This lets the dashboard show parent-child relationships immediately.
+        const parentSessionId = req.headers['x-parent-session'] || null;
+        const dispatchMeta = {
+          agentName, campaignId: campaignId || null, slot: slot || null,
+          mode: mode || 'auto', dispatchedAt: new Date().toISOString()
+        };
+        const preState = {
+          sessionId, tool: null, detail: 'Launching...', statusLine: 'Auto-dispatch',
+          ts: Date.now(), claudePid: null, resumeCount: 0,
+          displayName: agentName, parentSessionId, dispatchMeta,
+          state: 'launching', emoji: '🚀', label: 'LAUNCHING'
+        };
+        if (!fs.existsSync(STATES_DIR)) fs.mkdirSync(STATES_DIR, { recursive: true });
+        fs.writeFileSync(path.join(STATES_DIR, `${sessionId}.json`), JSON.stringify(preState));
+
+        // Convert Windows path to Unix path for Git Bash
+        const toUnix = p => p.replace(/\\/g, '/').replace(/^([A-Z]):/i, (_, d) => '/' + d.toLowerCase());
+        const unixDispatch = toUnix(path.join(__dirname, 'dispatch.sh'));
+        const unixPromptPath = toUnix(promptPath);
+
+        // Write a small launcher script to avoid wt.exe quoting hell on Windows.
+        // wt.exe + spawn + cmd.exe = 3 layers of quote interpretation = guaranteed breakage.
+        // A temp .sh file sidesteps all of it: wt.exe just runs "bash <file>".
+        const launcherPath = path.join(__dirname, `_launch-${sessionId.slice(0,8)}.sh`);
+        const launcherContent = [
+          '#!/bin/bash',
+          '# Auto-generated launcher — self-deletes after use',
+          `cd /c/Users/ephra/phredomade`,
+          `bash "${unixDispatch}" "${agentName}" "${unixPromptPath}" "${sessionId}" "${mode || 'auto'}" "${autoClose ? 'close' : ''}" "${slot || ''}"`,
+          `rm -f "${toUnix(launcherPath)}"`,
+        ].join('\n');
+        fs.writeFileSync(launcherPath, launcherContent, { mode: 0o755 });
+
+        // Launch in new Windows Terminal tab
+        // Full path to bash.exe — wt.exe can't resolve bare "bash"
+        const bashExe = 'C:\\Program Files\\Git\\usr\\bin\\bash.exe';
+        const winLauncher = launcherPath; // Windows path for wt.exe
+        const { exec: execCmd } = require('child_process');
+        const safeTitle = agentName.replace(/"/g, '');
+        const cmd = `wt.exe -w 0 new-tab --title "${safeTitle}" "${bashExe}" "${winLauncher}"`;
+        execCmd(cmd, (err) => {
+          if (err) console.error('[launch] wt.exe error:', err.message);
+        });
+
+        res.writeHead(200, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ ok: true, sessionId, agentName }));
+      } catch (e) {
+        res.writeHead(500, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ error: e.message }));
+      }
     });
     return;
   }
@@ -3815,6 +3121,20 @@ const server = http.createServer((req, res) => {
     const legacy = readJSON(DISPATCH_F, []);
     if (legacy.some(i => i.id === id)) return { type: 'array', file: DISPATCH_F };
     return null;
+  }
+
+  // Serve brief/prompt files from coordinated-sprint/ as plain text
+  if (url.startsWith('/api/brief/') && req.method === 'GET') {
+    const filename = decodeURIComponent(url.slice('/api/brief/'.length)).replace(/[^a-zA-Z0-9._-]/g, '');
+    const filePath = path.join(__dirname, 'coordinated-sprint', filename);
+    try {
+      const content = fs.readFileSync(filePath, 'utf8');
+      res.writeHead(200, { 'Content-Type': 'text/plain; charset=utf-8', 'Cache-Control': 'no-store' });
+      return res.end(content);
+    } catch (e) {
+      res.writeHead(404, { 'Content-Type': 'text/plain' });
+      return res.end('Brief not found: ' + filename);
+    }
   }
 
   if (url === '/api/dispatch' && req.method === 'GET') {
@@ -4544,14 +3864,48 @@ Respond with ONLY a JSON object: {"workstream": "the-id", "confidence": 0.0-1.0,
     return res.end(readPage(HEALTH_HTML_F, 'Health page'));
   }
 
+  // Morning Brief page
+  if (url === '/morning-brief') {
+    res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
+    return res.end(readPage(path.join(__dirname, 'morning-brief-page.html'), 'Morning Brief'));
+  }
+
+  // Getting Started guide for friends
+  if (url === '/starter') {
+    res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
+    return res.end(readPage(path.join(__dirname, 'starter-guide.html'), 'Starter Guide'));
+  }
+
   // Hidden video findings page (no nav link)
   if (url === '/video-findings') {
     res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
     return res.end(readPage(path.join(__dirname, 'video-findings-page.html'), 'Video Findings'));
   }
 
+  // Capture page — mobile-first idea intake
+  if (url === '/capture') {
+    res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
+    return res.end(readPage(CAPTURE_HTML_F, 'Capture page'));
+  }
+
+  // President's Report — CEO dashboard
+  if (url === '/president') {
+    res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
+    return res.end(readPage(PRESIDENT_HTML_F, "President's Report"));
+  }
+
+  if (url === '/story') {
+    res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
+    return res.end(readPage(path.join(__dirname, 'story-page.html'), 'Story page'));
+  }
+
+  if (url === '/close-out') {
+    res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
+    return res.end(readPage(path.join(__dirname, 'close-out-page.html'), 'Close-Out page'));
+  }
+
   res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
-  res.end(DASHBOARD);
+  res.end(readPage(DASHBOARD_HTML_F, 'Dashboard'));
 });
 
 server.listen(PORT, () => {
@@ -4566,4 +3920,9 @@ server.listen(PORT, () => {
   console.log('  \u2502                                              \u2502');
   console.log('  \u2514\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2518');
   console.log('');
+
+  // PERF: Warm caches on startup so first Dashboard request is fast
+  readAgents();
+  computeCostData(false).catch(() => {});
+  console.log('  Cache warming: agents + cost data...');
 });

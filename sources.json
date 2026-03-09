@@ -92,5 +92,157 @@
     ],
     "added": "2026-03-07",
     "pinned": false
+  },
+  {
+    "id": "claude-code-source-readable",
+    "name": "Claude Code System Prompts Are Readable in cli.js",
+    "url": "https://www.reddit.com/r/ClaudeCode/s/jDir1g23mE",
+    "category": "Research",
+    "description": "Reddit post: Claude Code's full system prompt is readable in node_modules/@anthropic-ai/claude-agent-sdk/cli.js (13,800 lines minified JS). Identity variants for CLI/SDK/Agent, tool usage rules, over-engineering guidelines, git templates — all plaintext. Consensus: the model is the product, not the CLI. Useful for: studying how Anthropic structures agent instructions, informing CLAUDE.md and agent brief design, understanding claude-agent-sdk for building custom agents.",
+    "tags": [
+      "claude-code",
+      "system-prompts",
+      "agent-sdk",
+      "research",
+      "competitive-intel"
+    ],
+    "added": "2026-03-07",
+    "pinned": true
+  },
+  {
+    "id": "morilliu-terminal-website",
+    "name": "@morilliu: Personal Website in Terminal",
+    "url": "https://www.instagram.com/reel/DVjA3CQDl2t/",
+    "category": "Inspiration",
+    "description": "Terminal-style personal website. Directly relevant to phredomade's ASCII hero aesthetic. Study for ideas on terminal UI in web context.",
+    "tags": [
+      "terminal",
+      "portfolio",
+      "design",
+      "from-discord"
+    ],
+    "added": "2026-03-07",
+    "pinned": false
+  },
+  {
+    "id": "agentic-james-looping-cron",
+    "name": "@agentic.james: Claude Code Looping + Cron Jobs",
+    "url": "https://www.instagram.com/reel/DVl7jdQjpT8/",
+    "category": "Research",
+    "description": "Claude Code looping and cron job features. Relevant for MC automation and agent scheduling. 851 likes.",
+    "tags": [
+      "claude-code",
+      "automation",
+      "agents",
+      "from-discord"
+    ],
+    "added": "2026-03-07",
+    "pinned": false
+  },
+  {
+    "id": "donalleniii-4-docs",
+    "name": "@donalleniii: 4 Docs Every Agentic Engineer Needs",
+    "url": "https://www.instagram.com/reel/DUxWKozk8yS/",
+    "category": "Research",
+    "description": "4 documents every agentic engineer needs before vibe coding. 5,902 likes. Study for MC documentation strategy and agent brief structure.",
+    "tags": [
+      "agentic-engineering",
+      "documentation",
+      "best-practices",
+      "from-discord"
+    ],
+    "added": "2026-03-07",
+    "pinned": true
+  },
+  {
+    "id": "agentic-james-text-claude",
+    "name": "@agentic.james: Text Claude Code From Phone All Day",
+    "url": "https://www.instagram.com/reel/DTTgKynEl00/",
+    "category": "Research",
+    "description": "VERY RELEVANT. 8,454 likes. Claude Code running on home computer, texted throughout the day. This is exactly the phone-to-MC pipeline problem. Study this creator's approach for the capture page remote access strategy.",
+    "tags": [
+      "phone-bridge",
+      "remote-access",
+      "claude-code",
+      "capture-pipeline",
+      "from-discord"
+    ],
+    "added": "2026-03-07",
+    "pinned": true
+  },
+  {
+    "id": "chase-h-ai-guides",
+    "name": "@chase.h.ai: Claude Code Guides + n8n Templates",
+    "url": "https://www.instagram.com/reel/DT68MFTjYQ4/",
+    "category": "Research",
+    "description": "Claude Code guides and 100+ n8n templates. 2,434 likes. Noted as helpful for demo material. Could inform MC demo guide.",
+    "tags": [
+      "claude-code",
+      "n8n",
+      "demo",
+      "from-discord"
+    ],
+    "added": "2026-03-07",
+    "pinned": false
+  },
+  {
+    "id": "apartment-finder-idea",
+    "name": "Apartment Finder/Tracker (Project Idea)",
+    "url": "",
+    "category": "Research",
+    "description": "Idea: Build apartment finder/tracker by scraping Facebook and other sites. Needs feasibility research -- what sites to scrape, legal considerations, what exists already.",
+    "tags": [
+      "project-idea",
+      "scraping",
+      "personal",
+      "from-discord"
+    ],
+    "added": "2026-03-07",
+    "pinned": false
+  },
+  {
+    "id": "lightroom-presets-idea",
+    "name": "Auto-Generate Lightroom Presets from Image Data",
+    "url": "",
+    "category": "Research",
+    "description": "Idea: Create Lightroom presets based on image metadata/analysis. Could use EXIF data + color analysis to generate presets that match a photographer's style. Relevant to portfolio workflow.",
+    "tags": [
+      "photography",
+      "automation",
+      "lightroom",
+      "from-discord"
+    ],
+    "added": "2026-03-07",
+    "pinned": false
+  },
+  {
+    "id": "cli-beautification-idea",
+    "name": "CLI Beautification Package",
+    "url": "",
+    "category": "Research",
+    "description": "Idea: Make terminal output pretty and user-friendly. Could be an npm package. Think: colored output, progress bars, formatted tables for Claude Code and MC CLI tools.",
+    "tags": [
+      "cli",
+      "dx",
+      "terminal",
+      "from-discord"
+    ],
+    "added": "2026-03-07",
+    "pinned": false
+  },
+  {
+    "id": "device-file-transfer",
+    "name": "Better Phone-Computer-Laptop File Transfer",
+    "url": "",
+    "category": "Research",
+    "description": "Research better solutions for transferring files between phone, computer, and laptop. Current pain: screenshots, action items, ideas are siloed on each device. Part of the broader capture pipeline problem.",
+    "tags": [
+      "workflow",
+      "file-transfer",
+      "capture-pipeline",
+      "from-discord"
+    ],
+    "added": "2026-03-07",
+    "pinned": false
   }
 ]

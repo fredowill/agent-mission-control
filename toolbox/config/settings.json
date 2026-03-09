@@ -1,52 +1,59 @@
 {
-  "permissions": {
-    "allow": [
-      "Bash:*",
-      "Read:*",
-      "Write:*",
-      "Edit:*",
-      "Glob:*",
-      "Grep:*",
-      "WebFetch:*",
-      "WebSearch:*",
-      "Agent:*",
-      "NotebookEdit:*",
-      "Skill:*",
-      "TaskCreate:*",
-      "TaskUpdate:*",
-      "TaskList:*",
-      "TaskGet:*",
-      "EnterPlanMode:*",
-      "ExitPlanMode:*",
-      "AskUserQuestion:*",
-      "EnterWorktree:*",
-      "ListMcpResourcesTool:*",
-      "ReadMcpResourceTool:*",
-      "mcp__github:*",
-      "mcp__azure-devops-custom:*"
-    ]
+  "enabledPlugins": {
+    "frontend-design@claude-plugins-official": true,
+    "security-guidance@claude-plugins-official": true,
+    "code-review@claude-plugins-official": true,
+    "pr-review-toolkit@claude-plugins-official": true
   },
-  "model": "opus[1m]",
-  "autoUpdatesChannel": "latest",
   "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash /c/Users/ephra/phredomade/.claude/scripts/guard-destructive.sh"
+          }
+        ]
+      }
+    ],
     "PostToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash /c/Users/ephra/phredomade/.claude/scripts/check-code-change.sh"
+          },
+          {
+            "type": "command",
+            "command": "node /c/Users/ephra/phredomade/.claude/scripts/check-file-conflict.js"
+          },
+          {
+            "type": "command",
+            "command": "node /c/Users/ephra/phredomade/.claude/scripts/validate-html-js.js"
+          }
+        ]
+      },
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash /c/Users/ephra/phredomade/.claude/scripts/check-server.sh"
+          },
+          {
+            "type": "command",
+            "command": "bash /c/Users/ephra/phredomade/.claude/scripts/verify-deploy.sh"
+          }
+        ]
+      },
       {
         "matcher": ".*",
         "hooks": [
           {
             "type": "command",
-            "command": "node C:/Users/emeskel/Claude/projects/agent-mission-control/hook.js"
-          }
-        ]
-      }
-    ],
-    "Stop": [
-      {
-        "matcher": "",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "node C:/Users/emeskel/Claude/projects/agent-mission-control/hook.js"
+            "command": "node /c/Users/ephra/phredomade/.claude/agent-hub/hook.js"
           }
         ]
       }
@@ -57,7 +64,37 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node C:/Users/emeskel/Claude/projects/agent-mission-control/prompt-hook.js"
+            "command": "node /c/Users/ephra/phredomade/.claude/agent-hub/prompt-hook.js"
+          },
+          {
+            "type": "command",
+            "command": "bash /c/Users/ephra/phredomade/.claude/hooks/skill-activation-hook.sh"
+          }
+        ]
+      }
+    ],
+    "SessionStart": [
+      {
+        "matcher": "compact",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node /c/Users/ephra/phredomade/.claude/scripts/session-start-compact.js"
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node /c/Users/ephra/phredomade/.claude/agent-hub/hook.js"
+          },
+          {
+            "type": "command",
+            "command": "echo '' && echo '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━' && echo '  VERIFY BEFORE DONE — Did you actually confirm this works?' && echo '  - Run tests or Playwright spot-check' && echo '  - Screenshot + visually evaluate if UI change' && echo '  - If you skipped verification, say so honestly' && echo '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━'"
           }
         ]
       }

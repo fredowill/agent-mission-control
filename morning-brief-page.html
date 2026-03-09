@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Morning Brief &mdash; Mission Control</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=DM+Sans:wght@400;500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#fff;--bg2:#fafafa;--surface:#f4f4f5;--surface2:#e4e4e7;
+  --text:#09090b;--text2:#52525b;--text3:#a1a1aa;--sep:#e4e4e7;
+  --purple:#8b5cf6;--purple-bg:rgba(139,92,246,0.06);
+  --green:#22c55e;--green-bg:rgba(34,197,94,0.06);
+  --blue:#3b82f6;--blue-bg:rgba(59,130,246,0.06);
+  --amber:#f59e0b;--amber-bg:rgba(245,158,11,0.06);
+  --rose:#ef4444;--rose-bg:rgba(239,68,68,0.05);
+  --cyan:#06b6d4;--cyan-bg:rgba(6,182,212,0.06);
+  --orange:#ea580c;--pink:#db2777;
+  --radius:12px;
+}
+body{background:var(--bg2);color:var(--text);font-family:'DM Sans',-apple-system,sans-serif;-webkit-font-smoothing:antialiased;min-height:100vh}
+
+/* Header — matches campaigns */
+header{display:flex;align-items:center;justify-content:space-between;padding:0 clamp(24px,4vw,48px);height:64px;background:var(--bg);border-bottom:1px solid var(--sep);position:sticky;top:0;z-index:50}
+.logo{display:flex;align-items:center;gap:10px}
+.logo-dot{width:8px;height:8px;border-radius:50%;background:var(--purple)}
+.logo-text{font-family:'Plus Jakarta Sans',sans-serif;font-size:14px;font-weight:700;letter-spacing:-0.02em}
+.header-nav{display:flex;gap:2px;padding:3px;background:var(--surface);border-radius:8px;position:absolute;left:50%;transform:translateX(-50%)}
+.nav-link{padding:5px 14px;border-radius:6px;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;color:var(--text3);text-decoration:none;transition:all .15s;white-space:nowrap}
+.nav-link:hover{color:var(--text2)}
+.nav-link.active{background:var(--bg);color:var(--text);box-shadow:0 1px 3px rgba(0,0,0,.06)}
+.header-right{font-family:'DM Mono',monospace;font-size:11px;color:var(--text3)}
+
+.wrap{padding:32px clamp(24px,4vw,48px) 80px;max-width:1200px;margin:0 auto}
+
+/* Hero card */
+.hero{background:var(--bg);border:1px solid var(--sep);border-radius:16px;margin-bottom:28px;position:relative;overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,.04)}
+.hero-gradient{height:4px;background:linear-gradient(90deg,var(--purple),var(--blue),var(--cyan))}
+.hero-inner{padding:32px 36px 28px}
+.hero-top{display:flex;align-items:center;gap:12px;margin-bottom:14px;flex-wrap:wrap}
+.date-badge{font-family:'DM Mono',monospace;font-size:11px;font-weight:500;color:var(--purple);background:var(--purple-bg);padding:4px 12px;border-radius:100px}
+.campaign-badge{font-family:'DM Mono',monospace;font-size:11px;color:var(--text3);background:var(--surface);padding:4px 12px;border-radius:100px}
+.session-badge{font-family:'DM Mono',monospace;font-size:11px;color:var(--amber);background:var(--amber-bg);padding:4px 12px;border-radius:100px}
+h1{font-family:'Plus Jakarta Sans',sans-serif;font-size:30px;font-weight:800;letter-spacing:-0.03em;margin-bottom:8px;line-height:1.2}
+.hero-subtitle{font-size:14px;color:var(--text2);line-height:1.7;max-width:700px}
+
+/* Stats row */
+.stats-row{display:flex;gap:0;flex-wrap:wrap;border:1px solid var(--sep);border-radius:12px;overflow:hidden;margin-bottom:28px;background:var(--bg);box-shadow:0 2px 8px rgba(0,0,0,.03)}
+.stat{flex:1;min-width:100px;padding:18px 20px;display:flex;flex-direction:column;gap:2px;border-right:1px solid var(--sep)}
+.stat:last-child{border-right:none}
+.stat-value{font-family:'Plus Jakarta Sans',sans-serif;font-size:26px;font-weight:800;letter-spacing:-0.03em;line-height:1}
+.stat-label{font-family:'DM Mono',monospace;font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;margin-top:4px}
+.stat-green .stat-value{color:var(--green)}
+.stat-rose .stat-value{color:var(--rose)}
+.stat-purple .stat-value{color:var(--purple)}
+.stat-amber .stat-value{color:var(--amber)}
+.stat-blue .stat-value{color:var(--blue)}
+.stat-cyan .stat-value{color:var(--cyan)}
+
+/* Section titles */
+.section{margin-bottom:28px}
+.section-title{font-family:'Plus Jakarta Sans',sans-serif;font-size:16px;font-weight:800;letter-spacing:-0.02em;margin-bottom:14px;display:flex;align-items:center;gap:10px}
+.section-title .emoji{font-size:18px}
+.section-title .count{font-family:'DM Mono',monospace;font-size:10px;color:var(--text3);background:var(--surface);padding:2px 8px;border-radius:100px}
+
+/* TLDR */
+.tldr{background:linear-gradient(135deg,var(--purple-bg),var(--blue-bg));border:1px solid rgba(139,92,246,0.12);border-radius:var(--radius);padding:20px 24px;margin-bottom:28px}
+.tldr-label{font-family:'Plus Jakarta Sans',sans-serif;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--purple);margin-bottom:8px}
+.tldr-items{display:flex;flex-direction:column;gap:6px}
+.tldr-item{font-size:13.5px;line-height:1.6;color:var(--text);display:flex;align-items:flex-start;gap:8px}
+.tldr-item::before{content:'';width:5px;height:5px;border-radius:50%;background:var(--purple);flex-shrink:0;margin-top:8px}
+.tldr-item strong{font-weight:700}
+
+/* Card base */
+.card{background:var(--bg);border:1px solid var(--sep);border-radius:var(--radius);overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,.02)}
+
+/* What Got Done — list card */
+.done-list{padding:6px 8px;display:flex;flex-direction:column;gap:1px}
+.done-item{display:flex;align-items:flex-start;gap:10px;padding:10px 14px;border-radius:8px;font-size:13px;line-height:1.6;color:var(--text2);transition:background .12s}
+.done-item:hover{background:var(--surface)}
+.done-icon{width:22px;height:22px;border-radius:6px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:12px;margin-top:1px}
+.done-icon.green{background:var(--green-bg);color:var(--green)}
+.done-icon.purple{background:var(--purple-bg);color:var(--purple)}
+.done-icon.blue{background:var(--blue-bg);color:var(--blue)}
+.done-icon.amber{background:var(--amber-bg);color:var(--amber)}
+.done-text strong{color:var(--text);font-weight:600}
+.done-text .metric{font-family:'DM Mono',monospace;font-weight:600;color:var(--purple)}
+.done-text .link{color:var(--purple);font-size:11px;text-decoration:none;font-weight:500;margin-left:4px}
+.done-text .link:hover{text-decoration:underline}
+
+/* Execution plan table */
+.exec-table{width:100%;border-collapse:collapse}
+.exec-table thead{background:var(--surface)}
+.exec-table th{font-family:'DM Mono',monospace;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text3);padding:10px 16px;text-align:left;border-bottom:1px solid var(--sep)}
+.exec-table td{padding:14px 16px;font-size:13px;border-bottom:1px solid var(--sep);vertical-align:top}
+.exec-table tr:last-child td{border-bottom:none}
+.exec-table tr:hover{background:rgba(139,92,246,0.02)}
+.exec-num{font-family:'DM Mono',monospace;font-size:12px;font-weight:600;color:var(--text3)}
+.exec-name{font-weight:600;color:var(--text)}
+.exec-desc{font-size:12px;color:var(--text2);margin-top:2px;line-height:1.5}
+.priority-pill{font-family:'DM Mono',monospace;font-size:9px;font-weight:700;padding:3px 10px;border-radius:100px;text-transform:uppercase;letter-spacing:.04em;white-space:nowrap}
+.priority-pill.p0{background:var(--rose-bg);color:var(--rose)}
+.priority-pill.important{background:var(--amber-bg);color:var(--amber)}
+.status-pill{font-family:'DM Mono',monospace;font-size:9px;font-weight:700;padding:3px 10px;border-radius:100px;text-transform:uppercase;letter-spacing:.04em;white-space:nowrap}
+.status-pill.done{background:var(--green-bg);color:var(--green)}
+.status-pill.ready{background:var(--blue-bg);color:var(--blue)}
+.status-pill.eod{background:var(--surface);color:var(--text3)}
+
+/* Findings cards */
+.findings-grid{display:grid;grid-template-columns:1fr;gap:10px}
+.finding-card{background:var(--bg);border:1px solid var(--sep);border-radius:var(--radius);padding:18px 22px;position:relative;overflow:hidden;transition:all .15s}
+.finding-card:hover{box-shadow:0 4px 16px rgba(0,0,0,.05);transform:translateY(-1px)}
+.finding-card::before{content:'';position:absolute;top:0;left:0;width:4px;height:100%;background:var(--purple)}
+.finding-id{font-family:'DM Mono',monospace;font-size:10px;font-weight:700;color:var(--purple);text-transform:uppercase;letter-spacing:.04em;margin-bottom:6px}
+.finding-title{font-family:'Plus Jakarta Sans',sans-serif;font-size:17px;font-weight:800;letter-spacing:-0.03em;margin-bottom:8px;color:var(--text)}
+.finding-body{font-size:11.5px;color:var(--text3);line-height:1.6;max-height:0;overflow:hidden;transition:max-height .3s ease}
+.finding-card:hover .finding-body{max-height:200px}
+.finding-body strong{color:var(--text2);font-weight:600}
+.finding-tldr{font-size:12px;color:var(--text2);margin-top:2px}
+.finding-quote{font-size:11.5px;color:var(--text3);font-style:italic;margin-top:6px;padding-left:12px;border-left:2px solid var(--surface2);line-height:1.5}
+
+/* Resume prompt */
+.resume-card{background:var(--bg);border:1px solid var(--sep);border-radius:var(--radius);overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,.04)}
+.resume-header{padding:16px 20px;border-bottom:1px solid var(--sep);display:flex;align-items:center;gap:10px}
+.resume-label{font-family:'Plus Jakarta Sans',sans-serif;font-size:14px;font-weight:700}
+.resume-sublabel{font-size:12px;color:var(--text3)}
+.resume-body{padding:16px 20px}
+.resume-steps{display:flex;flex-direction:column;gap:8px;margin-bottom:16px}
+.resume-step{font-size:13px;color:var(--text2);line-height:1.5;display:flex;align-items:flex-start;gap:10px}
+.step-num{font-family:'DM Mono',monospace;font-size:11px;font-weight:700;color:var(--purple);background:var(--purple-bg);width:22px;height:22px;border-radius:6px;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px}
+.resume-step strong{color:var(--text);font-weight:600}
+.code-block{background:#1e1e2e;border-radius:10px;padding:18px 20px;font-family:'DM Mono',monospace;font-size:12.5px;line-height:1.7;color:#cdd6f4;position:relative;overflow-x:auto;white-space:pre-wrap;word-break:break-word}
+.code-block .comment{color:#6c7086}
+.code-block .string{color:#a6e3a1}
+.copy-btn{position:absolute;top:10px;right:10px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.12);color:#cdd6f4;font-family:'DM Mono',monospace;font-size:10px;font-weight:500;padding:5px 12px;border-radius:6px;cursor:pointer;transition:all .15s;text-transform:uppercase;letter-spacing:.04em}
+.copy-btn:hover{background:rgba(255,255,255,.18)}
+.copy-btn.copied{background:rgba(166,227,161,.15);color:#a6e3a1;border-color:rgba(166,227,161,.2)}
+
+/* Quick links */
+.quick-links{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px}
+.quick-link{padding:8px 18px;border-radius:980px;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:600;text-decoration:none;display:inline-flex;align-items:center;gap:6px;transition:all .15s;border:1.5px solid var(--sep);color:var(--text2);background:var(--bg)}
+.quick-link:hover{background:var(--surface);border-color:var(--surface2)}
+.quick-link.primary{background:var(--purple);color:#fff;border-color:var(--purple)}
+.quick-link.primary:hover{background:#7c3aed}
+
+/* Footer */
+.footer{text-align:center;padding:40px 0 20px;font-size:11px;color:var(--text3);display:flex;flex-direction:column;gap:4px;align-items:center}
+.footer-sub{font-size:10px;color:var(--surface2)}
+
+/* Responsive */
+@media(max-width:700px){
+  .stats-row{flex-direction:column}
+  .stat{border-right:none;border-bottom:1px solid var(--sep)}
+  .stat:last-child{border-bottom:none}
+  .hero-inner{padding:24px 20px 22px}
+  h1{font-size:24px}
+  .header-nav{position:static;transform:none}
+  .exec-table{font-size:12px}
+  .exec-table th,.exec-table td{padding:10px 12px}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">
+    <div class="logo-dot"></div>
+    <span class="logo-text">Mission Control</span>
+  </div>
+  <div class="header-nav">
+    <a href="/" class="nav-link">Dashboard</a>
+    <a href="/campaigns" class="nav-link">Campaigns</a>
+    <a href="/dispatch" class="nav-link">Dispatch</a>
+    <a href="/morning-brief" class="nav-link active">Brief</a>
+  </div>
+  <div class="header-right" id="clock"></div>
+  <script>document.getElementById('clock').textContent=new Date().toLocaleTimeString([],{hour:'numeric',minute:'2-digit'})</script>
+</header>
+
+<div class="wrap">
+
+  <!-- Hero -->
+  <div class="hero">
+    <div class="hero-gradient"></div>
+    <div class="hero-inner">
+      <div class="hero-top">
+        <span class="date-badge">March 8, 2026</span>
+        <span class="campaign-badge">campaign-001 &middot; sprint 6</span>
+        <span class="session-badge">Orchestrator v1.2</span>
+      </div>
+      <h1>Good morning. Here's where you left off.</h1>
+      <div class="hero-subtitle"><strong>Orchestrator v1.2</strong> ran campaign-001 sprint 6 &mdash; campaigns page overhaul, orchestrator skill created, 3 findings captured, critic review completed.</div>
+    </div>
+  </div>
+
+  <!-- Stats Row -->
+  <div class="stats-row">
+    <div class="stat stat-purple">
+      <span class="stat-value">3.16</span>
+      <span class="stat-label">Campaign GPA</span>
+    </div>
+    <div class="stat stat-blue">
+      <span class="stat-value">19</span>
+      <span class="stat-label">Agents</span>
+    </div>
+    <div class="stat stat-green">
+      <span class="stat-value">24</span>
+      <span class="stat-label">Wins</span>
+    </div>
+    <div class="stat stat-rose">
+      <span class="stat-value">8</span>
+      <span class="stat-label">Losses</span>
+    </div>
+    <div class="stat stat-amber">
+      <span class="stat-value">38</span>
+      <span class="stat-label">Remaining</span>
+    </div>
+    <div class="stat stat-cyan">
+      <span class="stat-value">63</span>
+      <span class="stat-label">Findings</span>
+    </div>
+  </div>
+
+  <!-- TL;DR -->
+  <div class="tldr">
+    <div class="tldr-label">TL;DR &mdash; Last session recap</div>
+    <div class="tldr-items">
+      <div class="tldr-item"><strong>Campaigns page overhauled</strong> &mdash; tabbed layout, agent report cards with grades/lifecycle/skills, GPA in hero, timeline, retro scorecard</div>
+      <div class="tldr-item"><strong>Orchestrator skill created</strong> &mdash; reusable 8-phase, 14-rule skill at <code style="font-family:'DM Mono',monospace;font-size:12px;background:rgba(139,92,246,0.08);padding:1px 6px;border-radius:4px">.claude/skills/orchestrator/SKILL.md</code></div>
+      <div class="tldr-item"><strong>All 19 agents graded</strong> &mdash; enriched campaigns.json with grades, lifecycle stages, skills used, delivered/missed</div>
+      <div class="tldr-item"><strong>3 findings captured</strong> &mdash; f057 (update data before dispatch), f058 (no sub-agents from orchestrator), f059 (bold-lead text pattern)</div>
+      <div class="tldr-item"><strong>4/19 agents used skills</strong> &mdash; up from 2/16. Campaign Architect used 3 skills. Still a screaming gap for campaign-002</div>
+    </div>
+  </div>
+
+  <!-- What Got Done Today -->
+  <div class="section">
+    <div class="section-title"><span class="emoji">&#x2705;</span> What Got Done <span class="count">sprint 6 &middot; 3 agents</span></div>
+    <div class="card">
+      <div class="done-list">
+        <div class="done-item">
+          <div class="done-icon green">&#x2713;</div>
+          <span class="done-text"><strong>Campaigns page overhauled.</strong> 5 tabs (Agents, Debrief, Timeline, Retro, Close-Out). Agent report cards with grade badges, lifecycle indicators, skill usage. GPA in hero stats. <a href="/campaigns" class="link">View &rarr;</a></span>
+        </div>
+        <div class="done-item">
+          <div class="done-icon green">&#x2713;</div>
+          <span class="done-text"><strong>Orchestrator skill built.</strong> 8 phases, 14 rules, readable in 2 minutes. Captures what made v1.2 better than v1.0 &mdash; coordinate-don't-build, PRD-based dispatch, structured brainstorming. <a href="/tools" class="link">View in Toolbox &rarr;</a></span>
+        </div>
+        <div class="done-item">
+          <div class="done-icon green">&#x2713;</div>
+          <span class="done-text"><strong>Agent grading completed.</strong> All <span class="metric">19</span> agents graded (A to D+). campaigns.json enriched with lifecycle stages, skills used, delivered/missed per agent.</span>
+        </div>
+        <div class="done-item">
+          <div class="done-icon purple">&#x270E;</div>
+          <span class="done-text"><strong>Critic review done.</strong> Orchestrator skill refined &mdash; added 4 new rules (f059 bold-lead, small fixes OK, keep campaigns current, emojis), fixed findings format, added grade weights.</span>
+        </div>
+        <div class="done-item">
+          <div class="done-icon purple">&#x270E;</div>
+          <span class="done-text"><strong>Campaign Architect bugs fixed.</strong> Iframe inception on Timeline/Close-Out, timeline ordering reversed, no legend/key for colors &mdash; all patched by orchestrator directly.</span>
+        </div>
+        <div class="done-item">
+          <div class="done-icon blue">&#x1F4CB;</div>
+          <span class="done-text"><strong>Design doc written.</strong> Full brainstorm with multiple-choice questions, user-approved design, documented at <code style="font-family:'DM Mono',monospace;font-size:11px;background:var(--surface);padding:1px 5px;border-radius:4px">docs/plans/2026-03-08-campaigns-page-overhaul-design.md</code></span>
+        </div>
+        <div class="done-item">
+          <div class="done-icon amber">&#x26A0;</div>
+          <span class="done-text"><strong>3 findings captured.</strong> f057 (update reference data before dispatch), f058 (orchestrators dispatch to CLI, not sub-agents), f059 (bold-lead text pattern on every line).</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- What's Next — Execution Plan -->
+  <div class="section">
+    <div class="section-title"><span class="emoji">&#x1F3AF;</span> What's Next <span class="count">execution plan</span></div>
+    <div class="card">
+      <table class="exec-table">
+        <thead>
+          <tr>
+            <th style="width:40px">#</th>
+            <th>Task</th>
+            <th style="width:100px">Priority</th>
+            <th style="width:100px">Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr style="background:rgba(34,197,94,0.06)">
+            <td><span class="exec-num" style="color:#16a34a">✅</span></td>
+            <td><span class="exec-name" style="color:#16a34a">Campaigns Page Overhaul</span><div class="exec-desc"><strong>Tabbed layout,</strong> agent report cards, GPA, timeline, retro scorecard</div></td>
+            <td><span class="priority-pill p0">P0</span></td>
+            <td><span class="status-pill done">Done</span></td>
+          </tr>
+          <tr style="background:rgba(34,197,94,0.06)">
+            <td><span class="exec-num" style="color:#16a34a">✅</span></td>
+            <td><span class="exec-name" style="color:#16a34a">Orchestrator Skill</span><div class="exec-desc"><strong>8 phases, 15 rules.</strong> Critic review completed. Ready for campaign-002</div></td>
+            <td><span class="priority-pill p0">P0</span></td>
+            <td><span class="status-pill done">Done</span></td>
+          </tr>
+          <tr style="background:rgba(59,130,246,0.03)">
+            <td><span class="exec-num" style="color:var(--blue)">3</span></td>
+            <td><span class="exec-name">Workflow Page</span><div class="exec-desc"><strong>THE most important page</strong> after Dashboard. Must capture orchestrator pattern, PRD dispatch, agent lifecycle (5 stages), skill discovery, campaigns system, learning loop. Current page stale from D+-graded agent.</div></td>
+            <td><span class="priority-pill p0">P0</span></td>
+            <td><span class="status-pill ready">Ready</span></td>
+          </tr>
+          <tr>
+            <td><span class="exec-num">4</span></td>
+            <td><span class="exec-name">Memory Cleanup v2</span><div class="exec-desc"><strong>MEMORY.md still has phredomade bleeding in.</strong> Strip it. MC-only in global memory. phredomade stuff to docs/ or repo-level .md files.</div></td>
+            <td><span class="priority-pill p0">P0</span></td>
+            <td><span class="status-pill ready">Ready</span></td>
+          </tr>
+          <tr>
+            <td><span class="exec-num">5</span></td>
+            <td><span class="exec-name">Agent Lifecycle in Prompts</span><div class="exec-desc"><strong>Every future agent prompt</strong> includes 5-stage lifecycle + mandatory skill discovery. Verify in CLAUDE.md and agent prompt conventions.</div></td>
+            <td><span class="priority-pill p0">P0</span></td>
+            <td><span class="status-pill ready">Ready</span></td>
+          </tr>
+          <tr>
+            <td><span class="exec-num">6</span></td>
+            <td><span class="exec-name">Split server.js</span><div class="exec-desc"><strong>3,600+ lines,</strong> too large for agents. Split into modules so campaign-002 starts clean.</div></td>
+            <td><span class="priority-pill important">Important</span></td>
+            <td><span class="status-pill eod">End of Sprint</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Key Findings from This Session -->
+  <div class="section">
+    <div class="section-title"><span class="emoji">&#x1F4A1;</span> Key Findings from This Session <span class="count">f057&ndash;f059</span></div>
+    <div class="findings-grid">
+      <div class="finding-card">
+        <div class="finding-id">f057 &middot; principle</div>
+        <div class="finding-title">Update reference data before dispatching dependent agents</div>
+        <div class="finding-tldr" style="color:#16a34a">Stale data in = stale output out. Update campaigns.json before agents read it.</div>
+        <div class="finding-body"><strong>When an agent reads campaigns.json</strong> or any shared data file as context, that file must be accurate FIRST. <strong>Dispatching an agent</strong> to overhaul a page while its data source is stale means building on wrong foundations. <strong>Reference data accuracy</strong> is a pre-condition, not a follow-up task.</div>
+        <div class="finding-quote">"If the campaigns page becomes a place that is used for reference then we can't send out agents to do something before we update the reference file."</div>
+      </div>
+      <div class="finding-card">
+        <div class="finding-id">f058 &middot; principle</div>
+        <div class="finding-title">Orchestrators should not run sub-agents &mdash; dispatch to separate CLIs</div>
+        <div class="finding-tldr" style="color:var(--rose)">Sub-agents are invisible. Write prompts, user dispatches in separate terminals.</div>
+        <div class="finding-body"><strong>v1.2 ran Campaign Architect and Skill Creator</strong> as sub-agents within its own session. <strong>Problems:</strong> agents invisible to Dashboard, orchestrator context bloated, user can't monitor progress, defeats coordinate-don't-build. <strong>Correct pattern:</strong> write PRD prompts, user dispatches in separate terminals.</div>
+        <div class="finding-quote">"I don't think it's a good abstraction to have the orchestrator run subagents. Having separate CLIs makes more sense so you can preserve context for orchestrating."</div>
+      </div>
+      <div class="finding-card">
+        <div class="finding-id">f059 &middot; principle</div>
+        <div class="finding-title">All text must use bold-lead pattern &mdash; no paragraph walls</div>
+        <div class="finding-tldr" style="color:var(--blue)">Bold keyword first, concise description after. Debrief wins list = gold standard.</div>
+        <div class="finding-body"><strong>Debrief wins list is the gold standard:</strong> bold key text up front, concise description after, metrics color-coded, View links inline. <strong>Every text block in MC</strong> should follow this pattern. <strong>If text needs more than 2 sentences,</strong> break it into multiple bold-lead items.</div>
+        <div class="finding-quote">"This type of stuff. Love this type of text, so easy to understand. You need to make all text like this. This should be a finding."</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Sprint 6 Agents -->
+  <div class="section">
+    <div class="section-title"><span class="emoji">&#x1F916;</span> Sprint 6 Agents <span class="count">3 agents</span></div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:12px">
+      <div class="card" style="border-left:3px solid var(--purple)">
+        <div style="padding:16px 20px">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+            <span style="font-family:'Plus Jakarta Sans',sans-serif;font-size:14px;font-weight:700;color:var(--purple)">Orchestrator v1.2</span>
+            <span style="font-family:'DM Mono',monospace;font-size:10px;font-weight:700;color:var(--amber);background:var(--amber-bg);padding:2px 8px;border-radius:100px">ACTIVE</span>
+          </div>
+          <div style="font-size:12.5px;color:var(--text2);line-height:1.6">
+            <strong style="color:var(--text)">Coordinate-only.</strong> Brainstormed campaigns page overhaul, graded all agents, enriched campaigns.json, dispatched Campaign Architect + Skill Creator, fixed post-delivery bugs, captured 3 findings.
+          </div>
+          <div style="display:flex;gap:6px;margin-top:10px;flex-wrap:wrap">
+            <span style="font-family:'DM Mono',monospace;font-size:9px;background:var(--purple-bg);color:var(--purple);padding:2px 8px;border-radius:100px;font-weight:600">brainstorming</span>
+          </div>
+        </div>
+      </div>
+      <div class="card" style="border-left:3px solid var(--blue)">
+        <div style="padding:16px 20px">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+            <span style="font-family:'Plus Jakarta Sans',sans-serif;font-size:14px;font-weight:700;color:var(--blue)">Campaign Architect</span>
+            <span style="font-family:'DM Mono',monospace;font-size:10px;font-weight:700;color:var(--green);background:var(--green-bg);padding:2px 8px;border-radius:100px">B+</span>
+          </div>
+          <div style="font-size:12.5px;color:var(--text2);line-height:1.6">
+            <strong style="color:var(--text)">Built the campaigns overhaul.</strong> 5 tabs, agent report cards with grades/lifecycle/skills, GPA hero, timeline, retro scorecard. Used 3 skills &mdash; first agent to use multiple.
+          </div>
+          <div style="display:flex;gap:6px;margin-top:10px;flex-wrap:wrap">
+            <span style="font-family:'DM Mono',monospace;font-size:9px;background:var(--blue-bg);color:var(--blue);padding:2px 8px;border-radius:100px;font-weight:600">frontend-design</span>
+            <span style="font-family:'DM Mono',monospace;font-size:9px;background:var(--green-bg);color:var(--green);padding:2px 8px;border-radius:100px;font-weight:600">impeccable-polish</span>
+            <span style="font-family:'DM Mono',monospace;font-size:9px;background:var(--amber-bg);color:var(--amber);padding:2px 8px;border-radius:100px;font-weight:600">impeccable-critique</span>
+          </div>
+        </div>
+      </div>
+      <div class="card" style="border-left:3px solid var(--green)">
+        <div style="padding:16px 20px">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+            <span style="font-family:'Plus Jakarta Sans',sans-serif;font-size:14px;font-weight:700;color:var(--green)">Orchestrator Skill Creator</span>
+            <span style="font-family:'DM Mono',monospace;font-size:10px;font-weight:700;color:var(--green);background:var(--green-bg);padding:2px 8px;border-radius:100px">A-</span>
+          </div>
+          <div style="font-size:12.5px;color:var(--text2);line-height:1.6">
+            <strong style="color:var(--text)">Clean delivery.</strong> 200-line skill covering all 8 phases, 14 rules. Readable in 2 min. Captures what made v1.2 better than v1.0.
+          </div>
+          <div style="display:flex;gap:6px;margin-top:10px;flex-wrap:wrap">
+            <span style="font-family:'DM Mono',monospace;font-size:9px;background:var(--surface);color:var(--text3);padding:2px 8px;border-radius:100px;font-weight:600">text-only &mdash; no skills needed</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Key User Preferences Reinforced -->
+  <div class="section">
+    <div class="section-title"><span class="emoji">&#x1F3A8;</span> Preferences Reinforced This Session <span class="count">7 rules</span></div>
+    <div class="card">
+      <div class="done-list">
+        <div class="done-item">
+          <div class="done-icon purple" style="font-size:10px;font-weight:700">1</div>
+          <span class="done-text"><strong>Bold-lead text pattern (f059).</strong> Every line: bold keyword first, concise description. No paragraph walls. Debrief wins list = gold standard.</span>
+        </div>
+        <div class="done-item">
+          <div class="done-icon purple" style="font-size:10px;font-weight:700">2</div>
+          <span class="done-text"><strong>Emojis everywhere.</strong> "Makes things nonchalant and unserious." Use in stage labels, status indicators, section headers.</span>
+        </div>
+        <div class="done-item">
+          <div class="done-icon purple" style="font-size:10px;font-weight:700">3</div>
+          <span class="done-text"><strong>Structured questions.</strong> Multiple-choice with recommendations. Label clearly: "Questions for you:"</span>
+        </div>
+        <div class="done-item">
+          <div class="done-icon purple" style="font-size:10px;font-weight:700">4</div>
+          <span class="done-text"><strong>Execution plan as table.</strong> Praised this format multiple times. Reviewable in CLI.</span>
+        </div>
+        <div class="done-item">
+          <div class="done-icon purple" style="font-size:10px;font-weight:700">5</div>
+          <span class="done-text"><strong>Don't run sub-agents from orchestrator (f058).</strong> Write PRD prompts, user dispatches in separate terminals.</span>
+        </div>
+        <div class="done-item">
+          <div class="done-icon purple" style="font-size:10px;font-weight:700">6</div>
+          <span class="done-text"><strong>Small fixes OK.</strong> Orchestrator can fix CSS, data, legends directly. Big builds get dispatched.</span>
+        </div>
+        <div class="done-item">
+          <div class="done-icon purple" style="font-size:10px;font-weight:700">7</div>
+          <span class="done-text"><strong>Skill discovery is P0.</strong> Only 4/19 agents used skills. Every prompt must include <code style="font-family:'DM Mono',monospace;font-size:11px;background:var(--surface);padding:1px 5px;border-radius:4px">ls .claude/skills/</code></span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Resume Prompt -->
+  <div class="section">
+    <div class="section-title"><span class="emoji">&#x1F680;</span> Resume Prompt</div>
+    <div class="resume-card">
+      <div class="resume-header">
+        <span class="resume-label">Pick up where you left off</span>
+        <span class="resume-sublabel">&mdash; paste this into a new Claude Code terminal</span>
+      </div>
+      <div class="resume-body">
+        <div class="resume-steps">
+          <div class="resume-step">
+            <span class="step-num">1</span>
+            <span><strong>Open a new Claude Code terminal</strong> in the phredomade directory</span>
+          </div>
+          <div class="resume-step">
+            <span class="step-num">2</span>
+            <span><strong>Paste the prompt below</strong> &mdash; it initializes Orchestrator v1.3 with full context</span>
+          </div>
+          <div class="resume-step">
+            <span class="step-num">3</span>
+            <span><strong>Or just run</strong> <code style="font-family:'DM Mono',monospace;font-size:12px;background:var(--purple-bg);color:var(--purple);padding:2px 8px;border-radius:4px;font-weight:500">/orchestrator</code> &mdash; the skill handles initialization</span>
+          </div>
+        </div>
+        <div class="code-block" id="resume-code"><button class="copy-btn" onclick="copyPrompt()">Copy</button><span class="comment"># Orchestrator v1.3 — Resume Prompt</span>
+
+You are Orchestrator v1.3. Read <span class="string">`.claude/agent-hub/coordinated-sprint/orchestrator-v1.2-handoff.md`</span> and the orchestrator skill at <span class="string">`.claude/skills/orchestrator/SKILL.md`</span>. Then check campaigns at <span class="string">http://localhost:3033/campaigns</span>. Tell me where we are and what's next.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Quick Links -->
+  <div class="section">
+    <div class="section-title"><span class="emoji">&#x1F517;</span> Quick Links</div>
+    <div class="quick-links">
+      <a href="/campaigns" class="quick-link primary">Campaigns</a>
+      <a href="/" class="quick-link">Dashboard</a>
+      <a href="/close-out" class="quick-link">Close-Out</a>
+      <a href="/findings" class="quick-link">Findings</a>
+      <a href="/workflow" class="quick-link">Workflow</a>
+      <a href="/tools" class="quick-link">Toolbox</a>
+      <a href="/story" class="quick-link">Story</a>
+      <a href="/health" class="quick-link">Health</a>
+    </div>
+  </div>
+
+  <div class="footer">
+    <span>Morning Brief &middot; March 8, 2026 &middot; Orchestrator v1.2 Session</span>
+    <span class="footer-sub">campaign-001 &middot; MC Evolution Sprint &middot; Sprint 6</span>
+  </div>
+
+</div>
+
+<script>
+function copyPrompt() {
+  const text = `You are Orchestrator v1.3. Read \`.claude/agent-hub/coordinated-sprint/orchestrator-v1.2-handoff.md\` and the orchestrator skill at \`.claude/skills/orchestrator/SKILL.md\`. Then check campaigns at http://localhost:3033/campaigns. Tell me where we are and what's next.`;
+  navigator.clipboard.writeText(text).then(() => {
+    const btn = document.querySelector('.copy-btn');
+    btn.textContent = 'Copied!';
+    btn.classList.add('copied');
+    setTimeout(() => {
+      btn.textContent = 'Copy';
+      btn.classList.remove('copied');
+    }, 2000);
+  });
+}
+</script>
+
+</body>
+</html>

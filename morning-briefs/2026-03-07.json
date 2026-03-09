@@ -1,0 +1,14 @@
+{
+  "date": "2026-03-07",
+  "campaign": "campaign-001",
+  "title": "Morning Brief",
+  "subtitle": "MC Evolution Sprint — 11 agents across 2 sprints — ~8 hours overnight activity",
+  "tldr": "The system works. You have a polished /why page, a retrospective system, a transcribed 2-hour demo with 15 value prop quotes, a health page, 8 new findings, and 12 new dispatch items. The Monday FHL hooks demo is your P0.",
+  "stats": {
+    "agents": 11,
+    "sprints": 2,
+    "wins": 18,
+    "findings": 47
+  },
+  "source": "morning-brief agent, sprint 4"
+}

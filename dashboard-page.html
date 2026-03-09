@@ -1,0 +1,1117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Mission Control</title>
+<link rel="icon" id="favicon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><circle cx='16' cy='16' r='15' fill='%231a1a1a'/><circle cx='16' cy='16' r='9' fill='none' stroke='rgba(255,255,255,0.2)' stroke-width='1.2'/><line x1='16' y1='1' x2='16' y2='7' stroke='rgba(255,255,255,0.15)' stroke-width='1' stroke-linecap='round'/><line x1='16' y1='25' x2='16' y2='31' stroke='rgba(255,255,255,0.15)' stroke-width='1' stroke-linecap='round'/><line x1='1' y1='16' x2='7' y2='16' stroke='rgba(255,255,255,0.15)' stroke-width='1' stroke-linecap='round'/><line x1='25' y1='16' x2='31' y2='16' stroke='rgba(255,255,255,0.15)' stroke-width='1' stroke-linecap='round'/><circle cx='16' cy='16' r='3.5' fill='%239ca3af'/></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=DM+Sans:wght@400;500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+
+  *, *::before, *::after { margin:0; padding:0; box-sizing:border-box }
+
+  :root {
+    --bg: #ffffff;
+    --bg-page: #f8f8f8;
+    --surface: #f2f2f2;
+    --surface2: #e8e8e8;
+    --text: #1a1a1a;
+    --text2: #555;
+    --text3: #999;
+    --sep: #e5e5e5;
+
+    --green: #22c55e;
+    --green-bg: rgba(34, 197, 94, 0.08);
+    --blue: #3b82f6;
+    --blue-bg: rgba(59, 130, 246, 0.08);
+    --amber: #f59e0b;
+    --amber-bg: rgba(245, 158, 11, 0.08);
+    --purple: #8b5cf6;
+    --purple-bg: rgba(139, 92, 246, 0.08);
+    --rose: #ef4444;
+    --rose-bg: rgba(239, 68, 68, 0.06);
+    --gray: #9ca3af;
+  }
+
+  body {
+    background: var(--bg-page);
+    color: var(--text);
+    font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  /* ================================================================
+     HEADER
+     ================================================================ */
+  header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 clamp(24px, 4vw, 48px);
+    height: 64px;
+    background: var(--bg);
+    border-bottom: 1px solid var(--sep);
+    position: sticky;
+    top: 0;
+    z-index: 10;
+  }
+
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .logo-icon {
+    width: 28px;
+    height: 28px;
+    flex-shrink: 0;
+    color: var(--text);
+  }
+  .logo-icon svg { display: block }
+  .mc-dot {
+    fill: var(--gray);
+    transition: fill 0.4s ease;
+  }
+  .logo-icon.active .mc-dot { fill: var(--green) }
+  .logo-icon.waiting .mc-dot { fill: var(--amber); animation: blink 1.4s ease-in-out infinite }
+  .mc-sweep {
+    transform-origin: 16px 16px;
+    opacity: 0;
+    transition: opacity 0.4s ease;
+  }
+  .logo-icon.active .mc-sweep {
+    opacity: 0.1;
+    animation: sweep 3s linear infinite;
+  }
+
+  .logo-text {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 15px;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    color: var(--text);
+  }
+
+  .header-nav {
+    display: flex;
+    gap: 4px;
+    padding: 3px;
+    background: var(--surface);
+    border-radius: 8px;
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+  .nav-link {
+    padding: 5px 14px;
+    border-radius: 6px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text3);
+    text-decoration: none;
+    transition: all 0.15s ease;
+  }
+  .nav-link:hover { color: var(--text2) }
+  .nav-link.active {
+    background: var(--bg);
+    color: var(--text);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+  }
+  .header-spacer { flex: 1 }
+
+  .hstats {
+    display: flex;
+    gap: 6px;
+  }
+  .stat-pill {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 5px 12px;
+    border-radius: 100px;
+    background: var(--surface);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    color: var(--text2);
+  }
+  .stat-pill .count {
+    font-weight: 600;
+    color: var(--text);
+  }
+  .stat-pill.has-waiting {
+    background: var(--amber-bg);
+    color: #92400e;
+  }
+  .stat-pill.has-waiting .count { color: #92400e }
+  .sdot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .sdot-on   { background: var(--green) }
+  .sdot-wait { background: var(--amber); animation: blink 1.4s ease-in-out infinite }
+  .sdot-off  { background: var(--gray) }
+  .sdot-done { background: var(--green); opacity: 0.4 }
+
+  @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
+  @keyframes pulse { 0%,100%{opacity:0.4} 50%{opacity:1} }
+  @keyframes sweep { from{transform:rotate(0deg)} to{transform:rotate(360deg)} }
+
+  /* ================================================================
+     LAYOUT
+     ================================================================ */
+  .shell {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: clamp(24px, 4vw, 48px);
+  }
+
+  .page-title {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: clamp(28px, 4vw, 38px);
+    font-weight: 700;
+    letter-spacing: -0.035em;
+    color: var(--text);
+    margin-bottom: 8px;
+    line-height: 1.1;
+  }
+  .page-sub {
+    font-size: 15px;
+    color: var(--text3);
+    margin-bottom: 36px;
+  }
+
+  /* ================================================================
+     TOP OF MIND
+     ================================================================ */
+  .tom-section {
+    margin-bottom: 28px;
+    padding: 20px 24px;
+    background: var(--bg);
+    border-radius: 14px;
+    border: 1px solid var(--sep);
+  }
+
+  .tom-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 14px;
+  }
+  .tom-label {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 12px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--text3);
+  }
+  .tom-ago {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--text3);
+    opacity: 0.5;
+  }
+
+  .tom-text {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15px;
+    font-weight: 400;
+    line-height: 1.75;
+    color: var(--text2);
+  }
+  .tom-pill {
+    font-weight: 600;
+    color: var(--text);
+  }
+
+  .tom-topics {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px solid var(--sep);
+  }
+  .ns-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 7px 16px;
+    border-radius: 100px;
+    background: var(--surface);
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text);
+    letter-spacing: -0.01em;
+    transition: background 0.15s ease;
+  }
+  .ns-chip:hover { background: var(--surface2) }
+  .ns-chip .ns-count {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--text3);
+    background: var(--surface2);
+    padding: 1px 6px;
+    border-radius: 100px;
+  }
+  .ns-chip:hover .ns-count { background: var(--bg) }
+
+  .ns-empty {
+    font-size: 13px;
+    color: var(--text3);
+    font-style: italic;
+  }
+  .ns-noai {
+    font-size: 13px;
+    color: var(--text3);
+    font-style: italic;
+    margin-bottom: 28px;
+  }
+  .ns-noai code {
+    font-size: 11px;
+    background: var(--surface);
+    padding: 1px 5px;
+    border-radius: 3px;
+  }
+  .ns-noai a {
+    color: var(--blue);
+    text-decoration: none;
+  }
+  .ns-noai a:hover { text-decoration: underline }
+
+  /* Filter tabs */
+  .filters {
+    display: flex;
+    gap: 4px;
+    margin-bottom: 24px;
+    padding: 3px;
+    background: var(--surface);
+    border-radius: 10px;
+    width: fit-content;
+  }
+  .filter-btn {
+    padding: 7px 16px;
+    border-radius: 8px;
+    border: none;
+    background: transparent;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text3);
+    cursor: pointer;
+    transition: all 0.15s ease;
+  }
+  .filter-btn:hover { color: var(--text2) }
+  .filter-btn.active {
+    background: var(--bg);
+    color: var(--text);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+  }
+  .filter-count {
+    font-size: 11px;
+    margin-left: 4px;
+    opacity: 0.5;
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+    gap: 16px;
+  }
+
+  /* ================================================================
+     AGENT CARD
+     ================================================================ */
+  .card {
+    background: var(--bg);
+    border-radius: 14px;
+    border: 1px solid var(--sep);
+    overflow: hidden;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    position: relative;
+  }
+  .card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.04);
+  }
+
+  .card::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 3px;
+    background: var(--card-accent, var(--gray));
+    border-radius: 3px 0 0 3px;
+    opacity: 0.7;
+    transition: opacity 0.2s ease;
+  }
+  .card:hover::before { opacity: 1 }
+
+  .card-body { padding: 20px 24px }
+
+  .card-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+  }
+  .state-pill {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 3px 10px;
+    border-radius: 100px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.01em;
+  }
+  .state-pill .sdot { width: 5px; height: 5px }
+  .state-pill.s-investigating { background: var(--blue-bg); color: #1d4ed8 }
+  .state-pill.s-investigating .sdot { background: var(--blue) }
+  .state-pill.s-developing { background: var(--amber-bg); color: #92400e }
+  .state-pill.s-developing .sdot { background: var(--amber) }
+  .state-pill.s-planning { background: var(--purple-bg); color: #6d28d9 }
+  .state-pill.s-planning .sdot { background: var(--purple) }
+  .state-pill.s-verifying { background: var(--green-bg); color: #166534 }
+  .state-pill.s-verifying .sdot { background: var(--green) }
+  .state-pill.s-waiting { background: var(--amber-bg); color: #92400e }
+  .state-pill.s-waiting .sdot { background: var(--amber); animation: blink 1.4s ease-in-out infinite }
+  .state-pill.s-thinking { background: var(--purple-bg); color: #6d28d9 }
+  .state-pill.s-thinking .sdot { background: var(--purple); animation: blink 2s ease-in-out infinite }
+  .state-pill.s-done { background: var(--green-bg); color: #166534 }
+  .state-pill.s-done .sdot { background: var(--green); opacity: 0.5 }
+  .state-pill.s-idle { background: var(--surface); color: var(--text3) }
+  .state-pill.s-idle .sdot { background: var(--gray); opacity: 0.4 }
+
+  .card-ago {
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    color: var(--text3);
+  }
+
+  .card-mission {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 17px;
+    font-weight: 600;
+    color: var(--text);
+    line-height: 1.35;
+    margin-bottom: 6px;
+    letter-spacing: -0.02em;
+  }
+
+  .card-no-prompt {
+    font-size: 14px;
+    color: var(--text3);
+    font-style: italic;
+    line-height: 1.5;
+    margin-bottom: 6px;
+  }
+
+  .card-summarizing {
+    font-size: 13px;
+    color: var(--blue);
+    line-height: 1.5;
+    margin-bottom: 6px;
+    animation: pulse 2s ease-in-out infinite;
+  }
+
+  .needs-input {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    margin-bottom: 12px;
+    border-radius: 8px;
+    background: var(--amber-bg);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    color: #92400e;
+  }
+  .needs-input-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--amber);
+    animation: blink 1.4s ease-in-out infinite;
+    flex-shrink: 0;
+  }
+
+  .card-footer {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 8px;
+    position: absolute;
+    bottom: 8px;
+    right: 12px;
+  }
+  .card-id {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--text3);
+    opacity: 0.5;
+  }
+
+  .ctx-badge {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--purple);
+    background: rgba(139,92,246,0.08);
+    padding: 1px 6px;
+    border-radius: 4px;
+    letter-spacing: 0.02em;
+  }
+  .resume-badge {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--blue);
+    background: rgba(59,130,246,0.08);
+    padding: 1px 6px;
+    border-radius: 4px;
+    letter-spacing: 0.02em;
+  }
+  .cost-badge {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    font-weight: 600;
+    color: #059669;
+    background: rgba(5,150,105,0.08);
+    padding: 1px 6px;
+    border-radius: 4px;
+    letter-spacing: 0.02em;
+  }
+
+  .card-meta {
+    display: flex; align-items: center; gap: 6px; flex-wrap: wrap;
+    font-size: 11px; color: var(--text3); margin-top: 6px;
+  }
+  .card-meta .meta-sep { color: var(--sep); font-size: 10px }
+  .card-ws {
+    display: inline-flex; align-items: center; gap: 4px;
+    font-size: 11px; font-weight: 500; color: var(--text3);
+  }
+  .card-ws-dot { width: 5px; height: 5px; border-radius: 50%; flex-shrink: 0 }
+  .ws-suggest {
+    display: flex; align-items: center; gap: 8px;
+    margin-top: 8px; padding: 6px 10px;
+    background: rgba(139,92,246,0.06); border-radius: 8px;
+    font-size: 11px; color: var(--text2);
+  }
+  .ws-suggest span { flex: 1 }
+  .ws-suggest b { color: var(--purple) }
+  .ws-accept {
+    font-size: 11px; font-weight: 600; color: var(--purple);
+    background: none; border: 1px solid rgba(139,92,246,0.3);
+    border-radius: 4px; padding: 2px 8px; cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+  }
+  .ws-accept:hover { background: rgba(139,92,246,0.1) }
+  .ws-dismiss {
+    font-size: 13px; color: var(--text3); background: none; border: none;
+    cursor: pointer; padding: 0 4px;
+  }
+  .ws-dismiss:hover { color: var(--text) }
+  .card-tag {
+    font-family: 'DM Mono', monospace; font-size: 9px; font-weight: 500;
+    padding: 1px 6px; border-radius: 100px;
+    background: var(--surface); color: var(--text3);
+  }
+  .card-campaign {
+    display: inline-flex; align-items: center; gap: 4px;
+    font-family: 'DM Mono', monospace; font-size: 10px; font-weight: 500;
+    padding: 2px 8px; border-radius: 100px;
+    background: rgba(139,92,246,0.07); color: #8b5cf6;
+    margin-bottom: 6px; text-decoration: none; cursor: pointer;
+    transition: background .12s; letter-spacing: 0.01em;
+  }
+  .card-campaign:hover { background: rgba(139,92,246,0.14) }
+  .card-campaign .camp-dot { width: 4px; height: 4px; border-radius: 50%; background: #8b5cf6; opacity: 0.7 }
+  .dispatch-badge {
+    display: inline-flex; align-items: center; gap: 2px;
+    font-family: 'DM Mono', monospace; font-size: 10px; font-weight: 500;
+    padding: 2px 8px; border-radius: 100px;
+    background: rgba(34,197,94,0.08); color: #16a34a;
+    margin-bottom: 6px; margin-left: 4px; letter-spacing: 0.01em;
+  }
+  .card-statusline {
+    font-family: 'DM Sans', sans-serif; font-size: 11px; color: var(--text3);
+    display: inline-flex; align-items: center; gap: 4px;
+  }
+  .card-statusline .sl-dot { width: 5px; height: 5px; border-radius: 50%; flex-shrink: 0 }
+  .card-statusline .sl-dot.investigating { background: var(--blue) }
+  .card-statusline .sl-dot.developing { background: var(--amber) }
+  .card-statusline .sl-dot.verifying { background: var(--green) }
+  .card-statusline .sl-dot.thinking { background: var(--purple); animation: pulse 2s ease infinite }
+  .card-statusline .sl-dot.planning { background: var(--purple) }
+
+  /* Workstream filter row */
+  .ws-filters {
+    display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; align-items: center;
+  }
+  .ws-fpill {
+    display: flex; align-items: center; gap: 5px;
+    padding: 5px 12px; border-radius: 100px;
+    font-size: 12px; font-weight: 500;
+    background: var(--bg); border: 1px solid var(--sep);
+    color: var(--text3); cursor: pointer;
+    transition: all .15s; user-select: none;
+  }
+  .ws-fpill:hover { border-color: var(--text3) }
+  .ws-fpill.active { border-color: var(--purple); color: var(--purple); background: rgba(139,92,246,0.06) }
+  .ws-fpill .wf-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0 }
+  .ws-fpill .wf-count {
+    font-family: 'DM Mono', monospace; font-size: 10px;
+    padding: 0 5px; border-radius: 100px;
+    background: var(--surface); color: var(--text3);
+  }
+
+  .card.stale { opacity: 0.45; border-color: transparent }
+  .card.stale:hover { opacity: 0.7 }
+  .card.done { opacity: 0.7 }
+
+  /* ================================================================
+     EMPTY STATE
+     ================================================================ */
+  .empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 120px 24px;
+    text-align: center;
+  }
+  .empty-state .dot-ring {
+    width: 48px; height: 48px;
+    border-radius: 50%;
+    border: 2px solid var(--sep);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 20px;
+  }
+  .empty-state .dot-ring .inner {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: var(--gray);
+    opacity: 0.4;
+  }
+  .empty-state h2 {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 18px;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    color: var(--text2);
+    margin-bottom: 8px;
+  }
+  .empty-state p {
+    font-size: 14px;
+    color: var(--text3);
+    max-width: 360px;
+    line-height: 1.6;
+  }
+
+  @media (max-width: 800px) {
+    .grid { grid-template-columns: 1fr }
+    .shell { padding: 20px 16px }
+    .page-title { font-size: 24px }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">
+    <div class="logo-icon" id="logo-icon">
+      <svg viewBox="0 0 32 32" width="28" height="28" fill="none">
+        <circle cx="16" cy="16" r="14" stroke="currentColor" stroke-width="1.4" opacity="0.3"/>
+        <circle cx="16" cy="16" r="8" stroke="currentColor" stroke-width="1.2" opacity="0.2"/>
+        <line x1="16" y1="1" x2="16" y2="6.5" stroke="currentColor" stroke-width="1" opacity="0.3" stroke-linecap="round"/>
+        <line x1="16" y1="25.5" x2="16" y2="31" stroke="currentColor" stroke-width="1" opacity="0.3" stroke-linecap="round"/>
+        <line x1="1" y1="16" x2="6.5" y2="16" stroke="currentColor" stroke-width="1" opacity="0.3" stroke-linecap="round"/>
+        <line x1="25.5" y1="16" x2="31" y2="16" stroke="currentColor" stroke-width="1" opacity="0.3" stroke-linecap="round"/>
+        <path class="mc-sweep" d="M16 16 L16 2 A14 14 0 0 1 29.8 13.2 Z" fill="currentColor"/>
+        <circle class="mc-dot" cx="16" cy="16" r="4"/>
+      </svg>
+    </div>
+    <div class="logo-text">Mission Control</div>
+  </div>
+  <nav class="header-nav">
+    <a href="/" class="nav-link active">Dashboard</a>
+    <a href="/dispatch" class="nav-link">Dispatch</a>
+    <a href="/findings" class="nav-link">Findings</a>
+    <a href="/workflow" class="nav-link">Workflow</a>
+    <a href="/postmortems" class="nav-link">Post-Mortems</a>
+    <a href="/tools" class="nav-link">Toolbox</a>
+    <a href="/logic" class="nav-link">Logic</a>
+    <a href="/radar" class="nav-link">Radar</a>
+    <a href="/campaigns" class="nav-link">Campaigns</a>
+    <a href="/health" class="nav-link">Health</a>
+  </nav>
+  <div class="hstats" id="stats"></div>
+</header>
+
+<div class="shell">
+  <div id="main"></div>
+</div>
+
+<script>
+const STATE_ACCENT = {
+  investigating: 'var(--blue)',
+  developing:    'var(--amber)',
+  planning:      'var(--purple)',
+  waiting:       'var(--amber)',
+  verifying:     'var(--green)',
+  thinking:      'var(--purple)',
+  done:          'var(--green)',
+  idle:          'var(--gray)',
+};
+
+const STATE_LABEL = {
+  investigating: 'Researching',
+  developing:    'Writing',
+  planning:      'Planning',
+  waiting:       'Needs input',
+  verifying:     'Verifying',
+  thinking:      'Thinking',
+  done:          'Done',
+  idle:          'Idle',
+};
+
+if ('Notification' in window && Notification.permission === 'default') {
+  Notification.requestPermission();
+}
+const notifiedSessions = new Set();
+
+function notify(title, body) {
+  if ('Notification' in window && Notification.permission === 'granted') {
+    new Notification(title, { body, tag: 'mc-input' });
+  }
+}
+
+function ago(ms) {
+  if (ms < 5000) return 'now';
+  const s = Math.floor(ms / 1000);
+  if (s < 60) return s + 's ago';
+  const m = Math.floor(s / 60);
+  if (m < 60) return m + 'm ago';
+  const hr = Math.floor(m / 60);
+  if (hr < 24) return hr + 'h ago';
+  return Math.floor(hr / 24) + 'd ago';
+}
+
+function esc(s) {
+  return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+}
+
+// Campaign lookup — maps sessionId to campaign info (client-side, uses cached data)
+let _campaignLookup = new Map();
+function buildCampaignLookup(campaigns) {
+  _campaignLookup = new Map();
+  for (const c of campaigns) {
+    if (!c.agents) continue;
+    for (const ag of c.agents) {
+      if (ag.sessionId) {
+        _campaignLookup.set(ag.sessionId, { campaignName: c.name, campaignId: c.id, agentName: ag.name, agentSlot: ag.slot });
+      }
+    }
+  }
+}
+function getCampaignLookup() { return _campaignLookup; }
+
+function renderCard(a) {
+  try {
+  const isWaiting = a.active && a.state === 'waiting';
+  const stateKey  = a.done ? 'done' : a.state;
+  const accent    = STATE_ACCENT[stateKey] || 'var(--gray)';
+  const label     = STATE_LABEL[stateKey] || stateKey;
+  const sid       = a.sessionId || '???';
+  const short     = sid.slice(-6);
+  const mission   = a.mission || '';
+  const letter    = a.letter || '?';
+  // Campaign info
+  const campLookup = getCampaignLookup();
+  const campInfo = campLookup.get(sid) || (a.chainedSessions ? a.chainedSessions.reduce((found, s) => found || campLookup.get(s), null) : null);
+
+  let cardCls = 'card';
+  if (a.done) cardCls += ' done';
+
+  if (isWaiting && !notifiedSessions.has(sid)) {
+    notifiedSessions.add(sid);
+    notify('Agent needs your input', mission || 'Agent #' + short);
+  }
+  if (!isWaiting) notifiedSessions.delete(sid);
+
+  let inputBanner = '';
+  if (isWaiting) {
+    inputBanner = '<div class="needs-input"><span class="needs-input-dot"></span>Waiting for your input</div>';
+  }
+
+  // Workstream badge
+  let wsHtml = '';
+  if (a.wsName) {
+    wsHtml = '<div class="card-ws"><span class="card-ws-dot" style="background:' + (a.wsColor || '#9ca3af') + '"></span>' + esc(a.wsName) + '</div>';
+  }
+
+  // Campaign badge — MUST be <span> not <a>, because the card wrapper is <a> and nested <a> is invalid HTML.
+  // A nested <a> causes the browser to auto-close the outer <a>, producing a blank card (PM011).
+  let campBadge = '';
+  try {
+    if (campInfo) {
+      campBadge = '<span class="card-campaign" onclick="event.stopPropagation(); window.location.href=\'/campaigns\'" role="link" tabindex="0"><span class="camp-dot"></span>' + esc(campInfo.agentName) + ' · ' + esc(campInfo.campaignName) + '</span>';
+    }
+  } catch (e) { campBadge = ''; }
+
+  // Dispatch badge — shows when this agent was auto-dispatched
+  let dispatchBadge = '';
+  if (a.dispatchMeta) {
+    const dm = a.dispatchMeta;
+    const parentShort = a.parentSessionId ? a.parentSessionId.slice(-6) : 'orchestrator';
+    dispatchBadge = '<span class="dispatch-badge" title="Auto-dispatched by session ' + esc(parentShort) + '"><span style="margin-right:4px">🚀</span>Dispatched' + (dm.agentName ? ': ' + esc(dm.agentName) : '') + '</span>';
+  }
+
+  // StatusLine (what the agent is currently doing)
+  // Suppress when it just repeats the state pill label (e.g. "Idle" shown twice)
+  let statusHtml = '';
+  if (a.active && a.statusLine) {
+    var slNorm = (a.statusLine || '').toLowerCase().trim();
+    var labelNorm = (label || '').toLowerCase().trim();
+    if (slNorm && slNorm !== labelNorm && slNorm !== stateKey) {
+      statusHtml = '<div class="card-statusline"><span class="sl-dot ' + esc(a.state || '') + '"></span>' + esc(a.statusLine) + '</div>';
+    }
+  }
+
+  // Build combined metadata line (workstream + statusLine on one row)
+  let metaHtml = '';
+  if (wsHtml || statusHtml) {
+    metaHtml = '<div class="card-meta">' + wsHtml
+      + (wsHtml && statusHtml ? '<span class="meta-sep">&middot;</span>' : '')
+      + statusHtml + '</div>';
+  }
+
+  let heroHtml = campBadge + dispatchBadge;
+  if (mission && a.isSummarizing) {
+    heroHtml += '<div class="card-mission">' + esc(mission) + '</div>'
+      + metaHtml
+      + '<div class="card-summarizing">Re-summarizing...</div>';
+  } else if (mission) {
+    heroHtml += '<div class="card-mission">' + esc(mission) + '</div>' + metaHtml;
+  } else if (a.hasPrompts || (a.active && !a.done)) {
+    heroHtml += '<div class="card-summarizing">Summarizing...</div>' + metaHtml;
+  } else {
+    heroHtml += '<div class="card-no-prompt">No prompt captured yet</div>' + metaHtml;
+  }
+
+  // Tag pills
+  let tagPills = '';
+  if (a.wsTags && a.wsTags.length) {
+    tagPills = a.wsTags.map(t => '<span class="card-tag">' + esc(t) + '</span>').join('');
+  }
+
+  return '<a href="/session/' + esc(sid) + '" class="' + cardCls + '" style="--card-accent:' + accent + ';text-decoration:none;color:inherit;display:block" data-sid="' + esc(sid) + '" data-ws="' + (a.workstream || '') + '">'
+    + '<div class="card-body">'
+    + '<div class="card-top">'
+    + '<span class="state-pill s-' + stateKey + '"><span class="sdot"></span>' + esc(label) + '</span>'
+    + '<span class="card-ago">' + ago(a.ago) + '</span>'
+    + '</div>'
+    + inputBanner
+    + heroHtml
+    + '</div>'
+    + '<div class="card-footer">'
+    + tagPills
+    + (a.resumeCount > 0 ? '<span class="resume-badge" title="Resumed ' + a.resumeCount + ' time' + (a.resumeCount > 1 ? 's' : '') + ' in a new terminal">' + a.resumeCount + 'x resume</span>' : '')
+    + (a.contextSwitches > 0 ? '<span class="ctx-badge" title="' + a.contextSwitches + ' context transition' + (a.contextSwitches > 1 ? 's' : '') + ' (/plan, /compact, etc.)">' + a.contextSwitches + 'x ctx</span>' : '')
+    + (costMap[sid] ? '<span class="cost-badge" title="Cost at published Anthropic rates">$' + costMap[sid].toFixed(2) + '</span>' : '')
+    + '<span class="card-id">' + esc(letter) + '</span>'
+    + '</div>'
+    + '</a>';
+  } catch (err) {
+    // Graceful degradation — render a minimal card instead of blank (PM011 resilience)
+    const sid = (a && a.sessionId) || '???';
+    return '<a href="/session/' + esc(sid) + '" class="card" style="--card-accent:var(--gray);text-decoration:none;color:inherit;display:block" data-sid="' + esc(sid) + '" data-ws="' + ((a && a.workstream) || '') + '">'
+      + '<div class="card-body"><div class="card-top"><span class="state-pill"><span class="sdot"></span>Error</span></div>'
+      + '<div class="card-mission" style="color:var(--text3)">Card render failed: ' + esc(String(err)) + '</div></div>'
+      + '<div class="card-footer"><span class="card-id">' + esc(sid.slice(-6)) + '</span></div></a>';
+  }
+}
+
+function renderNorthStar(data) {
+  const PILL_COLORS = ['#22c55e','#3b82f6','#f59e0b','#8b5cf6','#ef4444','#06b6d4','#ec4899','#f97316'];
+
+  function pillColor(idx) {
+    return PILL_COLORS[idx % PILL_COLORS.length];
+  }
+
+  if (!data.aiReady) {
+    return '<div class="ns-noai">Add your Cerebras API key to <code>.claude/agent-hub/.env</code> to enable AI summaries. <a href="https://cloud.cerebras.ai" target="_blank">Get free key</a></div>';
+  }
+
+  let h = '<div class="tom-section">';
+
+  // Header
+  const tsAge = data.ts ? ago(Date.now() - data.ts) : '';
+  h += '<div class="tom-head">';
+  h += '<span class="tom-label">Top of Mind</span>';
+  if (tsAge) h += '<span class="tom-ago">' + tsAge + '</span>';
+  h += '</div>';
+
+  // Briefing text
+  if (data.topOfMind) {
+    let tomHtml = esc(data.topOfMind);
+    tomHtml = tomHtml.replace(/\{(.+?)\|(\d+)\}/g, (_, phrase, idxStr) => {
+      const color = pillColor(parseInt(idxStr, 10));
+      return '<span class="tom-pill" style="color:' + color + '">' + phrase + '</span>';
+    });
+    h += '<div class="tom-text">' + tomHtml + '</div>';
+  } else {
+    h += '<span class="ns-empty">Generating briefing...</span>';
+  }
+
+  // Topic pills
+  if (data.themes && data.themes.length) {
+    h += '<div class="tom-topics">';
+    data.themes.forEach(t => {
+      h += '<span class="ns-chip">' + esc(t.theme) + '<span class="ns-count">' + t.count + '</span></span>';
+    });
+    h += '</div>';
+  }
+
+  h += '</div>';
+  return h;
+}
+
+function renderStats(agents) {
+  const waiting = agents.filter(a => a.active && a.state === 'waiting').length;
+  const active  = agents.filter(a => a.active && a.state !== 'waiting').length;
+  const done    = agents.filter(a => a.done && !a.archived).length;
+  let h = '';
+
+  if (waiting) h += '<div class="stat-pill has-waiting"><span class="sdot sdot-wait"></span><span class="count">' + waiting + '</span> waiting</div>';
+  if (active)  h += '<div class="stat-pill"><span class="sdot sdot-on"></span><span class="count">' + active + '</span> active</div>';
+  if (done)    h += '<div class="stat-pill"><span class="sdot sdot-done"></span>' + done + ' done</div>';
+  if (!agents.length) h = '<div class="stat-pill" style="color:var(--text3)">No agents</div>';
+
+  const icon = document.getElementById('logo-icon');
+  if (icon) {
+    icon.className = 'logo-icon' + (waiting ? ' waiting' : active ? ' active' : '');
+  }
+
+  // Dynamic favicon color
+  var favColor = waiting ? '%23f59e0b' : active ? '%2322c55e' : '%239ca3af';
+  var fav = document.getElementById('favicon');
+  if (fav) {
+    var svg = "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><circle cx='16' cy='16' r='15' fill='%231a1a1a'/><circle cx='16' cy='16' r='9' fill='none' stroke='rgba(255,255,255,0.2)' stroke-width='1.2'/><line x1='16' y1='1' x2='16' y2='7' stroke='rgba(255,255,255,0.15)' stroke-width='1' stroke-linecap='round'/><line x1='16' y1='25' x2='16' y2='31' stroke='rgba(255,255,255,0.15)' stroke-width='1' stroke-linecap='round'/><line x1='1' y1='16' x2='7' y2='16' stroke='rgba(255,255,255,0.15)' stroke-width='1' stroke-linecap='round'/><line x1='25' y1='16' x2='31' y2='16' stroke='rgba(255,255,255,0.15)' stroke-width='1' stroke-linecap='round'/><circle cx='16' cy='16' r='3.5' fill='" + favColor + "'/></svg>";
+    fav.href = svg;
+  }
+
+  document.title = waiting
+    ? '(' + waiting + ') Mission Control'
+    : active
+    ? 'Mission Control \u2022 ' + active + ' active'
+    : 'Mission Control';
+
+  return h;
+}
+
+function renderEmpty() {
+  return '<div class="empty-state">'
+    + '<div class="dot-ring"><div class="inner"></div></div>'
+    + '<h2>Listening for agents</h2>'
+    + '<p>Open a Claude Code session in this project. Agent activity will appear here automatically.</p>'
+    + '</div>';
+}
+
+let currentFilter = 'active';
+let currentWsFilter = 'all';
+
+function filterAgents(agents) {
+  let result;
+  if (currentFilter === 'all') result = agents.filter(a => !a.archived);
+  else if (currentFilter === 'done') result = agents.filter(a => a.done && !a.archived);
+  else if (currentFilter === 'archived') result = agents.filter(a => a.archived);
+  else result = agents.filter(a => a.active);
+
+  // Apply workstream filter
+  if (currentWsFilter !== 'all') {
+    if (currentWsFilter === 'unassigned') result = result.filter(a => !a.workstream);
+    else result = result.filter(a => a.workstream === currentWsFilter);
+  }
+  return result;
+}
+
+function renderWsFilters(agents) {
+  const mode = (window.__getMode && window.__getMode()) || 'home';
+  const defs = window.__wsDefs || [];
+  // Only show workstreams matching current mode (shared + mode-specific)
+  const modeWsIds = new Set(defs.filter(w => w.context === null || w.context === undefined || w.context === mode).map(w => w.id));
+
+  const nonArchived = agents.filter(a => !a.archived);
+  const wsCounts = {};
+  let unassigned = 0;
+  nonArchived.forEach(a => {
+    if (a.workstream && modeWsIds.has(a.workstream)) wsCounts[a.workstream] = (wsCounts[a.workstream] || 0) + 1;
+    else if (a.workstream && !modeWsIds.has(a.workstream)) { /* skip — wrong mode */ }
+    else unassigned++;
+  });
+
+  const hasAny = Object.keys(wsCounts).length > 0 || unassigned > 0;
+  if (!hasAny) return '';
+
+  let h = '<div class="ws-filters">';
+  h += '<div class="ws-fpill' + (currentWsFilter === 'all' ? ' active' : '') + '" data-ws="all">All</div>';
+
+  // Show ALL workstreams for current mode (even if 0 agents assigned)
+  defs.filter(w => w.context === null || w.context === undefined || w.context === mode).forEach(w => {
+    const count = wsCounts[w.id] || 0;
+    h += '<div class="ws-fpill' + (currentWsFilter === w.id ? ' active' : '') + '" data-ws="' + esc(w.id) + '">'
+      + '<span class="wf-dot" style="background:' + esc(w.color) + '"></span>'
+      + esc(w.name)
+      + '<span class="wf-count">' + count + '</span></div>';
+  });
+
+  if (unassigned > 0) {
+    h += '<div class="ws-fpill' + (currentWsFilter === 'unassigned' ? ' active' : '') + '" data-ws="unassigned">Unassigned<span class="wf-count">' + unassigned + '</span></div>';
+  }
+
+  h += '</div>';
+  return h;
+}
+
+function renderFilters(agents) {
+  const activeN   = agents.filter(a => a.active).length;
+  const allN      = agents.filter(a => !a.archived).length;
+  const doneN     = agents.filter(a => a.done && !a.archived).length;
+  const archivedN = agents.filter(a => a.archived).length;
+
+  let h = '<div class="filters">';
+  h += '<button class="filter-btn' + (currentFilter === 'active' ? ' active' : '') + '" data-f="active">Active<span class="filter-count">' + activeN + '</span></button>';
+  h += '<button class="filter-btn' + (currentFilter === 'all' ? ' active' : '') + '" data-f="all">All<span class="filter-count">' + allN + '</span></button>';
+  h += '<button class="filter-btn' + (currentFilter === 'done' ? ' active' : '') + '" data-f="done">Done<span class="filter-count">' + doneN + '</span></button>';
+  if (archivedN) h += '<button class="filter-btn' + (currentFilter === 'archived' ? ' active' : '') + '" data-f="archived">Archived<span class="filter-count">' + archivedN + '</span></button>';
+  h += '</div>';
+  return h;
+}
+
+async function refresh() {
+  try {
+    const [agents, nsData, wsDefs, campaigns] = await Promise.all([
+      fetch('/api/agents').then(r => r.json()),
+      fetch('/api/northstar').then(r => r.json()),
+      fetch('/api/workstreams').then(r => r.json()),
+      fetch('/api/campaigns').then(r => r.json()),
+    ]);
+    // Store workstream defs for mode filtering
+    window.__wsDefs = wsDefs;
+    // Build campaign lookup for agent card badges
+    buildCampaignLookup(campaigns);
+
+    document.getElementById('stats').innerHTML = renderStats(agents);
+
+    if (!agents.length) {
+      document.getElementById('main').innerHTML = renderEmpty();
+      return;
+    }
+
+    const filtered = filterAgents(agents);
+    let h = '<h1 class="page-title">Agents</h1>';
+    h += '<p class="page-sub">' + agents.length + ' sessions tracked</p>';
+    h += renderNorthStar(nsData);
+    h += renderFilters(agents);
+    h += renderWsFilters(agents);
+
+    if (filtered.length) {
+      h += '<div class="grid">' + filtered.map(renderCard).join('') + '</div>';
+    } else {
+      h += '<div class="empty-state" style="padding:80px 24px"><h2>No agents in this view</h2><p>Try switching filters above.</p></div>';
+    }
+
+    document.getElementById('main').innerHTML = h;
+
+    document.querySelectorAll('.ws-fpill').forEach(pill => {
+      pill.addEventListener('click', () => {
+        currentWsFilter = pill.dataset.ws;
+        refresh();
+      });
+    });
+
+    document.querySelectorAll('.filter-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        currentFilter = btn.dataset.f;
+        refresh();
+      });
+    });
+
+    // AI workstream suggestions for unassigned sessions with prompts
+    agents.forEach(a => {
+      if (!a.workstream && a.hasPrompts && !suggestedSessions.has(a.sessionId)) {
+        suggestedSessions.add(a.sessionId);
+        fetch('/api/suggest-workstream/' + encodeURIComponent(a.sessionId))
+          .then(r => r.json())
+          .then(data => {
+            if (data.workstream && data.confidence > 0.4) {
+              const card = document.querySelector('[data-sid="' + a.sessionId + '"]');
+              if (!card) return;
+              if (card.querySelector('.ws-suggest')) return;
+              const banner = document.createElement('div');
+              banner.className = 'ws-suggest';
+              const span = document.createElement('span');
+              span.innerHTML = 'Looks like <b>' + esc(data.workstream) + '</b>';
+              banner.appendChild(span);
+              const acceptBtn = document.createElement('button');
+              acceptBtn.className = 'ws-accept';
+              acceptBtn.textContent = 'Accept';
+              acceptBtn.onclick = function(e) { e.preventDefault(); e.stopPropagation(); acceptWs(a.sessionId, data.workstream); };
+              banner.appendChild(acceptBtn);
+              const dismissBtn = document.createElement('button');
+              dismissBtn.className = 'ws-dismiss';
+              dismissBtn.textContent = 'x';
+              dismissBtn.onclick = function(e) { e.preventDefault(); e.stopPropagation(); banner.remove(); };
+              banner.appendChild(dismissBtn);
+              card.querySelector('.card-body').appendChild(banner);
+            }
+          }).catch(() => {});
+      }
+    });
+  } catch (e) {
+    console.warn('refresh error', e);
+  }
+}
+
+const suggestedSessions = new Set();
+
+// Cost badge POC — fetch once, populate costMap for card rendering
+let costMap = {};
+fetch('/api/cost').then(r => r.json()).then(data => {
+  if (data.sessions) {
+    data.sessions.forEach(s => { costMap[s.id] = s.cost; });
+    refresh(); // re-render cards with cost badges
+  }
+}).catch(() => {});
+
+function acceptWs(sid, workstream) {
+  fetch('/api/agent-workstreams', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ sessionId: sid, workstream })
+  }).then(() => refresh()).catch(() => {});
+}
+
+refresh();
+setInterval(refresh, 1500);
+// Re-render when mode toggles
+window.addEventListener('modechange', function() { currentWsFilter = 'all'; refresh(); });
+</script>
+</body>
+</html>

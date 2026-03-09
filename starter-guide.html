@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Getting Started &mdash; Mission Control</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=DM+Sans:wght@400;500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#fff;--bg2:#fafafa;--surface:#f4f4f5;--surface2:#e4e4e7;
+  --text:#09090b;--text2:#52525b;--text3:#a1a1aa;--sep:#e4e4e7;
+  --purple:#8b5cf6;--purple-bg:rgba(139,92,246,0.06);
+  --green:#22c55e;--green-bg:rgba(34,197,94,0.06);
+  --blue:#3b82f6;--blue-bg:rgba(59,130,246,0.06);
+  --amber:#f59e0b;--amber-bg:rgba(245,158,11,0.06);
+  --radius:12px;
+}
+body{background:var(--bg2);color:var(--text);font-family:'DM Sans',-apple-system,sans-serif;-webkit-font-smoothing:antialiased;min-height:100vh;padding:0}
+
+header{display:flex;align-items:center;justify-content:space-between;padding:0 clamp(24px,4vw,48px);height:64px;background:var(--bg);border-bottom:1px solid var(--sep)}
+.logo{display:flex;align-items:center;gap:10px}
+.logo-dot{width:8px;height:8px;border-radius:50%;background:var(--purple)}
+.logo-text{font-family:'Plus Jakarta Sans',sans-serif;font-size:14px;font-weight:700;letter-spacing:-0.02em}
+.back-link{font-size:13px;color:var(--purple);text-decoration:none;font-weight:500}
+.back-link:hover{text-decoration:underline}
+
+.container{max-width:720px;margin:0 auto;padding:48px clamp(24px,4vw,48px) 80px}
+h1{font-family:'Plus Jakarta Sans',sans-serif;font-size:32px;font-weight:800;letter-spacing:-0.03em;margin-bottom:8px}
+.subtitle{font-size:15px;color:var(--text2);line-height:1.6;margin-bottom:40px}
+
+.section{margin-bottom:40px}
+.section-label{font-family:'Plus Jakarta Sans',sans-serif;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);margin-bottom:12px}
+h2{font-family:'Plus Jakarta Sans',sans-serif;font-size:20px;font-weight:700;letter-spacing:-0.02em;margin-bottom:16px}
+
+.what-box{background:var(--bg);border:1px solid var(--sep);border-radius:var(--radius);padding:24px 28px;margin-bottom:24px}
+.what-box p{font-size:14px;line-height:1.7;color:var(--text2)}
+.what-box strong{color:var(--text);font-weight:600}
+
+.steps{display:flex;flex-direction:column;gap:16px}
+.step{background:var(--bg);border:1px solid var(--sep);border-radius:var(--radius);padding:20px 24px;position:relative;overflow:hidden}
+.step::before{content:'';position:absolute;top:0;left:0;width:3px;height:100%}
+.step:nth-child(1)::before{background:var(--purple)}
+.step:nth-child(2)::before{background:var(--blue)}
+.step:nth-child(3)::before{background:var(--green)}
+.step-num{font-family:'Plus Jakarta Sans',sans-serif;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text3);margin-bottom:6px}
+.step-title{font-family:'Plus Jakarta Sans',sans-serif;font-size:15px;font-weight:700;margin-bottom:8px}
+.step-body{font-size:13px;line-height:1.7;color:var(--text2)}
+code{font-family:'DM Mono',monospace;font-size:12px;padding:2px 8px;border-radius:6px;background:var(--surface);color:#7c3aed}
+
+.look-first{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;margin-bottom:24px}
+.look-card{background:var(--bg);border:1px solid var(--sep);border-radius:var(--radius);padding:16px 20px;text-decoration:none;color:inherit;transition:all .15s}
+.look-card:hover{box-shadow:0 4px 16px rgba(0,0,0,.06);transform:translateY(-1px)}
+.look-card-name{font-family:'Plus Jakarta Sans',sans-serif;font-size:14px;font-weight:700;margin-bottom:4px}
+.look-card-desc{font-size:12px;color:var(--text2);line-height:1.5}
+
+.try-list{display:flex;flex-direction:column;gap:12px}
+.try-item{display:flex;gap:14px;align-items:flex-start;background:var(--bg);border:1px solid var(--sep);border-radius:var(--radius);padding:16px 20px}
+.try-num{font-family:'Plus Jakarta Sans',sans-serif;font-size:20px;font-weight:800;color:var(--purple);flex-shrink:0;width:28px}
+.try-text{font-size:13px;line-height:1.7;color:var(--text2)}
+.try-text strong{color:var(--text);font-weight:600}
+
+.prereq{background:var(--amber-bg);border:1px solid rgba(245,158,11,0.15);border-radius:var(--radius);padding:16px 20px;margin-bottom:32px;font-size:13px;line-height:1.6;color:var(--text2)}
+.prereq strong{color:var(--text)}
+
+.footer{text-align:center;padding:32px 0;font-size:12px;color:var(--text3)}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">
+    <div class="logo-dot"></div>
+    <span class="logo-text">Mission Control</span>
+  </div>
+  <a href="/" class="back-link">Back to Dashboard</a>
+</header>
+
+<div class="container">
+  <h1>Getting Started</h1>
+  <p class="subtitle">Get Mission Control running in 5 minutes. No setup wizards, no config files, no nonsense.</p>
+
+  <div class="prereq">
+    <strong>Prerequisite:</strong> You need <a href="https://docs.anthropic.com/en/docs/claude-code" style="color:var(--purple)">Claude Code</a> installed and working. MC is a management layer that sits on top of Claude Code -- it watches your agent sessions and gives you visibility into what they're doing.
+  </div>
+
+  <div class="section">
+    <div class="section-label">What is this?</div>
+    <div class="what-box">
+      <p><strong>Mission Control is air traffic control for your AI agents.</strong> It's a local dashboard that shows you every Claude Code session running on your machine -- what they're doing, what they've learned, what went wrong. You see everything without opening a single file.</p>
+      <p style="margin-top:12px"><strong>It's also a learning system.</strong> Mistakes get captured as findings, findings become rules, rules get enforced by hooks. The same mistake never happens twice.</p>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-label">Install (3 steps)</div>
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">Step 1</div>
+        <div class="step-title">Clone the repo</div>
+        <div class="step-body">
+          <code>git clone https://github.com/fredowill/agent-mission-control.git .claude/agent-hub</code>
+          <br><br>
+          Clone it inside your project's <code>.claude/</code> directory. That's where Claude Code looks for hooks and config.
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">Step 2</div>
+        <div class="step-title">Start the server</div>
+        <div class="step-body">
+          <code>node .claude/agent-hub/server.js</code>
+          <br><br>
+          Opens on <code>http://localhost:3033</code>. That's it. No npm install, no build step, no dependencies beyond Node.js.
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">Step 3</div>
+        <div class="step-title">Open Claude Code in another terminal</div>
+        <div class="step-body">
+          Start a Claude Code session in the same project directory. The hooks in <code>.claude/settings.json</code> will automatically report to Mission Control. Refresh the dashboard -- you should see your session appear as a card.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-label">What to look at first</div>
+    <div class="look-first">
+      <a href="/" class="look-card">
+        <div class="look-card-name">Dashboard</div>
+        <div class="look-card-desc">Live agent cards. See every running session, what it's doing, and its current state.</div>
+      </a>
+      <a href="/dispatch" class="look-card">
+        <div class="look-card-name">Dispatch</div>
+        <div class="look-card-desc">Your task board. Bugs, features, ideas -- everything you need to work on, prioritized.</div>
+      </a>
+      <a href="/campaigns" class="look-card">
+        <div class="look-card-name">Campaigns</div>
+        <div class="look-card-desc">Multi-agent sprints. Coordinate 3-5 agents working in parallel on a big goal.</div>
+      </a>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-label">3 things to try</div>
+    <div class="try-list">
+      <div class="try-item">
+        <div class="try-num">1</div>
+        <div class="try-text"><strong>Run two Claude Code sessions simultaneously.</strong> Open two terminals, start Claude Code in each, and watch the Dashboard show both as live cards. This is the basic superpower -- seeing all your agents at once.</div>
+      </div>
+      <div class="try-item">
+        <div class="try-num">2</div>
+        <div class="try-text"><strong>End a session with /end-session.</strong> Type <code>/end-session</code> before closing a terminal. It writes a structured retrospective -- what was accomplished, decisions made, unfinished work. Check the Dashboard card for a Retrospective tab afterward.</div>
+      </div>
+      <div class="try-item">
+        <div class="try-num">3</div>
+        <div class="try-text"><strong>Check the Findings page.</strong> Go to <a href="/findings" style="color:var(--purple)">/findings</a> to see lessons learned from past sessions. These are the compound interest of the system -- each one prevents a future mistake. Add your own as you discover patterns.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer">
+    Mission Control &mdash; built by Ephratah
+  </div>
+</div>
+
+</body>
+</html>

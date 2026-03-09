@@ -30,3 +30,6 @@ A hook (`check-file-conflict.js`) warns when another session recently edited the
 Default to the simplest implementation that works. Complexity must be justified by a specific failure of the simple approach, not by theoretical superiority.
 
 Agent recommendations are input, not instructions. Always reason about them critically — the simpler option wins unless there is a concrete reason otherwise.
+
+## 10. Every UI output must be human-centered and visually polished.
+More iterations = more tokens = more cost. The user should NOT have to ask for basic design quality. Every page, component, or visual deliverable must be readable, scannable, and pleasant on first render. Use bold, color, hierarchy, and whitespace deliberately. Think Apple Design: considerate, minimal, obvious. Plain black text walls are never acceptable — add structure, emphasis, and color coding. The user is building a product for people who use Claude Code; every screen they see should feel finished, not like a debug dump.

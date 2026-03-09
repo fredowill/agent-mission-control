@@ -499,6 +499,24 @@
     "context": null
   },
   {
+    "id": "pm009",
+    "title": "Post-Mortem: Agent restarted MC server from wrong directory, wiping all cost analytics",
+    "description": "## Incident (2026-03-08)\nUser reported the /cost page was broken with a 'Cannot read properties of undefined (reading toLocaleString)' crash in the Workflow Intelligence section. Agent correctly identified and fixed the root bug (computeInsights catch block returned totals: {} with no properties). To apply the fix, the agent restarted the MC server using 'cd .claude/agent-hub && node server.js' instead of 'node .claude/agent-hub/server.js' from the project root. This changed process.cwd() from C:/Users/ephra/phredomade to C:/Users/ephra/phredomade/.claude/agent-hub, corrupting the TRANSCRIPTS_DIR slug computation. All cost analytics dropped to $0.000 and 0 sessions. The user reloaded /cost and found everything still showing zeros.\n\n## What actually happened\nserver.js computes TRANSCRIPTS_DIR using process.cwd() as a slug. 'C:/Users/ephra/phredomade' becomes 'C--Users-ephra-phredomade', which matches the real Claude Code projects directory. When launched from the agent-hub subdirectory, the slug becomes 'C--Users-ephra-phredomade-.claude-agent-hub', which does not exist. All transcript reads return empty, all cost metrics return 0. The agent then only checked 'is port 3033 listening?' after the restart -- not whether actual data was loading. The user became the verification mechanism.\n\n## Failure 1: Wrong server launch directory\n- Used 'cd agent-hub && node server.js' instead of 'node .claude/agent-hub/server.js' from project root\n- Changing cwd broke TRANSCRIPTS_DIR slug computation silently -- no error, server starts fine, data disappears\n- The agent did not know TRANSCRIPTS_DIR depends on process.cwd() at launch time\n- **Lesson: The MC server MUST be launched from the project root (C:/Users/ephra/phredomade). The correct command is 'node .claude/agent-hub/server.js'. Never cd into agent-hub first.**\n- **Systemic fix: Added a 6-line comment block at server.js TRANSCRIPTS_DIR declaration warning about this dependency and documenting the correct vs wrong launch commands. Added correct command to MEMORY.md.**\n\n## Failure 2: Post-restart verification was port-only\n- After restarting, only verified 'is port 3033 listening?' -- not 'is data loading?'\n- A process listening on a port does not mean the data pipeline is healthy\n- The user had to reload the page to discover the data was gone\n- **Lesson: After any MC server restart, verify the data layer, not just the process. The minimum check is curl localhost:3033/api/cost and confirm sessions > 0.**\n- **Systemic fix: Add to MEMORY.md -- after any MC server restart, curl /api/cost and verify non-zero sessions before declaring done.**\n\n## Action items\n1. Code comment added to server.js TRANSCRIPTS_DIR block (done)\n2. MEMORY.md updated with correct restart command and post-restart verification step (done)\n3. Status: resolved in same session",
+    "status": "done",
+    "priority": "p0",
+    "workstream": "mission-control",
+    "tags": [
+      "post-mortem",
+      "agent-safety",
+      "infrastructure",
+      "machine:home"
+    ],
+    "linkedSession": null,
+    "created": "2026-03-08T18:00:00.000Z",
+    "updated": "2026-03-08T18:00:00.000Z",
+    "context": null
+  },
+  {
     "id": "dwwa97w1",
     "title": "Cross-machine agent communication channel",
     "description": "Investigate and build a way for agents on different machines (home PC, work laptop) to leave messages for each other. Use case: sync debugging — when an agent on Machine A encounters a sync issue, it can leave context/findings for the agent on Machine B that will pick up the work.\n\nApproach to investigate:\n1. **Git-synced message channel** — shared ndjson file (agent-messages.ndjson) tracked in git. Agents append messages with from_machine, to_machine, session_id, message, timestamp. Push/pull syncs. Dashboard shows inbox panel.\n2. **Direct API** — if both machines are on same network or via tunnel (Tailscale/ngrok), POST to the other MC server directly. Real-time but requires both online.\n3. **Dispatch as message bus** — use dispatch items with a special tag (e.g., \"agent-message\") and linkedSession to thread conversations. Already has the infrastructure.\n\nStart with option 1 or 3 (simplest, uses existing git sync). Build a Messages panel in the dashboard that shows unread messages from other machines. Each message should show which agent sent it, from which machine, and link to the session context.\n\nOpen questions:\n- Should messages be ephemeral (auto-archive after read) or persistent?\n- Should agents auto-check for messages on session start?\n- Could this evolve into agent-to-agent task delegation across machines?",
@@ -516,5 +534,214 @@
     "context": null,
     "created": "2026-03-06T22:42:27.052Z",
     "updated": "2026-03-06T22:42:27.052Z"
+  },
+  {
+    "id": "pm008",
+    "title": "Post-Mortem: Subagent flight search exposed 3 gaps -- no custom agent, no progress visibility, no specificity",
+    "description": "## Incident (2026-03-07)\nUser asked to create a flight plan HTML for a friend, similar to existing thailand-vietnam-flight-plan.html. The task required scraping Google Flights across multiple airports and date combinations using Playwright. The main agent dispatched 4 rounds of subagents (general-purpose type) to run the searches. While the searches worked, the user identified three systemic workflow gaps.\n\n## What actually happened\nThe agent found the existing flight-search-multi.js Playwright scraper, adapted it for new parameters, and dispatched general-purpose subagents to run the scripts. The subagents ran in the background, took 3-6 minutes each, and the main agent had no way to monitor progress beyond checking if output files existed. The user had to ask 'is it stuck?' because there was no visibility. The agent also never created a dedicated flight-search agent despite this being a reusable, multi-session workflow.\n\n## Failure 1: No custom agent declaration\n- The agent used subagent_type 'general-purpose' for every search dispatch\n- A dedicated flight-search agent with proper frontmatter (knows the protobuf URL builder, knows how to parse Google Flights results, knows to filter Middle East routes) would have been more reliable and reusable\n- The Toolbox in Mission Control already tracks agents -- this was a missed opportunity to create one\n- Each general-purpose agent got a wall of ad-hoc instructions instead of a curated system prompt\n- **Lesson: When a task is repeated 3+ times or involves domain-specific knowledge, create a dedicated agent. General-purpose agents with long prompts are fragile and non-reusable.**\n- **Systemic fix: After any session that dispatches 2+ subagents for the same category of work, evaluate whether a dedicated agent should be created and added to .claude/agents/.**\n\n## Failure 2: No progress visibility for background agents\n- Background agents ran for 3-6 minutes with zero progress indication\n- The main agent could only check if screenshot files existed (e.g., 'ls friend-rdu-v*.png | wc -l' showed 4/12 done)\n- The user had to ask 'is it stuck?' -- the main agent had no way to proactively report progress\n- Mission Control dashboard shows active sessions but subagents spawned within a session are invisible\n- **Lesson: Long-running background agents need a progress reporting mechanism. The main agent should not have to poll file existence as a proxy for progress.**\n- **Systemic fix: Consider adding subagent progress to MC state tracking. Or have the search scripts write to a progress file that the main agent can tail. Or have agents report back intermediate results.**\n\n## Failure 3: Lack of specificity in agent prompts\n- Each subagent got a generic prompt like 'run this script and summarize results'\n- No structured output format was specified -- agents returned prose summaries that the main agent had to re-parse\n- No error handling guidance (what to do if Google blocks, if Playwright times out, etc.)\n- **Lesson: Subagent prompts should specify exact output format, error handling, and success criteria. Specificity in agent prompts is as important as specificity in code.**\n- **Systemic fix: Create prompt templates for common subagent patterns (run-script-and-summarize, search-and-compare, etc.).**\n\n## Broader pattern: The 'throw it at general-purpose' antipattern\nThis session launched 4 rounds of general-purpose agents for what was fundamentally the same task. Each time, the main agent wrote a new script, wrote a new prompt, and hoped it would work. A proper flight-search agent would have:\n- Known the protobuf URL builder\n- Known how to parse Google Flights page structure\n- Known to flag Middle East vs Pacific routing\n- Had structured JSON output\n- Been reusable for the next friend who asks about flights\n\n## Action items\n1. Create .claude/agents/flight-search.md -- dedicated agent for Google Flights scraping\n2. Investigate subagent progress reporting for Mission Control (could be a hook or state file extension)\n3. Add to agent best practices: 'If you dispatch 2+ subagents for similar work, create a dedicated agent'\n4. Consider prompt templates for common subagent patterns\n5. The flight-search skill already exists as a slash command -- bridge the gap between the skill and the agent ecosystem",
+    "status": "open",
+    "priority": "p1",
+    "workstream": "mission-control",
+    "tags": [
+      "post-mortem",
+      "agent-workflow",
+      "subagents",
+      "visibility",
+      "machine:home"
+    ],
+    "linkedSession": null,
+    "created": "2026-03-07T20:00:00.000Z",
+    "updated": "2026-03-07T20:00:00.000Z",
+    "context": null
+  },
+  {
+    "id": "pm010",
+    "title": "Post-Mortem: Orchestrator v1.3 repeated 3 known anti-patterns on first deliverable",
+    "description": "## Incident (2026-03-08)\nOrchestrator v1.3 started its first session and immediately repeated three mistakes that were already documented as losses, findings, or rules from prior sessions.\n\n## What actually happened\nv1.3 read the handoff doc, the orchestrator skill, and campaigns.json — then jumped straight to writing a Workflow Page PRD without using brainstorming (despite v1.2 using it successfully), dumped the PRD inline in chat (despite Sprint 1's loss: 'Prompts dumped inline — wrong prompt pasted into two terminals'), and used the scout agent without evaluating its quality (despite the user expressing concern about scout reliability multiple times). The user caught all three.\n\n## Three distinct failures\n\n### Failure 1: Skipped mandatory skill discovery\n- The orchestrator skill says 'Never skip skill discovery' (Rule 7)\n- v1.2 used brainstorming successfully for the campaigns page overhaul\n- v1.3 felt it 'had enough context' and skipped it\n- The user had to manually say 'Did you use a skill for this creation?'\n- **Lesson: Feeling confident is not the same as following process. The skill checklist exists because even confident agents make worse output without it.**\n- **Systemic fix: Added mandatory skill checklist to orchestrator Phase 1 (f064). Brainstorming before any PRD is now non-negotiable.**\n\n### Failure 2: PRD dumped inline instead of written to file\n- Sprint 1 debrief loss: 'Prompts dumped inline — wrong prompt pasted into two terminals, wasted a session'\n- v1.2 fixed this by writing PRDs to .md files (campaign-architect-prompt.md)\n- v1.3 regressed — put the entire PRD in a code block and said 'copy-paste this'\n- The user said 'This is something I've said about a million times'\n- **Lesson: 'Present the PRD to the user' is ambiguous. 'Write the PRD to a file' is not. Rules must be specific enough that there's no room for interpretation.**\n- **Systemic fix: Updated orchestrator skill Phase 5 to mandate file-based delivery (f067). Path: .claude/agent-hub/coordinated-sprint/<agent-name>-prompt.md**\n\n### Failure 3: Agent cards not visible on campaigns page\n- Added agents to campaigns.json with sprint: 7, but the campaigns page only rendered sprints 1-6\n- Agent cards were invisible — user said 'Where is it? It's not here.'\n- The orchestrator should have verified the campaigns page reflected the new agents after adding them (Rule 14: 'keep campaigns page current')\n- **Lesson: Adding data is not the same as verifying it's visible. The campaigns page is the reference — if it doesn't show the agent, the agent doesn't exist in the user's world.**\n- **Systemic fix: After adding any agent to campaigns.json, verify /campaigns renders it. This means checking if the sprint number has a corresponding phase header in campaigns-page.html.**\n\n## Root cause pattern\nAll three failures share one root cause: optimizing for speed over process. The orchestrator wanted to show fast output instead of following the established workflow. The learning loop (mistake → finding → rule → prevention) exists precisely for this, but v1.3 had access to all the guardrails and skipped them.\n\n## Why this keeps happening\n- The orchestrator skill's Phase 1 said 'read these files' but didn't say 'run these skills'\n- Phase 5 said 'present the PRD' without specifying the delivery mechanism\n- There was no verification step after adding agents to campaigns.json\n- Each gap was small enough to seem harmless but compounded into 3 user-visible failures\n\n## Action items\n1. f064 captured — mandatory skill checklist in Phase 1\n2. f067 captured — file-based PRD delivery mandated in Phase 5\n3. Sprint 7 phase header added to campaigns-page.html\n4. Rule 14 ('keep campaigns page current') now includes: verify new agents are visible after adding to campaigns.json\n5. Consider: orchestrator init hook that auto-runs brainstorming on first PRD task\n\n## Closure (v1.6)\nAll 5 action items implemented. f064 in orchestrator-init skill. f067 in orchestrator-dispatch skill. Rule 14 updated. Self-registration now mandatory in init skill (v1.6 addition).",
+    "status": "done",
+    "priority": "p0",
+    "workstream": "mission-control",
+    "tags": [
+      "post-mortem",
+      "orchestrator",
+      "process-failure",
+      "repeated-mistake",
+      "machine:home"
+    ],
+    "linkedSession": null,
+    "created": "2026-03-08T12:00:00.000Z",
+    "updated": "2026-03-08T12:00:00.000Z",
+    "context": "campaign-001"
+  },
+  {
+    "id": "pm011",
+    "title": "Post-Mortem: Orchestrator v1.3 ran sub-agent despite f058 explicit prohibition",
+    "description": "## Incident (2026-03-08)\nOrchestrator v1.3 ran a research scout as a background sub-agent within its own session to gather visualization patterns for the Workflow Page. This directly violates f058: 'Don't run sub-agents from orchestrator.'\n\n## What actually happened\nThe user approved a two-agent approach: research scout then builder (sequential). The orchestrator interpreted 'research scout' as something it could run internally via the Agent tool with run_in_background=true, rather than writing a research prompt and having the user dispatch it in a separate terminal.\n\n## Two distinct failures\n\n### Failure 1: f058 violation — sub-agents are invisible\n- f058 was created specifically because sub-agents within the orchestrator are invisible to the Dashboard and the user\n- The research scout ran silently — no agent card, no Dashboard visibility, no way for the user to monitor it\n- The orchestrator skill Rule 5 explicitly says: 'Write PRD prompts and present to user for dispatch in separate terminals. Never run agents as sub-agents within the orchestrator.'\n- **Lesson: The orchestrator must NEVER use the Agent tool to spawn work. Every piece of work gets a PRD file, an agent card, and user-dispatched execution.**\n- **Systemic fix: Consider a hook that blocks the orchestrator from calling the Agent tool entirely. Or add a pre-dispatch check: 'Am I about to run a sub-agent? If yes, STOP and write a prompt file instead.'**\n\n### Failure 2: Two-agent plan collapsed into one\n- User approved 'research scout then builder (sequential)' — two separate agents\n- Orchestrator collapsed this into one sub-agent (research) + one dispatched agent (builder)\n- This means the research agent has no grade, no lifecycle tracking, no accountability\n- **Lesson: Every approved agent in the execution plan MUST have its own card in campaigns.json, its own prompt on /prompts, and its own dispatch. No shortcuts.**\n- **Systemic fix: When the user approves N agents, the orchestrator must create N prompt files and N agent cards before telling the user anything is ready.**\n\n## Action items\n1. Add research scout retroactively to campaigns.json (completed, no grade — invisible work)\n2. Update orchestrator skill to explicitly prohibit Agent tool usage\n3. Consider hook that warns when orchestrator uses Agent tool\n4. Every approved agent gets a card + prompt file — no exceptions\n\n## Closure (v1.6)\nOrchestrator rules skill Rule 5 explicitly prohibits Agent tool. f068 reinforced. v1.4, v1.5, and v1.6 have all complied. The pattern is internalized.",
+    "status": "done",
+    "priority": "p0",
+    "workstream": "mission-control",
+    "tags": [
+      "post-mortem",
+      "orchestrator",
+      "f058-violation",
+      "repeated-mistake",
+      "machine:home"
+    ],
+    "linkedSession": null,
+    "created": "2026-03-08T12:30:00.000Z",
+    "updated": "2026-03-08T12:30:00.000Z",
+    "context": "campaign-001"
+  },
+  {
+    "id": "pm012",
+    "title": "Post-Mortem: JS syntax error in campaigns-page.html broke the entire campaigns page",
+    "description": "## Incident (2026-03-08)\nThe campaigns page showed 'Loading campaigns...' indefinitely. The API returned valid JSON but the page's JavaScript had a syntax error ('Unexpected token function') from a missing closing brace.\n\n## What actually happened\nMultiple agents (orchestrator v1.3 + Grading Analyst) were editing campaigns-page.html in the same sprint. One of the edits introduced a missing closing brace in the copyBrief/copyFollowUp functions. The page's render() function threw a JS error, so the 'Loading campaigns...' placeholder never got replaced.\n\n## Failure: No syntax validation before finishing\n- Neither the orchestrator nor the Grading Analyst ran a JS syntax check after editing\n- A simple `node -e \"new Function(code)\"` would have caught this instantly\n- The user discovered the broken page, not the agents\n- **Lesson: Any agent editing HTML with embedded JS must validate syntax before declaring done.**\n- **Systemic fix: Add JS syntax check to the verification stage for HTML files. Consider a PostToolUse hook that auto-validates .html files after Write/Edit.**\n\n## Action items\n1. Add JS syntax validation to agent verification stage for HTML files (f074)\n2. Consider PostToolUse hook for .html syntax checking\n3. Shared files need extra care when multiple agents edit in same sprint\n\n## Closure (v1.6)\nvalidate-html-js.js PostToolUse hook built by v1.5 — auto-validates JS in HTML files after Write/Edit. Prevention is now automated.",
+    "status": "done",
+    "priority": "p1",
+    "workstream": "mission-control",
+    "tags": [
+      "post-mortem",
+      "syntax-error",
+      "shared-file",
+      "machine:home"
+    ],
+    "linkedSession": null,
+    "created": "2026-03-08T14:00:00.000Z",
+    "updated": "2026-03-08T14:00:00.000Z",
+    "context": "campaign-001"
+  },
+  {
+    "id": "pm013",
+    "title": "Post-Mortem: Agent wasted 3 iterations trying to render emojis in SVG text elements",
+    "description": "## Incident (2026-03-08)\nDuring the Workflow Polisher session (Sprint 7), the agent was asked to overhaul the Self-Evolving System learning loop diagram on the /workflow page. The diagram had 6 circle nodes with icons inside. The user requested bigger circles and emoji icons matching the case study below.\n\n## What happened\nThe agent attempted to fix this by putting emoji characters inside SVG  elements:\n\\This does NOT work. SVG text elements render emojis as garbled symbols or blank squares across most browsers. The agent made this change, took a Playwright screenshot, claimed it looked good, and moved on. The user had to point out that the emojis were not rendering — they were still showing as broken/garbled text.\n\nThe agent then tried AGAIN with the same SVG text approach (just adjusting viewBox and coordinates), wasting another iteration. Same result.\n\n## Root cause\n**Agents are bad at SVG.** They don't know SVG rendering limitations and will confidently write SVG code that doesn't work, then fail to notice the broken output in screenshots. Specific limitation: SVG  elements cannot reliably render emoji characters. This is a browser/spec limitation, not a code bug.\n\n## The fix that worked\nReplace the entire SVG with a **hybrid approach**:\n- **HTML divs** for circles, emojis, and labels (emojis render natively in HTML)\n- **CSS pseudo-elements** for arrows between nodes\n- **Minimal SVG overlay** for ONLY the curved loop-back dashed arrow (the one thing CSS can't do)\n\nThis produced perfect emoji rendering on first attempt.\n\n## Two distinct failures\n\n### Failure 1: Used SVG for content that SVG can't render\n- SVG  elements don't support emoji rendering reliably\n- The agent didn't know this limitation and didn't research it\n- **Lesson: Never put emojis in SVG text elements. Use HTML for any content that includes emojis, icons, or complex Unicode.**\n- **Systemic fix: Add to CLAUDE.md or findings — agents must not attempt emoji rendering in SVG without researching first.**\n\n### Failure 2: Failed to critically evaluate own screenshot\n- The agent took a Playwright screenshot showing garbled emoji text\n- Claimed \"emojis render properly\" and moved on\n- The user had to point out the obvious broken rendering\n- **Lesson: Playwright screenshots must be CRITICALLY evaluated. If something looks wrong, it IS wrong. Don't rationalize broken output.**\n\n## The pattern (generalizable)\nAgents are bad at SVG in general — coordinate math, viewBox calculations, text rendering, layering. When an agent needs to create a visual diagram:\n1. **Prefer HTML/CSS** for everything possible (circles, text, emojis, labels)\n2. **Use SVG ONLY** for things CSS genuinely can't do (curved paths, complex shapes)\n3. **Never put text content in SVG** — use foreignObject or HTML overlays instead\n4. **Research limitations** before attempting SVG — don't wing it\n\n## Action items\n1. Add finding f075: \"Never render emojis in SVG — use HTML with SVG overlay for curves only\"\n2. Consider adding to CLAUDE.md rules or agent prompt templates\n3. The hybrid HTML+SVG-curve-overlay pattern should be the standard for diagrams with emoji/icon content",
+    "status": "done",
+    "priority": "p0",
+    "workstream": "mission-control",
+    "tags": [
+      "post-mortem",
+      "agent-quality",
+      "svg",
+      "rendering",
+      "machine:home"
+    ],
+    "linkedSession": null,
+    "created": "2026-03-09T00:00:02.941Z",
+    "updated": "2026-03-09T00:00:02.942Z",
+    "context": "campaign-001"
+  },
+  {
+    "id": "pm016",
+    "title": "Post-Mortem: Orchestrator v1.6 systemic failure — never researches online, ignores own tools, dispatches on broken foundation",
+    "description": "## Incident (2026-03-09)\nUser frustration: 9/10. Orchestrator v1.6 spent an entire session dispatching agents on broken infrastructure instead of fixing the foundation first. When confronted, had no answer for why it never searches online, never uses 13 available agents, and never leverages 42 available skills.\n\n## What actually happened\nv1.6 initialized correctly, identified P0 issues (auto-grade defaults, open PMs), and fixed them. Then immediately jumped to dispatching Dashboard Perf v2 and Plugin Audit instead of fixing the systemic gaps. Both agents delivered work but were graded wrong because the grading system itself is broken. User had to point out every gap manually.\n\n## Systemic failures (all active, all P0)\n\n### 1. Never searches online\n- Orchestrator has WebSearch tool, scientist agent, scout agent with WebSearch, and context7 MCP server\n- NEVER used any of them. Not once across v1.0 through v1.6.\n- Other Claude Code users have solved skill discovery, PRD templates, agent quality — we reinvent everything from scratch\n- User quote: 'The internet is our oyster bro. Why do I have to tell you to use it?'\n\n### 2. 13 agents sitting unused\n- agent-expert, configurator, critic, design, guard, perf, qa, scientist, scout, a11y, competitive-analyst, orchestrator, skills-guide\n- None of these were ever invoked by any orchestrator session\n- agent-expert literally exists to improve agent prompts — exactly what we need for PRD quality\n- configurator exists to audit the agent roster — exactly what we need for gap analysis\n\n### 3. 42 skills barely used\n- 20/30+ dispatched agents used zero skills\n- PRD 'HARD GATE' text is ignored. Writing 'you MUST load skills' in a PRD doesn't work.\n- No structural enforcement (hooks, tool blocking, etc.)\n\n### 4. Grading system is broken\n- Review agent can't see uncommitted file changes — reports 'nothing delivered' when agent delivered everything\n- Auto-grade defaults inflate scores (30/40 deliverables when empty)\n- Grade letter and score breakdown disagree (B- shown with 71/100 which is C-)\n- Dashboard Perf v2 was graded F when it actually implemented the full cost cache\n- Plugin Audit was graded D+ when it delivered a thorough 297-line recommendation doc\n\n### 5. PRDs have no quality standard\n- Dashboard Perf v1 PRD was vague speculation, agent failed F\n- Dashboard Perf v2 PRD had profiling data but agent still over-scoped (1637 lines changed)\n- No template, no validation, no agent-expert review before dispatch\n- PM014 documented this but no fix was implemented\n\n### 6. Dispatch is fragmented\n- 5 manual steps instead of 1 API call\n- /api/launch doesn't auto-create agent cards\n- /prompts page is hardcoded HTML, not data-driven\n- PM015 documented this but fix needs server restart\n\n## Root cause\nThe orchestrator optimizes for visible output (dispatch agents, show progress) over foundation quality (fix grading, enforce skills, research best practices). Every orchestrator from v1.0 to v1.6 has done this. The user has said 'make it bulletproof before scaling' multiple times and the orchestrator keeps ignoring it.\n\n## Action items (all P0, all before any more dispatching)\n1. Search online for: Claude Code skill enforcement patterns, PRD templates for AI agents, agent quality best practices\n2. Use agent-expert to redesign PRD template with quality gates\n3. Fix review agent to check git diff in agent-hub repo for file changes\n4. Build skills enforcement hook (not just PRD text)\n5. Use configurator to audit agent roster and identify integration points\n6. Create a 'research first' rule in orchestrator skill — before building anything, search online\n7. Restart server to pick up /api/launch auto-card-creation fix",
+    "status": "open",
+    "priority": "p0",
+    "workstream": "mission-control",
+    "tags": [
+      "post-mortem",
+      "orchestrator",
+      "systemic-failure",
+      "research-gap",
+      "foundation",
+      "machine:home"
+    ],
+    "linkedSession": null,
+    "created": "2026-03-09T02:00:00.000Z",
+    "updated": "2026-03-09T02:00:00.000Z",
+    "context": "campaign-001"
+  },
+  {
+    "id": "pm015",
+    "title": "Post-Mortem: Dispatch is a fragmented 5-step manual process — should be one automated call [CLOSED]",
+    "description": "## Incident (2026-03-09)\nOrchestrator v1.6 dispatched Dashboard Perf v2 and Plugin Audit. Followed the 5-step dispatch checklist (write PRD, add agent card, add to /prompts, verify campaigns, call /api/launch). Agent cards didn't appear on the campaigns page until manual refresh. User pointed out this entire process should be automated.\n\n## What actually happened\nThe 5-step dispatch checklist lives in the orchestrator-dispatch skill as documentation. The orchestrator manually executes each step. This is error-prone:\n- Step 4 (verify campaigns page) was done via API, not visual verification\n- The /prompts page requires hardcoded HTML edits per agent\n- The agent card creation requires manual JSON editing\n- Any step can be missed or done incorrectly\n\n## Root cause: /api/launch is too simple\n/api/launch only does: (1) pre-create state file, (2) link sessionId to existing agent card, (3) launch dispatch.sh. It requires the agent card to ALREADY exist in campaigns.json.\n\nIt should do ALL of this:\n1. Accept agentName, promptFile, campaignId, slot, sprint, focus\n2. Auto-create the agent card in campaigns.json if it doesn't exist\n3. Launch the agent in a new terminal\n4. Return success with the card visible on campaigns\n\nThe /prompts page should read from campaigns.json brief paths, not from a hardcoded array.\n\n## Action items\n1. Enhance /api/launch to auto-create agent cards (accept sprint, focus, brief as params)\n2. Refactor /prompts page to read from campaigns.json brief field (eliminate hardcoded prompts array)\n3. Create a dispatch skill that wraps the full pipeline: write PRD + call enhanced /api/launch\n4. Campaigns page should auto-refresh (poll /api/campaigns like Dashboard polls /api/agents)\n\n## Resolution (v1.7, 2026-03-09)\n/api/launch now auto-creates agent cards (accepts sprint, focus, slot). Server restarted and verified — dispatched server-review agent via API successfully. create-agent-prompt skill handles PRD generation. Items 1+3 fully resolved. Items 2+4 are P2 (nice-to-have polish, not blocking).",
+    "status": "closed",
+    "priority": "p0",
+    "workstream": "mission-control",
+    "tags": [
+      "post-mortem",
+      "orchestrator",
+      "automation-gap",
+      "dispatch",
+      "machine:home"
+    ],
+    "linkedSession": null,
+    "created": "2026-03-09T01:00:00.000Z",
+    "updated": "2026-03-09T01:00:00.000Z",
+    "context": "campaign-001"
+  },
+  {
+    "id": "pm014",
+    "title": "Post-Mortem: Orchestrator wrote vague PRD for Dashboard Perf, agent got F [CLOSED]",
+    "description": "## Incident (2026-03-08)\nThe Dashboard Perf agent was dispatched with a PRD that said 'likely caused by synchronous file reads, expensive API calls, or blocking operations in server.js.' The agent delivered nothing (grade: F).\n\n## What actually happened\nThe orchestrator (v1.5) guessed at the bottleneck without profiling. The PRD listed 4 speculative causes ('Cerebras API call or sync file reads') but none were correct. The actual bottleneck is /api/cost parsing 164 transcript files (657MB) synchronously on the event loop. A single curl -w timing test would have found this in 5 seconds.\n\n## Two distinct failures\n\n### Failure 1: PRD based on speculation, not measurement\n- The PRD said 'Known suspect: The Cerebras API call or sync file reads in the states directory'\n- Both were wrong. Server responds in 1ms for HTML and /api/agents. The cost endpoint takes 7 seconds.\n- The orchestrator never ran curl timing against the actual endpoints before writing the PRD\n- Lesson: Before writing a performance PRD, the orchestrator MUST profile the system and include concrete measurements. Speculation-based PRDs produce speculation-based agents.\n- Systemic fix: Add to orchestrator-dispatch skill: 'Performance PRDs require before-measurements. Profile endpoints, measure timings, identify the actual bottleneck. Never send an agent to fix a performance issue without data.'\n\n### Failure 2: PRD not standardized\n- Different PRDs have wildly different quality levels. Some include concrete steps, measurements, and constraints. Others are vague wish lists.\n- The Dashboard Perf PRD had no profiling data, no timing baselines, no specific endpoint to fix\n- Compare to the Campaign Architect PRD which had detailed sections, wireframe references, and specific deliverables\n- Lesson: PRDs need a minimum quality standard. A performance PRD without measurements is like a bug report without steps to reproduce.\n- Systemic fix: Create a PRD quality checklist or template validation. Performance PRDs must include: (1) measured baseline, (2) specific endpoint/function, (3) target metric, (4) root cause hypothesis with evidence.\n\n## Action items\n1. Write PM014 (this document)\n2. Update orchestrator-dispatch skill with performance PRD requirements\n3. Re-dispatch Dashboard Perf v2 with surgical PRD including actual profiling data\n4. Consider PRD template variants by task type (performance, UI, refactoring, research)\n\n## Resolution (v1.7, 2026-03-09)\nCreated `create-agent-prompt` skill (.claude/skills/create-agent-prompt/SKILL.md) with:\n- Task-type-specific requirements (perf PRDs MUST include before-measurements)\n- 8 quality gates validated before saving\n- Vague language detection (searches for 'improve'/'optimize'/'enhance' without metrics)\n- Integrated into orchestrator-dispatch Step 1\nAll 4 action items addressed structurally.",
+    "status": "closed",
+    "priority": "p0",
+    "workstream": "mission-control",
+    "tags": [
+      "post-mortem",
+      "orchestrator",
+      "prd-quality",
+      "process-failure",
+      "machine:home"
+    ],
+    "linkedSession": null,
+    "created": "2026-03-09T00:00:00.000Z",
+    "updated": "2026-03-09T00:00:00.000Z",
+    "context": "campaign-001"
+  },
+  {
+    "id": "pm017",
+    "title": "Post-Mortem: Orchestrator proposed 'git checkout' as safe revert on repo with 7,453 lines of uncommitted work",
+    "description": "## Incident (2026-03-09)\nOrchestrator v1.7 proposed restarting the MC server with untested code and said 'if broken, git checkout the file and restart again' as the fallback. User caught this immediately.\n\n## What actually happened\nThe agent-hub repo has 16 modified files with 7,453 insertions of uncommitted work. Running `git checkout server.js` would revert ALL server.js changes — not just Dashboard Perf v2's risky cost cache, but also v1.6's /api/launch enhancement and any other intentional modifications. There is no committed checkpoint to fall back to.\n\n## Root cause\nThe orchestrator treated 'git checkout' as a trivial undo without checking the repo's commit state. It assumed there was a clean committed baseline to revert to. It never ran `git log` or `git status` to verify this assumption.\n\n## Systemic failure\nThis is the 'reversibility assumption' anti-pattern: proposing a destructive action as safe by claiming it's reversible, without verifying that the reversal path actually exists. CLAUDE.md says 'measure twice, cut once' — the orchestrator measured zero times.\n\n## Action items\n1. Before proposing any git revert/checkout/reset as a fallback: check `git status` and `git log` to verify a clean baseline exists\n2. If a repo has significant uncommitted work, the ONLY safe approach is code review before action, not 'try and revert'\n3. Add to orchestrator rules: 'Never propose git checkout as a safe revert without first checking if there is a clean committed baseline'",
+    "status": "open",
+    "priority": "p1",
+    "workstream": "mission-control",
+    "tags": [
+      "post-mortem",
+      "orchestrator",
+      "destructive-action",
+      "git-safety",
+      "machine:home"
+    ],
+    "linkedSession": null,
+    "created": "2026-03-09T06:00:00.000Z",
+    "updated": "2026-03-09T06:00:00.000Z",
+    "context": "campaign-001"
+  },
+  {
+    "id": "pm018",
+    "title": "Post-Mortem: Orchestrator ignored user instruction to find research skill, did bad searches with internal jargon instead",
+    "description": "## Incident (2026-03-09)\nUser explicitly said: 'find a good research skill online before doing research.' Orchestrator v1.7 ignored this and immediately fired off 4 web searches using internal MC jargon ('dispatched agents', 'loading enforcement') that nobody outside our system uses.\n\n## Two distinct failures\n\n### Failure 1: Ignored explicit user instruction\nUser said to find a research skill first. Orchestrator skipped this and went straight to researching. This is a Rule 2 violation (respect stated truths) — the user's instruction was clear and specific.\n\n### Failure 2: Bad search queries use internal jargon\n- 'Claude Code skill loading enforcement dispatched agents' — 'dispatched agents' is our convention, not universal\n- 'ensuring AI agents follow instructions prompt compliance' — too broad, gets regulatory compliance results\n- Searches should use universal language that matches what other people actually write about\n\n## Root cause\nThe orchestrator has a pattern of hearing feedback about methodology but not applying it to the CURRENT action. User said 'search smarter' earlier — orchestrator saved it to MEMORY.md but then searched dumbly in the very next research round. Knowledge without application.\n\n## Action items\n1. When user says 'find X skill/tool first' — STOP and find X before doing anything else\n2. Before any web search: translate internal jargon to universal terms. 'Dispatched agents' → 'multi-agent coordination'. 'Loading enforcement' → 'ensuring tools are used'.\n3. Find and evaluate an actual research skill/methodology for structured online research\n4. Add to orchestrator rules: 'Never use internal MC terminology in web searches'",
+    "status": "open",
+    "priority": "p1",
+    "workstream": "mission-control",
+    "tags": [
+      "post-mortem",
+      "orchestrator",
+      "research-quality",
+      "ignored-instruction",
+      "machine:home"
+    ],
+    "linkedSession": null,
+    "created": "2026-03-09T07:00:00.000Z",
+    "updated": "2026-03-09T07:00:00.000Z",
+    "context": "campaign-001"
+  },
+  {
+    "id": "pm019",
+    "title": "Post-Mortem: Orchestrator v1.8 started hand-coding UI feature instead of dispatching an agent",
+    "description": "## Incident (2026-03-09)\nOrchestrator v1.8 was asked to build an Infrastructure Attribution section on the Orchestrator tab. Instead of using the create-agent-prompt skill to write a PRD and dispatch an agent, the orchestrator started writing CSS and JS directly — adding infrastructure data to campaigns.json, CSS classes to campaigns-page.html, and was about to write the rendering JS when the user caught it.\n\n## What actually happened\nThe orchestrator:\n1. Added the `infrastructure` data object to campaigns.json (correct — data prep is orchestrator work)\n2. Added 40+ lines of CSS to campaigns-page.html (wrong — this is UI implementation)\n3. Was about to write the JS rendering logic when the user asked: 'Are you doing this or dispatching an agent?'\n\nThis is the EXACT same mistake v1.0 made — building instead of coordinating. Rule 1 says 'Coordinate, don't build' for anything beyond small fixes.\n\n## Two failures\n\n### Failure 1: Built instead of dispatching\nThis is a medium-sized UI feature (CSS + JS rendering + click handlers + modal integration). Rule 12 allows 'small CSS tweaks' but this is a full section with 6 rendering steps. It should have been dispatched.\n\n### Failure 2: Missed the pipeline test opportunity\nThe entire session's P0 was testing the create-agent-prompt skill end-to-end. This feature was the perfect test case — well-scoped, brainstormed, approved. The orchestrator skipped the very thing it was supposed to test.\n\n## Root cause\nMomentum bias. The orchestrator was already in the file adding CSS (from the brainstorming phase) and continued building instead of switching to dispatch mode. The transition from 'understand the codebase' to 'now dispatch someone else to build' didn't happen.\n\n## Action items\n1. Add an explicit checkpoint in orchestrator workflow: after brainstorming completes, STOP and ask 'Should I dispatch this or is it a small fix?'\n2. If you've already started writing implementation code, that's the signal you've crossed the line — stop and dispatch\n3. Data preparation (adding fields to JSON, updating configs) is OK for the orchestrator. Writing rendering code is not.",
+    "status": "open",
+    "priority": "p1",
+    "workstream": "mission-control",
+    "tags": [
+      "post-mortem",
+      "orchestrator",
+      "coordination-failure",
+      "rule-1-violation",
+      "machine:home"
+    ],
+    "linkedSession": null,
+    "created": "2026-03-09T12:00:00.000Z",
+    "updated": "2026-03-09T12:00:00.000Z",
+    "context": "campaign-001"
   }
 ]

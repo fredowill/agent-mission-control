@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>The v1.0 Story &mdash; Mission Control</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=DM+Sans:wght@400;500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#fff;--bg2:#fafafa;--surface:#f4f4f5;--surface2:#e4e4e7;
+  --text:#09090b;--text2:#52525b;--text3:#a1a1aa;--sep:#e4e4e7;
+  --purple:#8b5cf6;--purple-bg:rgba(139,92,246,0.06);
+  --blue:#3b82f6;--blue-bg:rgba(59,130,246,0.06);
+  --green:#22c55e;--green-bg:rgba(34,197,94,0.06);
+  --amber:#f59e0b;--amber-bg:rgba(245,158,11,0.06);
+  --rose:#ef4444;--rose-bg:rgba(239,68,68,0.05);
+  --cyan:#06b6d4;--cyan-bg:rgba(6,182,212,0.06);
+  --radius:12px;
+}
+body{background:var(--bg2);color:var(--text);font-family:'DM Sans',-apple-system,sans-serif;-webkit-font-smoothing:antialiased;min-height:100vh}
+
+/* Header */
+header{display:flex;align-items:center;justify-content:space-between;padding:0 clamp(24px,4vw,48px);height:64px;background:var(--bg);border-bottom:1px solid var(--sep);position:sticky;top:0;z-index:50}
+.logo{display:flex;align-items:center;gap:10px}
+.logo-dot{width:8px;height:8px;border-radius:50%;background:var(--purple)}
+.logo-text{font-family:'Plus Jakarta Sans',sans-serif;font-size:14px;font-weight:700;letter-spacing:-0.02em}
+.header-nav{display:flex;gap:2px;padding:3px;background:var(--surface);border-radius:8px;position:absolute;left:50%;transform:translateX(-50%)}
+.nav-link{padding:5px 14px;border-radius:6px;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;color:var(--text3);text-decoration:none;transition:all .15s;white-space:nowrap}
+.nav-link:hover{color:var(--text2)}
+.nav-link.active{background:var(--bg);color:var(--text);box-shadow:0 1px 3px rgba(0,0,0,.06)}
+.header-right{display:flex;align-items:center;gap:8px}
+
+/* Shell */
+.shell{max-width:960px;margin:0 auto;padding:48px 20px 80px}
+
+/* Hero */
+.story-hero{text-align:center;margin-bottom:56px}
+.hero-eyebrow{font-family:'DM Mono',monospace;font-size:11px;font-weight:500;text-transform:uppercase;letter-spacing:.1em;color:var(--purple);margin-bottom:12px}
+.hero-title{font-family:'Plus Jakarta Sans',sans-serif;font-size:clamp(36px,5vw,52px);font-weight:800;letter-spacing:-0.04em;line-height:1.1;margin-bottom:16px;background:linear-gradient(135deg,var(--text) 0%,var(--text2) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.hero-subtitle{font-size:16px;color:var(--text2);line-height:1.6;max-width:520px;margin:0 auto 32px}
+
+/* Stats Row */
+.stats-row{display:flex;justify-content:center;gap:4px;flex-wrap:wrap}
+.stat-pill{display:flex;align-items:center;gap:6px;padding:8px 18px;background:var(--bg);border:1px solid var(--sep);border-radius:100px;font-size:13px;font-weight:500;transition:transform .15s}
+.stat-pill:hover{transform:translateY(-1px)}
+.stat-value{font-family:'Plus Jakarta Sans',sans-serif;font-weight:800;letter-spacing:-0.02em}
+.stat-value.purple{color:var(--purple)}
+.stat-value.blue{color:var(--blue)}
+.stat-value.green{color:var(--green)}
+.stat-value.amber{color:var(--amber)}
+.stat-value.cyan{color:var(--cyan)}
+.stat-label{color:var(--text3);font-size:12px}
+
+/* Timeline */
+.timeline{position:relative;padding-left:0}
+
+/* Phase Section */
+.phase{margin-bottom:48px;position:relative}
+.phase:last-child{margin-bottom:0}
+
+/* Phase Header */
+.phase-head{display:flex;align-items:center;gap:16px;margin-bottom:24px}
+.phase-badge{width:40px;height:40px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-family:'Plus Jakarta Sans',sans-serif;font-size:16px;font-weight:800;color:#fff;flex-shrink:0}
+.phase-badge.p1{background:linear-gradient(135deg,#8b5cf6,#6366f1)}
+.phase-badge.p2{background:linear-gradient(135deg,#3b82f6,#2563eb)}
+.phase-badge.p3{background:linear-gradient(135deg,#06b6d4,#0891b2)}
+.phase-badge.p4{background:linear-gradient(135deg,#22c55e,#16a34a)}
+.phase-info{flex:1}
+.phase-name{font-family:'Plus Jakarta Sans',sans-serif;font-size:20px;font-weight:800;letter-spacing:-0.03em}
+.phase-meta{font-size:12px;color:var(--text3);margin-top:2px}
+.phase-count{font-family:'DM Mono',monospace;font-size:11px;color:var(--text3);background:var(--surface);padding:3px 12px;border-radius:100px;flex-shrink:0}
+
+/* Timeline Track */
+.tl-track{position:relative;padding-left:48px}
+.tl-track::before{content:'';position:absolute;left:15px;top:0;bottom:0;width:2px;border-radius:1px}
+.phase.p1 .tl-track::before{background:rgba(139,92,246,0.25)}
+.phase.p2 .tl-track::before{background:rgba(59,130,246,0.25)}
+.phase.p3 .tl-track::before{background:rgba(6,182,212,0.25)}
+.phase.p4 .tl-track::before{background:rgba(34,197,94,0.25)}
+
+/* Timeline Node */
+.tl-node{position:relative;margin-bottom:14px}
+.tl-node:last-child{margin-bottom:0}
+.tl-node::before{content:'';position:absolute;left:-33px;top:18px;width:10px;height:10px;border-radius:50%;border:2.5px solid var(--bg2);z-index:2;box-shadow:0 0 0 1px rgba(0,0,0,.04)}
+.phase.p1 .tl-node::before{background:var(--purple)}
+.phase.p2 .tl-node::before{background:var(--blue)}
+.phase.p3 .tl-node::before{background:var(--cyan)}
+.phase.p4 .tl-node::before{background:var(--green)}
+
+/* Agent Card (timeline variant) */
+.agent-tl-card{background:var(--bg);border:1px solid var(--sep);border-radius:var(--radius);padding:16px 20px;transition:all .2s;box-shadow:0 1px 4px rgba(0,0,0,.03)}
+.agent-tl-card:hover{box-shadow:0 4px 16px rgba(0,0,0,.06);transform:translateY(-1px)}
+.agent-tl-top{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.agent-tl-name{font-family:'Plus Jakarta Sans',sans-serif;font-size:15px;font-weight:700;letter-spacing:-0.02em}
+.agent-tl-deliverables{font-size:13px;color:var(--text2);line-height:1.7}
+.agent-tl-deliverables ul{list-style:none;padding:0;margin:0}
+.agent-tl-deliverables li{margin-bottom:3px;padding-left:16px;position:relative}
+.agent-tl-deliverables li::before{content:'';position:absolute;left:0;top:9px;width:5px;height:5px;border-radius:50%;background:var(--surface2)}
+.agent-tl-deliverables strong{color:var(--text);font-weight:600}
+.agent-tl-deliverables .metric{font-family:'DM Mono',monospace;font-weight:700;color:var(--green);font-size:11px}
+.agent-tl-deliverables .metric.bad{color:var(--rose)}
+
+/* Agent name colors */
+.ag-name-orchestrator{color:#7c3aed}
+.ag-name-beacon{color:#d97706}
+.ag-name-compass{color:#2563eb}
+.ag-name-overwatch{color:#0891b2}
+.ag-name-polisher{color:#db2777}
+.ag-name-retrospector{color:#16a34a}
+.ag-name-integrator{color:#ea580c}
+.ag-name-analyst{color:#6366f1}
+.ag-name-video{color:#dc2626}
+.ag-name-medic{color:#059669}
+.ag-name-findings-analyst{color:#9333ea}
+.ag-name-pipeline{color:#0891b2}
+.ag-name-workflow{color:#ea580c}
+.ag-name-dashboard{color:#3b82f6}
+.ag-name-morning{color:#f97316}
+
+/* Key Moment */
+.tl-moment{position:relative;margin-bottom:14px}
+.tl-moment:last-child{margin-bottom:0}
+.tl-moment::before{content:'';position:absolute;left:-36px;top:14px;width:16px;height:16px;border-radius:50%;border:2.5px solid var(--bg2);z-index:2}
+.tl-moment.win::before{background:var(--green)}
+.tl-moment.loss::before{background:var(--rose)}
+.tl-moment.insight::before{background:var(--amber)}
+
+.moment-card{border-radius:var(--radius);padding:14px 18px;font-size:13px;line-height:1.6;display:flex;align-items:flex-start;gap:10px}
+.moment-card.win{background:var(--green-bg);border:1px solid rgba(34,197,94,0.12)}
+.moment-card.loss{background:var(--rose-bg);border:1px solid rgba(239,68,68,0.1)}
+.moment-card.insight{background:var(--amber-bg);border:1px solid rgba(245,158,11,0.12)}
+.moment-icon{font-size:14px;flex-shrink:0;margin-top:1px}
+.moment-text{color:var(--text)}
+.moment-text strong{font-weight:700}
+.moment-text em{font-style:italic;color:var(--text2)}
+
+/* Lessons Grid */
+.lessons-section{margin-top:56px}
+.section-heading{font-family:'Plus Jakarta Sans',sans-serif;font-size:22px;font-weight:800;letter-spacing:-0.04em;margin-bottom:8px}
+.section-sub{font-size:14px;color:var(--text2);margin-bottom:24px}
+.lessons-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+@media(max-width:768px){.lessons-grid{grid-template-columns:1fr}}
+@media(min-width:769px) and (max-width:960px){.lessons-grid{grid-template-columns:repeat(2,1fr)}}
+.lesson-card{background:var(--bg);border:1px solid var(--sep);border-radius:var(--radius);padding:20px;transition:all .2s}
+.lesson-card:hover{box-shadow:0 4px 16px rgba(0,0,0,.06);transform:translateY(-1px)}
+.lesson-num{font-family:'DM Mono',monospace;font-size:10px;font-weight:500;color:var(--text3);margin-bottom:8px;text-transform:uppercase;letter-spacing:.06em}
+.lesson-title{font-family:'Plus Jakarta Sans',sans-serif;font-size:14px;font-weight:700;letter-spacing:-0.02em;margin-bottom:6px;line-height:1.3}
+.lesson-body{font-size:12.5px;color:var(--text2);line-height:1.6}
+
+/* Scorecard */
+.scorecard-section{margin-top:56px}
+.scorecard{background:var(--bg);border:1px solid var(--sep);border-radius:16px;padding:28px 32px;position:relative;overflow:hidden}
+.scorecard::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--purple),var(--blue),var(--cyan),var(--green))}
+.scorecard-title{font-family:'Plus Jakarta Sans',sans-serif;font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text3);margin-bottom:20px}
+.scorecard-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:16px}
+@media(max-width:900px){.scorecard-grid{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:500px){.scorecard-grid{grid-template-columns:repeat(2,1fr)}}
+.sc-item{text-align:center}
+.sc-score{font-family:'Plus Jakarta Sans',sans-serif;font-size:28px;font-weight:800;letter-spacing:-0.03em;line-height:1}
+.sc-score .sc-max{font-size:14px;font-weight:500;color:var(--text3)}
+.sc-label{font-size:11px;color:var(--text2);margin-top:6px;line-height:1.3}
+.sc-score.excellent{color:var(--green)}
+.sc-score.good{color:var(--blue)}
+.sc-score.mid{color:var(--amber)}
+.sc-score.low{color:var(--rose)}
+.sc-score.perfect{color:var(--purple)}
+
+.scorecard-overall{display:flex;align-items:center;justify-content:center;gap:12px;margin-top:24px;padding-top:20px;border-top:1px solid var(--sep)}
+.sc-overall-label{font-size:14px;font-weight:600;color:var(--text2)}
+.sc-overall-score{font-family:'Plus Jakarta Sans',sans-serif;font-size:32px;font-weight:800;letter-spacing:-0.03em}
+.sc-arrow{font-size:18px;color:var(--green);font-weight:700}
+
+/* Phase connector dots between phases */
+.phase-connector{display:flex;justify-content:center;margin:-24px 0 24px;position:relative;z-index:1}
+.phase-connector-dots{display:flex;gap:4px}
+.phase-connector-dot{width:4px;height:4px;border-radius:50%;background:var(--surface2)}
+
+/* Responsive */
+@media(max-width:600px){
+  .shell{padding:24px 16px 60px}
+  .stats-row{gap:6px}
+  .stat-pill{padding:6px 12px;font-size:12px}
+  .tl-track{padding-left:40px}
+  .tl-node::before{left:-25px}
+  .tl-moment::before{left:-28px;width:14px;height:14px}
+  .phase-badge{width:34px;height:34px;font-size:14px}
+  .phase-name{font-size:17px}
+}
+
+/* Scroll reveal animation — CSS-only, respects prefers-reduced-motion */
+@keyframes fadeSlideUp{
+  from{opacity:0;transform:translateY(16px)}
+  to{opacity:1;transform:translateY(0)}
+}
+@media(prefers-reduced-motion: no-preference){
+  .tl-node{animation:fadeSlideUp .5s ease both}
+  .tl-moment{animation:fadeSlideUp .5s ease both}
+  .lesson-card{animation:fadeSlideUp .4s ease both}
+  .sc-item{animation:fadeSlideUp .4s ease both}
+  /* Stagger within each phase */
+  .tl-node:nth-child(1),.tl-moment:nth-child(1){animation-delay:0s}
+  .tl-node:nth-child(2),.tl-moment:nth-child(2){animation-delay:.06s}
+  .tl-node:nth-child(3),.tl-moment:nth-child(3){animation-delay:.12s}
+  .tl-node:nth-child(4),.tl-moment:nth-child(4){animation-delay:.18s}
+  .tl-node:nth-child(5),.tl-moment:nth-child(5){animation-delay:.24s}
+  .tl-node:nth-child(6),.tl-moment:nth-child(6){animation-delay:.3s}
+  .lesson-card:nth-child(1){animation-delay:0s}
+  .lesson-card:nth-child(2){animation-delay:.06s}
+  .lesson-card:nth-child(3){animation-delay:.08s}
+  .lesson-card:nth-child(4){animation-delay:.1s}
+  .lesson-card:nth-child(5){animation-delay:.12s}
+  .lesson-card:nth-child(6){animation-delay:.14s}
+  .sc-item:nth-child(1){animation-delay:0s}
+  .sc-item:nth-child(2){animation-delay:.05s}
+  .sc-item:nth-child(3){animation-delay:.1s}
+  .sc-item:nth-child(4){animation-delay:.15s}
+  .sc-item:nth-child(5){animation-delay:.2s}
+  .sc-item:nth-child(6){animation-delay:.25s}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">
+    <div class="logo-dot"></div>
+    <div class="logo-text">Mission Control</div>
+  </div>
+  <nav class="header-nav">
+    <a href="/" class="nav-link">Dashboard</a>
+    <a href="/dispatch" class="nav-link">Dispatch</a>
+    <a href="/campaigns" class="nav-link">Campaigns</a>
+    <a href="/findings" class="nav-link">Findings</a>
+    <a href="/story" class="nav-link active">Story</a>
+  </nav>
+  <div class="header-right"></div>
+</header>
+
+<div class="shell">
+
+  <!-- Hero -->
+  <div class="story-hero">
+    <div class="hero-eyebrow">Orchestrator v1.0 &mdash; March 2, 2026</div>
+    <h1 class="hero-title">The v1.0 Story</h1>
+    <p class="hero-subtitle">10 hours. 15 agents. 4 phases. The first coordinated multi-agent campaign.</p>
+    <div class="stats-row">
+      <div class="stat-pill"><span class="stat-value purple">10h</span><span class="stat-label">duration</span></div>
+      <div class="stat-pill"><span class="stat-value blue">15</span><span class="stat-label">agents</span></div>
+      <div class="stat-pill"><span class="stat-value green">27</span><span class="stat-label">wins</span></div>
+      <div class="stat-pill"><span class="stat-value amber">47</span><span class="stat-label">findings</span></div>
+      <div class="stat-pill"><span class="stat-value cyan">8<span style="font-size:12px;color:var(--text3)">/10</span></span><span class="stat-label">rating</span></div>
+    </div>
+  </div>
+
+  <!-- Phase 1 -->
+  <div class="phase p1">
+    <div class="phase-head">
+      <div class="phase-badge p1">1</div>
+      <div class="phase-info">
+        <div class="phase-name">Initial Push</div>
+        <div class="phase-meta">4 agents launched simultaneously</div>
+      </div>
+      <div class="phase-count">4 agents</div>
+    </div>
+    <div class="tl-track">
+      <div class="tl-node">
+        <div class="agent-tl-card">
+          <div class="agent-tl-top">
+            <span class="agent-tl-name ag-name-orchestrator">Orchestrator</span>
+          </div>
+          <div class="agent-tl-deliverables">
+            <ul>
+              <li>Built the <strong>Campaigns page</strong> from scratch</li>
+              <li>Created <strong>Sprint Prompts</strong> system for agent coordination</li>
+              <li><strong>13x page load fix</strong> &mdash; <span class="metric">18.5s</span> down to <span class="metric">1.4s</span></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <div class="tl-node">
+        <div class="agent-tl-card">
+          <div class="agent-tl-top">
+            <span class="agent-tl-name ag-name-beacon">Beacon</span>
+          </div>
+          <div class="agent-tl-deliverables">
+            <ul>
+              <li>Terminal auto-naming system</li>
+              <li><strong>/name</strong> command for manual session naming</li>
+              <li><strong>/end-session</strong> for clean session close</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <div class="tl-node">
+        <div class="agent-tl-card">
+          <div class="agent-tl-top">
+            <span class="agent-tl-name ag-name-compass">Compass</span>
+          </div>
+          <div class="agent-tl-deliverables">
+            <ul>
+              <li>&ldquo;Air traffic control for AI agents&rdquo; pitch</li>
+              <li><strong>/why</strong> page &mdash; value proposition narrative</li>
+              <li><strong>7 recommendations</strong> for product direction</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <div class="tl-node">
+        <div class="agent-tl-card">
+          <div class="agent-tl-top">
+            <span class="agent-tl-name ag-name-overwatch">Overwatch</span>
+          </div>
+          <div class="agent-tl-deliverables">
+            <ul>
+              <li>Inspector panel spec for live session monitoring</li>
+              <li><strong>Competitive analysis</strong> across existing tools</li>
+              <li>Activity feed concept design</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Key Moments -->
+      <div class="tl-moment loss">
+        <div class="moment-card loss">
+          <span class="moment-icon">&#10007;</span>
+          <span class="moment-text"><strong>Loss:</strong> Wrong prompt pasted into 2 terminals &mdash; wasted an entire session</span>
+        </div>
+      </div>
+      <div class="tl-moment win">
+        <div class="moment-card win">
+          <span class="moment-icon">&#10003;</span>
+          <span class="moment-text"><strong>Win:</strong> <em>&ldquo;Findings is the killer feature&rdquo;</em> &mdash; insight from Compass that reframed product positioning</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="phase-connector"><div class="phase-connector-dots"><span class="phase-connector-dot"></span><span class="phase-connector-dot"></span><span class="phase-connector-dot"></span></div></div>
+
+  <!-- Phase 2 -->
+  <div class="phase p2">
+    <div class="phase-head">
+      <div class="phase-badge p2">2</div>
+      <div class="phase-info">
+        <div class="phase-name">Polish &amp; Analysis</div>
+        <div class="phase-meta">4 agents, focused on refining Phase 1 output</div>
+      </div>
+      <div class="phase-count">4 agents</div>
+    </div>
+    <div class="tl-track">
+      <div class="tl-node">
+        <div class="agent-tl-card">
+          <div class="agent-tl-top">
+            <span class="agent-tl-name ag-name-polisher">Polisher</span>
+          </div>
+          <div class="agent-tl-deliverables">
+            <ul>
+              <li><strong>/why</strong> polished to screen-share quality</li>
+              <li><strong>/demo-guide</strong> created for live presentations</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <div class="tl-node">
+        <div class="agent-tl-card">
+          <div class="agent-tl-top">
+            <span class="agent-tl-name ag-name-retrospector">Retrospector</span>
+          </div>
+          <div class="agent-tl-deliverables">
+            <ul>
+              <li>Full campaign retrospective</li>
+              <li><strong>7 broadly applicable lessons</strong> for future campaigns</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <div class="tl-node">
+        <div class="agent-tl-card">
+          <div class="agent-tl-top">
+            <span class="agent-tl-name ag-name-integrator">Integrator</span>
+          </div>
+          <div class="agent-tl-deliverables">
+            <ul>
+              <li>Retrospective tab on Dashboard agent cards</li>
+              <li>Integrated review workflow into campaign UI</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <div class="tl-node">
+        <div class="agent-tl-card">
+          <div class="agent-tl-top">
+            <span class="agent-tl-name ag-name-analyst">Analyst</span>
+          </div>
+          <div class="agent-tl-deliverables">
+            <ul>
+              <li>Session analytics infrastructure</li>
+              <li>Discovered <strong>sub-agent visibility gap</strong> (P0 finding)</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Key Moment -->
+      <div class="tl-moment insight">
+        <div class="moment-card insight">
+          <span class="moment-icon">&#9670;</span>
+          <span class="moment-text"><strong>Insight:</strong> <em>&ldquo;One long orchestrator + many short executors&rdquo;</em> &mdash; the pattern that defines multi-agent campaigns</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="phase-connector"><div class="phase-connector-dots"><span class="phase-connector-dot"></span><span class="phase-connector-dot"></span><span class="phase-connector-dot"></span></div></div>
+
+  <!-- Phase 3 -->
+  <div class="phase p3">
+    <div class="phase-head">
+      <div class="phase-badge p3">3</div>
+      <div class="phase-info">
+        <div class="phase-name">Deep Dives</div>
+        <div class="phase-meta">3 agents, processing data and building diagnostics</div>
+      </div>
+      <div class="phase-count">3 agents</div>
+    </div>
+    <div class="tl-track">
+      <div class="tl-node">
+        <div class="agent-tl-card">
+          <div class="agent-tl-top">
+            <span class="agent-tl-name ag-name-video">Video Analyzer</span>
+          </div>
+          <div class="agent-tl-deliverables">
+            <ul>
+              <li>Processed <strong>2-hour demo recording</strong></li>
+              <li>Generated <strong>80KB transcript</strong> with timestamps</li>
+              <li>Extracted <strong>15 value proposition quotes</strong></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <div class="tl-node">
+        <div class="agent-tl-card">
+          <div class="agent-tl-top">
+            <span class="agent-tl-name ag-name-findings-analyst">Findings Analyst</span>
+          </div>
+          <div class="agent-tl-deliverables">
+            <ul>
+              <li><strong>8 new findings</strong> (f036&ndash;f043) catalogued</li>
+              <li><strong>12 dispatch items</strong> created from analysis</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <div class="tl-node">
+        <div class="agent-tl-card">
+          <div class="agent-tl-top">
+            <span class="agent-tl-name ag-name-medic">Medic</span>
+          </div>
+          <div class="agent-tl-deliverables">
+            <ul>
+              <li><strong>/health</strong> diagnostics page for system monitoring</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Key Moments -->
+      <div class="tl-moment loss">
+        <div class="moment-card loss">
+          <span class="moment-icon">&#10007;</span>
+          <span class="moment-text"><strong>Loss:</strong> Wrong CUDA version on Video Analyzer &mdash; <span class="metric bad">30&ndash;40%</span> token waste on transcription</span>
+        </div>
+      </div>
+      <div class="tl-moment win">
+        <div class="moment-card win">
+          <span class="moment-icon">&#10003;</span>
+          <span class="moment-text"><strong>Win:</strong> <em>&ldquo;Self-evolving loop is the moat&rdquo;</em> (f036) &mdash; MC&rsquo;s competitive advantage identified</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="phase-connector"><div class="phase-connector-dots"><span class="phase-connector-dot"></span><span class="phase-connector-dot"></span><span class="phase-connector-dot"></span></div></div>
+
+  <!-- Phase 4 -->
+  <div class="phase p4">
+    <div class="phase-head">
+      <div class="phase-badge p4">4</div>
+      <div class="phase-info">
+        <div class="phase-name">Closing Sprint</div>
+        <div class="phase-meta">4 agents, finishing up</div>
+      </div>
+      <div class="phase-count">4 agents</div>
+    </div>
+    <div class="tl-track">
+      <div class="tl-node">
+        <div class="agent-tl-card">
+          <div class="agent-tl-top">
+            <span class="agent-tl-name ag-name-pipeline">Pipeline Architect</span>
+          </div>
+          <div class="agent-tl-deliverables">
+            <ul>
+              <li><strong>/capture</strong> &mdash; mobile idea intake pipeline</li>
+              <li><strong>/president</strong> &mdash; CEO dashboard view</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <div class="tl-node">
+        <div class="agent-tl-card">
+          <div class="agent-tl-top">
+            <span class="agent-tl-name ag-name-workflow">Workflow Redesign</span>
+          </div>
+          <div class="agent-tl-deliverables">
+            <ul>
+              <li>Workflow page revamp <span style="font-size:11px;color:var(--amber);font-weight:600">(in progress)</span></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <div class="tl-node">
+        <div class="agent-tl-card">
+          <div class="agent-tl-top">
+            <span class="agent-tl-name ag-name-dashboard">Dashboard Fix</span>
+          </div>
+          <div class="agent-tl-deliverables">
+            <ul>
+              <li>Blank card bug fixed &mdash; PM008/PM011 resolved</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <div class="tl-node">
+        <div class="agent-tl-card">
+          <div class="agent-tl-top">
+            <span class="agent-tl-name ag-name-morning">Morning Brief</span>
+          </div>
+          <div class="agent-tl-deliverables">
+            <ul>
+              <li>Wake-up summary for session continuity</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Lessons Learned -->
+  <div class="lessons-section">
+    <div class="section-heading">Lessons Learned</div>
+    <div class="section-sub">What we took away from the first coordinated campaign.</div>
+    <div class="lessons-grid">
+      <div class="lesson-card">
+        <div class="lesson-num">Lesson 01</div>
+        <div class="lesson-title">&ldquo;Playwright test everything&rdquo;</div>
+        <div class="lesson-body">Broke the Dashboard 3 times during the sprint. Never tested with a screenshot. Visual verification is non-negotiable.</div>
+      </div>
+      <div class="lesson-card">
+        <div class="lesson-num">Lesson 02</div>
+        <div class="lesson-title">&ldquo;Pause after delivering&rdquo;</div>
+        <div class="lesson-body">The user needs to act before you move on. Shipping three things in a row overwhelms. Deliver, wait, iterate.</div>
+      </div>
+      <div class="lesson-card">
+        <div class="lesson-num">Lesson 03</div>
+        <div class="lesson-title">&ldquo;Never dump prompts inline&rdquo;</div>
+        <div class="lesson-body">Use /prompts, not terminal text. Pasting multi-line prompts into terminals caused the worst session waste of the sprint.</div>
+      </div>
+      <div class="lesson-card">
+        <div class="lesson-num">Lesson 04</div>
+        <div class="lesson-title">&ldquo;Setup checklist before agents&rdquo;</div>
+        <div class="lesson-body">20 minutes of setup prevents 2 hours of recovery. Pre-flight checks for every agent launch.</div>
+      </div>
+      <div class="lesson-card">
+        <div class="lesson-num">Lesson 05</div>
+        <div class="lesson-title">&ldquo;Research agents are highest-value&rdquo;</div>
+        <div class="lesson-body">Not every agent should write code. Compass and Analyst produced insights worth more than any single feature.</div>
+      </div>
+      <div class="lesson-card">
+        <div class="lesson-num">Lesson 06</div>
+        <div class="lesson-title">&ldquo;Data change &#x2260; UI change&rdquo;</div>
+        <div class="lesson-body">The user sees the screen, not the JSON. If data updated but the UI didn&rsquo;t refresh, the user sees nothing.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scorecard -->
+  <div class="scorecard-section">
+    <div class="scorecard">
+      <div class="scorecard-title">Campaign Scorecard</div>
+      <div class="scorecard-grid">
+        <div class="sc-item">
+          <div class="sc-score excellent">9<span class="sc-max">/10</span></div>
+          <div class="sc-label">Brief Quality</div>
+        </div>
+        <div class="sc-item">
+          <div class="sc-score good">8<span class="sc-max">/10</span></div>
+          <div class="sc-label">Agent Output</div>
+        </div>
+        <div class="sc-item">
+          <div class="sc-score mid">5<span class="sc-max">/10</span></div>
+          <div class="sc-label">Orchestrator</div>
+        </div>
+        <div class="sc-item">
+          <div class="sc-score low">4<span class="sc-max">/10</span></div>
+          <div class="sc-label">Coordination</div>
+        </div>
+        <div class="sc-item">
+          <div class="sc-score perfect">10<span class="sc-max">/10</span></div>
+          <div class="sc-label">Meta-learning</div>
+        </div>
+        <div class="sc-item">
+          <div class="sc-score good" style="display:flex;align-items:baseline;justify-content:center;gap:6px">
+            <span style="font-size:16px;color:var(--text3);font-weight:500;text-decoration:line-through">7</span>
+            <span class="sc-arrow">&rarr;</span>
+            8<span class="sc-max">/10</span>
+          </div>
+          <div class="sc-label">Overall</div>
+        </div>
+      </div>
+      <div class="scorecard-overall">
+        <span class="sc-overall-label">The verdict:</span>
+        <span style="font-size:14px;color:var(--text2);line-height:1.5;max-width:500px">Messy orchestration, exceptional output. The agents delivered more in 10 hours than expected. The meta-learning loop proved itself.</span>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- No JavaScript needed — animations are CSS-only -->
+</body>
+</html>

@@ -109,11 +109,15 @@ process.stdin.on('end', () => {
     let claudePid = null;
     let resumeCount = 0;
     let displayName = null;
+    let parentSessionId = null;  // Set by /api/launch for auto-dispatched agents
+    let dispatchMeta = null;     // { agentName, campaignId, slot, mode, dispatchedAt }
     try {
       const prev = JSON.parse(fs.readFileSync(stateFile, 'utf8'));
       claudePid = prev.claudePid || null;
       resumeCount = prev.resumeCount || 0;
       displayName = prev.displayName || null;
+      parentSessionId = prev.parentSessionId || null;
+      dispatchMeta = prev.dispatchMeta || null;
     } catch (_) { /* first fire — no state file yet */ }
 
     // If stored PID exists, check if it's still alive.
@@ -154,7 +158,7 @@ process.stdin.on('end', () => {
         }
       } catch (_) { /* no previous state — proceed normally */ }
     }
-    const stateData = { sessionId: sid, tool: tool || null, detail, statusLine, ts: now, claudePid, resumeCount, displayName, ...info };
+    const stateData = { sessionId: sid, tool: tool || null, detail, statusLine, ts: now, claudePid, resumeCount, displayName, parentSessionId, dispatchMeta, ...info };
     fs.writeFileSync(stateFile, JSON.stringify(stateData));
 
     // ── Append to activity log (only on state transitions) ──

@@ -53,19 +53,6 @@
     "updated": "2026-03-06T22:53:54.906Z"
   },
   {
-    "id": "azy57qxr",
-    "title": "Untitled",
-    "description": "ddd",
-    "status": "todo",
-    "priority": "p0",
-    "workstream": "",
-    "tags": [],
-    "linkedSession": null,
-    "context": "work",
-    "created": "2026-03-07T00:39:31.478Z",
-    "updated": "2026-03-07T00:39:35.557Z"
-  },
-  {
     "id": "n17nkr09",
     "title": "Tracking how much im spending in tokens",
     "description": "graphic ",
@@ -87,12 +74,16 @@
     "description": "Create a new Slack group chat and start brainstorming for the summit. Been slacking on this — need to get the conversation going ASAP.\n\nTODO:\n- Create the group chat, invite the right people\n- Seed it with initial brainstorming topics / agenda ideas\n- Get discussion flowing",
     "status": "todo",
     "priority": "p0",
-    "workstream": "",
-    "tags": ["summit", "slack", "brainstorming"],
+    "workstream": "aqg",
+    "tags": [
+      "summit",
+      "slack",
+      "brainstorming"
+    ],
     "linkedSession": null,
     "context": "work",
     "created": "2026-03-06T23:00:00.000Z",
-    "updated": "2026-03-06T23:00:00.000Z"
+    "updated": "2026-03-08T08:19:21.457Z"
   },
   {
     "id": "wk-cares-showcase",
@@ -101,12 +92,20 @@
     "status": "todo",
     "priority": "p0",
     "workstream": "cares",
-    "tags": ["showcase", "cares", "presentation", "manager"],
+    "tags": [
+      "showcase",
+      "cares",
+      "presentation",
+      "manager"
+    ],
     "linkedSession": null,
     "context": "work",
     "created": "2026-03-07T06:00:00.000Z",
     "updated": "2026-03-07T06:00:00.000Z",
-    "areas": ["showcase", "cares"]
+    "areas": [
+      "showcase",
+      "cares"
+    ]
   },
   {
     "id": "wk-hooks-demo",
@@ -115,11 +114,19 @@
     "status": "todo",
     "priority": "p0",
     "workstream": "cares",
-    "tags": ["showcase", "hooks", "fhl", "presentation", "monday-deadline"],
+    "tags": [
+      "showcase",
+      "hooks",
+      "fhl",
+      "presentation",
+      "monday-deadline"
+    ],
     "linkedSession": null,
     "context": "work",
     "created": "2026-03-07T11:00:00.000Z",
     "updated": "2026-03-07T11:00:00.000Z",
-    "areas": ["showcase"]
+    "areas": [
+      "showcase"
+    ]
   }
 ]

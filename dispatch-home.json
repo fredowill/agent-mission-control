@@ -79,7 +79,8 @@
     "tags": [
       "agent-workflow",
       "post-mortem",
-      "agent-creation"
+      "agent-creation",
+      "machine:home"
     ],
     "linkedSession": null,
     "created": "2026-03-05T23:55:00.000Z",
@@ -649,7 +650,8 @@
       "post-mortem",
       "data-quality",
       "memory",
-      "principle"
+      "principle",
+      "machine:home"
     ],
     "linkedSession": null,
     "created": "2026-03-07T01:15:00.000Z",
@@ -954,7 +956,8 @@
     "tags": [
       "post-mortem",
       "notifications",
-      "agent-workflow"
+      "agent-workflow",
+      "machine:home"
     ],
     "linkedSession": null,
     "created": "2026-03-07T14:00:00.000Z",
@@ -1035,7 +1038,8 @@
     "tags": [
       "post-mortem",
       "infrastructure",
-      "dashboard"
+      "dashboard",
+      "machine:home"
     ],
     "linkedSession": null,
     "created": "2026-03-07T16:00:00.000Z",
@@ -1111,6 +1115,315 @@
     "context": null,
     "areas": [
       "demo"
+    ]
+  },
+  {
+    "id": "pm010",
+    "title": "Post-Mortem: Agent claimed two different philosophies were 'the same' because they rhymed",
+    "description": "## Incident (2026-03-07)\nDuring a late-night session, the orchestrator was reviewing a Reddit post about Claude Code's readable system prompts. The post mentioned Anthropic's internal guideline: 'three similar lines of code is better than a premature abstraction.' The orchestrator immediately said this was 'the same philosophy' as CLAUDE.md Rule #9 ('Keep it simple, stupid'). User pushed back: 'Wait, how is this the same philosophy?'\n\n## What actually happened\nThe orchestrator pattern-matched on vibes instead of substance. Both statements sound like they're about simplicity, so the agent declared them equivalent. But they're not:\n\n**CLAUDE.md Rule #9** is a high-level engineering principle. It governs the ENTIRE approach to any problem: default to the simplest implementation that works. Complexity must be justified by a specific failure of the simple approach. This applies to architecture decisions, feature design, solution selection — everything.\n\n**Anthropic's line** is a specific coding guideline about abstraction timing. It says: don't create a helper function or utility class when you only use it once. Three copy-pasted lines are better than a premature DRY refactor. This applies to code structure only.\n\nOne governs how you think about problems. The other governs how you organize functions. They're in the same philosophical family — both value simplicity — but they operate at completely different levels of abstraction. The irony: the agent failed to distinguish between levels of abstraction while discussing a principle ABOUT levels of abstraction.\n\n## Failure 1: Pattern-matching on vibes instead of analyzing substance\n- The agent saw 'simplicity' in both statements and short-circuited to 'same thing'\n- Never actually compared what each statement governs, when it applies, or what it prevents\n- This is the linguistic equivalent of saying jazz and blues are the same genre because they both use saxophones\n- **Lesson: When drawing parallels between concepts, be precise about what's actually shared vs what merely sounds similar. 'Related' and 'the same' are different words for a reason.**\n\n## Failure 2: Confident assertion without verification\n- The agent said 'You're aligned with how Anthropic thinks' as if stating a fact\n- Never paused to check whether the two principles actually overlap in scope, application, or consequence\n- Presented a vibe check as an analytical conclusion\n- **Lesson: Analogies are hypotheses, not facts. When claiming two things are equivalent, verify the equivalence — don't just assert it because they feel similar.**\n\n## Why this is funny\nAn AI agent whose entire job is language precision said two different things were 'the same philosophy' because they vibed similarly. It then had to explain the difference when called out, proving it knew they were different all along. The agent was being lazy, not ignorant — which is arguably worse.\n\n## Action items\n1. When comparing principles, frameworks, or philosophies: state what's shared AND what's different\n2. Never say 'same' when you mean 'related' or 'similar'\n3. This post-mortem should remain tagged 'funny' as a reminder that even language models can be intellectually lazy",
+    "status": "done",
+    "priority": "p3",
+    "workstream": "mission-control",
+    "tags": [
+      "post-mortem",
+      "funny",
+      "language-precision",
+      "machine:home"
+    ],
+    "linkedSession": null,
+    "created": "2026-03-07T17:00:00.000Z",
+    "updated": "2026-03-07T17:00:00.000Z",
+    "context": null,
+    "areas": [
+      "logic"
+    ]
+  },
+  {
+    "id": "ip-guidelines",
+    "title": "Consult Microsoft IP guidelines -- ensure MC stays clearly personal",
+    "description": "Mission Control is personal intellectual property built on personal time. Before FHL demos or team presentations:\n\n1. Review Microsoft's side-project and IP policy (employee handbook, IP assignment clause)\n2. Confirm MC doesn't use any Microsoft resources, code, or proprietary tools\n3. Frame any work demo as 'personal experimentation with Claude Code hooks' not 'I built a product'\n4. Ensure no MC branding is visible during work presentations (Tony Stark principle)\n5. Keep work and personal contexts clearly separated in git, deployment, and discussion\n\nThis is a prerequisite for the FHL hooks demo task. Do not present MC-related work to teammates until IP boundaries are clear.",
+    "status": "todo",
+    "priority": "p0",
+    "workstream": "mission-control",
+    "tags": [
+      "legal",
+      "ip",
+      "work",
+      "prerequisite",
+      "machine:home"
+    ],
+    "linkedSession": null,
+    "created": "2026-03-07T12:00:00.000Z",
+    "updated": "2026-03-07T12:00:00.000Z",
+    "context": null,
+    "areas": [
+      "workflow",
+      "demo"
+    ]
+  },
+  {
+    "id": "pm011",
+    "title": "Post-Mortem: Dashboard blank card — agent card renders empty box, third time Dashboard breaks",
+    "description": "## Incident (2026-03-07)\nDashboard shows 3 active cards but the first one (the orchestrator session) renders as a completely empty white box — no title, no status, no content. This is the THIRD time the Dashboard has broken during this campaign (PM008 was server-side JS in browser, now this).\n\n## What actually happened\nThe orchestrator added campaign badge rendering (getCampaignLookup, campInfo) and agent modal click handlers to the renderCard function. The code passes syntax checks but one agent card causes a runtime error — likely the campInfo.reduce() call on chainedSessions returns null/undefined for one specific agent, or the onclick handler for the modal breaks the card's anchor tag.\n\n## Failure 1: Dashboard renderCard is fragile\n- renderCard now has campaign lookups, modal onclick handlers, statusLine, and conditional badge rendering — too many failure points for a template function\n- No try/catch around individual card rendering — one bad card kills the whole display or renders blank\n- **Lesson: Wrap renderCard in a try/catch that falls back to a basic card if the enhanced rendering fails. Never let one bad data point blank an entire card.**\n\n## Failure 2: Third Dashboard break in one campaign\n- PM008: server-side fs.readFileSync in browser JS\n- Now: runtime error in renderCard from campaign badge code\n- Pattern: the Dashboard embedded HTML in server.js is too fragile for rapid iteration. Every change risks breaking it.\n- **Lesson: The Dashboard needs to be extracted from server.js into its own HTML file (like all other pages). The template literal embedding makes the server/client boundary invisible and encourages exactly these bugs.**\n\n## Action items\n1. Add try/catch to renderCard — bad data should produce a degraded card, not a blank one\n2. Extract Dashboard from server.js into dashboard-page.html (tracked in serverjs-split task)\n3. Add regression test: verify all 3 active cards render with content after any server.js change",
+    "status": "open",
+    "priority": "p0",
+    "workstream": "mission-control",
+    "tags": [
+      "post-mortem",
+      "dashboard",
+      "infrastructure",
+      "machine:home"
+    ],
+    "linkedSession": null,
+    "created": "2026-03-07T18:00:00.000Z",
+    "updated": "2026-03-07T18:00:00.000Z",
+    "context": null,
+    "areas": [
+      "dashboard",
+      "bug"
+    ]
+  },
+  {
+    "id": "pm012",
+    "title": "Post-Mortem: Morning Brief written as markdown file -- user couldn't find it because there was no page",
+    "description": "## Incident (2026-03-07)\nThe Morning Brief agent was tasked with producing a wake-up summary covering the overnight sprint. The agent wrote a comprehensive morning-brief.md file to the coordinated-sprint directory. The user asked 'where is it?' because there was no page to view it. The deliverable was invisible.\n\n## The irony\nThe agent had just read finding f030 ('Data change is not a UI change -- the user sees the screen, not the JSON') and finding f033 ('MC is an interface layer, not an IDE. Your job is to create, not read files.') as part of researching the brief. Both findings were QUOTED in the brief itself. The agent understood the principle, documented it, and then immediately violated it with its own deliverable. This is the exact pattern from PM002, where an agent built Finding #2 about Playwright testing and then didn't Playwright test.\n\n## What actually happened\nThe task description said 'Write this to .claude/agent-hub/coordinated-sprint/morning-brief.md' and the agent followed the instruction literally. It wrote the file, moved on to other tasks, and never asked: can the user actually SEE this? The agent created a starter guide HTML page with a route, created findings with routes, updated the campaigns page -- all browser-accessible. But the primary deliverable, the morning brief itself, was left as a raw .md file on disk.\n\n## Two distinct failures\n\n### Failure 1: File on disk treated as a deliverable\n- The user operates through localhost:3033 in the browser. Period.\n- A markdown file in a subdirectory is not something the user will ever navigate to\n- The agent knew this -- it had just read and cited the exact findings that say so\n- Reading a principle and citing it is not the same as applying it\n- **Lesson: In MC, a file is never a deliverable. A deliverable is a page the user can reach in the browser. If you write a .md file, you must ALSO create an HTML page and wire a route. The file is the data source. The page is the deliverable.**\n- **Systemic fix: Add to CLAUDE.md or principles: 'Any document meant for the user must be served as a page at localhost:3033. Markdown files are for agent consumption. HTML pages are for user consumption. If in doubt, create the page.'**\n\n### Failure 2: Principles read but not applied (PM002 repeat)\n- This is the third time an agent has documented a principle and then violated it in the same session\n- PM002: built Finding about Playwright testing, didn't Playwright test\n- PM012 (this): cited f030 and f033 about 'user sees the screen not the file,' then delivered a file\n- Pattern: reading and understanding are necessary but not sufficient. Application requires a separate cognitive step -- checking your own output against the principles you just read\n- **Lesson: After producing any deliverable, run a mental checklist: (1) Can the user reach this in the browser? (2) Did I apply the principles I just cited? (3) Would I need to tell the user a file path for them to find this? If yes to #3, it's not done.**\n- **Systemic fix: Consider adding a 'deliverable audit' step to the anti-rationalization hook. When an agent claims done, check: are all outputs browser-accessible? Any .md files that should have been pages?**\n\n## Action items\n1. Create morning-brief.html page served at /morning-brief with the brief content rendered as a polished page\n2. Add finding: 'A file is not a deliverable. A page is a deliverable.'\n3. Add to principles or CLAUDE.md: any user-facing document must be served as a page\n4. Consider: hook that warns when agent creates .md in agent-hub without a corresponding .html page or route\n5. This is the same class of failure as PM002 and f030 -- the enforcement mechanism is missing, not the knowledge",
+    "status": "open",
+    "priority": "p0",
+    "workstream": "mission-control",
+    "tags": [
+      "post-mortem",
+      "deliverables",
+      "ux",
+      "principles",
+      "machine:home"
+    ],
+    "linkedSession": "f7fc2397-779e-4f59-9454-3178f8efb6f7",
+    "created": "2026-03-07T22:30:00.000Z",
+    "updated": "2026-03-07T22:30:00.000Z",
+    "context": null,
+    "areas": [
+      "workflow",
+      "dashboard",
+      "findings"
+    ]
+  },
+  {
+    "id": "life-derm",
+    "title": "Book dermatologist appointment",
+    "description": "Need to schedule a dermatologist appointment. Look up providers, check availability, book it.",
+    "status": "todo",
+    "priority": "p1",
+    "workstream": "personal",
+    "tags": [
+      "life",
+      "health",
+      "appointment"
+    ],
+    "linkedSession": null,
+    "created": "2026-03-07T19:00:00.000Z",
+    "updated": "2026-03-07T19:00:00.000Z",
+    "context": "home",
+    "areas": [
+      "life"
+    ]
+  },
+  {
+    "id": "life-grandpa-doc",
+    "title": "Make a documentary about grandfather",
+    "description": "Personal passion project. Create a documentary about grandfather's life and story.\n\nKey asset: voice memo recordings from Florida trip where grandparents talked for hours about their lives. These are on iPhone and need to be:\n1. Transferred from iPhone to computer\n2. Transcribed (same Whisper pipeline used for MC demo video)\n3. Organized by topic/timeline\n4. Used as the narrative backbone of the documentary\n\nThis is irreplaceable primary source material. Handle with extreme care. Back up the recordings before processing.\n\nThe deeper vision (from a conversation with brother): Grandfather was a political prisoner who fought against a regime in his country. He carries deep philosophical ideologies from that experience but can't fully express them in English — it's not his first language (knows Dutch better than English). Conversations in English feel surface-level ('yeah, back in the 90s, you know') but there's so much more underneath. The documentary should include segments where he speaks in his own language (to Grinya or Harik) with subtitles, so he can really go deep on what he lived through and what he believes. The language barrier is hiding the most important stories.\n\nNext steps:\n- Transfer voice memos from iPhone\n- Back up originals to multiple locations\n- Transcribe using Whisper (may need multilingual model for non-English segments)\n- Outline documentary structure from the transcripts\n- Plan filmed conversations in his native language with subtitles\n- Identify gaps — what stories are missing that need follow-up conversations",
+    "status": "todo",
+    "priority": "p0",
+    "workstream": "personal",
+    "tags": [
+      "life",
+      "documentary",
+      "family",
+      "creative"
+    ],
+    "linkedSession": null,
+    "created": "2026-03-07T19:30:00.000Z",
+    "updated": "2026-03-07T19:30:00.000Z",
+    "context": "home",
+    "areas": [
+      "life"
+    ]
+  },
+  {
+    "id": "life-language-learn",
+    "title": "Build an AI conversation partner to learn grandfather's language",
+    "description": "P0 personal project. Not Duolingo — an AI person who talks back, teaches, and converses in grandfather's language.\n\nWhy this matters: Grandfather was a political prisoner who fought against a regime. He carries deep philosophical beliefs and life stories but can't express them in English. The language barrier means the most important conversations are locked behind surface-level English. Learning his language unlocks those conversations before it's too late.\n\nWhat it should be:\n- A voice-based AI conversation partner (not flashcards, not gamification)\n- It talks TO you in the language, you respond, it corrects and teaches\n- Personalized: trained on grandfather's actual vocabulary and topics from the Florida voice memos\n- Conversational, not academic — learn how HE talks, not how a textbook talks\n- Progressive: starts simple, gets deeper as you improve\n- Goal: be able to have a real, deep conversation with grandfather in his language\n\nTechnical approach:\n- Claude API for the conversational AI (speaks most languages, can role-play as a patient teacher)\n- Whisper for speech-to-text (you speak into mic, it transcribes)\n- TTS API (ElevenLabs or Google) for the AI to speak back to you audibly\n- Web app or desktop app interface (simple: mic button, AI responds with voice + text)\n- Grandfather's transcribed voice memos as curriculum source — extract his common phrases, topics, vocabulary\n- Could even clone his voice with ElevenLabs for the ultimate personal touch\n\nThis is 100% technically feasible today. The Claude API + Whisper + TTS pipeline is proven. The differentiator is the personalization from real family recordings.\n\nFirst steps:\n1. Determine the exact language/dialect\n2. Transcribe the Florida voice memos (multilingual Whisper)\n3. Build a simple prototype: Claude API chat in that language with voice I/O\n4. Feed grandfather's vocabulary and topics into the system prompt\n5. Practice daily, track progress",
+    "status": "todo",
+    "priority": "p0",
+    "workstream": "personal",
+    "tags": [
+      "life",
+      "language",
+      "family",
+      "ai-product",
+      "creative"
+    ],
+    "linkedSession": null,
+    "created": "2026-03-07T19:45:00.000Z",
+    "updated": "2026-03-07T19:45:00.000Z",
+    "context": "home",
+    "areas": [
+      "life"
+    ]
+  },
+  {
+    "id": "auto-dispatch-cli",
+    "title": "Auto-dispatch agents from campaigns page using Claude CLI flags",
+    "description": "Discovery: Claude Code CLI has flags that enable fully programmatic agent dispatch:\n\n- --append-system-prompt 'text': inject campaign context + agent role without replacing default Claude Code behavior\n- --append-system-prompt-file path: load agent brief from file (we already have these in coordinated-sprint/)\n- -p: single-shot non-interactive mode for quick tasks\n- --output-format json: parse agent responses programmatically\n- --worktree / -w: isolated git worktree per agent (prevents file conflicts we've been managing manually)\n- --agents: JSON object defining custom subagents\n\nImplementation:\n1. Campaign agent briefs saved as files (already done: coordinated-sprint/*.md)\n2. Campaigns page 'Dispatch' button runs: claude --append-system-prompt-file .claude/agent-hub/briefs/{slot}.md --worktree\n3. Server.js API endpoint that spawns child_process.exec('claude ...') \n4. Agent output captured and linked back to campaign card\n5. No more copy-paste-into-terminal workflow\n\nThis replaces the entire prompt copy-paste flow with a single button click. Combined with --worktree, each agent gets its own git branch automatically.\n\nRef: https://code.claude.com/docs/en/cli-reference",
+    "status": "todo",
+    "priority": "p1",
+    "workstream": "mission-control",
+    "tags": [
+      "campaigns",
+      "automation",
+      "cli",
+      "infrastructure"
+    ],
+    "linkedSession": null,
+    "created": "2026-03-07T20:00:00.000Z",
+    "updated": "2026-03-07T20:00:00.000Z",
+    "context": null,
+    "areas": [
+      "agents",
+      "infra"
+    ]
+  },
+  {
+    "id": "discord-001",
+    "title": "Apply for media pass for Concrete Boys",
+    "description": "From Discord dump (Mar 7). Apply for media pass to photograph Concrete Boys. Likely a concert/event — check dates and application process.",
+    "status": "todo",
+    "priority": "p1",
+    "workstream": "portfolio-site",
+    "tags": [
+      "photography",
+      "events",
+      "from-discord"
+    ],
+    "linkedSession": null,
+    "context": null,
+    "created": "2026-03-08T07:42:12.494Z",
+    "updated": "2026-03-08T07:42:12.494Z"
+  },
+  {
+    "id": "discord-002",
+    "title": "Submit application to Black Box Gallery",
+    "description": "From Discord dump (Mar 7). Submit portfolio work to Black Box Gallery. Research their submission guidelines and prepare portfolio packet.",
+    "status": "todo",
+    "priority": "p1",
+    "workstream": "portfolio-site",
+    "tags": [
+      "photography",
+      "gallery",
+      "from-discord"
+    ],
+    "linkedSession": null,
+    "context": null,
+    "created": "2026-03-08T07:42:12.494Z",
+    "updated": "2026-03-08T07:42:12.494Z"
+  },
+  {
+    "id": "discord-003",
+    "title": "File tax return",
+    "description": "From Discord dump (Mar 7). Personal task — get tax return filed.",
+    "status": "todo",
+    "priority": "p1",
+    "workstream": "personal",
+    "tags": [
+      "life-admin",
+      "from-discord"
+    ],
+    "linkedSession": null,
+    "context": null,
+    "areas": [
+      "life"
+    ],
+    "created": "2026-03-08T07:42:12.494Z",
+    "updated": "2026-03-08T07:42:12.494Z"
+  },
+  {
+    "id": "discord-004",
+    "title": "Flesh out YEET project",
+    "description": "From Discord dump (Mar 7). Existing project that needs revival. Scope what remains and decide if it's worth continuing.",
+    "status": "backlog",
+    "priority": "p2",
+    "workstream": "personal",
+    "tags": [
+      "project",
+      "from-discord"
+    ],
+    "linkedSession": null,
+    "context": null,
+    "created": "2026-03-08T07:42:12.494Z",
+    "updated": "2026-03-08T07:42:12.494Z"
+  },
+  {
+    "id": "discord-005",
+    "title": "Add MCP to MC workflow page list",
+    "description": "From Discord dump (Mar 7). The workflow page should list MCP servers as part of the agent initialization pipeline.",
+    "status": "todo",
+    "priority": "p2",
+    "workstream": "mission-control",
+    "tags": [
+      "workflow",
+      "mcp",
+      "from-discord"
+    ],
+    "linkedSession": null,
+    "context": null,
+    "areas": [
+      "workflow"
+    ],
+    "created": "2026-03-08T07:42:12.494Z",
+    "updated": "2026-03-08T07:42:12.494Z"
+  },
+  {
+    "id": "pm013",
+    "title": "Post-Mortem: Campaign debrief losses column crushed to ~100px while wins took all space",
+    "description": "## Incident (2026-03-07)\nThe Campaign Debrief losses column rendered as a ~100px narrow strip with text wrapping on every word, while the wins column took 80%+ of the width. The page was unreadable.\n\n## What actually happened\nThe orchestrator changed .d-item from flexbox to CSS grid with fixed columns (8px 90px 1fr) to align agent badges in the wins column. But loss items don't HAVE agent badges — they only have a dot and text. The grid still allocated 90px for the non-existent badge, AND the grid layout caused the parent column to calculate width differently, giving wins priority.\n\n## Failure 1: CSS change not tested visually\n- Changed layout from flex to grid without checking both wins AND losses columns\n- Only wins has agent badges. Losses has different DOM structure. One CSS rule can't serve both.\n- **Lesson: When changing layout CSS, test EVERY variant of the content that uses it. Wins and losses have different DOM structures — test both.**\n\n## Failure 2: No Playwright verification at 2GB heap\n- At high context/memory usage, the orchestrator is cutting corners on visual verification\n- CLAUDE.md Rule #7 is non-negotiable regardless of context pressure\n- **Lesson: If you're too deep in context to Playwright test, dispatch a sub-agent to do it. Never ship CSS changes blind.**\n\n## Action items\n1. CSS changes to shared components must be tested against all usage variants\n2. At high context, dispatch visual verification to a sub-agent rather than skipping it\n3. Consider separate CSS classes for win-items vs loss-items instead of one shared .d-item",
+    "status": "open",
+    "priority": "p1",
+    "workstream": "mission-control",
+    "tags": [
+      "post-mortem",
+      "dashboard",
+      "css",
+      "machine:home"
+    ],
+    "linkedSession": null,
+    "created": "2026-03-07T21:00:00.000Z",
+    "updated": "2026-03-07T21:00:00.000Z",
+    "context": null,
+    "areas": [
+      "dispatch"
+    ]
+  },
+  {
+    "id": "pm014",
+    "title": "Post-Mortem: Workflow Redesign agent produced 3 failed iterations of amateur visualizations",
+    "description": "## Incident (2026-03-08)\nUser dispatched a P0 Workflow Redesign agent to overhaul the Mission Control Workflow page. The agent was given a detailed brief with 7 sections, design specs, and explicit instructions to make the Learning Loop 'visually stunning.' The agent produced 3 iterations, all of which the user rejected as varying degrees of horrible.\n\n## What actually happened\nThe agent took the existing clean, functional Workflow page and made it worse across 3 attempts:\n\n### Iteration 1: Cluttered dashboard slop\n- Added a generic flow diagram (single-letter circles with arrows) that looked like every AI-generated architecture diagram\n- Added a stats bar (13 hooks, 26 agents, 65 skills) that was pure noise with no context\n- Added a Tools/Skills/Agents section that duplicated the existing Toolbox page\n- Buried the original pipeline (the best part of the page) behind collapsible sections\n- User reaction: 'This is way too cluttered. This entire redesign has taken away from what made the original so good.'\n\n### Iteration 2: Reverted to original with nothing added\n- After the user's criticism, the agent essentially just reverted to the original page\n- Stapled on two weak collapsible cards (Learning Loop, Campaign Flow)\n- The Learning Loop used a hand-drawn SVG circle with emoji nodes that looked amateur\n- User reaction: 'What did you add? It looks the same. I am almost going to mark you as a failure as an agent.'\n\n### Iteration 3: Slightly better but still amateur\n- Improved the Hook Pipeline to show a visual flow (Event -> Hooks -> Outputs)\n- Replaced the SVG Learning Loop with CSS-positioned HTML nodes\n- Still not up to design quality standards\n- User reaction: Called for a post-mortem of the entire agent session\n\n## Three distinct failures\n\n### Failure 1: Freeballing visual design without research\n- The agent attempted to hand-code SVG circular diagrams and flow visualizations without any research into how to do them well\n- The Learning Loop diagram was described as 'the crown jewel' in the brief, yet the agent produced crude SVG circles with emoji icons\n- The agent has no inherent design sense for complex visualizations and should have used skills, web search, or reference implementations BEFORE writing code\n- **Lesson: When the task involves visual design or complex visualization that you have no context on, RESEARCH FIRST. Search online for tools, techniques, reference implementations. Do not freeball it. Use the design skill, the frontend-design skill, or the deep-scrape skill to study how others solve the same problem.**\n- **Systemic fix: Add a principle -- for any visual/design task that requires craft beyond basic layout, the agent MUST research approaches before implementing. Use skills, web search, or study existing implementations.**\n\n### Failure 2: Adding noise instead of value\n- The first iteration added generic dashboard elements (stats bar, flow diagram, tools grid) that the user immediately identified as AI slop\n- These elements competed with the original pipeline instead of enhancing it\n- The agent did not ask 'does this add value or just look busy?' before shipping\n- **Lesson: Every element on a page must justify its existence. Ask: does this help the user understand the system better, or is it just filling space? If the answer is 'filling space,' delete it.**\n- **Systemic fix: Before adding any new UI element, the agent should state what specific user need it serves. If the answer is vague ('it looks nice' or 'it shows data'), do not add it.**\n\n### Failure 3: Not respecting what already worked\n- The original Workflow page had a clean vertical pipeline that users liked -- it was simple, readable, and visually satisfying\n- The agent's first move was to bury this behind collapsible sections and add competing elements above it\n- This violates CLAUDE.md Rule #3: 'Ask is this by design? before changing existing behavior'\n- **Lesson: When redesigning, identify what already works and PRESERVE it. The pipeline was the hero -- any redesign should enhance it, not compete with it or hide it.**\n- **Systemic fix: Before any redesign, explicitly list what currently works well and make preserving those elements a hard constraint.**\n\n## The user's frustration (in their words)\n- 'This is kind of horrible. This entire redesign has taken away from what made the original so good.'\n- 'What did you add? It looks the same dude.'\n- 'Why are you trying to do things yourself if you want to do something that relates to user design? It is imperative that you go search online for a tool that can help you do it.'\n- 'This is a very frustrating session.'\n- 'This entire agent class needs to be a postmortem.'\n\n## Action items\n1. Add Finding: 'Research before designing -- never freeball complex visualizations'\n2. Add Finding: 'Every UI element must justify its existence -- no noise'\n3. Consider adding a design review checkpoint to the campaign dispatch flow\n4. The Learning Loop visualization still needs to be done properly -- with research and reference implementations\n5. Update principles.md with the 'research before design' principle",
+    "status": "done",
+    "priority": "p0",
+    "workstream": "mission-control",
+    "tags": [
+      "post-mortem",
+      "design",
+      "agent-quality",
+      "workflow",
+      "machine:home"
+    ],
+    "linkedSession": null,
+    "created": "2026-03-08T08:22:29.142Z",
+    "updated": "2026-03-08T08:22:29.142Z",
+    "context": null,
+    "areas": [
+      "workflow",
+      "design",
+      "agent-quality"
     ]
   }
 ]

@@ -86,6 +86,8 @@
   .pm-date { font-family:'DM Mono',monospace; font-size:10px; color:var(--text3) }
   .pm-tag { font-size:8px; font-weight:700; text-transform:uppercase; letter-spacing:0.05em; padding:2px 6px; border-radius:4px; background:var(--surface); color:var(--text3) }
   .pm-tag.safety { background:var(--rose-bg); color:var(--rose) }
+  .pm-tag.funny { background:rgba(245,158,11,0.1); color:#d97706 }
+  .pm-tag.precision { background:rgba(139,92,246,0.08); color:#7c3aed }
   .pm-tag.cross { background:var(--amber-bg); color:var(--amber) }
   .pm-tag.machine-home { background:var(--blue-bg); color:var(--blue) }
   .pm-tag.machine-work { background:var(--purple-bg); color:var(--purple) }
@@ -262,7 +264,7 @@ function renderPM(pm, idx) {
   const statusLabel = pm.status === 'done' ? 'Resolved' : 'Open';
 
   const tags = pm.tags.filter(t => t !== 'post-mortem').map(t => {
-    const cls = t === 'agent-safety' ? 'safety' : t === 'cross-agent' ? 'cross' : t === 'machine:home' ? 'machine-home' : t === 'machine:work' ? 'machine-work' : '';
+    const cls = t === 'agent-safety' ? 'safety' : t === 'cross-agent' ? 'cross' : t === 'machine:home' ? 'machine-home' : t === 'machine:work' ? 'machine-work' : t === 'funny' ? 'funny' : t === 'language-precision' ? 'precision' : '';
     return `<span class="pm-tag ${cls}">${esc(t)}</span>`;
   }).join('');
 
