@@ -814,6 +814,16 @@ function gradeClass(grade) {
   return 'grade-d';
 }
 
+function gradeToColor(grade) {
+  if (!grade) return '#a1a1aa';
+  const letter = grade.charAt(0).toUpperCase();
+  if (letter === 'A') return '#16a34a';
+  if (letter === 'B') return '#2563eb';
+  if (letter === 'C') return '#f59e0b';
+  if (letter === 'D') return '#ef4444';
+  return '#ef4444';
+}
+
 function gpaColor(gpa) {
   if (gpa >= 3.5) return 'stat-green';
   if (gpa >= 3.0) return 'stat-blue';
@@ -1879,22 +1889,33 @@ function render() {
       h += renderLiveState(orchLive);
     }
 
-    // Dispatched agents — children of the current orchestrator
-    const dispatchedAgents = sessions ? sessions.filter(s => s.parentSessionId && sortedOrch.some(o => o.sessionId === s.parentSessionId)) : [];
-    if (dispatchedAgents.length > 0) {
+    // Dispatched agents — non-orchestrator agents from the current orchestrator's sprint (from campaign data)
+    const orchSprint = currentOrch.sprint;
+    const sprintAgents = agents.filter(a => a.sprint === orchSprint && !a.slot.startsWith('orchestrator'));
+    if (sprintAgents.length > 0) {
       h += '<div style="margin-top:16px;padding-top:16px;border-top:1px solid rgba(139,92,246,0.12)">';
-      h += '<div style="font-family:\'Plus Jakarta Sans\',sans-serif;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.04em;color:var(--text3);margin-bottom:10px">Dispatched Agents</div>';
-      dispatchedAgents.forEach(da => {
-        const isActive = da.active && !da.done;
-        const dotColor = isActive ? '#22c55e' : da.done ? '#a1a1aa' : '#f59e0b';
-        const stateLabel = isActive ? (da.label || da.state || 'ACTIVE') : 'DONE';
-        const name = da.dispatchMeta ? da.dispatchMeta.agentName : (da.displayName || da.sessionId.slice(0,8));
+      h += '<div style="font-family:\'Plus Jakarta Sans\',sans-serif;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.04em;color:var(--text3);margin-bottom:10px">Dispatched Agents <span style="font-weight:500;opacity:0.7">(' + sprintAgents.length + ')</span></div>';
+      sprintAgents.forEach(da => {
+        const liveState = getAgentLiveState(da);
+        const isActive = liveState && liveState.active;
+        const gradeColor = da.grade ? gradeClass(da.grade) : '';
+        const dotColor = isActive ? '#22c55e' : da.status === 'completed' ? (da.grade ? gradeToColor(da.grade) : '#a1a1aa') : da.status === 'ready' ? '#a78bfa' : '#f59e0b';
+        const stateLabel = isActive ? (liveState.label || 'ACTIVE') : da.status === 'completed' ? (da.grade || 'Done') : da.status === 'ready' ? 'Ready' : esc(da.status || '?');
         h += '<div style="display:flex;align-items:center;gap:10px;padding:6px 0;font-size:13px">';
         h += '<span style="width:8px;height:8px;border-radius:50%;background:' + dotColor + ';flex-shrink:0' + (isActive ? ';animation:livePulse 1.5s ease-in-out infinite' : '') + '"></span>';
-        h += '<span style="font-weight:600;color:var(--text)">' + esc(name) + '</span>';
+        h += '<span style="font-weight:600;color:var(--text)">' + esc(da.name) + '</span>';
+        if (da.grade) {
+          h += '<span class="agent-grade ' + gradeColor + '" style="font-size:10px;padding:1px 8px;margin-left:4px">' + esc(da.grade) + '</span>';
+        }
         h += '<span style="font-family:\'DM Mono\',monospace;font-size:10px;color:var(--text3);margin-left:auto">' + esc(stateLabel) + '</span>';
         h += '</div>';
       });
+      h += '</div>';
+    } else if (!orchSprint) {
+      // No sprint set — show nothing
+    } else {
+      h += '<div style="margin-top:16px;padding-top:16px;border-top:1px solid rgba(139,92,246,0.12)">';
+      h += '<div style="font-size:12px;color:var(--text3);font-style:italic">No agents dispatched in Sprint ' + orchSprint + ' yet</div>';
       h += '</div>';
     }
 

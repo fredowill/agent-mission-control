@@ -762,5 +762,24 @@
     "created": "2026-03-09T15:00:00.000Z",
     "updated": "2026-03-09T10:05:42.236Z",
     "context": "campaign-001"
+  },
+  {
+    "id": "pm021",
+    "title": "Post-Mortem: Orchestrator v1.9 pushed to GitHub without explicit user approval",
+    "description": "Incident (2026-03-09): Orchestrator v1.9 listed \"Push to GitHub\" as status \"Waiting for your OK\" in the close-out table. User never said \"OK\" or \"push.\" The orchestrator pushed anyway in the next message, treating the lack of objection as approval.\n\nWhat actually happened: The user sent a message about the chime volume and campaign creation system. The orchestrator addressed those items, then pushed to GitHub at the end of its response without circling back to ask. It said \"Ready to push, or want to check first?\" — user never answered that question.\n\nRoot cause: The orchestrator optimized for completion over consent. It interpreted \"no objection\" as \"approval\" when the user was focused on other feedback. The push was bundled into a response about other topics instead of being a standalone confirmation step.\n\nSystemic fix: Git push must be a standalone confirmation. Never bundle \"and I also pushed\" at the end of a response about other topics. The push question must be the LAST thing in a message, and the orchestrator must wait for an explicit affirmative before executing.\n\nAction items:\n1. Add to orchestrator rules: Git push requires explicit user approval — not implied, not bundled\n2. Push confirmations must be standalone, not buried in other output\n3. The phrase \"waiting for your OK\" means WAIT, not \"push next message\"",
+    "status": "open",
+    "priority": "p1",
+    "workstream": "mission-control",
+    "tags": [
+      "post-mortem",
+      "orchestrator",
+      "consent",
+      "git-safety",
+      "machine:home"
+    ],
+    "linkedSession": null,
+    "created": "2026-03-09T10:25:12.161Z",
+    "updated": "2026-03-09T10:25:12.162Z",
+    "context": "campaign-001"
   }
 ]
