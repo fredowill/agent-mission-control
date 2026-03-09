@@ -2,6 +2,7 @@
   {
     "id": "campaign-001",
     "name": "MC Evolution Sprint",
+    "workstream": "mission-control",
     "status": "retrospective",
     "created": "2026-03-06",
     "description": "First coordinated 4-agent sprint. Goal: evolve MC from 'it works' to 'it's genuinely powerful.' 4 agents ran simultaneously, each owning a piece. This is the campaign that proved the concept.",
@@ -1555,6 +1556,135 @@
           "total": 95
         },
         "reviewStatus": "complete"
+      },
+      {
+        "slot": "campaign-card-polish",
+        "name": "Campaign Card Polish",
+        "focus": "Richer metrics, bolded/color-coded taglines, visual refinement on campaign landing cards",
+        "sessionId": "1cccb6a2-c28c-4230-bfbb-237abc1ef183",
+        "status": "completed",
+        "brief": "coordinated-sprint/campaign-card-polish-prompt.md",
+        "sprint": 12,
+        "grade": "B+",
+        "gradeReason": "Manual override from C- auto-grade. Agent delivered visible card improvements: bolded taglines, richer stats (delivered/missed/active), sprint badge, subtitle. Loaded 2 mandated skills (impeccable-polish, frontend-design). Full lifecycle. Debrief was partial — didn't post delivered list, causing auto-grade to see 0 deliverables. Work was real, reporting was incomplete.",
+        "lifecycle": {
+          "define": "passed",
+          "discover": "passed",
+          "execute": "passed",
+          "reason": "passed",
+          "verify": "passed",
+          "debrief": "partial"
+        },
+        "skillsUsed": [
+          "impeccable-polish",
+          "frontend-design"
+        ],
+        "delivered": [
+          "Bolded first sentence of campaign descriptions",
+          "Richer stats row: added Delivered, Missed, Active/Complete counts",
+          "Sprint badge at bottom of each card",
+          "Subtitle under Campaigns title (3 campaigns, 46 agents, 1 active)",
+          "Improved card visual hierarchy and spacing"
+        ],
+        "missed": [
+          "Debrief incomplete — did not post delivered/missed lists via API",
+          "Color-coded taglines not implemented (description still monochrome)"
+        ],
+        "scoreBreakdown": {
+          "deliverables": 15,
+          "execution": 22,
+          "lifecycle": 20,
+          "skills": 15,
+          "total": 72
+        },
+        "reviewStatus": "complete"
+      },
+      {
+        "slot": "campaign-nav-review",
+        "name": "Campaign Nav Review",
+        "focus": "Read-only code review: XSS, edge cases, CSS conflicts, spec compliance",
+        "sessionId": "8521b753-a10a-4850-b055-bad57225941f",
+        "status": "completed",
+        "brief": "coordinated-sprint/campaign-nav-review-prompt.md",
+        "sprint": 12,
+        "grade": "B+",
+        "gradeReason": "Excellent review output: 2 CRITICAL XSS, 1 HIGH, 3 MEDIUM, 2 LOW findings. Rich debrief with actionable lessons. But: zero skill usage (skipped Stage 2 entirely — should have loaded code-review skill), no Playwright verification. Auto-grade couldn't run (dispatch.sh path bug). Capped at B+ per rubric: skipping Discover prevents A-tier.",
+        "lifecycle": {
+          "define": "passed",
+          "discover": "failed",
+          "execute": "passed",
+          "reason": "passed",
+          "verify": "partial",
+          "debrief": "passed"
+        },
+        "skillsUsed": [],
+        "skillsNote": "Skipped Stage 2 — no skills loaded. Would have benefited from code-review skill.",
+        "delivered": [
+          "XSS via unescaped class injection in wsClass/stClass (CRITICAL)",
+          "XSS risk in onclick handler with encodeURIComponent (CRITICAL)",
+          "GPA color threshold mismatch between landing (3.0/2.0) and detail (3.5/2.5) views (HIGH)",
+          "File size violation at 2869 lines (MEDIUM)",
+          "Cards not keyboard navigable - div with onclick, no tabindex/role (MEDIUM)",
+          "Filter buttons missing aria-pressed state (MEDIUM)",
+          "Responsive breakpoints differ from spec 900/600 vs 1024/768 (LOW)",
+          "Empty state label casing inconsistency (LOW)",
+          "Verified empty campaign handling, null workstream fallback, progress bar hide on 0 items",
+          "Verified esc() usage on name, description, date, data-ws attribute",
+          "Verified spec compliance: sort order, card anatomy, workstream colors, status pills"
+        ],
+        "missed": [
+          "Could not run Playwright screenshot to visually verify landing page rendering",
+          "Did not audit the full 2869-line file for pre-existing issues outside landing page scope",
+          "Did not verify GSAP animation integration with landing page cards"
+        ],
+        "lessons": [
+          "The esc() function is used consistently for text content but NOT for values interpolated into CSS class names - this is a common XSS pattern to miss",
+          "Duplicated business logic (GPA thresholds) across views causes subtle inconsistencies - should be extracted to a shared function",
+          "Auto-fill grid with minmax is a better responsive pattern than fixed breakpoint columns"
+        ]
+      },
+      {
+        "slot": "e2e-pipeline-test",
+        "name": "E2E Pipeline Test",
+        "focus": "Validate full dispatch pipeline: card creation, skill discovery, debrief quality, auto-grading",
+        "sessionId": "ea6dcd41-c363-47c3-a9ee-be18f98960c2",
+        "status": "completed",
+        "brief": "coordinated-sprint/e2e-pipeline-test-prompt.md",
+        "sprint": 12,
+        "grade": "A-",
+        "gradeReason": "Auto-graded: 91/100. Lifecycle 16/20, Skills 13/15, Exec 22/25, Deliverables 40/40.",
+        "lifecycle": {
+          "define": "passed",
+          "discover": "passed",
+          "execute": "partial",
+          "reason": "skipped",
+          "verify": "partial",
+          "debrief": "partial"
+        },
+        "skillsUsed": [
+          "verification-before-completion"
+        ],
+        "delivered": [
+          "Verified agent card auto-creation via /api/launch — slot, sessionId, status, sprint all correct",
+          "Verified dispatch.sh uses $SCRIPT_DIR paths (line 76: node $SCRIPT_DIR/auto-grade.js) — portable across machines",
+          "Verified create-agent-prompt debrief template has populated example arrays (line 140) — empty arrays = C- cap enforced",
+          "Wrote e2e-pipeline-validation.md summary in coordinated-sprint/",
+          "Verified agent card exists in live /api/campaigns response via curl"
+        ],
+        "missed": [],
+        "lessons": [
+          "The debrief must always have populated delivered arrays to avoid C- auto-grade",
+          "Windows Node.js does not support /dev/stdin — use process.stdin event-based reading instead",
+          "Skill discovery gate (Stage 2) is critical — skipping it caps grade at C regardless of deliverables"
+        ],
+        "scoreBreakdown": {
+          "deliverables": 40,
+          "execution": 22,
+          "lifecycle": 16,
+          "skills": 13,
+          "total": 91
+        },
+        "reviewStatus": "complete"
       }
     ],
     "executionPlan": {
@@ -1797,6 +1927,105 @@
           "sprint": 10,
           "agentSlot": "orchestrator-v1.8",
           "note": "PM019 systemic fix. v1.8 missed CARES and FHL demo because dispatch split files weren't in the init checklist."
+        },
+        {
+          "id": 27,
+          "task": "Campaign Navigation Landing Page",
+          "status": "done",
+          "priority": "P0",
+          "sprint": 12,
+          "agentSlot": "campaign-nav-builder",
+          "note": "Card gallery landing page for /campaigns. Design doc: docs/plans/2026-03-09-campaign-navigation-design.md"
+        },
+        {
+          "id": 28,
+          "task": "Workstream Field on Campaign Schema",
+          "status": "done",
+          "priority": "P0",
+          "sprint": 12,
+          "agentSlot": "orchestrator-v2.0",
+          "note": "Added workstream field to all campaigns in campaigns.json. Enables color-coded workstream badges."
+        },
+        {
+          "id": 29,
+          "task": "Machine Auto-Detection Config",
+          "status": "done",
+          "priority": "P1",
+          "sprint": 12,
+          "agentSlot": "orchestrator-v2.0",
+          "note": "machine-config.json with hostname mapping. Work laptop: DESKTOP-456PJPP."
+        },
+        {
+          "id": 30,
+          "task": "Session Completion Chime (Stopgap)",
+          "status": "done",
+          "priority": "P1",
+          "sprint": 12,
+          "agentSlot": "orchestrator-v2.0",
+          "note": "Wired play-chime.ps1 into Stop hook. Windows chimes.wav at volume 0.8."
+        },
+        {
+          "id": 31,
+          "task": "Campaign Card Polish",
+          "status": "ready",
+          "priority": "P1",
+          "sprint": 12,
+          "agentSlot": "campaign-card-polish",
+          "note": "Richer metrics, bolded/color-coded taglines, visual refinement. Prompt: coordinated-sprint/campaign-card-polish-prompt.md"
+        },
+        {
+          "id": 32,
+          "task": "Campaign Navigation Code Review",
+          "status": "done",
+          "priority": "P1",
+          "sprint": 12,
+          "agentSlot": "campaign-nav-review",
+          "note": "Found 2 CRITICAL XSS, 1 HIGH, 3 MEDIUM, 2 LOW. Grade: B+."
+        },
+        {
+          "id": 33,
+          "task": "Fix XSS Findings from Nav Review",
+          "status": "ready",
+          "priority": "P0",
+          "sprint": 12,
+          "agentSlot": null,
+          "note": "CRITICAL: unescaped workstream/status in CSS class names. HIGH: GPA threshold mismatch."
+        },
+        {
+          "id": 34,
+          "task": "Create-Agent-Prompt Debrief Quality Fix",
+          "status": "done",
+          "priority": "P0",
+          "sprint": 12,
+          "agentSlot": "orchestrator-v2.0",
+          "note": "Explicit debrief template with populated arrays, quality gate #6, C- warning. Prevents empty debrief auto-grade tank."
+        },
+        {
+          "id": 35,
+          "task": "Orchestrator-Specific Grading Script",
+          "status": "ready",
+          "priority": "P1",
+          "sprint": 12,
+          "agentSlot": null,
+          "note": "Different grading criteria for orchestrators vs sub-task agents. Orchestrators coordinate, not build."
+        },
+        {
+          "id": 36,
+          "task": "Cross-Device Handoff Skill",
+          "status": "ready",
+          "priority": "P0",
+          "sprint": 12,
+          "agentSlot": null,
+          "note": "Separate from same-device handoff. Needs git push/pull, file sync verification, machine-config check. Needed for home switch in ~2hrs."
+        },
+        {
+          "id": 37,
+          "task": "Follow-Up Agent Linking",
+          "status": "backlog",
+          "priority": "P2",
+          "sprint": null,
+          "agentSlot": null,
+          "note": "When dispatching a polish/follow-up agent, link it to the parent agent card instead of creating a new card. Explore in future."
         }
       ]
     },
@@ -2339,6 +2568,7 @@
   {
     "id": "campaign-002",
     "name": "MC Maturity Sprint",
+    "workstream": "mission-control",
     "status": "draft",
     "created": "2026-03-09",
     "description": "Second campaign. Goal: mature MC from proven-concept to daily-driver. Multi-campaign navigation, Cerebras-to-hooks migration, work laptop parity, showcase readiness. First campaign to span both home and work machines.",
@@ -2351,7 +2581,36 @@
       "Campaign-001 retrospective: analyze data, update close-out, extract learnings",
       "Research: workflow best practices from community"
     ],
-    "agents": [],
+    "agents": [
+      {
+        "slot": "orchestrator-v2.0",
+        "name": "Orchestrator v2.0",
+        "focus": "First work laptop orchestrator. Campaign nav landing page, dispatch pipeline fixes (wt.exe, paths, debrief quality), Sprint 12 with 3 agents, 2 PMs filed+closed, 5 findings.",
+        "sessionId": null,
+        "status": "completed",
+        "retro": "coordinated-sprint/orchestrator-v2.0-handoff.md",
+        "brief": null,
+        "retro": null,
+        "sprint": 1,
+        "grade": null,
+        "gradeReason": null,
+        "lifecycle": {
+          "define": "passed",
+          "discover": "passed",
+          "execute": "pending",
+          "reason": "pending",
+          "verify": "pending"
+        },
+        "lifecycleReached": "discover",
+        "lifecycleFailedAt": null,
+        "skillsUsed": [
+          "orchestrator-init"
+        ],
+        "skillsNote": "Loaded orchestrator-init skill for Phase 1+2 initialization.",
+        "delivered": [],
+        "missed": []
+      }
+    ],
     "executionPlan": {
       "version": "v1.9-draft",
       "items": []
@@ -2394,5 +2653,53 @@
         "source": "PM016 carry"
       }
     ]
+  },
+  {
+    "id": "campaign-003",
+    "name": "CARES Sprint",
+    "workstream": "cares",
+    "status": "active",
+    "created": "2026-03-09",
+    "description": "First CARES-focused campaign. Goal: overhaul CARES guide with MC dispatch capability, build WSR slides from metrics, prepare FHL hooks demo. First campaign on work laptop, first non-MC workstream campaign.",
+    "objectives": [
+      "WSR slides: metrics-based slide deck from CARES data",
+      "CARES guide overhaul: full rebuild leveraging MC dispatch agents",
+      "FHL hooks demo prep: slide deck + recording showcasing hooks as guardrails",
+      "Campaign navigation: proper /campaigns landing page with multi-campaign support"
+    ],
+    "agents": [
+      {
+        "slot": "orchestrator-v2.0",
+        "name": "Orchestrator v2.0",
+        "focus": "Created campaign-003, initialized CARES Sprint. Actual work done in campaign-001 Sprint 12.",
+        "sessionId": null,
+        "status": "completed",
+        "brief": null,
+        "retro": null,
+        "sprint": 1,
+        "grade": null,
+        "gradeReason": null,
+        "lifecycle": {
+          "define": "passed",
+          "discover": "passed",
+          "execute": "pending",
+          "reason": "pending",
+          "verify": "pending"
+        },
+        "lifecycleReached": "discover",
+        "lifecycleFailedAt": null,
+        "skillsUsed": [
+          "orchestrator-init",
+          "orchestrator-rules"
+        ],
+        "skillsNote": "Loaded init + rules skills. First work laptop orchestrator.",
+        "delivered": [],
+        "missed": []
+      }
+    ],
+    "executionPlan": {
+      "version": "v2.0-draft",
+      "items": []
+    }
   }
 ]

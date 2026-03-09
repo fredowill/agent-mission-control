@@ -73,13 +73,13 @@ EXIT_CODE=$?
 # ── Auto-grade: analyze activity log and write grade to campaigns.json ──
 echo ""
 echo "  ⏳ Auto-grading..."
-node .claude/agent-hub/auto-grade.js "$SESSION_ID" 2>&1 | while read line; do echo "  $line"; done
+node "$SCRIPT_DIR/auto-grade.js" "$SESSION_ID" 2>&1 | while read line; do echo "  $line"; done
 
 # ── Review Agent: read activity log + PRD, generate debrief ──
 if [ -n "$AGENT_SLOT" ] && [ -f "$PROMPT_FILE" ]; then
   echo ""
   echo "  🔍 Review agent analyzing agent output..."
-  bash .claude/agent-hub/run-review.sh "$SESSION_ID" "$AGENT_SLOT" "$PROMPT_FILE"
+  bash "$SCRIPT_DIR/run-review.sh" "$SESSION_ID" "$AGENT_SLOT" "$PROMPT_FILE"
 fi
 
 echo ""

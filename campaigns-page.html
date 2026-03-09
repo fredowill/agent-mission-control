@@ -127,7 +127,7 @@ header{display:flex;align-items:center;justify-content:space-between;padding:0 c
 /* ── Sprint Phase Headers ── */
 .phase-header{display:flex;align-items:center;gap:14px;margin-top:28px;margin-bottom:16px;padding-bottom:10px;border-bottom:2px solid var(--sep)}
 .phase-header:first-of-type{margin-top:4px}
-.phase-num{width:32px;height:32px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-family:'Plus Jakarta Sans',sans-serif;font-size:14px;font-weight:800;color:#fff;flex-shrink:0}
+.phase-num{width:32px;height:32px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-family:'Plus Jakarta Sans',sans-serif;font-size:14px;font-weight:800;color:#fff;flex-shrink:0;background:linear-gradient(135deg,#71717a,#52525b)}
 .phase-num.p1{background:linear-gradient(135deg,#8b5cf6,#6366f1)}
 .phase-num.p2{background:linear-gradient(135deg,#ec4899,#8b5cf6)}
 .phase-num.p3{background:linear-gradient(135deg,#f97316,#ef4444)}
@@ -138,6 +138,8 @@ header{display:flex;align-items:center;justify-content:space-between;padding:0 c
 .phase-num.p8{background:linear-gradient(135deg,#22c55e,#06b6d4)}
 .phase-num.p9{background:linear-gradient(135deg,#f59e0b,#ef4444)}
 .phase-num.p10{background:linear-gradient(135deg,#8b5cf6,#a855f7)}
+.phase-num.p11{background:linear-gradient(135deg,#f97316,#f59e0b)}
+.phase-num.p12{background:linear-gradient(135deg,#06b6d4,#8b5cf6)}
 .phase-label{font-family:'Plus Jakarta Sans',sans-serif;font-size:20px;font-weight:800;letter-spacing:-0.03em;color:var(--text)}
 .phase-count{font-family:'DM Mono',monospace;font-size:11px;color:var(--text3);background:var(--surface);padding:2px 10px;border-radius:100px;margin-left:auto}
 .phase-chevron{font-size:12px;color:var(--text3);margin-left:8px;transition:transform .2s}
@@ -678,6 +680,89 @@ header{display:flex;align-items:center;justify-content:space-between;padding:0 c
   .hero-stat{flex-direction:row;gap:8px;align-items:baseline;border-right:none;border-bottom:1px solid var(--sep);padding:10px 16px}
   .hero-stat:last-child{border-bottom:none}
 }
+
+/* ── Campaign Landing Page ── */
+.cl-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:28px;flex-wrap:wrap;gap:12px}
+.cl-title{font-family:'Plus Jakarta Sans',sans-serif;font-size:28px;font-weight:800;letter-spacing:-0.04em;color:var(--text)}
+.cl-subtitle{font-family:'DM Sans',sans-serif;font-size:13px;color:var(--text3);margin-top:2px}
+.cl-filters{display:flex;gap:2px;padding:3px;background:var(--surface);border-radius:8px}
+.cl-filter{padding:5px 14px;border-radius:6px;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;color:var(--text3);background:none;border:none;cursor:pointer;transition:all .15s;white-space:nowrap}
+.cl-filter:hover{color:var(--text2)}
+.cl-filter.active{background:var(--bg);color:var(--text);font-weight:600;box-shadow:0 1px 3px rgba(0,0,0,.06)}
+.cl-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(360px,1fr));gap:18px}
+.cl-card{background:var(--bg);border:1.5px solid var(--sep);border-radius:16px;overflow:hidden;transition:all .25s cubic-bezier(.4,0,.2,1);cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.04);position:relative}
+.cl-card:hover{transform:translateY(-3px)}
+.cl-card.cl-hidden{display:none}
+/* Workstream-colored hover glow */
+.cl-card.ws-mission-control:hover{box-shadow:0 8px 28px rgba(139,92,246,.12);border-color:rgba(139,92,246,.2)}
+.cl-card.ws-cares:hover{box-shadow:0 8px 28px rgba(59,130,246,.12);border-color:rgba(59,130,246,.2)}
+.cl-card.ws-personal:hover{box-shadow:0 8px 28px rgba(34,197,94,.12);border-color:rgba(34,197,94,.2)}
+.cl-card.ws-default:hover{box-shadow:0 8px 24px rgba(0,0,0,.08)}
+/* Active campaign subtle left accent */
+.cl-card.cl-active{box-shadow:0 0 0 1.5px rgba(34,197,94,0.3),0 2px 12px rgba(0,0,0,.04)}
+.cl-bar{height:4px}
+.cl-bar.ws-mission-control{background:linear-gradient(90deg,#8b5cf6,#6366f1)}
+.cl-bar.ws-cares{background:linear-gradient(90deg,#3b82f6,#2563eb)}
+.cl-bar.ws-personal{background:linear-gradient(90deg,#22c55e,#16a34a)}
+.cl-bar.ws-default{background:linear-gradient(90deg,#94a3b8,#64748b)}
+.cl-inner{padding:22px 24px 20px}
+.cl-top{display:flex;align-items:center;gap:8px;margin-bottom:14px;flex-wrap:wrap}
+.cl-status{display:inline-flex;align-items:center;gap:6px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;padding:4px 12px;border-radius:100px}
+.cl-status.st-active{background:var(--green-bg);color:#16a34a}
+.cl-status.st-active::before{content:'';width:6px;height:6px;border-radius:50%;background:#22c55e;animation:pulse 2s ease infinite}
+.cl-status.st-draft{background:rgba(139,92,246,0.1);color:#7c3aed}
+.cl-status.st-retrospective{background:var(--amber-bg);color:#92400e}
+.cl-status.st-closed{background:var(--surface);color:var(--text3)}
+/* Workstream badges with stronger contrast */
+.cl-ws-badge{font-family:'DM Mono',monospace;font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;padding:4px 10px;border-radius:100px;margin-left:auto}
+.cl-ws-badge.ws-mission-control{background:rgba(139,92,246,0.12);color:#7c3aed;border:1px solid rgba(139,92,246,.18)}
+.cl-ws-badge.ws-cares{background:rgba(59,130,246,0.12);color:#2563eb;border:1px solid rgba(59,130,246,.18)}
+.cl-ws-badge.ws-personal{background:rgba(34,197,94,0.12);color:#16a34a;border:1px solid rgba(34,197,94,.18)}
+.cl-ws-badge.ws-default{background:var(--surface);color:var(--text3);border:1px solid var(--sep)}
+.cl-name{font-family:'Plus Jakarta Sans',sans-serif;font-size:22px;font-weight:800;letter-spacing:-0.03em;line-height:1.25;margin-bottom:8px;color:var(--text)}
+/* Description with bolded first sentence */
+.cl-desc{font-family:'DM Sans',sans-serif;font-size:13px;line-height:1.6;color:var(--text2);margin-bottom:16px;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;text-overflow:ellipsis}
+.cl-desc .cl-desc-lead{font-weight:600;color:var(--text)}
+/* Stats grid — 3 columns primary row */
+.cl-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:8px}
+.cl-stat{background:var(--bg2);border:1px solid var(--sep);border-radius:8px;padding:8px 10px;text-align:center;transition:background .15s}
+.cl-stat-value{font-family:'Plus Jakarta Sans',sans-serif;font-size:16px;font-weight:800;letter-spacing:-0.02em;line-height:1}
+.cl-stat-label{font-family:'DM Mono',monospace;font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:.05em;margin-top:3px}
+/* Muted zero/N-A stats */
+.cl-stat.cl-stat-muted{opacity:.45}
+.cl-stat.cl-stat-muted .cl-stat-value{color:var(--text3)}
+/* Secondary stats row — lighter treatment */
+.cl-stats-row2{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:14px}
+.cl-stats-row2 .cl-stat{background:transparent;border:1px dashed rgba(0,0,0,.06);padding:6px 8px}
+.cl-stats-row2 .cl-stat-value{font-size:14px;font-weight:700}
+.cl-stats-row2 .cl-stat-label{font-size:8px}
+.cl-progress{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.cl-progress-bar{flex:1;height:6px;background:var(--surface);border-radius:100px;overflow:hidden}
+.cl-progress-fill{height:100%;border-radius:100px;transition:width .4s ease}
+/* Workstream-colored progress bar */
+.cl-progress-fill.ws-mission-control{background:linear-gradient(90deg,#8b5cf6,#6366f1)}
+.cl-progress-fill.ws-cares{background:linear-gradient(90deg,#3b82f6,#2563eb)}
+.cl-progress-fill.ws-personal{background:linear-gradient(90deg,#22c55e,#16a34a)}
+.cl-progress-fill.ws-default{background:linear-gradient(90deg,#22c55e,#16a34a)}
+.cl-progress-text{font-family:'DM Mono',monospace;font-size:10px;font-weight:600;color:var(--text3);white-space:nowrap;flex-shrink:0}
+.cl-date{font-family:'DM Mono',monospace;font-size:10px;color:var(--text3);display:flex;align-items:center;gap:8px}
+.cl-date .cl-sprint-tag{font-size:9px;font-weight:700;color:var(--purple);background:var(--purple-bg);padding:1px 7px;border-radius:4px}
+.cl-back{display:inline-flex;align-items:center;gap:6px;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:600;color:var(--text3);text-decoration:none;padding:6px 0;margin-bottom:16px;transition:color .15s}
+.cl-back:hover{color:var(--text)}
+.cl-back svg{width:16px;height:16px}
+.cl-empty{text-align:center;padding:48px 20px;color:var(--text3);font-size:14px}
+.cl-empty strong{display:block;font-size:16px;color:var(--text2);margin-bottom:6px}
+@media(max-width:900px){
+  .cl-grid{grid-template-columns:repeat(auto-fill,minmax(300px,1fr))}
+  .cl-stats{grid-template-columns:repeat(3,1fr);gap:4px}
+  .cl-stats-row2{grid-template-columns:repeat(3,1fr);gap:4px}
+}
+@media(max-width:600px){
+  .cl-grid{grid-template-columns:1fr}
+  .cl-header{flex-direction:column;align-items:flex-start}
+  .cl-stats{grid-template-columns:repeat(3,1fr)}
+  .cl-stats-row2{grid-template-columns:repeat(3,1fr)}
+}
 </style>
 <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.1/dist/gsap.min.js"></script>
 </head>
@@ -945,8 +1030,10 @@ function renderLiveState(live) {
 // ── Render Agent Card ──
 function renderAgentCard(campaign, agent) {
   const cls = agentCls(agent.name);
-  // FIX: Always compute grade from score when scoreBreakdown exists — prevents letter/score mismatch
-  const grade = (agent.scoreBreakdown && agent.scoreBreakdown.total) ? scoreToGrade(agent.scoreBreakdown.total) : (agent.grade || '');
+  // Manual grade override takes priority (orchestrator corrections).
+  // If agent.grade exists AND scoreBreakdown exists but they disagree, agent.grade is the manual override.
+  const autoGrade = (agent.scoreBreakdown && agent.scoreBreakdown.total) ? scoreToGrade(agent.scoreBreakdown.total) : '';
+  const grade = agent.grade || autoGrade || '';
   const gCls = gradeClass(grade);
 
   // Check for live session state
@@ -1663,8 +1750,10 @@ function switchTab(tab) {
 
 // ── Campaign selector ──
 function selectCampaign(idx) {
-  selectedCampaignIdx = idx;
-  render();
+  const c = campaigns[idx];
+  if (c) {
+    window.location.href = '/campaigns?id=' + encodeURIComponent(c.id);
+  }
 }
 
 function renderCampaignSelector() {
@@ -1687,16 +1776,217 @@ function renderCampaignSelector() {
   return h;
 }
 
+// ── Landing Page Render ──
+
+// Bold the first sentence of a description (up to first period/exclamation)
+function boldFirstSentence(text) {
+  if (!text) return '';
+  const escaped = esc(text);
+  // Find first sentence boundary: period followed by space, or end of string
+  const match = escaped.match(/^([^.!?]+[.!?])\s*(.*)/s);
+  if (match) {
+    return '<span class="cl-desc-lead">' + match[1] + '</span> ' + (match[2] || '');
+  }
+  // No sentence boundary — bold whole thing if short, else bold first clause
+  if (escaped.length <= 60) return '<span class="cl-desc-lead">' + escaped + '</span>';
+  return escaped;
+}
+
+function renderLanding() {
+  const app = document.getElementById('app');
+  if (!campaigns.length) {
+    app.innerHTML = '<div class="cl-empty"><strong>No campaigns yet</strong>Create a campaign to coordinate multi-agent efforts</div>';
+    return;
+  }
+
+  const wsLabels = { 'mission-control': 'MC', 'cares': 'CARES', 'personal': 'Personal' };
+
+  // Sort: active first, then by created date descending
+  const sorted = campaigns.slice().sort((a, b) => {
+    const statusOrder = { active: 0, draft: 1, retrospective: 2, closed: 3 };
+    const sa = statusOrder[a.status] !== undefined ? statusOrder[a.status] : 9;
+    const sb = statusOrder[b.status] !== undefined ? statusOrder[b.status] : 9;
+    if (sa !== sb) return sa - sb;
+    return (b.created || '').localeCompare(a.created || '');
+  });
+
+  // Aggregate totals for subtitle
+  const totalAgents = sorted.reduce((s, c) => s + (c.agents || []).length, 0);
+  const activeCount = sorted.filter(c => c.status === 'active').length;
+
+  let h = '';
+
+  // Header with filters
+  h += '<div class="cl-header">';
+  h += '<div>';
+  h += '<div class="cl-title">Campaigns</div>';
+  h += '<div class="cl-subtitle">' + sorted.length + ' campaigns, ' + totalAgents + ' agents' + (activeCount ? ', ' + activeCount + ' active' : '') + '</div>';
+  h += '</div>';
+  h += '<div class="cl-filters">';
+  h += '<button class="cl-filter active" data-ws="all" onclick="filterLanding(\'all\',this)">All</button>';
+  h += '<button class="cl-filter" data-ws="mission-control" onclick="filterLanding(\'mission-control\',this)">MC</button>';
+  h += '<button class="cl-filter" data-ws="cares" onclick="filterLanding(\'cares\',this)">CARES</button>';
+  h += '<button class="cl-filter" data-ws="personal" onclick="filterLanding(\'personal\',this)">Personal</button>';
+  h += '</div></div>';
+
+  // Card grid
+  h += '<div class="cl-grid" id="clGrid">';
+  sorted.forEach(c => {
+    const agents = c.agents || [];
+    const ws = c.workstream || 'default';
+    // Sanitize for CSS class names — strip anything that isn't alphanumeric or hyphen (XSS prevention)
+    const safeClass = s => s.replace(/[^a-zA-Z0-9-]/g, '');
+    const wsClass = 'ws-' + safeClass(ws);
+    const stClass = 'st-' + safeClass(c.status || 'draft');
+    const isActive = c.status === 'active';
+
+    // ── Compute primary stats ──
+    const gradedAgents = agents.filter(a => a.grade);
+    const gpaSum = gradedAgents.reduce((s, a) => s + gradeToGPA(a.grade), 0);
+    const gpa = gradedAgents.length ? (gpaSum / gradedAgents.length).toFixed(2) : 'N/A';
+    const gpaNum = parseFloat(gpa);
+    const gpaColorCls = isNaN(gpaNum) ? 'stat-text3' : gpaNum >= 3.5 ? 'stat-green' : gpaNum >= 3.0 ? 'stat-blue' : gpaNum >= 2.0 ? 'stat-amber' : 'stat-rose';
+
+    const sprintCount = [...new Set(agents.map(a => a.sprint).filter(Boolean))].length;
+    const planItems = c.executionPlan && c.executionPlan.items ? c.executionPlan.items : [];
+    const doneItems = planItems.filter(i => i.status === 'done').length;
+    const totalItems = planItems.length;
+    const pctDone = totalItems ? Math.round((doneItems / totalItems) * 100) : 0;
+
+    // ── Compute secondary stats ──
+    const completedAgents = agents.filter(a => a.status === 'completed').length;
+    const activeAgents = agents.filter(a => a.status === 'active' || a.status === 'in-progress').length;
+    // Deliverables: total delivered items across all agents
+    const totalDelivered = agents.reduce((s, a) => s + (a.delivered ? a.delivered.length : 0), 0);
+    // Missed items total
+    const totalMissed = agents.reduce((s, a) => s + (a.missed ? a.missed.length : 0), 0);
+    // Latest sprint number
+    const latestSprint = agents.reduce((max, a) => Math.max(max, a.sprint || 0), 0);
+
+    const dateStr = c.created ? new Date(c.created + 'T00:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : '';
+
+    h += '<div class="cl-card ' + wsClass + (isActive ? ' cl-active' : '') + '" data-ws="' + esc(ws) + '" onclick="window.location.href=\'/campaigns?id=' + encodeURIComponent(c.id) + '\'">';
+    h += '<div class="cl-bar ' + wsClass + '"></div>';
+    h += '<div class="cl-inner">';
+
+    // Top row: status + workstream badge
+    h += '<div class="cl-top">';
+    h += '<span class="cl-status ' + stClass + '">' + esc(c.status || 'draft') + '</span>';
+    h += '<span class="cl-ws-badge ' + wsClass + '">' + esc(wsLabels[ws] || ws) + '</span>';
+    h += '</div>';
+
+    // Name + description (first sentence bolded)
+    h += '<div class="cl-name">' + esc(c.name) + '</div>';
+    h += '<div class="cl-desc">' + boldFirstSentence(c.description || '') + '</div>';
+
+    // ── Primary stats row (3 cols): GPA, Agents, Sprints ──
+    h += '<div class="cl-stats">';
+    const gpaMuted = isNaN(gpaNum) ? ' cl-stat-muted' : '';
+    h += '<div class="cl-stat' + gpaMuted + '"><div class="cl-stat-value ' + gpaColorCls + '">' + gpa + '</div><div class="cl-stat-label">GPA</div></div>';
+    h += '<div class="cl-stat"><div class="cl-stat-value">' + agents.length + '</div><div class="cl-stat-label">Agents</div></div>';
+    const sprintMuted = sprintCount === 0 ? ' cl-stat-muted' : '';
+    h += '<div class="cl-stat' + sprintMuted + '"><div class="cl-stat-value">' + sprintCount + '</div><div class="cl-stat-label">Sprints</div></div>';
+    h += '</div>';
+
+    // ── Secondary stats row (3 cols): Delivered, Missed, Active ──
+    h += '<div class="cl-stats-row2">';
+    const delMuted = totalDelivered === 0 ? ' cl-stat-muted' : '';
+    h += '<div class="cl-stat' + delMuted + '"><div class="cl-stat-value stat-green">' + totalDelivered + '</div><div class="cl-stat-label">Delivered</div></div>';
+    const missMuted = totalMissed === 0 ? ' cl-stat-muted' : '';
+    h += '<div class="cl-stat' + missMuted + '"><div class="cl-stat-value stat-rose">' + totalMissed + '</div><div class="cl-stat-label">Missed</div></div>';
+    if (isActive && activeAgents > 0) {
+      h += '<div class="cl-stat"><div class="cl-stat-value stat-blue">' + activeAgents + '</div><div class="cl-stat-label">Active</div></div>';
+    } else {
+      const donePctMuted = !gradedAgents.length ? ' cl-stat-muted' : '';
+      h += '<div class="cl-stat' + donePctMuted + '"><div class="cl-stat-value">' + completedAgents + '/' + agents.length + '</div><div class="cl-stat-label">Complete</div></div>';
+    }
+    h += '</div>';
+
+    // Progress bar (workstream-colored)
+    if (totalItems > 0) {
+      h += '<div class="cl-progress">';
+      h += '<div class="cl-progress-bar"><div class="cl-progress-fill ' + wsClass + '" style="width:' + pctDone + '%"></div></div>';
+      h += '<span class="cl-progress-text">' + doneItems + '/' + totalItems + ' (' + pctDone + '%)</span>';
+      h += '</div>';
+    }
+
+    // Date + latest sprint tag
+    if (dateStr) {
+      h += '<div class="cl-date">Started ' + esc(dateStr);
+      if (latestSprint > 0) {
+        h += ' <span class="cl-sprint-tag">Sprint ' + latestSprint + '</span>';
+      }
+      h += '</div>';
+    }
+
+    h += '</div></div>';
+  });
+  h += '</div>';
+
+  app.innerHTML = h;
+}
+
+function filterLanding(ws, btn) {
+  // Update active filter button
+  document.querySelectorAll('.cl-filter').forEach(f => f.classList.remove('active'));
+  btn.classList.add('active');
+
+  // Show/hide cards
+  document.querySelectorAll('.cl-card').forEach(card => {
+    if (ws === 'all') {
+      card.classList.remove('cl-hidden');
+    } else {
+      card.classList.toggle('cl-hidden', card.dataset.ws !== ws);
+    }
+  });
+
+  // Empty state for filtered view
+  const grid = document.getElementById('clGrid');
+  const visible = grid.querySelectorAll('.cl-card:not(.cl-hidden)');
+  let emptyEl = grid.querySelector('.cl-empty');
+  if (visible.length === 0) {
+    if (!emptyEl) {
+      emptyEl = document.createElement('div');
+      emptyEl.className = 'cl-empty';
+      grid.appendChild(emptyEl);
+    }
+    const wsLabel = ws === 'mission-control' ? 'Mission Control' : ws.charAt(0).toUpperCase() + ws.slice(1);
+    emptyEl.innerHTML = '<strong>No ' + wsLabel + ' campaigns</strong>';
+    emptyEl.style.display = '';
+  } else if (emptyEl) {
+    emptyEl.style.display = 'none';
+  }
+}
+
+// ── Route: landing vs detail ──
+function getSelectedCampaignId() {
+  const params = new URLSearchParams(window.location.search);
+  return params.get('id');
+}
+
 // ── Main Render ──
 function render() {
   const app = document.getElementById('app');
+
+  // Route: if no ?id= param, show landing page
+  const selectedId = getSelectedCampaignId();
+  if (!selectedId) {
+    renderLanding();
+    return;
+  }
+
   if (!campaigns.length) {
     app.innerHTML = '<div style="text-align:center;padding:48px;color:var(--text3)"><strong style="display:block;font-size:18px;color:var(--text2);margin-bottom:6px">No campaigns yet</strong>Create a campaign to coordinate multi-agent efforts</div>';
     return;
   }
 
-  // Clamp index
-  if (selectedCampaignIdx >= campaigns.length) selectedCampaignIdx = 0;
+  // Find campaign by ID from URL
+  const campaignIdx = campaigns.findIndex(c => c.id === selectedId);
+  if (campaignIdx === -1) {
+    app.innerHTML = '<div style="text-align:center;padding:48px;color:var(--text3)"><strong style="display:block;font-size:18px;color:var(--text2);margin-bottom:6px">Campaign not found</strong><a href="/campaigns" class="cl-back" style="display:inline-flex;margin-top:8px"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M10 3L5 8l5 5"/></svg> Back to all campaigns</a></div>';
+    return;
+  }
+  selectedCampaignIdx = campaignIdx;
   const c = campaigns[selectedCampaignIdx];
   const agents = c.agents || [];
   const db = c.debrief || {};
@@ -1749,8 +2039,8 @@ function render() {
 
   let h = '';
 
-  // ── Campaign Selector (multi-campaign navigation) ──
-  h += renderCampaignSelector();
+  // ── Back to all campaigns ──
+  h += '<a href="/campaigns" class="cl-back"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M10 3L5 8l5 5"/></svg> All Campaigns</a>';
 
   // ── HERO ──
   h += '<div class="hero">';
@@ -1777,8 +2067,9 @@ function render() {
   // Data-driven execution plan from campaigns.json
   const plan = c.executionPlan;
   if (plan && plan.items) {
-    h += '<div class="hero-exec">';
-    h += '<div class="hero-exec-title" style="cursor:pointer" onclick="var body=this.nextElementSibling;if(!body)return;var wrap=this.parentElement;if(wrap.classList.contains(\'collapsed\')){wrap.classList.remove(\'collapsed\');wrap.style.maxHeight=\'\'}else{wrap.classList.add(\'collapsed\');wrap.style.maxHeight=this.offsetHeight+2+\'px\';wrap.style.overflow=\'hidden\'}"><span style="transition:transform .15s;display:inline-block;margin-right:4px" class="exec-chevron">▼</span> 🎯 Execution Plan <span class="hero-exec-version">' + esc(plan.version) + '</span><span style="margin-left:auto;font-family:\'DM Mono\',monospace;font-size:10px;color:var(--text3)">' + plan.items.filter(function(i){return i.status==="done"}).length + '/' + plan.items.length + ' done</span></div><div>';
+    var execCollapsed = localStorage.getItem('mc-exec-plan-' + c.id) === '0';
+    h += '<div class="hero-exec' + (execCollapsed ? ' collapsed' : '') + '"' + (execCollapsed ? ' style="max-height:42px;overflow:hidden"' : '') + '>';
+    h += '<div class="hero-exec-title" style="cursor:pointer" onclick="toggleExecPlan(this,\'' + esc(c.id) + '\')"><span style="transition:transform .15s;display:inline-block;margin-right:4px" class="exec-chevron">' + (execCollapsed ? '▶' : '▼') + '</span> 🎯 Execution Plan <span class="hero-exec-version">' + esc(plan.version) + '</span><span style="margin-left:auto;font-family:\'DM Mono\',monospace;font-size:10px;color:var(--text3)">' + plan.items.filter(function(i){return i.status==="done"}).length + '/' + plan.items.length + ' done</span></div><div>';
 
     // Group by sprint
     const sprintGroups = {};
@@ -1787,7 +2078,7 @@ function render() {
       if (!sprintGroups[s]) sprintGroups[s] = [];
       sprintGroups[s].push(item);
     });
-    const sprintLabels = { 0: 'Carry → Campaign-002', 6: 'Sprint 6 — Overhaul', 7: 'Sprint 7 — Systems', 8: 'Sprint 8 — Auto-Dispatch', 9: 'Sprint 9 — Integration', 10: 'Sprint 10 — Polish', 11: 'Sprint 11 — Close-Out' };
+    const sprintLabels = { 0: 'Carry → Campaign-002', 6: 'Sprint 6 — Overhaul', 7: 'Sprint 7 — Systems', 8: 'Sprint 8 — Auto-Dispatch', 9: 'Sprint 9 — Integration', 10: 'Sprint 10 — Polish', 11: 'Sprint 11 — Close-Out', 12: 'Sprint 12 — Campaign Navigation' };
 
     // Sort sprints but put 0 (carry items) last
     Object.keys(sprintGroups).sort((a,b) => { if (a == 0) return 1; if (b == 0) return -1; return a - b; }).forEach(sprint => {
@@ -2176,18 +2467,22 @@ function render() {
   h += '</div>';
 
   // Agents grouped by sprint (excluding orchestrators — they're in the Orchestrator tab)
-  const phases = [
-    { id: 1, label: 'Initial Push', agents: nonOrchAgents.filter(a => !a.sprint || a.sprint === 1) },
-    { id: 2, label: 'Polish & Analysis', agents: nonOrchAgents.filter(a => a.sprint === 2) },
-    { id: 3, label: 'Deep Dives', agents: nonOrchAgents.filter(a => a.sprint === 3) },
-    { id: 4, label: 'Closing Sprint', agents: nonOrchAgents.filter(a => a.sprint === 4) },
-    { id: 5, label: 'Campaign Close', agents: nonOrchAgents.filter(a => a.sprint === 5) },
-    { id: 6, label: 'Overhaul Sprint', agents: nonOrchAgents.filter(a => a.sprint === 6) },
-    { id: 7, label: 'Workflow & Systems', agents: nonOrchAgents.filter(a => a.sprint === 7) },
-    { id: 8, label: 'Auto-Dispatch Integration', agents: nonOrchAgents.filter(a => a.sprint === 8) },
-    { id: 9, label: 'v1.5 Integration', agents: nonOrchAgents.filter(a => a.sprint === 9) },
-    { id: 10, label: 'Cleanup & Enforcement', agents: nonOrchAgents.filter(a => a.sprint === 10) },
-  ].filter(p => p.agents.length > 0);
+  // Data-driven sprint phases — derive from agents, not hardcoded list
+  // This prevents the "invisible agents" bug (Rule 14, v1.3 regression)
+  const sprintPhaseLabels = {
+    1: 'Initial Push', 2: 'Polish & Analysis', 3: 'Deep Dives', 4: 'Closing Sprint',
+    5: 'Campaign Close', 6: 'Overhaul Sprint', 7: 'Workflow & Systems',
+    8: 'Auto-Dispatch Integration', 9: 'v1.5 Integration', 10: 'Cleanup & Enforcement',
+    11: 'Close-Out', 12: 'Campaign Navigation'
+  };
+  // Derive sprint IDs from ALL agents (including orchestrators) so numbering is continuous.
+  // Sprints with only orchestrators show as a compact row linking to the Orchestrator tab.
+  const allSprintIds = [...new Set(agents.map(a => a.sprint || 1))].sort((a, b) => a - b);
+  const phases = allSprintIds.map(id => {
+    const sprintAgents = nonOrchAgents.filter(a => (a.sprint || 1) === id);
+    const orchOnly = sprintAgents.length === 0 && agents.some(a => (a.sprint || 1) === id);
+    return { id, label: sprintPhaseLabels[id] || 'Sprint ' + id, agents: sprintAgents, orchOnly };
+  });
 
   phases.forEach(phase => {
     const isLatest = phase.id === phases[phases.length - 1].id;
@@ -2198,12 +2493,16 @@ function render() {
     h += '<div class="phase-header' + collapsed + '" data-sprint="' + phase.id + '" onclick="toggleSprint(this)" style="cursor:pointer;user-select:none">';
     h += '<span class="phase-num p' + phase.id + '">' + phase.id + '</span>';
     h += '<span class="phase-label">' + phase.label + '</span>';
-    h += '<span class="phase-count">' + phase.agents.length + ' agent' + (phase.agents.length !== 1 ? 's' : '') + '</span>';
+    h += '<span class="phase-count">' + (phase.orchOnly ? 'orchestrator only' : phase.agents.length + ' agent' + (phase.agents.length !== 1 ? 's' : '')) + '</span>';
     h += '<span class="phase-chevron">' + (isOpen ? '\u25B4' : '\u25BE') + '</span>';
     h += '</div>';
-    h += '<div class="agents-grid' + (isOpen ? '' : ' sprint-hidden') + '">';
-    phase.agents.forEach(agent => { h += renderAgentCard(c, agent); });
-    h += '</div>';
+    if (phase.orchOnly) {
+      h += '<div class="agents-grid' + (isOpen ? '' : ' sprint-hidden') + '" style="padding:12px 16px;font-size:12px;color:var(--text3);font-style:italic">Orchestrator agents — see Orchestrator tab</div>';
+    } else {
+      h += '<div class="agents-grid' + (isOpen ? '' : ' sprint-hidden') + '">';
+      phase.agents.forEach(agent => { h += renderAgentCard(c, agent); });
+      h += '</div>';
+    }
   });
   h += '</div>';
 
@@ -2451,6 +2750,26 @@ function getAgentNameStyle(name) {
     if (n.includes(key)) return 'color:' + color;
   }
   return '';
+}
+
+// ── Execution plan toggle (persisted) ──
+function toggleExecPlan(titleEl, campaignId) {
+  var wrap = titleEl.parentElement;
+  if (!wrap) return;
+  var chevron = titleEl.querySelector('.exec-chevron');
+  if (wrap.classList.contains('collapsed')) {
+    wrap.classList.remove('collapsed');
+    wrap.style.maxHeight = '';
+    wrap.style.overflow = '';
+    if (chevron) chevron.textContent = '\u25BC';
+    localStorage.setItem('mc-exec-plan-' + campaignId, '1');
+  } else {
+    wrap.classList.add('collapsed');
+    wrap.style.maxHeight = titleEl.offsetHeight + 2 + 'px';
+    wrap.style.overflow = 'hidden';
+    if (chevron) chevron.textContent = '\u25B6';
+    localStorage.setItem('mc-exec-plan-' + campaignId, '0');
+  }
 }
 
 // ── Collapse state management ──

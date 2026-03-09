@@ -1,0 +1,10 @@
+{
+  "machines": {
+    "DESKTOP-456PJPP": {
+      "label": "work",
+      "owner": "emeskel@microsoft.com",
+      "notes": "Work laptop. First synced 2026-03-09."
+    }
+  },
+  "detectMachine": "Match $COMPUTERNAME against machines keys. If not found, assume home."
+}

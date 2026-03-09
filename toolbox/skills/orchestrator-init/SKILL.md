@@ -7,10 +7,14 @@ description: Orchestrator initialization and question-asking phases. Use when st
 
 ## Phase 1: Initialize
 
-**Read these in order before doing anything else:**
+**MANDATORY FIRST ACTION — before reading anything else:**
+Load `/orchestrator-rules` using the Skill tool. This is non-negotiable. v2.0 skipped this and regressed on Rule 5 (Agent tool prohibition) within the first hour. The rules contain a pre-dispatch regression checklist that prevents known anti-patterns. If you skip this, you WILL repeat past mistakes.
+
+**Then read these in order:**
 
 1. **Previous orchestrator sessions** — check `deep-summaries.json` for session keys of prior orchestrators. Surface user feedback, complaints, and praised patterns. This is what made v1.2's execution plan great.
-2. **Latest handoff doc** — find the most recent file in `.claude/agent-hub/coordinated-sprint/orchestrator-v*-handoff.md`
+2. **Read last 10-15 prompts from the previous orchestrator session (PM020 — NON-NEGOTIABLE).** Handoff docs miss things. The raw prompts are ground truth. Find the previous orchestrator's session ID in campaigns.json, then read its transcript from `~/.claude/projects/`. v2.0 skipped this and missed the entire dispatch automation (/api/launch, auto-grade, notification sounds). This step is what separates a B orchestrator from an A.
+3. **Latest handoff doc** — find the most recent file in `coordinated-sprint/orchestrator-v*-handoff.md`
 3. **Campaign data** — `.claude/agent-hub/campaigns.json` (enriched with grades, lifecycle, skills per agent)
 4. **Memory** — `MEMORY.md` (global context, user preferences, two-project structure)
 5. **CLAUDE.md** — behavioral rules (root cause first, respect stated truths, ask before changing)

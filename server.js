@@ -2727,12 +2727,17 @@ Be direct and opinionated. Use <strong> tags for key phrases.`, 256
         fs.writeFileSync(launcherPath, launcherContent, { mode: 0o755 });
 
         // Launch in new Windows Terminal tab
-        // Full path to bash.exe — wt.exe can't resolve bare "bash"
+        // Full paths for both wt.exe and bash.exe — bare names may not be in PATH
+        // depending on the shell environment the server runs in (Git Bash vs cmd vs PS)
+        // WindowsApps UWP symlinks are invisible to fs.existsSync AND cmd /c where.
+        // Use the known WindowsApps path directly — this is where Windows Terminal installs.
         const bashExe = 'C:\\Program Files\\Git\\usr\\bin\\bash.exe';
+        const wtCandidate = path.join(process.env.LOCALAPPDATA || '', 'Microsoft', 'WindowsApps', 'wt.exe');
+        const wtExe = process.env.LOCALAPPDATA ? wtCandidate : 'wt.exe';
         const winLauncher = launcherPath; // Windows path for wt.exe
         const { exec: execCmd } = require('child_process');
         const safeTitle = agentName.replace(/"/g, '');
-        const cmd = `wt.exe -w 0 new-tab --title "${safeTitle}" "${bashExe}" "${winLauncher}"`;
+        const cmd = `"${wtExe}" -w 0 new-tab --title "${safeTitle}" "${bashExe}" "${winLauncher}"`;
         execCmd(cmd, (err) => {
           if (err) console.error('[launch] wt.exe error:', err.message);
         });

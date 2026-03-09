@@ -1047,5 +1047,60 @@
     "meta": "Session: orchestrator-v1.9, Campaign: campaign-001 close-out",
     "id": "f094",
     "created": "2026-03-09T10:05:53.782Z"
+  },
+  {
+    "tier": "tier2",
+    "tag": "infrastructure",
+    "title": "Home-to-work machine transition: smoother than expected",
+    "quote": "\"It was actually pretty easy, a couple of bumps but it worked well.\"",
+    "body": "First cross-machine sync of MC + agent ecosystem. Required 2 prep sessions: (1) git pull to get the repo, (2) pull all skills and toolbox configs. After that, orchestrator loaded cleanly with full skill access. Bumps were minor — no blocking issues. The git-based sync model works. Key enabler: skills and toolbox configs live in the repo, not machine-local paths. Missing: auto-detection of which machine the orchestrator is on (home vs work) — user had to state it manually.",
+    "lesson": "Cross-machine sync works via git pull + 2 setup sessions. Future improvement: auto-detect machine via hostname ($COMPUTERNAME) to eliminate manual declaration. Store hostname mapping in a config file.",
+    "meta": "Session: orchestrator-v2.0, Campaign: campaign-003 init",
+    "id": "f095",
+    "created": "2026-03-09T00:00:00.000Z"
+  },
+  {
+    "tier": "tier2",
+    "tag": "communication",
+    "title": "Emoji coding must be semantic, not decorative",
+    "quote": "\"I don't want everything with a number to be labeled as a color. Color should actually imply something.\"",
+    "body": "f094 established emoji-coded tables as gold standard. Clarification: emojis encode STATUS (done/in-progress/blocked/caution), not row identity. Don't put color circles next to row numbers. Use a dedicated status column with semantic emojis: green circle = done, yellow circle = in progress, hourglass = blocked, red circle = P0/urgent, warning triangle = caution.",
+    "lesson": "Emoji column = semantic status indicator in its own column. Never decorate row numbers with colors. The emoji must MEAN something about the item's state.",
+    "meta": "Session: orchestrator-v2.0, Campaign: campaign-003 init",
+    "id": "f096",
+    "created": "2026-03-09T00:00:00.000Z"
+  },
+  {
+    "tier": "tier1",
+    "tag": "process",
+    "title": "Orchestrator must use create-agent-prompt skill, never 'write a PRD'",
+    "quote": "\"Don't write the PRD; it makes it sound like a PRD is a sub-step. We have a Create Agent skill. Why did you say that?\"",
+    "body": "Orchestrator v2.0 said 'I'll write the PRD' when planning to dispatch agents. This bypasses the create-agent-prompt skill which enforces: 6-stage lifecycle structure, mandatory skill discovery (Stage 2), concrete verification steps (Stage 5), debrief curl (Stage 6), quality gates, and task-type-specific requirements. A raw PRD produces PM014-style failures (vague prompts, F-grade agents). The skill IS the dispatch pipeline.",
+    "lesson": "Never say 'write a PRD.' Always say 'use create-agent-prompt skill.' The skill produces the full agent prompt with lifecycle, skill mandates, verification, and debrief. The PRD is a sub-component, not the deliverable.",
+    "meta": "Session: orchestrator-v2.0, Campaign: campaign-001 Sprint 12",
+    "id": "f097",
+    "created": "2026-03-09T00:00:00.000Z"
+  },
+  {
+    "tier": "tier1",
+    "tag": "process",
+    "title": "Orchestrator must dispatch to separate terminals, never use Agent tool for implementation",
+    "quote": "\"Why did you sub-agent? That would cloud up your context window.\"",
+    "body": "Orchestrator v2.0 used the Agent tool (sub-agent within same process) to build the campaign navigation page. This burned 60K tokens of implementation context inside the orchestrator's window, produced an untrackable agent (no dashboard card, no session, no grading), and violated PM019 (coordinate don't build). The correct flow: use create-agent-prompt skill to write prompt file, tell user to open a new terminal with that prompt. Separate terminal = own session, own state file, own dashboard card, gradeable, campaign-linkable.",
+    "lesson": "Orchestrator NEVER uses Agent tool for implementation work. Always dispatch via separate terminals. Agent tool is only acceptable for quick read-only research queries.",
+    "meta": "Session: orchestrator-v2.0, Campaign: campaign-001 Sprint 12",
+    "id": "f098",
+    "created": "2026-03-09T00:00:00.000Z"
+  },
+  {
+    "tier": "tier1",
+    "tag": "principle",
+    "title": "Logic changes MUST include visual verification of existing conventions",
+    "quote": "\"You just were more worried about the logic when it is coming with certain changes; this content and visual is important.\"",
+    "body": "Orchestrator v2.0 made sprint phases data-driven (good logic fix) but didn't verify the visual output matched existing conventions. Sprint 12 rendered without its numbered gradient badge because the CSS classes p1-p10 were hardcoded and no p11/p12 existed. A single Playwright screenshot would have caught this instantly. When modifying rendering logic, the visual conventions (badges, colors, spacing, hierarchy) are just as important as the data flow. The fix is always: change logic, then screenshot, then compare against existing items on the page.",
+    "lesson": "After any rendering logic change: (1) screenshot the result, (2) compare against existing items visually, (3) check CSS classes, gradients, badges, spacing match the conventions. Logic correctness without visual correctness is incomplete.",
+    "meta": "Session: orchestrator-v2.0, Campaign: campaign-001 Sprint 12",
+    "id": "f099",
+    "created": "2026-03-09T00:00:00.000Z"
   }
 ]

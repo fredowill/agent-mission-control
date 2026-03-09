@@ -781,5 +781,43 @@
     "created": "2026-03-09T10:25:12.161Z",
     "updated": "2026-03-09T10:25:12.162Z",
     "context": "campaign-001"
+  },
+  {
+    "id": "pm022",
+    "title": "Post-Mortem: Orchestrator v2.0 used Agent tool for implementation instead of dispatching separate terminal",
+    "description": "Incident (2026-03-09): Orchestrator v2.0 used the Agent tool (sub-agent within same process) to build the campaign navigation landing page. This is a regression of PM019 (orchestrator building instead of dispatching).\n\nWhat actually happened: Instead of using the create-agent-prompt skill to write a prompt file and telling the user to open a new terminal, the orchestrator used the Agent tool with subagent_type=design. This ran 60K tokens of implementation work inside the orchestrator context window.\n\nTwo distinct failures:\n\nFailure 1: Used Agent tool instead of separate terminal\nThe Agent tool runs a sub-agent within the orchestrator process. This burns context, produces an untrackable agent (no dashboard card, no session, no grading), and violates the coordinate-don't-build principle. The correct flow is: create-agent-prompt skill produces prompt file, user opens new terminal, MC tracks the session.\n\nFailure 2: Said 'write the PRD' instead of using create-agent-prompt skill\nThe orchestrator said it would 'write the PRD' as if that were the deliverable. The create-agent-prompt skill exists specifically to enforce lifecycle stages, skill mandates, verification, and debrief. Saying 'write a PRD' bypasses all of that and produces PM014-style vague prompts.\n\nRoot cause: Convenience bias. The Agent tool is faster than writing a prompt file and coordinating a terminal. The orchestrator optimized for speed over process correctness. This is the same PM019 pattern: building feels productive, coordinating feels slow.\n\nSystemic fix:\n1. Orchestrator must NEVER use Agent tool for implementation tasks. Only acceptable for quick read-only research queries.\n2. All implementation dispatch must go through create-agent-prompt skill then separate terminal.\n3. Need regression checks: a checklist of past PM lessons that the orchestrator validates against before each dispatch.\n\nAction items:\n1. Add to orchestrator rules: Agent tool is read-only research only, never implementation\n2. Add create-agent-prompt as mandatory skill for all dispatches\n3. Create orchestrator regression checklist (PM010-PM022 lessons)\n\nResolution: All 3 action items implemented. Rule 5 updated with PM022 reference. Rule 20 added (create-agent-prompt mandatory). 10-item pre-dispatch regression checklist added to orchestrator-rules. orchestrator-init now mandates loading orchestrator-rules as first action. All changes synced to both installed and toolbox copies.",
+    "status": "closed",
+    "priority": "p0",
+    "workstream": "mission-control",
+    "tags": [
+      "post-mortem",
+      "orchestrator",
+      "regression",
+      "dispatch-failure",
+      "machine:work"
+    ],
+    "linkedSession": null,
+    "created": "2026-03-09T00:00:00.000Z",
+    "updated": "2026-03-09T00:00:00.000Z",
+    "context": "campaign-001"
+  },
+  {
+    "id": "pm023",
+    "title": "Post-Mortem: Orchestrator v2.0 missed entire dispatch automation (/api/launch, auto-cards, wt.exe), told user to open terminals manually, then dispatched without verifying",
+    "description": "Incident (2026-03-09): Three cascading failures in one dispatch attempt.\n\nFailure 1: Told user to manually open terminals. v1.8/v1.9 built POST /api/launch which auto-creates agent cards, pre-creates state files, opens Windows Terminal tabs, runs agents autonomously, auto-grades, and plays sounds. The orchestrator just curls this endpoint. v2.0 never discovered this system existed and told the user to copy-paste prompts into terminals manually.\n\nFailure 2: Panic-dispatched without testing. When the user caught Failure 1, the orchestrator rushed to curl /api/launch without first verifying the system works on the work laptop. The curls returned 200 but wt.exe was not in PATH on this machine. Agents got stuck in 'launching' state with no PID. Stale state files and agent cards were left behind.\n\nFailure 3: Didn't verify after dispatch. The orchestrator reported success based on the 200 response without checking if terminal tabs actually opened, if agents got PIDs, or if they appeared on the campaigns page. The user checked /campaigns and found nothing.\n\nRoot cause: v2.0 never read the dispatch infrastructure during init. The handoff doc mentioned /api/launch but the orchestrator treated prompt-file creation as the final step. When caught, panic mode led to untested dispatch. The wt.exe PATH issue is a work laptop environment difference that a simple test would have caught.\n\nSystemic fix:\n1. Rule 21 added: All dispatch via /api/launch, never manual terminals.\n2. server.js fixed: wt.exe now uses full path with fallback.\n3. orchestrator-init must read dispatch.sh and /api/launch during Phase 1.\n4. After ANY /api/launch call, verify: (a) terminal tab opened, (b) agent has PID in state file, (c) agent card visible on /campaigns.\n\nResolution: Rule 21 added to orchestrator-rules (both copies). server.js fixed to use LOCALAPPDATA for wt.exe full path (UWP symlinks invisible to fs.existsSync and cmd /c where). guard-destructive.sh updated to allow MC server kills when command references port 3033. E2E test passed: test agent dispatched, got PID, state file updated, agent card created. Two real agents then dispatched successfully with PIDs 40068 and 40616.",
+    "status": "closed",
+    "priority": "p0",
+    "workstream": "mission-control",
+    "tags": [
+      "post-mortem",
+      "orchestrator",
+      "regression",
+      "dispatch-failure",
+      "machine:work"
+    ],
+    "linkedSession": null,
+    "created": "2026-03-09T00:00:00.000Z",
+    "updated": "2026-03-09T00:00:00.000Z",
+    "context": "campaign-001"
   }
 ]
