@@ -1377,29 +1377,50 @@
       {
         "slot": "orchestrator-v1.9",
         "name": "Orchestrator v1.9",
-        "focus": "Push unpushed fixes, close open PMs, assess work laptop readiness (FHL hooks demo Monday), dispatch feature agents if foundation is solid.",
+        "focus": "Campaign-001 close-out. Multi-campaign system (selector, lifecycle states, create API). First campaign close-out in MC history. Emoji-coded tables (f094). PM020 systemic fix.",
         "sessionId": null,
         "status": "active",
         "brief": null,
-        "retro": null,
+        "retro": "coordinated-sprint/orchestrator-v1.9-handoff.md",
         "sprint": 11,
         "grade": null,
         "gradeReason": null,
         "lifecycle": {
           "define": "passed",
           "discover": "passed",
-          "execute": "pending",
-          "reason": "pending",
-          "verify": "pending",
-          "debrief": "pending"
+          "execute": "passed",
+          "reason": "passed",
+          "verify": "partial",
+          "debrief": "passed"
         },
         "skillsUsed": [
           "orchestrator",
           "orchestrator-init",
-          "orchestrator-rules"
+          "orchestrator-rules",
+          "orchestrator-plan"
         ],
-        "delivered": [],
-        "missed": []
+        "delivered": [
+          "Campaign-001 close-out: 23/27 execution plan items done, 4 carry",
+          "PM016-020 all closed with resolution notes",
+          "Campaign GPA computed: 2.97 (B avg), 40 agents, 11 sprints",
+          "Multi-campaign selector on /campaigns page",
+          "Campaign lifecycle states (draft/active/retrospective/closed)",
+          "POST /api/campaigns/create API",
+          "POST /api/campaigns/status API",
+          "Campaign-002 MC Maturity Sprint skeleton drafted",
+          "Carry items section (was Sprint 0)",
+          "orchestrator-init Step 9: read previous orchestrator prompts (PM020)",
+          "Finding f094: emoji-coded tables",
+          "Session chime sound on Stop hook",
+          "Cerebras-to-hooks migration P0 carry item",
+          "FHL demo work item refined",
+          "Handoff doc for v2.0"
+        ],
+        "missed": [
+          "Initially missed Cerebras-to-hooks migration from v1.8 prompts (PM020 — fixed same session)",
+          "Emoji coding missing from first output (fixed after feedback)",
+          "Chime volume too low on first attempt (fixed to 0.8)"
+        ]
       },
       {
         "slot": "infra-polish",
