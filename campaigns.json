@@ -2,7 +2,7 @@
   {
     "id": "campaign-001",
     "name": "MC Evolution Sprint",
-    "status": "active",
+    "status": "retrospective",
     "created": "2026-03-06",
     "description": "First coordinated 4-agent sprint. Goal: evolve MC from 'it works' to 'it's genuinely powerful.' 4 agents ran simultaneously, each owning a piece. This is the campaign that proved the concept.",
     "objectives": [
@@ -1324,12 +1324,65 @@
       {
         "slot": "orchestrator-v1.8",
         "name": "Orchestrator v1.8",
-        "focus": "Pipeline verification sprint. Test create-agent-prompt skill end-to-end, verify auto-grade with fixed defaults, verify review agent sees file changes. Prove the foundation before dispatching features.",
+        "focus": "Pipeline verification sprint. Proved create-agent-prompt → dispatch → auto-grade → review pipeline end-to-end. 4 agents dispatched, all graded correctly. First 100% skill compliance sprint. 15+ systemic fixes.",
+        "sessionId": null,
+        "status": "completed",
+        "brief": null,
+        "retro": "coordinated-sprint/orchestrator-v1.8-handoff.md",
+        "sprint": 10,
+        "grade": "A-",
+        "gradeReason": "Pipeline verification sprint success. 4 agents dispatched with 100% skill compliance (first time). Auto-grade, debrief API, guard hook, auto-colors, path portability all shipped. CLAUDE.md Rules 11+12 added. PM019 filed (caught building mid-session). High-context proactive handoff.",
+        "lifecycle": {
+          "define": "passed",
+          "discover": "passed",
+          "execute": "passed",
+          "reason": "passed",
+          "verify": "passed",
+          "debrief": "passed"
+        },
+        "skillsUsed": [
+          "orchestrator",
+          "orchestrator-init",
+          "orchestrator-rules",
+          "orchestrator-dispatch",
+          "orchestrator-grade",
+          "brainstorming"
+        ],
+        "delivered": [
+          "Auto-grade transcript parsing fix (home dir vs project dir)",
+          "Auto-grade deliverables ratio scoring",
+          "Auto-grade always-update behavior",
+          "Debrief API markdown stripping",
+          "Agent card auto-colors (nameToColor hash)",
+          "Path portability (dispatch.sh, run-review.sh, server.js)",
+          "setup-hooks.sh for cross-machine sync",
+          "SYNC-GUIDE.md",
+          "/api/hook/<name> endpoint",
+          "Guard hook MC whitelist",
+          "Execution plan collapse UI",
+          "Infrastructure attribution section",
+          "CLAUDE.md Rules 11+12",
+          "Orchestrator Rule 20 (tables)",
+          "Finding f093",
+          "PM019 filed",
+          "4 agents dispatched with 100% skill compliance"
+        ],
+        "missed": [
+          "Unpushed commits — never pushed to GitHub before handoff (auto-grade, debrief API, guard hook, auto-colors, CLAUDE.md 11+12)",
+          "Started building CSS instead of dispatching (PM019)",
+          "Missed dispatch-home.json and dispatch-work.json on init (fixed mid-session)",
+          "Handoff doc buried the Cerebras-to-hooks migration idea as a minor note when user considered it P0 (PM020)"
+        ]
+      },
+      {
+        "slot": "orchestrator-v1.9",
+        "name": "Orchestrator v1.9",
+        "focus": "Push unpushed fixes, close open PMs, assess work laptop readiness (FHL hooks demo Monday), dispatch feature agents if foundation is solid.",
         "sessionId": null,
         "status": "active",
         "brief": null,
         "retro": null,
-        "sprint": 10,
+        "sprint": 11,
         "grade": null,
         "gradeReason": null,
         "lifecycle": {
@@ -1484,7 +1537,7 @@
       }
     ],
     "executionPlan": {
-      "version": "v1.6",
+      "version": "v1.9-closeout",
       "items": [
         {
           "id": 1,
@@ -1556,20 +1609,20 @@
         {
           "id": 9,
           "task": "Dashboard Performance",
-          "status": "ready",
+          "status": "done",
           "priority": "P0",
           "sprint": 10,
           "agentSlot": "dashboard-perf-v2",
-          "note": "v1 failed (F). v2: surgical PRD with profiling data, per-session cost cache."
+          "note": "v2 delivered per-session cost cache (C-). Server restarted by v1.7. 12x faster."
         },
         {
           "id": 10,
           "task": "Sound Design System",
-          "status": "ready",
+          "status": "carry",
           "priority": "P1",
-          "sprint": 9,
+          "sprint": null,
           "agentSlot": null,
-          "note": "Different sounds for different events"
+          "note": "Interactive mode — different sounds for different events. Never started. Carry to campaign-002."
         },
         {
           "id": 11,
@@ -1582,12 +1635,12 @@
         },
         {
           "id": 12,
-          "task": "Clickable Skills on Agent Cards",
-          "status": "ready",
+          "task": "Viewable Skill Content on Agent Report Cards",
+          "status": "carry",
           "priority": "P1",
-          "sprint": 9,
+          "sprint": null,
           "agentSlot": "clickable-skills",
-          "note": "Link to Toolbox or pop SKILL.md"
+          "note": "Click skill pills on agent cards to view SKILL.md content. PRD written, never dispatched. Carry to campaign-002."
         },
         {
           "id": 13,
@@ -1601,45 +1654,47 @@
         {
           "id": 14,
           "task": "Memory Cleanup",
-          "status": "ready",
+          "status": "done",
           "priority": "P1",
           "sprint": 10,
-          "agentSlot": "memory-cleanup"
+          "agentSlot": "memory-cleanup-v2",
+          "note": "v2 delivered: MEMORY.md rewritten to 98 lines, hooks table, zero stale data. Grade: A (95)."
         },
         {
           "id": 15,
           "task": "Lifecycle Enforcer",
-          "status": "ready",
+          "status": "done",
           "priority": "P1",
           "sprint": 10,
-          "agentSlot": "lifecycle-enforcer"
+          "agentSlot": "lifecycle-enforcer-v2",
+          "note": "v2 delivered: reference card, CLAUDE.md Rule 11, 19-prompt audit scorecard. Grade: A (95)."
         },
         {
           "id": 16,
           "task": "Demo Page",
-          "status": "ready",
+          "status": "carry",
           "priority": "P2",
-          "sprint": 10,
+          "sprint": null,
           "agentSlot": null,
-          "note": "Wow view for teammates"
+          "note": "Wow view for teammates. Never started. Carry to campaign-002."
         },
         {
           "id": 21,
           "task": "Plugin Audit",
-          "status": "ready",
+          "status": "done",
           "priority": "P0",
           "sprint": 10,
           "agentSlot": "plugin-audit",
-          "note": "41+ plugins, only 1 enabled. Research online + resolve overlaps."
+          "note": "42+ plugins evaluated. 4 enabled, python3 shim created, 10 overlap comparisons. Grade: B (83)."
         },
         {
           "id": 22,
           "task": "Research Agent: Workflow Best Practices",
-          "status": "ready",
+          "status": "carry",
           "priority": "P1",
-          "sprint": 10,
+          "sprint": null,
           "agentSlot": null,
-          "note": "Research online: PRD templates, campaign workflows, skill review patterns. We're too DIY."
+          "note": "Partially done: v1.6/v1.7 did ad-hoc online research (15+ sources), but no formal research agent dispatched. Carry to campaign-002."
         },
         {
           "id": 23,
@@ -2259,5 +2314,64 @@
       ]
     },
     "context": null
+  },
+  {
+    "id": "campaign-002",
+    "name": "MC Maturity Sprint",
+    "status": "draft",
+    "created": "2026-03-09",
+    "description": "Second campaign. Goal: mature MC from proven-concept to daily-driver. Multi-campaign navigation, Cerebras-to-hooks migration, work laptop parity, showcase readiness. First campaign to span both home and work machines.",
+    "objectives": [
+      "Campaign system: multi-campaign navigation, lifecycle states, create-campaign flow",
+      "Cerebras migration: replace AI summaries with direct Claude Code hook writes",
+      "Work laptop parity: sync, FHL hooks demo, CARES showcase",
+      "Sound design: different tones for different events",
+      "Viewable skill content on agent report cards",
+      "Campaign-001 retrospective: analyze data, update close-out, extract learnings",
+      "Research: workflow best practices from community"
+    ],
+    "agents": [],
+    "executionPlan": {
+      "version": "v1.9-draft",
+      "items": []
+    },
+    "carryFromCampaign001": [
+      {
+        "id": 1,
+        "task": "Cerebras to hooks migration",
+        "priority": "P0",
+        "source": "v1.8 prompt 38"
+      },
+      {
+        "id": 2,
+        "task": "Sound Design System",
+        "priority": "P1",
+        "source": "exec plan #10"
+      },
+      {
+        "id": 3,
+        "task": "Viewable Skill Content on Agent Cards",
+        "priority": "P1",
+        "source": "exec plan #12"
+      },
+      {
+        "id": 4,
+        "task": "Demo Page",
+        "priority": "P2",
+        "source": "exec plan #16"
+      },
+      {
+        "id": 5,
+        "task": "Research Agent: Workflow Best Practices",
+        "priority": "P1",
+        "source": "exec plan #22"
+      },
+      {
+        "id": 6,
+        "task": "Lifecycle enforcement hook (PreToolUse)",
+        "priority": "P1",
+        "source": "PM016 carry"
+      }
+    ]
   }
 ]

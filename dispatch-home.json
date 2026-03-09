@@ -1425,5 +1425,50 @@
       "design",
       "agent-quality"
     ]
+  },
+  {
+    "id": "cerebras-hooks-migration",
+    "title": "Migrate Cerebras AI summaries to Claude Code hooks (eliminate rate limits)",
+    "description": "Replace Cerebras-powered taglines, summaries, and state updates on the Dashboard with direct Claude Code hook writes. When a prompt is sent, a hook writes the update itself instead of calling Cerebras. Benefits: no rate limits, smarter summaries (Claude > Cerebras for this), lower latency, one less external dependency. User called this very important in v1.8 prompt 38. Carry from campaign-001.",
+    "status": "todo",
+    "priority": "p0",
+    "workstream": "mission-control",
+    "tags": [
+      "architecture",
+      "hooks",
+      "cerebras",
+      "carry-from-001"
+    ],
+    "linkedSession": null,
+    "created": "2026-03-09T10:04:59.496Z",
+    "updated": "2026-03-09T10:04:59.496Z",
+    "context": null,
+    "areas": [
+      "hooks",
+      "dashboard",
+      "workflow"
+    ]
+  },
+  {
+    "id": "orchestrator-chime",
+    "title": "Default chime sound when orchestrator session finishes",
+    "description": "Currently only sub-agents trigger the LoL ping notification sound when they finish. The orchestrator itself has no completion chime. User only knows when agents finish, not when the orchestrator completes. Small fix: play a default chime (different from agent ping) when the orchestrator Stop hook fires. Should be a gentler, distinct tone so user can tell orchestrator vs agent completion apart.",
+    "status": "todo",
+    "priority": "p1",
+    "workstream": "mission-control",
+    "tags": [
+      "sound",
+      "notifications",
+      "orchestrator",
+      "small-fix"
+    ],
+    "linkedSession": null,
+    "created": "2026-03-09T10:06:04.048Z",
+    "updated": "2026-03-09T10:06:04.048Z",
+    "context": null,
+    "areas": [
+      "hooks",
+      "notifications"
+    ]
   }
 ]

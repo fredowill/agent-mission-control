@@ -1036,5 +1036,16 @@
     "lesson": "When fixing any bug or addressing any post-mortem: ask 'what system allowed this to happen?' not 'how do I fix this instance?' The fix should make the problem impossible to recur, not just patch the current occurrence. Band-aid = fix data. Systemic = fix the API/hook/generator that produces the data.",
     "meta": "Session: orchestrator-v1.8, campaign-001",
     "context": "campaign-001"
+  },
+  {
+    "tier": "tier1",
+    "tag": "communication",
+    "title": "Emoji-coded tables for all orchestrator output",
+    "quote": "\"This is beautiful. I love this. This should be a finding.\"",
+    "body": "All orchestrator tables should use emoji color coding: red/green/yellow circles for status, priority emojis, checkmarks for done, warning triangles for issues. Combined with Rule 20 (tables for everything), this makes output scannable at a glance. User praised this as 10x more readable than plain text tables.",
+    "lesson": "Emoji-coded tables (status circles, priority indicators, type badges) are the gold standard for orchestrator communication. Rule 15 (user loves emojis) + Rule 20 (tables) = this pattern.",
+    "meta": "Session: orchestrator-v1.9, Campaign: campaign-001 close-out",
+    "id": "f094",
+    "created": "2026-03-09T10:05:53.782Z"
   }
 ]

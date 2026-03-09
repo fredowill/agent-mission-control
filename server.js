@@ -2581,6 +2581,59 @@ Be direct and opinionated. Use <strong> tags for key phrases.`, 256
     return;
   }
 
+  // ── Create a new campaign ──
+  if (url === '/api/campaigns/create' && req.method === 'POST') {
+    let body = '';
+    req.on('data', c => body += c);
+    req.on('end', () => {
+      try {
+        const { name, description, objectives } = JSON.parse(body);
+        if (!name) { res.writeHead(400); return res.end('{"error":"name required"}'); }
+        const camps = readJSON(CAMPAIGNS_F, []);
+        const id = 'campaign-' + String(camps.length + 1).padStart(3, '0');
+        const newCampaign = {
+          id,
+          name,
+          status: 'active',
+          created: new Date().toISOString().split('T')[0],
+          description: description || '',
+          objectives: objectives || [],
+          agents: [],
+          executionPlan: { version: 'v1.0', items: [] }
+        };
+        camps.push(newCampaign);
+        writeJSON(CAMPAIGNS_F, camps);
+        res.writeHead(201, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ ok: true, campaign: newCampaign }));
+      } catch { res.writeHead(400); res.end('{"error":"bad json"}'); }
+    });
+    return;
+  }
+
+  // ── Update campaign status (draft -> active, active -> retrospective, etc.) ──
+  if (url === '/api/campaigns/status' && req.method === 'POST') {
+    let body = '';
+    req.on('data', c => body += c);
+    req.on('end', () => {
+      try {
+        const { campaignId, status } = JSON.parse(body);
+        const validStatuses = ['draft', 'active', 'retrospective', 'closed'];
+        if (!campaignId || !status || !validStatuses.includes(status)) {
+          res.writeHead(400);
+          return res.end('{"error":"campaignId and valid status required (draft/active/retrospective/closed)"}');
+        }
+        const camps = readJSON(CAMPAIGNS_F, []);
+        const campaign = camps.find(c => c.id === campaignId);
+        if (!campaign) { res.writeHead(404); return res.end('{"error":"campaign not found"}'); }
+        campaign.status = status;
+        writeJSON(CAMPAIGNS_F, camps);
+        res.writeHead(200, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ ok: true, id: campaignId, status }));
+      } catch { res.writeHead(400); res.end('{"error":"bad json"}'); }
+    });
+    return;
+  }
+
   // ── Auto-dispatch: launch agent in new Windows Terminal tab ──
   if (url === '/api/launch' && req.method === 'POST') {
     let body = '';

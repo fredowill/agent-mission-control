@@ -46,6 +46,7 @@ header{display:flex;align-items:center;justify-content:space-between;padding:0 c
 .hero-status.active::before{content:'';width:6px;height:6px;border-radius:50%;background:#22c55e;animation:pulse 2s ease infinite}
 .hero-status.retro{background:var(--amber-bg);color:#92400e}
 .hero-status.done{background:var(--blue-bg);color:var(--blue)}
+.hero-status.draft{background:rgba(139,92,246,0.1);color:#7c3aed}
 .hero-status.setup{background:var(--purple-bg);color:var(--purple)}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
 .hero-date{font-family:'DM Mono',monospace;font-size:11px;color:var(--text3)}
@@ -712,6 +713,7 @@ header{display:flex;align-items:center;justify-content:space-between;padding:0 c
 let campaigns = [];
 let sessions = [];
 let activeTab = 'agents';
+let selectedCampaignIdx = 0;
 let _lastDataHash = '';
 
 async function load() {
@@ -1610,7 +1612,7 @@ async function copyBriefFile(filename, btnSelector, successLabel) {
 }
 
 async function copyBrief(slot) {
-  const camp = campaigns[0];
+  const camp = campaigns[selectedCampaignIdx];
   const agent = camp && camp.agents.find(a => a.slot === slot);
   if (!agent || !agent.brief) return;
   const filename = agent.brief.replace(/\\/g, '/').split('/').pop();
@@ -1620,7 +1622,7 @@ async function copyBrief(slot) {
 }
 
 async function copyFollowUp(slot) {
-  const camp = campaigns[0];
+  const camp = campaigns[selectedCampaignIdx];
   const agent = camp && camp.agents.find(a => a.slot === slot);
   if (!agent || !agent.followUpBrief) return;
   const filename = agent.followUpBrief.replace(/\\/g, '/').split('/').pop();
@@ -1645,8 +1647,34 @@ function switchTab(tab) {
 
   // Load retro on first open
   if (tab === 'retro' && campaigns.length) {
-    renderRetro(campaigns[0].id);
+    renderRetro(campaigns[selectedCampaignIdx].id);
   }
+}
+
+// ── Campaign selector ──
+function selectCampaign(idx) {
+  selectedCampaignIdx = idx;
+  render();
+}
+
+function renderCampaignSelector() {
+  if (campaigns.length <= 1) return '';
+  const statusEmoji = { active: '🟢', retrospective: '🟡', closed: '⚪', draft: '🟣' };
+  let h = '<div style="display:flex;gap:8px;padding:12px 20px;border-bottom:1.5px solid var(--sep);background:rgba(0,0,0,.015);flex-wrap:wrap;align-items:center">';
+  h += '<span style="font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;margin-right:4px">Campaigns</span>';
+  campaigns.forEach((c, i) => {
+    const active = i === selectedCampaignIdx;
+    const emoji = statusEmoji[c.status] || '';
+    h += '<button onclick="selectCampaign(' + i + ')" style="';
+    h += 'padding:6px 14px;border-radius:100px;font-size:12px;font-weight:' + (active ? '700' : '500') + ';';
+    h += 'border:1.5px solid ' + (active ? 'var(--primary)' : 'var(--sep)') + ';';
+    h += 'background:' + (active ? 'rgba(139,92,246,0.08)' : 'transparent') + ';';
+    h += 'color:' + (active ? 'var(--primary)' : 'var(--text2)') + ';cursor:pointer;transition:all .15s">';
+    h += emoji + ' ' + esc(c.name);
+    h += '</button>';
+  });
+  h += '</div>';
+  return h;
 }
 
 // ── Main Render ──
@@ -1657,7 +1685,9 @@ function render() {
     return;
   }
 
-  const c = campaigns[0]; // Single campaign view
+  // Clamp index
+  if (selectedCampaignIdx >= campaigns.length) selectedCampaignIdx = 0;
+  const c = campaigns[selectedCampaignIdx];
   const agents = c.agents || [];
   const db = c.debrief || {};
   const manualWins = (db.wins || []).map(w => Object.assign({}, w, { auto: false }));
@@ -1709,12 +1739,16 @@ function render() {
 
   let h = '';
 
+  // ── Campaign Selector (multi-campaign navigation) ──
+  h += renderCampaignSelector();
+
   // ── HERO ──
   h += '<div class="hero">';
   h += '<div class="hero-gradient"></div>';
   h += '<div class="hero-inner">';
   h += '<div class="hero-top">';
-  h += '<span class="hero-status ' + esc(c.status) + '">' + esc(c.status) + '</span>';
+  const statusClass = c.status === 'retrospective' ? 'retro' : c.status === 'closed' ? 'done' : esc(c.status);
+  h += '<span class="hero-status ' + statusClass + '">' + esc(c.status) + '</span>';
   if (dateStr) h += '<span class="hero-date">Started ' + esc(dateStr) + '</span>';
   h += '</div>';
   h += '<div class="hero-name">' + esc(c.name) + '</div>';
@@ -1743,17 +1777,19 @@ function render() {
       if (!sprintGroups[s]) sprintGroups[s] = [];
       sprintGroups[s].push(item);
     });
-    const sprintLabels = { 6: 'Sprint 6 — Overhaul', 7: 'Sprint 7 — Systems', 8: 'Sprint 8 — Auto-Dispatch', 9: 'Sprint 9 — Integration', 10: 'Sprint 10 — Polish' };
+    const sprintLabels = { 0: 'Carry → Campaign-002', 6: 'Sprint 6 — Overhaul', 7: 'Sprint 7 — Systems', 8: 'Sprint 8 — Auto-Dispatch', 9: 'Sprint 9 — Integration', 10: 'Sprint 10 — Polish', 11: 'Sprint 11 — Close-Out' };
 
-    Object.keys(sprintGroups).sort((a,b) => a - b).forEach(sprint => {
+    // Sort sprints but put 0 (carry items) last
+    Object.keys(sprintGroups).sort((a,b) => { if (a == 0) return 1; if (b == 0) return -1; return a - b; }).forEach(sprint => {
       const sLabel = sprintLabels[sprint] ? sprintLabels[sprint].split(' — ')[1] : '';
-      h += '<div class="hero-exec-sprint-header">Sprint ' + sprint + (sLabel ? ' <span style="color:var(--text3);font-weight:600">' + sLabel + '</span>' : '') + '</div>';
+      const headerText = sprint == 0 ? '📦 Carry → Next Campaign' : 'Sprint ' + sprint;
+      h += '<div class="hero-exec-sprint-header">' + headerText + (sLabel && sprint != 0 ? ' <span style="color:var(--text3);font-weight:600">' + sLabel + '</span>' : '') + '</div>';
       sprintGroups[sprint].forEach(item => {
         const statusIcons = { done: '✅', ready: '⬜', 'in-progress': '⚡', blocked: '🔶', deferred: '⏸️' };
         const rowClass = item.status === 'done' ? ' done' : item.status === 'in-progress' ? ' in-progress' : item.status === 'blocked' ? ' blocked' : '';
         const nameClass = item.status === 'done' ? ' done-name' : '';
         const pillClass = item.status === 'done' ? 'done' : item.status === 'in-progress' ? 'in-progress' : item.status === 'blocked' ? 'blocked' : item.status === 'ready' ? 'ready' : 'later';
-        const pillLabel = item.status === 'done' ? 'Done' : item.status === 'in-progress' ? 'Active' : item.status === 'blocked' ? 'Blocked' : item.status === 'ready' ? 'Ready' : 'Deferred';
+        const pillLabel = item.status === 'done' ? 'Done' : item.status === 'in-progress' ? 'Active' : item.status === 'blocked' ? 'Blocked' : item.status === 'ready' ? 'Ready' : item.status === 'carry' ? 'Deferred' : 'Deferred';
         // Find assigned agent
         const assignedAgent = item.agentSlot ? agents.find(a => a.slot === item.agentSlot) : null;
         const agentLabel = assignedAgent ? assignedAgent.name : (item.agentSlot ? item.agentSlot : '');
