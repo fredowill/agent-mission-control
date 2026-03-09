@@ -1102,5 +1102,16 @@
     "meta": "Session: orchestrator-v2.0, Campaign: campaign-001 Sprint 12",
     "id": "f099",
     "created": "2026-03-09T00:00:00.000Z"
+  },
+  {
+    "tier": "tier1",
+    "tag": "principle",
+    "title": "MC ecosystem has no dependency map — new components leave stale references",
+    "quote": "\"There should be a standardized way of dependency checking... we should have a document where there's a dependency understanding, a way that everything is mapped to each other.\"",
+    "body": "When a new skill, rule, or system is added to MC, it may need to be registered in 5+ places: orchestrator-rules, orchestrator-init, campaigns-page infrastructure section, MEMORY.md, CLAUDE.md, the Orchestrator tab skills list, etc. Currently there is no map of these dependencies. Orchestrators sometimes remember to update all locations and sometimes don't — it depends on reasoning, not enforcement. This causes stale references, invisible features, and regressions. Example: creating a handoff skill requires updates to orchestrator-rules, orchestrator-init, campaigns infrastructure, and the campaigns page — miss any one and the next orchestrator won't know it exists.",
+    "lesson": "Build a dependency map (on the Logic page or as a standalone document) that shows what connects to what. Every new component must come with a dependency checklist: what other files/systems need to know about it. This should be enforced, not reasoned about.",
+    "meta": "Session: orchestrator-v2.0, Campaign: campaign-001 Sprint 12",
+    "id": "f100",
+    "created": "2026-03-09T00:00:00.000Z"
   }
 ]

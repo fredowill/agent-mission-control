@@ -99,6 +99,17 @@ After CARES. Create /demo page — dumbed-down interface for showing MC capabili
 
 Analyze phredomade.com design for one-shot prompting of similar aesthetics in future projects.
 
+### P0: MC Dependency Map (f100)
+
+Build a dependency map showing what connects to what in the MC ecosystem. When you add a new skill, rule, hook, or system, you need to know which other files need updating. Currently this is left to reasoning — it must be enforced via checklist. The map should live on the Logic page or as a standalone document. Include at minimum:
+- Skills → where they're referenced (orchestrator-init, orchestrator-rules, campaigns infrastructure)
+- Rules → what enforces them (hooks, skills, CLAUDE.md)
+- Hooks → what they affect (settings.json, dispatched agents, all sessions)
+- Pages → what data they read (campaigns.json, dispatch.json, findings.json, states/)
+- API endpoints → what writes to them and what reads from them
+
+Every new component gets a dependency checklist before it's considered "done."
+
 ### P0: Orchestrator handoff skill
 
 Create a `/orchestrator-handoff` skill that enforces quality gates before any orchestrator version transition. Must include:
