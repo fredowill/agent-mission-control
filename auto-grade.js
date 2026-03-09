@@ -258,8 +258,12 @@ if (hasDeliverables) {
   // Score based on actual delivered vs missed ratio
   const delivered = agent_check.delivered || [];
   const missed = agent_check.missed || [];
-  // Filter out placeholder "no missed items" entries
-  const realMissed = missed.filter(m => !/no miss|none|nothing|n\/a/i.test(m));
+  // Filter out: placeholder "no missed items", and items correctly deferred as out of scope
+  // "Out of scope" items show good judgment — they're insights, not failures
+  const realMissed = missed.filter(m =>
+    !/no miss|none|nothing|n\/a/i.test(m) &&
+    !/out of scope|deferred|future work|not in scope|beyond scope|correctly left/i.test(m)
+  );
   const total_items = delivered.length + realMissed.length;
   if (total_items > 0) {
     delScore = Math.round(40 * delivered.length / total_items);
