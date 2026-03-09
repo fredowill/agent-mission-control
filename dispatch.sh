@@ -30,7 +30,10 @@ if [ ! -f "$PROMPT_FILE" ]; then
   exit 1
 fi
 
-cd /c/Users/ephra/phredomade
+# Derive project root from script location: agent-hub is inside .claude/agent-hub/
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+PROJECT_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
+cd "$PROJECT_ROOT"
 
 # Clear the CLAUDECODE env var — prevents "nested session" error.
 # The MC server inherits this from the orchestrator's session.
@@ -83,12 +86,14 @@ echo ""
 echo "  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 if [ $EXIT_CODE -eq 0 ]; then
   echo "  ✅ Agent completed successfully"
-  # PM007: Notification sound — LoL Enemy Missing ping (.wav, volume pre-baked at 40%).
-  powershell -c "(New-Object Media.SoundPlayer 'C:\Users\ephra\phredomade\.claude\agent-hub\notify-ping.wav').PlaySync()" 2>/dev/null
+  # PM007: Notification sound — LoL Enemy Missing ping. Volume reduced ~25% from original.
+  PING_WAV="$SCRIPT_DIR/notify-ping.wav"
+  powershell -c "Add-Type -AssemblyName PresentationCore; \$p=New-Object System.Windows.Media.MediaPlayer; \$p.Open([Uri]::new('$PING_WAV')); \$p.Volume=0.25; \$p.Play(); Start-Sleep -Milliseconds 1500" 2>/dev/null
 else
   echo "  ⚠️  Agent exited with code $EXIT_CODE"
   # Error: double ping so user knows something went wrong
-  powershell -c "(New-Object Media.SoundPlayer 'C:\Users\ephra\phredomade\.claude\agent-hub\notify-ping.wav').PlaySync(); (New-Object Media.SoundPlayer 'C:\Users\ephra\phredomade\.claude\agent-hub\notify-ping.wav').PlaySync()" 2>/dev/null
+  PING_WAV="$SCRIPT_DIR/notify-ping.wav"
+  powershell -c "Add-Type -AssemblyName PresentationCore; \$p=New-Object System.Windows.Media.MediaPlayer; \$p.Open([Uri]::new('$PING_WAV')); \$p.Volume=0.25; \$p.Play(); Start-Sleep -Milliseconds 1500; \$p.Position=[TimeSpan]::Zero; \$p.Play(); Start-Sleep -Milliseconds 1500" 2>/dev/null
 fi
 echo "  🔑 Session: $SESSION_ID"
 echo "  🔄 Resume:  claude --resume $SESSION_ID"

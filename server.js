@@ -38,7 +38,7 @@ const TOOLBOX_SKILLS_DIR  = path.join(__dirname, 'toolbox', 'skills');
 // Transcript dir — Claude Code stores conversation .jsonl files here
 // Auto-detect transcript dir based on CWD slug (same logic Claude Code uses)
 // CRITICAL: TRANSCRIPTS_DIR depends on process.cwd() at launch time.
-// Server MUST be launched from the project root (C:/Users/ephra/phredomade).
+// Server MUST be launched from the project root (the repo that contains .claude/agent-hub/).
 // Correct command: node .claude/agent-hub/server.js  (from phredomade root)
 // WRONG:           cd .claude/agent-hub && node server.js  (changes cwd, breaks slug)
 // PM009 documents the incident where the wrong launch directory wiped all cost analytics.
@@ -2645,7 +2645,7 @@ Be direct and opinionated. Use <strong> tags for key phrases.`, 256
         const launcherContent = [
           '#!/bin/bash',
           '# Auto-generated launcher — self-deletes after use',
-          `cd /c/Users/ephra/phredomade`,
+          `cd "${toUnix(path.resolve(__dirname, '..', '..'))}"`,
           `bash "${unixDispatch}" "${agentName}" "${unixPromptPath}" "${sessionId}" "${mode || 'auto'}" "${autoClose ? 'close' : ''}" "${slot || ''}"`,
           `rm -f "${toUnix(launcherPath)}"`,
         ].join('\n');

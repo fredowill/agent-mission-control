@@ -36,64 +36,192 @@ header{display:flex;align-items:center;justify-content:space-between;padding:0 c
 /* Shell */
 .shell{max-width:1200px;margin:0 auto;padding:32px 20px 60px}
 
-/* Campaign Header */
-.campaign-hero{background:var(--bg);border:1px solid var(--sep);border-radius:16px;padding:32px 36px;margin-bottom:24px;position:relative;overflow:hidden}
-.campaign-hero::before{content:'';position:absolute;top:0;left:0;right:0;height:4px;background:linear-gradient(90deg,var(--purple),var(--blue),var(--cyan))}
-.campaign-status-row{display:flex;align-items:center;gap:10px;margin-bottom:14px}
-.campaign-status{display:inline-flex;align-items:center;gap:6px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;padding:4px 12px;border-radius:100px}
-.campaign-status.active{background:var(--green-bg);color:#16a34a}
-.campaign-status.active::before{content:'';width:6px;height:6px;border-radius:50%;background:#22c55e;animation:statusPulse 2s ease infinite}
-.campaign-status.completed{background:var(--blue-bg);color:var(--blue)}
-.campaign-status.paused{background:var(--amber-bg);color:#92400e}
-@keyframes statusPulse{0%,100%{opacity:1}50%{opacity:.4}}
-.campaign-date{font-family:'DM Mono',monospace;font-size:11px;color:var(--text3)}
-.campaign-name{font-family:'Plus Jakarta Sans',sans-serif;font-size:32px;font-weight:800;letter-spacing:-0.04em;line-height:1.2;margin-bottom:10px}
-.campaign-desc{font-size:14px;line-height:1.7;color:var(--text2);max-width:700px}
+/* ── Hero Card ── */
+.hero{background:var(--bg);border:1px solid var(--sep);border-radius:16px;padding:0;margin-bottom:24px;position:relative;overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,.04)}
+.hero-gradient{height:4px;background:linear-gradient(90deg,var(--purple),var(--blue),var(--cyan))}
+.hero-inner{padding:32px 36px 28px}
+.hero-top{display:flex;align-items:center;gap:12px;margin-bottom:14px;flex-wrap:wrap}
+.hero-status{display:inline-flex;align-items:center;gap:6px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;padding:4px 14px;border-radius:100px}
+.hero-status.active{background:var(--green-bg);color:#16a34a}
+.hero-status.active::before{content:'';width:6px;height:6px;border-radius:50%;background:#22c55e;animation:pulse 2s ease infinite}
+.hero-status.retro{background:var(--amber-bg);color:#92400e}
+.hero-status.done{background:var(--blue-bg);color:var(--blue)}
+.hero-status.setup{background:var(--purple-bg);color:var(--purple)}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+.hero-date{font-family:'DM Mono',monospace;font-size:11px;color:var(--text3)}
+.hero-name{font-family:'Plus Jakarta Sans',sans-serif;font-size:32px;font-weight:800;letter-spacing:-0.04em;line-height:1.2;margin-bottom:8px}
+.hero-desc{font-size:14px;line-height:1.7;color:var(--text2);max-width:700px;margin-bottom:20px}
 
-/* Objectives */
-.objectives{margin-top:20px;display:flex;flex-direction:column;gap:6px}
-.obj-item{display:flex;align-items:flex-start;gap:8px;font-size:13px;line-height:1.5;color:var(--text)}
-.obj-check{width:16px;height:16px;border-radius:4px;border:1.5px solid var(--surface2);flex-shrink:0;margin-top:2px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .15s}
-.obj-check:hover{border-color:var(--purple)}
-.obj-check.done{background:var(--green);border-color:var(--green);color:#fff}
-.obj-check.done::after{content:'\\2713';font-size:10px;font-weight:700}
+/* Hero Stats */
+.hero-stats{display:flex;gap:0;flex-wrap:wrap;border:1px solid var(--sep);border-radius:12px;overflow:hidden;margin-bottom:20px}
+.hero-stat{flex:1;min-width:100px;padding:16px 20px;display:flex;flex-direction:column;gap:2px;border-right:1px solid var(--sep);background:var(--bg)}
+.hero-stat:last-child{border-right:none}
+.hero-stat-value{font-family:'Plus Jakarta Sans',sans-serif;font-size:24px;font-weight:800;letter-spacing:-0.03em;line-height:1}
+.hero-stat-label{font-family:'DM Mono',monospace;font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;margin-top:4px}
+.hero-stat.gpa .hero-stat-value{font-size:28px}
+.stat-purple{color:var(--purple)}
+.stat-green{color:var(--green)}
+.stat-rose{color:var(--rose)}
+.stat-amber{color:var(--amber)}
+.stat-blue{color:var(--blue)}
+.stat-text3{color:var(--text3)}
 
-/* Section headers */
-.section-title{font-family:'Plus Jakarta Sans',sans-serif;font-size:18px;font-weight:700;letter-spacing:-0.03em;margin-bottom:16px;display:flex;align-items:center;gap:8px}
-.section-title .count{font-family:'DM Mono',monospace;font-size:11px;color:var(--text3);background:var(--surface);padding:2px 8px;border-radius:100px}
+/* Hero Actions */
+.hero-actions{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+/* Compact execution plan in hero */
+.hero-exec{margin:20px 0 16px;background:var(--bg2);border:1px solid var(--sep);border-radius:10px;overflow:hidden}
+.hero-exec-title{font-family:'Plus Jakarta Sans',sans-serif;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text3);padding:10px 16px 6px;display:flex;align-items:center;gap:8px}
+.hero-exec-version{font-family:'DM Mono',monospace;font-size:9px;color:#7c3aed;background:rgba(139,92,246,0.08);padding:1px 6px;border-radius:4px}
+.hero-exec-sprint-header{font-family:'Plus Jakarta Sans',sans-serif;font-size:13px;font-weight:800;letter-spacing:-0.01em;color:var(--text);padding:12px 16px 6px;background:rgba(0,0,0,.02);border-top:1.5px solid var(--sep)}
+.hero-exec-row{display:grid;grid-template-columns:24px 48px 1fr auto auto;align-items:center;gap:8px;padding:7px 16px;border-top:1px solid rgba(0,0,0,.04);font-size:12px;transition:background .1s}
+.hero-exec-row:hover{background:rgba(0,0,0,.02)}
+.hero-exec-row.done{background:rgba(34,197,94,0.03)}
+.hero-exec-row.in-progress{background:rgba(59,130,246,0.04)}
+.hero-exec-row.blocked{background:rgba(245,158,11,0.04)}
+.hero-exec-icon{text-align:center;font-size:13px;flex-shrink:0}
+.hero-exec-priority{font-family:'DM Mono',monospace;font-size:9px;font-weight:700;padding:1px 6px;border-radius:4px;text-align:center;flex-shrink:0}
+.hero-exec-priority.p0{background:rgba(239,68,68,0.08);color:#dc2626}
+.hero-exec-priority.p1{background:rgba(59,130,246,0.08);color:#2563eb}
+.hero-exec-priority.p2{background:rgba(0,0,0,.04);color:var(--text3)}
+.hero-exec-name{font-weight:600;color:var(--text);min-width:0}
+.hero-exec-name.done-name{color:#16a34a;text-decoration:line-through;opacity:0.6}
+.hero-exec-agent{font-family:'DM Mono',monospace;font-size:9px;font-weight:600;padding:2px 7px;border-radius:4px;white-space:nowrap;letter-spacing:.02em}
+.hero-exec-pill{font-family:'DM Mono',monospace;font-size:9px;font-weight:700;padding:1px 7px;border-radius:100px;flex-shrink:0;text-align:center}
+.hero-exec-pill.done{background:var(--green-bg);color:#16a34a}
+.hero-exec-pill.ready{background:var(--blue-bg);color:var(--blue)}
+.hero-exec-pill.in-progress{background:rgba(245,158,11,0.1);color:#d97706;animation:livePulse 1.5s ease-in-out infinite}
+.hero-exec-pill.blocked{background:rgba(239,68,68,0.08);color:#dc2626}
+.hero-exec-pill.later{background:var(--surface);color:var(--text3)}
+.hero-btn{padding:8px 20px;border-radius:980px;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:600;cursor:pointer;transition:all .15s;border:1.5px solid transparent;text-decoration:none;display:inline-flex;align-items:center;gap:6px}
+.hero-btn.primary{background:var(--purple);color:#fff;border-color:var(--purple)}
+.hero-btn.primary:hover{background:#7c3aed}
+.hero-btn.secondary{background:var(--bg);color:var(--text2);border-color:var(--sep)}
+.hero-btn.secondary:hover{background:var(--surface)}
+.hero-btn.ghost{background:transparent;color:var(--text3);border-color:transparent}
+.hero-btn.ghost:hover{color:var(--text2);background:var(--surface)}
 
-/* Agent Cards Grid */
-.agents-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px;margin-bottom:32px}
-.agent-card{background:var(--bg);border:1px solid var(--sep);border-radius:var(--radius);padding:0;transition:all .2s;position:relative;overflow:hidden}
-.agent-card:hover{box-shadow:0 4px 16px rgba(0,0,0,.06);transform:translateY(-1px)}
-.agent-bar{height:4px}
-.agent-bar.active{background:var(--green)}
-.agent-bar.pending{background:var(--surface2)}
-.agent-bar.completed{background:var(--blue)}
-.agent-card{box-shadow:0 2px 8px rgba(0,0,0,.04)}
+/* ── Tab System ── */
+.tabs-bar{display:flex;gap:2px;padding:3px;background:var(--surface);border-radius:10px;margin-bottom:24px;overflow-x:auto}
+.tab-btn{padding:8px 20px;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;color:var(--text3);background:none;border:none;cursor:pointer;transition:all .15s;white-space:nowrap;position:relative}
+.tab-btn:hover{color:var(--text2)}
+.tab-btn.active{background:var(--bg);color:var(--text);font-weight:600;box-shadow:0 1px 3px rgba(0,0,0,.06)}
+.tab-btn[data-tab="orchestrator"]{color:#7c3aed}
+.tab-btn[data-tab="orchestrator"].active{background:linear-gradient(135deg,rgba(139,92,246,0.08),rgba(99,102,241,0.04));color:#7c3aed;border:1px solid rgba(139,92,246,0.15)}
+.tab-btn .tab-count{font-family:'DM Mono',monospace;font-size:10px;color:var(--text3);margin-left:4px}
+.tab-content{display:none}
+.tab-content.active{display:block}
+
+/* ── Lifecycle Reference Card ── */
+.lifecycle-ref{background:var(--bg);border:1px solid var(--sep);border-radius:var(--radius);padding:20px 24px;margin-bottom:24px;box-shadow:0 1px 4px rgba(0,0,0,.02)}
+.lifecycle-ref-title{font-family:'Plus Jakarta Sans',sans-serif;font-size:13px;font-weight:700;letter-spacing:-0.01em;margin-bottom:4px;color:var(--text)}
+.lifecycle-ref-sub{font-size:11px;color:var(--text3);margin-bottom:16px}
+.lifecycle-stages{display:flex;align-items:flex-start;gap:0;position:relative}
+.lifecycle-stage{flex:1;text-align:center;position:relative;padding:0 8px}
+.lifecycle-stage:not(:last-child)::after{content:'';position:absolute;top:14px;right:-2px;width:calc(100% - 36px);height:2px;background:var(--surface2);left:calc(50% + 18px);z-index:0}
+.lifecycle-dot-ref{width:28px;height:28px;border-radius:50%;background:var(--surface);display:flex;align-items:center;justify-content:center;margin:0 auto 8px;position:relative;z-index:1;font-size:12px;font-weight:700;color:var(--text3);border:2px solid var(--surface2)}
+.lifecycle-stage-name{font-family:'DM Sans',sans-serif;font-size:11px;font-weight:600;color:var(--text);letter-spacing:-0.01em}
+.lifecycle-stage-desc{font-size:10px;color:var(--text3);margin-top:2px;line-height:1.3}
+
+/* ── Sprint Phase Headers ── */
+.phase-header{display:flex;align-items:center;gap:14px;margin-top:28px;margin-bottom:16px;padding-bottom:10px;border-bottom:2px solid var(--sep)}
+.phase-header:first-of-type{margin-top:4px}
+.phase-num{width:32px;height:32px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-family:'Plus Jakarta Sans',sans-serif;font-size:14px;font-weight:800;color:#fff;flex-shrink:0}
+.phase-num.p1{background:linear-gradient(135deg,#8b5cf6,#6366f1)}
+.phase-num.p2{background:linear-gradient(135deg,#ec4899,#8b5cf6)}
+.phase-num.p3{background:linear-gradient(135deg,#f97316,#ef4444)}
+.phase-num.p4{background:linear-gradient(135deg,#14b8a6,#3b82f6)}
+.phase-num.p5{background:linear-gradient(135deg,#f59e0b,#ea580c)}
+.phase-num.p6{background:linear-gradient(135deg,#8b5cf6,#ec4899)}
+.phase-num.p7{background:linear-gradient(135deg,#06b6d4,#3b82f6)}
+.phase-num.p8{background:linear-gradient(135deg,#22c55e,#06b6d4)}
+.phase-num.p9{background:linear-gradient(135deg,#f59e0b,#ef4444)}
+.phase-num.p10{background:linear-gradient(135deg,#8b5cf6,#a855f7)}
+.phase-label{font-family:'Plus Jakarta Sans',sans-serif;font-size:20px;font-weight:800;letter-spacing:-0.03em;color:var(--text)}
+.phase-count{font-family:'DM Mono',monospace;font-size:11px;color:var(--text3);background:var(--surface);padding:2px 10px;border-radius:100px;margin-left:auto}
+.phase-chevron{font-size:12px;color:var(--text3);margin-left:8px;transition:transform .2s}
+.phase-header.collapsed{opacity:.85;margin-bottom:0;padding-bottom:10px}
+.phase-header.collapsed + .agents-grid{margin-bottom:0}
+.agents-grid.sprint-hidden{display:none !important}
+
+/* ── Agent Card Grid ── */
+.agents-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px;margin-bottom:32px}
+
+/* Agent Card */
+.agent-card{background:var(--bg);border:1px solid var(--sep);border-radius:var(--radius);overflow:hidden;transition:all .2s;position:relative;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.04)}
 .agent-card:hover{box-shadow:0 8px 24px rgba(0,0,0,.08);transform:translateY(-2px)}
-/* Agent-specific color bars + subtle card tint */
+.agent-bar{height:4px}
+.agent-inner{padding:18px 20px 16px}
+.agent-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;gap:8px}
+.agent-name{font-family:'Plus Jakarta Sans',sans-serif;font-size:15px;font-weight:700;letter-spacing:-0.02em}
+.agent-grade{font-family:'Plus Jakarta Sans',sans-serif;font-size:12px;font-weight:800;padding:3px 10px;border-radius:8px;letter-spacing:-0.01em;flex-shrink:0}
+.agent-grade.grade-a{background:rgba(34,197,94,0.12);color:#16a34a}
+.agent-grade.grade-b{background:rgba(59,130,246,0.12);color:#2563eb}
+.agent-grade.grade-c{background:rgba(245,158,11,0.12);color:#92400e}
+.agent-grade.grade-d{background:rgba(239,68,68,0.1);color:#dc2626}
+
+/* Agent structured focus */
+.agent-focus-struct{font-size:12px;line-height:1.6;color:var(--text2);margin-bottom:12px}
+.agent-focus-struct .focus-label{font-weight:700;color:var(--text);font-size:11px;text-transform:uppercase;letter-spacing:.03em}
+.agent-focus-struct .focus-delivered{color:var(--text)}
+.agent-focus-struct .focus-missed{color:var(--rose)}
+.agent-focus-struct .focus-closed{color:var(--text3);font-style:italic;font-size:11px}
+
+/* Lifecycle bar (5 dots) */
+.lifecycle-bar{display:flex;align-items:center;gap:4px;margin-bottom:10px}
+.lc-dot{width:8px;height:8px;border-radius:50%;transition:all .15s}
+.lc-dot.passed{background:#22c55e}
+.lc-dot.partial{background:#22c55e;opacity:.5}
+.lc-dot.failed{background:#f59e0b}
+.lc-dot.skipped{background:#e4e4e7}
+.lc-dot.active-stage{background:#8b5cf6;animation:livePulse 1.2s ease-in-out infinite;box-shadow:0 0 6px rgba(139,92,246,0.5)}
+.lc-connector{width:12px;height:2px;background:var(--surface2)}
+
+/* Live state indicator (auto-dispatched agents) */
+.live-state{display:flex;align-items:center;gap:8px;padding:6px 12px;border-radius:8px;margin-bottom:10px;font-family:'DM Mono',monospace;font-size:11px;font-weight:600;letter-spacing:.02em}
+.live-state.is-active{background:rgba(34,197,94,0.08);color:#16a34a;border:1px solid rgba(34,197,94,0.15)}
+.live-state.is-idle{background:rgba(139,92,246,0.06);color:#7c3aed;border:1px solid rgba(139,92,246,0.12)}
+.live-state.is-waiting{background:rgba(245,158,11,0.08);color:#92400e;border:1px solid rgba(245,158,11,0.15)}
+.live-state.is-done{background:var(--surface);color:var(--text3);border:1px solid var(--sep)}
+.live-pulse{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.live-pulse.pulse-active{background:#22c55e;animation:livePulse 1.5s ease-in-out infinite}
+.live-pulse.pulse-idle{background:#8b5cf6;animation:livePulse 2.5s ease-in-out infinite}
+.live-pulse.pulse-waiting{background:#f59e0b;animation:livePulse 0.8s ease-in-out infinite}
+.live-pulse.pulse-done{background:#a1a1aa}
+.live-state-label{text-transform:uppercase}
+.live-state-detail{color:var(--text3);font-weight:400;font-size:10px;margin-left:auto;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:120px}
+@keyframes livePulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.3;transform:scale(.7)}}
+
+/* Agent card live glow */
+.agent-card.is-live{border-color:rgba(34,197,94,0.25);box-shadow:0 2px 12px rgba(34,197,94,0.08)}
+.agent-card.is-waiting-input{border-color:rgba(245,158,11,0.25);box-shadow:0 2px 12px rgba(245,158,11,0.08)}
+
+/* Skills pills */
+.skills-row{display:flex;flex-wrap:wrap;gap:4px}
+.skill-pill{font-family:'DM Mono',monospace;font-size:9px;font-weight:600;padding:2px 8px;border-radius:100px;letter-spacing:.02em;text-transform:lowercase}
+.skill-pill.used{background:rgba(139,92,246,0.1);color:#7c3aed}
+.skill-pill.none{background:var(--surface);color:var(--text3);font-style:italic}
+
+/* Agent-specific color bars */
 .agent-card.ag-orchestrator .agent-bar{background:linear-gradient(90deg,#a78bfa,#7c3aed)}
 .agent-card.ag-orchestrator{border-color:rgba(139,92,246,0.15)}
+.agent-card.ag-orchestrator .agent-name{color:#7c3aed}
 .agent-card.ag-beacon .agent-bar{background:linear-gradient(90deg,#fbbf24,#d97706)}
 .agent-card.ag-beacon{border-color:rgba(245,158,11,0.15)}
+.agent-card.ag-beacon .agent-name{color:#d97706}
 .agent-card.ag-compass .agent-bar{background:linear-gradient(90deg,#60a5fa,#2563eb)}
 .agent-card.ag-compass{border-color:rgba(59,130,246,0.15)}
+.agent-card.ag-compass .agent-name{color:#2563eb}
 .agent-card.ag-overwatch .agent-bar{background:linear-gradient(90deg,#22d3ee,#0891b2)}
 .agent-card.ag-overwatch{border-color:rgba(6,182,212,0.15)}
+.agent-card.ag-overwatch .agent-name{color:#0891b2}
 .agent-card.ag-polisher .agent-bar{background:linear-gradient(90deg,#f472b6,#db2777)}
 .agent-card.ag-polisher{border-color:rgba(236,72,153,0.15)}
+.agent-card.ag-polisher .agent-name{color:#db2777}
 .agent-card.ag-retrospector .agent-bar{background:linear-gradient(90deg,#4ade80,#16a34a)}
 .agent-card.ag-retrospector{border-color:rgba(34,197,94,0.15)}
+.agent-card.ag-retrospector .agent-name{color:#16a34a}
 .agent-card.ag-integrator .agent-bar{background:linear-gradient(90deg,#fbbf24,#ea580c)}
 .agent-card.ag-integrator{border-color:rgba(249,115,22,0.15)}
-/* Agent name color — vibrant, not muddy */
-.agent-card.ag-orchestrator .agent-name{color:#7c3aed}
-.agent-card.ag-beacon .agent-name{color:#d97706}
-.agent-card.ag-compass .agent-name{color:#2563eb}
-.agent-card.ag-overwatch .agent-name{color:#0891b2}
-.agent-card.ag-polisher .agent-name{color:#db2777}
-.agent-card.ag-retrospector .agent-name{color:#16a34a}
 .agent-card.ag-integrator .agent-name{color:#ea580c}
 .agent-card.ag-analyst .agent-bar{background:linear-gradient(90deg,#a78bfa,#6366f1)}
 .agent-card.ag-analyst{border-color:rgba(99,102,241,0.15)}
@@ -101,102 +229,372 @@ header{display:flex;align-items:center;justify-content:space-between;padding:0 c
 .agent-card.ag-video .agent-bar{background:linear-gradient(90deg,#f97316,#dc2626)}
 .agent-card.ag-video{border-color:rgba(249,115,22,0.15)}
 .agent-card.ag-video .agent-name{color:#dc2626}
-.agent-card.ag-medic .agent-bar{background:linear-gradient(90deg,#34d399,#059669)}
-.agent-card.ag-medic{border-color:rgba(5,150,105,0.15)}
-.agent-card.ag-medic .agent-name{color:#059669}
 .agent-card.ag-findings-analyst .agent-bar{background:linear-gradient(90deg,#f472b6,#9333ea)}
 .agent-card.ag-findings-analyst{border-color:rgba(147,51,234,0.15)}
 .agent-card.ag-findings-analyst .agent-name{color:#9333ea}
-.agent-inner{padding:18px 20px}
-.agent-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
-.agent-name{font-family:'Plus Jakarta Sans',sans-serif;font-size:15px;font-weight:700;letter-spacing:-0.02em}
-.agent-status-badge{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;padding:3px 10px;border-radius:100px}
-.agent-status-badge.active{background:var(--green-bg);color:#16a34a}
-.agent-status-badge.pending{background:var(--surface);color:var(--text3)}
-.agent-status-badge.completed{background:var(--blue-bg);color:var(--blue)}
-.agent-focus{font-size:13px;color:var(--text2);line-height:1.5;margin-bottom:12px}
+.agent-card.ag-medic .agent-bar{background:linear-gradient(90deg,#34d399,#059669)}
+.agent-card.ag-medic{border-color:rgba(5,150,105,0.15)}
+.agent-card.ag-medic .agent-name{color:#059669}
+.agent-card.ag-workflow .agent-bar{background:linear-gradient(90deg,#f97316,#ef4444)}
+.agent-card.ag-workflow{border-color:rgba(249,115,22,0.15)}
+.agent-card.ag-workflow .agent-name{color:#ea580c}
+.agent-card.ag-pipeline .agent-bar{background:linear-gradient(90deg,#14b8a6,#0891b2)}
+.agent-card.ag-pipeline{border-color:rgba(20,184,166,0.15)}
+.agent-card.ag-pipeline .agent-name{color:#0891b2}
+.agent-card.ag-morning .agent-bar{background:linear-gradient(90deg,#fbbf24,#f97316)}
+.agent-card.ag-morning{border-color:rgba(249,115,22,0.15)}
+.agent-card.ag-morning .agent-name{color:#f97316}
+.agent-card.ag-campaign-arch .agent-bar{background:linear-gradient(90deg,#8b5cf6,#ec4899)}
+.agent-card.ag-campaign-arch{border-color:rgba(139,92,246,0.15)}
+.agent-card.ag-campaign-arch .agent-name{color:#8b5cf6}
+.agent-card.ag-skill-creator .agent-bar{background:linear-gradient(90deg,#6366f1,#8b5cf6)}
+.agent-card.ag-skill-creator{border-color:rgba(99,102,241,0.15)}
+.agent-card.ag-skill-creator .agent-name{color:#6366f1}
+.agent-card.ag-dashboard .agent-bar{background:linear-gradient(90deg,#fbbf24,#d97706)}
+.agent-card.ag-dashboard{border-color:rgba(245,158,11,0.15)}
+.agent-card.ag-dashboard .agent-name{color:#d97706}
+.agent-card.ag-plugin .agent-bar{background:linear-gradient(90deg,#818cf8,#4f46e5)}
+.agent-card.ag-plugin{border-color:rgba(79,70,229,0.15)}
+.agent-card.ag-plugin .agent-name{color:#4f46e5}
+.agent-card.ag-research .agent-bar{background:linear-gradient(90deg,#2dd4bf,#0d9488)}
+.agent-card.ag-research{border-color:rgba(13,148,136,0.15)}
+.agent-card.ag-research .agent-name{color:#0d9488}
+.agent-card.ag-default .agent-bar{background:linear-gradient(90deg,#94a3b8,#64748b)}
+.agent-card.ag-default{border-color:rgba(100,116,139,0.15)}
+.agent-card.ag-default .agent-name{color:#475569}
+.agent-card.ag-debrief .agent-bar{background:linear-gradient(90deg,#4ade80,#16a34a)}
+.agent-card.ag-debrief{border-color:rgba(34,197,94,0.15)}
+.agent-card.ag-debrief .agent-name{color:#16a34a}
+.agent-card.ag-grading .agent-bar{background:linear-gradient(90deg,#c084fc,#9333ea)}
+.agent-card.ag-grading{border-color:rgba(147,51,234,0.15)}
+.agent-card.ag-grading .agent-name{color:#9333ea}
+.agent-card.ag-memory .agent-bar{background:linear-gradient(90deg,#9ca3af,#4b5563)}
+.agent-card.ag-memory{border-color:rgba(107,114,128,0.15)}
+.agent-card.ag-memory .agent-name{color:#4b5563}
+.agent-card.ag-lifecycle .agent-bar{background:linear-gradient(90deg,#22d3ee,#0891b2)}
+.agent-card.ag-lifecycle{border-color:rgba(6,182,212,0.15)}
+.agent-card.ag-lifecycle .agent-name{color:#0891b2}
+.agent-card.ag-integration .agent-bar{background:linear-gradient(90deg,#60a5fa,#2563eb)}
+.agent-card.ag-integration{border-color:rgba(59,130,246,0.15)}
+.agent-card.ag-integration .agent-name{color:#2563eb}
 
-/* Live status from session state */
-.agent-live{display:flex;flex-direction:column;gap:6px;padding:10px 12px;background:var(--bg2);border-radius:8px;margin-top:8px}
-.agent-live-row{display:flex;align-items:center;gap:6px;font-size:11px}
-.agent-live-label{color:var(--text3);font-family:'DM Mono',monospace;min-width:50px}
-.agent-live-value{color:var(--text);font-weight:500}
-.agent-live-state{display:inline-flex;align-items:center;gap:4px}
-.agent-live-dot{width:6px;height:6px;border-radius:50%}
-.agent-live-dot.investigating{background:var(--blue)}
-.agent-live-dot.developing{background:var(--purple)}
-.agent-live-dot.verifying{background:var(--amber)}
-.agent-live-dot.idle{background:var(--text3)}
-.agent-live-dot.thinking{background:var(--cyan)}
-.agent-live-dot.planning{background:var(--green)}
+/* Standalone agent bar colors (for modal top bars) */
+.modal-bar.ag-orchestrator{background:linear-gradient(90deg,#a78bfa,#7c3aed) !important}
+.modal-bar.ag-beacon{background:linear-gradient(90deg,#fbbf24,#d97706) !important}
+.modal-bar.ag-compass{background:linear-gradient(90deg,#60a5fa,#2563eb) !important}
+.modal-bar.ag-overwatch{background:linear-gradient(90deg,#22d3ee,#0891b2) !important}
+.modal-bar.ag-polisher{background:linear-gradient(90deg,#f472b6,#db2777) !important}
+.modal-bar.ag-retrospector{background:linear-gradient(90deg,#4ade80,#16a34a) !important}
+.modal-bar.ag-integrator{background:linear-gradient(90deg,#fbbf24,#ea580c) !important}
+.modal-bar.ag-analyst{background:linear-gradient(90deg,#a78bfa,#6366f1) !important}
+.modal-bar.ag-video{background:linear-gradient(90deg,#f97316,#dc2626) !important}
+.modal-bar.ag-findings-analyst{background:linear-gradient(90deg,#f472b6,#9333ea) !important}
+.modal-bar.ag-medic{background:linear-gradient(90deg,#34d399,#059669) !important}
+.modal-bar.ag-workflow{background:linear-gradient(90deg,#f97316,#ef4444) !important}
+.modal-bar.ag-pipeline{background:linear-gradient(90deg,#14b8a6,#0891b2) !important}
+.modal-bar.ag-morning{background:linear-gradient(90deg,#fbbf24,#f97316) !important}
+.modal-bar.ag-campaign-arch{background:linear-gradient(90deg,#8b5cf6,#ec4899) !important}
+.modal-bar.ag-skill-creator{background:linear-gradient(90deg,#6366f1,#8b5cf6) !important}
+.modal-bar.ag-dashboard{background:linear-gradient(90deg,#fbbf24,#d97706) !important}
+.modal-bar.ag-plugin{background:linear-gradient(90deg,#818cf8,#4f46e5) !important}
+.modal-bar.ag-research{background:linear-gradient(90deg,#2dd4bf,#0d9488) !important}
+.modal-bar.ag-default{background:linear-gradient(90deg,#94a3b8,#64748b) !important}
 
-/* Link session button */
-.agent-link-btn{display:flex;align-items:center;gap:4px;margin-top:10px;padding:6px 12px;border-radius:6px;font-size:11px;font-weight:600;color:var(--purple);background:var(--purple-bg);border:none;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .12s}
-.agent-link-btn:hover{background:rgba(139,92,246,0.12)}
-.agent-session-id{font-family:'DM Mono',monospace;font-size:10px;color:var(--text3);margin-top:6px;word-break:break-all}
+/* ── Infrastructure Section ── */
+.infra-section{background:var(--bg);border:1px solid var(--sep);border-radius:var(--radius);overflow:hidden;margin-bottom:24px}
+.infra-header{display:flex;align-items:center;gap:10px;padding:16px 20px;border-bottom:1px solid var(--sep)}
+.infra-header-icon{font-size:16px}
+.infra-header-title{font-family:'Plus Jakarta Sans',sans-serif;font-size:15px;font-weight:700;letter-spacing:-0.02em}
+.infra-header-count{font-family:'DM Mono',monospace;font-size:11px;color:var(--text3);margin-left:auto;display:flex;gap:8px;align-items:center}
+.infra-header-count .hc-dot{width:6px;height:6px;border-radius:50%;display:inline-block}
+.infra-group{padding:0}
+.infra-group-title{display:flex;align-items:center;gap:8px;padding:10px 20px;font-family:'Plus Jakarta Sans',sans-serif;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--text3);background:rgba(0,0,0,.02);border-bottom:1px solid rgba(0,0,0,.04);cursor:pointer;user-select:none}
+.infra-group-title:hover{background:rgba(0,0,0,.04)}
+.infra-group-title .infra-chevron{transition:transform .15s;font-size:10px}
+.infra-group-title.collapsed .infra-chevron{transform:rotate(-90deg)}
+/* Chip grid for skills */
+.infra-chip-grid{display:flex;flex-wrap:wrap;gap:6px;padding:12px 16px}
+.infra-chip-subgroup{width:100%;display:flex;flex-wrap:wrap;gap:6px;align-items:flex-start}
+.infra-chip-subgroup:not(:first-child){margin-top:4px;padding-top:8px;border-top:1px solid rgba(0,0,0,.04)}
+.infra-chip-subgroup-label{width:100%;font-family:'DM Mono',monospace;font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text3);padding:0 2px 2px;display:flex;align-items:center;gap:5px}
+.infra-chip-subgroup-label .sg-dot{width:6px;height:6px;border-radius:50%;display:inline-block;flex-shrink:0}
+.infra-chip{display:inline-flex;align-items:center;gap:6px;padding:5px 10px;border-radius:8px;border:1px solid rgba(0,0,0,.06);background:var(--bg);font-size:12px;cursor:pointer;transition:all .15s;max-width:220px;position:relative}
+.infra-chip:hover{background:rgba(139,92,246,.04);border-color:rgba(139,92,246,.15);box-shadow:0 1px 4px rgba(0,0,0,.04);transform:translateY(-1px)}
+.infra-chip .chip-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+.infra-chip .chip-dot.current{background:#16a34a}
+.infra-chip .chip-dot.review{background:#d97706}
+.infra-chip .chip-dot.stale{background:#dc2626}
+.infra-chip .chip-name{font-family:'DM Sans',sans-serif;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.infra-chip .chip-ver{font-family:'DM Mono',monospace;font-size:9px;font-weight:600;color:#7c3aed;background:rgba(139,92,246,.08);padding:1px 5px;border-radius:4px;white-space:nowrap;flex-shrink:0}
+.infra-chip[title]:hover::after{content:attr(data-staleness-label);position:absolute;bottom:calc(100% + 4px);left:50%;transform:translateX(-50%);font-family:'DM Mono',monospace;font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;padding:3px 8px;border-radius:5px;white-space:nowrap;pointer-events:none;z-index:10;box-shadow:0 2px 8px rgba(0,0,0,.1)}
+.infra-chip[data-staleness-label="Current"]:hover::after{background:rgba(34,197,94,.12);color:#16a34a}
+.infra-chip[data-staleness-label="Review"]:hover::after{background:rgba(245,158,11,.12);color:#92400e}
+.infra-chip[data-staleness-label="Stale"]:hover::after{background:rgba(239,68,68,.12);color:#dc2626}
+/* Compact rows for hooks & rules */
+.infra-row{display:grid;grid-template-columns:1fr auto auto;align-items:center;gap:10px;padding:5px 20px;border-bottom:1px solid rgba(0,0,0,.03);font-size:12px;cursor:pointer;transition:background .1s}
+.infra-row:hover{background:rgba(139,92,246,.03)}
+.infra-row:last-child{border-bottom:none}
+.infra-name{font-family:'DM Sans',sans-serif;font-weight:600;color:var(--text);display:flex;align-items:baseline;gap:6px;min-width:0}
+.infra-name .infra-desc{font-weight:400;color:var(--text3);font-size:10px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.infra-version{font-family:'DM Mono',monospace;font-size:10px;font-weight:600;padding:2px 6px;border-radius:5px;background:rgba(139,92,246,.08);color:#7c3aed;white-space:nowrap}
+.infra-stale{font-family:'DM Mono',monospace;font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;padding:2px 6px;border-radius:5px;white-space:nowrap}
+.infra-stale.current{background:rgba(34,197,94,.08);color:#16a34a}
+.infra-stale.review{background:rgba(245,158,11,.08);color:#92400e}
+.infra-stale.stale{background:rgba(239,68,68,.08);color:#dc2626}
+/* Rule source badge */
+.infra-rule-source{font-family:'DM Mono',monospace;font-size:9px;padding:2px 6px;border-radius:4px;background:rgba(0,0,0,.04);color:var(--text3);white-space:nowrap}
 
-/* Link session modal */
-.link-modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.25);backdrop-filter:blur(6px);z-index:200;justify-content:center;align-items:center;padding:24px}
-.link-modal-bg.open{display:flex}
-.link-modal{background:var(--bg);border-radius:16px;width:90%;max-width:420px;padding:28px;box-shadow:0 24px 80px rgba(0,0,0,.12);animation:modalIn .2s ease}
+/* ── Infrastructure Content Modal ── */
+.infra-modal-content{font-family:'DM Mono',monospace;font-size:12px;line-height:1.6;white-space:pre-wrap;word-break:break-word;background:var(--bg2);border:1px solid var(--sep);border-radius:10px;padding:20px;max-height:60vh;overflow-y:auto;color:var(--text)}
+
+/* ── Report Card Modal ── */
+.modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.3);backdrop-filter:blur(8px);z-index:200;justify-content:center;align-items:center;padding:24px}
+.modal-bg.open{display:flex}
+.modal{background:var(--bg);border-radius:16px;width:92%;max-width:720px;max-height:85vh;overflow:hidden;box-shadow:0 24px 80px rgba(0,0,0,.15);animation:modalIn .2s ease}
 @keyframes modalIn{from{opacity:0;transform:translateY(12px) scale(0.97)}to{opacity:1;transform:none}}
-.link-modal h3{font-family:'Plus Jakarta Sans',sans-serif;font-size:18px;font-weight:700;letter-spacing:-0.02em;margin-bottom:6px}
-.link-modal p{font-size:13px;color:var(--text2);margin-bottom:16px;line-height:1.5}
-.link-modal label{display:block;font-size:11px;font-weight:600;color:var(--text3);margin-bottom:6px;text-transform:uppercase;letter-spacing:.04em}
-.link-modal select,.link-modal input{width:100%;padding:8px 12px;border:1px solid var(--sep);border-radius:8px;font-family:'DM Mono',monospace;font-size:12px;color:var(--text);background:var(--bg);outline:none;transition:border-color .12s;margin-bottom:14px}
-.link-modal select:focus,.link-modal input:focus{border-color:var(--purple)}
-.link-modal-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:6px}
-.link-modal-actions button{padding:8px 18px;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:600;cursor:pointer;transition:all .12s;border:1px solid var(--sep);background:var(--bg);color:var(--text2)}
-.link-modal-actions button:hover{background:var(--surface)}
-.link-modal-actions button.primary{background:var(--purple);color:#fff;border:none}
-.link-modal-actions button.primary:hover{background:#7c3aed}
+.modal-bar{height:4px}
+.modal-inner{padding:28px 32px;overflow-y:auto;max-height:calc(85vh - 4px);scroll-behavior:smooth}
 
-/* Debrief sections */
-.debrief{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:32px}
-@media(max-width:700px){.debrief{grid-template-columns:1fr}}
-.debrief-col{background:var(--bg);border:1px solid var(--sep);border-radius:var(--radius);overflow:hidden}
-.debrief-col-header{padding:14px 18px 10px;display:flex;align-items:center;gap:8px;border-bottom:1px solid var(--sep)}
-.debrief-col-header .col-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
-.debrief-col-header .col-dot.win{background:var(--green)}
-.debrief-col-header .col-dot.loss{background:var(--rose)}
-.debrief-col-header .col-dot.remain{background:var(--amber)}
-.debrief-col-header .col-label{font-family:'Plus Jakarta Sans',sans-serif;font-size:14px;font-weight:700;letter-spacing:-0.02em}
-.debrief-col-header .col-count{font-family:'DM Mono',monospace;font-size:10px;color:var(--text3);margin-left:auto;background:var(--surface);padding:1px 7px;border-radius:100px}
-.debrief-list{padding:10px 14px;display:flex;flex-direction:column;gap:2px;max-height:340px;overflow-y:auto}
-.debrief-list::-webkit-scrollbar{width:4px}
-.debrief-list::-webkit-scrollbar-thumb{background:var(--surface2);border-radius:2px}
+/* RC Grade Header */
+.rc-grade-header{display:flex;align-items:center;gap:20px;margin-bottom:24px}
+.rc-grade-letter{font-family:'Plus Jakarta Sans',sans-serif;font-size:48px;font-weight:800;width:72px;height:72px;border-radius:16px;display:flex;align-items:center;justify-content:center;flex-shrink:0;letter-spacing:-0.03em}
+.rc-grade-letter.grade-a{background:rgba(34,197,94,0.12);color:#16a34a}
+.rc-grade-letter.grade-b{background:rgba(59,130,246,0.12);color:#2563eb}
+.rc-grade-letter.grade-c{background:rgba(245,158,11,0.12);color:#92400e}
+.rc-grade-letter.grade-d{background:rgba(239,68,68,0.1);color:#dc2626}
+.rc-grade-letter.grade-f{background:rgba(239,68,68,0.15);color:#991b1b}
+.rc-grade-letter.grade-na{background:var(--surface);color:var(--text3)}
+.rc-grade-info{flex:1;min-width:0}
+.rc-agent-name{font-family:'Plus Jakarta Sans',sans-serif;font-size:22px;font-weight:800;letter-spacing:-0.03em;margin-bottom:4px}
+.rc-grade-subtitle{font-size:12px;color:var(--text3);font-family:'DM Mono',monospace}
+.rc-grade-reason{font-size:13px;line-height:1.5;color:var(--text2);margin-top:6px}
+
+/* RC Lifecycle — compact inline row */
+.rc-lifecycle{display:flex;gap:3px;margin-bottom:8px;padding:6px 8px;background:var(--bg2);border:1px solid var(--sep);border-radius:10px}
+.rc-lc-card{flex:1;display:flex;align-items:center;gap:4px;padding:5px 6px;border-radius:7px;cursor:pointer;transition:all .12s;border:1.5px solid transparent}
+.rc-lc-card:hover{background:rgba(0,0,0,.02)}
+.rc-lc-card.passed{border-color:rgba(34,197,94,0.2);background:rgba(34,197,94,0.03)}
+.rc-lc-card.partial{border-color:rgba(245,158,11,0.2);background:rgba(245,158,11,0.03)}
+.rc-lc-card.failed{border-color:rgba(239,68,68,0.2);background:rgba(239,68,68,0.03)}
+.rc-lc-card.skipped{opacity:.5}
+.rc-lc-card.expanded{border-color:var(--purple);background:rgba(139,92,246,.04)}
+.rc-lc-emoji{font-size:13px;flex-shrink:0}
+.rc-lc-text{display:flex;flex-direction:column;min-width:0}
+.rc-lc-name{font-family:'DM Sans',sans-serif;font-size:10px;font-weight:700;color:var(--text);line-height:1.2}
+.rc-lc-status{font-family:'DM Mono',monospace;font-size:8px;font-weight:600;text-transform:uppercase;letter-spacing:.03em}
+.rc-lc-card.passed .rc-lc-status{color:#16a34a}
+.rc-lc-card.partial .rc-lc-status{color:#92400e}
+.rc-lc-card.failed .rc-lc-status{color:#dc2626}
+.rc-lc-card.skipped .rc-lc-status{color:var(--text3)}
+.rc-lc-detail{display:none}
+.rc-lc-pts{display:none}
+/* Lifecycle detail dropdown — sits below the card row */
+.rc-lc-dropdown{height:0;overflow:hidden;margin-bottom:0}
+.rc-lc-dropdown-inner{background:var(--surface);border-radius:0 0 10px 10px;padding:12px 16px;margin-top:-2px;border:1px solid var(--sep);border-top:none;font-size:12px;line-height:1.6;color:var(--text2);display:flex;align-items:flex-start;gap:10px}
+.rc-lc-dropdown-emoji{font-size:16px;flex-shrink:0;margin-top:1px}
+.rc-lc-dropdown-stage{font-family:'DM Mono',monospace;font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;margin-bottom:2px}
+.rc-lc-dropdown-text{font-family:'DM Sans',sans-serif;font-size:12px;line-height:1.5;color:var(--text2)}
+
+/* RC Score Breakdown */
+.rc-scores{background:var(--bg2);border:1px solid var(--sep);border-radius:10px;padding:16px 18px;margin-bottom:20px}
+.rc-scores-title{font-family:'DM Sans',sans-serif;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text3);margin-bottom:12px}
+.rc-score-row{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.rc-score-row:last-of-type{margin-bottom:0}
+.rc-score-label{font-family:'DM Sans',sans-serif;font-size:12px;font-weight:600;color:var(--text);width:110px;flex-shrink:0}
+.rc-score-bar{flex:1;height:8px;background:var(--surface2);border-radius:100px;overflow:hidden}
+.rc-score-fill{height:100%;border-radius:100px;transition:width .4s ease}
+.rc-score-fill.f-del{background:linear-gradient(90deg,#22c55e,#16a34a)}
+.rc-score-fill.f-exec{background:linear-gradient(90deg,#3b82f6,#2563eb)}
+.rc-score-fill.f-lc{background:linear-gradient(90deg,#8b5cf6,#7c3aed)}
+.rc-score-fill.f-skill{background:linear-gradient(90deg,#f59e0b,#ea580c)}
+.rc-score-value{font-family:'DM Mono',monospace;font-size:11px;font-weight:600;color:var(--text2);width:48px;text-align:right;flex-shrink:0}
+.rc-score-total{display:flex;align-items:center;justify-content:space-between;padding-top:12px;margin-top:12px;border-top:1.5px solid var(--sep)}
+.rc-score-total-label{font-family:'DM Sans',sans-serif;font-size:13px;font-weight:700;color:var(--text)}
+.rc-score-total-value{font-family:'Plus Jakarta Sans',sans-serif;font-size:18px;font-weight:800;letter-spacing:-0.02em}
+
+/* RC Sections */
+.rc-section{margin-bottom:16px}
+.rc-section-label{font-family:'DM Sans',sans-serif;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text3);margin-bottom:8px;display:flex;align-items:center;gap:6px}
+.rc-section-count{font-family:'DM Mono',monospace;font-size:9px;background:var(--surface);padding:1px 6px;border-radius:100px}
+
+/* RC Item List */
+.rc-items{display:flex;flex-direction:column;gap:4px}
+.rc-item{display:flex;align-items:flex-start;gap:8px;font-size:13px;line-height:1.5;padding:4px 0}
+.rc-item-icon{width:18px;height:18px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0;margin-top:1px}
+.rc-item.delivered .rc-item-icon{background:rgba(34,197,94,0.12);color:#16a34a}
+.rc-item.missed .rc-item-icon{background:rgba(239,68,68,0.1);color:#dc2626}
+.rc-item a{color:var(--purple);text-decoration:none;font-weight:600;font-size:11px;padding:1px 6px;border-radius:4px;background:var(--purple-bg)}
+.rc-item a:hover{background:rgba(139,92,246,0.12)}
+
+/* RC Skills */
+.rc-skills-row{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:6px}
+.skill-pill.missed-skill{background:var(--surface);color:var(--text3);border:1px dashed var(--surface2);font-style:italic;position:relative;padding-right:40px !important}
+.skill-pill.missed-skill::after{content:'missed';font-size:7px;position:absolute;top:50%;right:4px;transform:translateY(-50%);background:var(--rose);color:#fff;padding:0 4px;border-radius:3px;font-style:normal;font-weight:700;letter-spacing:.02em}
+
+/* RC Collapsible Sections */
+.rc-collapse{border:1px solid var(--sep);border-radius:10px;overflow:hidden;margin-bottom:12px}
+.rc-collapse-head{display:flex;align-items:center;gap:8px;padding:10px 14px;cursor:pointer;user-select:none;transition:background .12s}
+.rc-collapse-head:hover{background:var(--bg2)}
+.rc-collapse-icon{font-size:12px;flex-shrink:0}
+.rc-collapse-title{font-family:'DM Sans',sans-serif;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--text3);flex:1}
+.rc-collapse-count{font-family:'DM Mono',monospace;font-size:9px;color:var(--text3);background:var(--surface);padding:1px 6px;border-radius:100px}
+.rc-collapse-chev{width:16px;height:16px;display:flex;align-items:center;justify-content:center;color:var(--text3);flex-shrink:0}
+.rc-collapse-body{height:0;overflow:hidden}
+.rc-collapse-inner{padding:0 14px 12px;border-top:1px solid var(--sep)}
+
+/* RC Footer */
+.rc-footer{display:flex;gap:8px;margin-top:20px;padding-top:16px;border-top:1px solid var(--sep)}
+.rc-btn{padding:8px 18px;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;cursor:pointer;transition:all .12s;border:1px solid var(--sep);background:var(--bg);color:var(--text2)}
+.rc-btn:hover{background:var(--surface)}
+.rc-btn.primary{background:var(--purple);color:#fff;border:none}
+.rc-btn.primary:hover{background:#7c3aed}
+.rc-btn.secondary{background:var(--bg);color:var(--purple);border:1.5px solid var(--purple)}
+.rc-btn.secondary:hover{background:var(--purple-bg)}
+
+/* RC Responsive */
+@media(max-width:700px){
+  .rc-lifecycle{flex-wrap:wrap}
+  .rc-lc-card{min-width:calc(50% - 4px)}
+  .rc-grade-letter{font-size:36px;width:56px;height:56px;border-radius:12px}
+  .rc-agent-name{font-size:18px}
+  .rc-score-label{width:80px;font-size:11px}
+}
+
+/* ── Debrief Sections ── */
+.debrief-section{background:var(--bg);border:1px solid var(--sep);border-radius:var(--radius);overflow:hidden;margin-bottom:12px}
+.debrief-section-header{display:flex;align-items:center;gap:10px;padding:14px 18px;cursor:pointer;user-select:none;transition:background .12s}
+.debrief-section-header:hover{background:var(--bg2)}
+.debrief-section-header .col-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.debrief-section-header .col-label{font-family:'Plus Jakarta Sans',sans-serif;font-size:14px;font-weight:700;letter-spacing:-0.02em}
+.debrief-section-header .col-count{font-family:'DM Mono',monospace;font-size:10px;color:var(--text3);background:var(--surface);padding:2px 8px;border-radius:100px;margin-left:auto}
+.section-chevron{width:20px;height:20px;display:flex;align-items:center;justify-content:center;color:var(--text3);transition:transform .25s ease;flex-shrink:0}
+.section-chevron.open{transform:rotate(180deg)}
+.section-body{max-height:0;overflow:hidden;transition:max-height .35s ease}
+.section-body.open{max-height:5000px}
+
+/* Debrief items */
+.debrief-list{padding:10px 14px;display:flex;flex-direction:column;gap:2px;border-top:1px solid var(--sep)}
 .d-item{display:flex;align-items:flex-start;gap:8px;padding:7px 8px;border-radius:8px;font-size:12.5px;line-height:1.5;color:var(--text);transition:background .12s}
 .d-item:hover{background:var(--surface)}
-.d-item .d-dot{width:5px;height:5px;border-radius:50%;flex-shrink:0;margin-top:6px}
-.d-item .d-dot.win{background:var(--green)}
-.d-item .d-dot.loss{background:var(--rose)}
-.d-item .d-dot.remain{background:var(--amber)}
-.d-item .d-agent{font-family:'DM Mono',monospace;font-size:9px;font-weight:600;padding:2px 7px;border-radius:4px;flex-shrink:0;margin-top:1px;letter-spacing:.02em}
-.d-item .d-agent.ag-orchestrator{background:rgba(139,92,246,0.1);color:#7c3aed}
-.d-item .d-agent.ag-beacon{background:rgba(245,158,11,0.1);color:#b45309}
-.d-item .d-agent.ag-compass{background:rgba(59,130,246,0.1);color:#2563eb}
-.d-item .d-agent.ag-overwatch{background:rgba(6,182,212,0.1);color:#0891b2}
-.d-item .d-agent.ag-polisher{background:rgba(236,72,153,0.1);color:#db2777}
-.d-item .d-agent.ag-retrospector{background:rgba(34,197,94,0.1);color:#16a34a}
-.d-item .d-agent.ag-integrator{background:rgba(249,115,22,0.1);color:#ea580c}
-.d-item .d-agent.ag-analyst{background:rgba(99,102,241,0.1);color:#6366f1}
-.d-item .d-text{color:var(--text)}
-.d-item .d-text strong{font-weight:700;color:var(--text)}
-.d-item .d-text .metric{font-family:'DM Mono',monospace;font-weight:700;color:var(--green);font-size:11px}
-.d-item .d-text .metric.bad{color:var(--rose)}
-.d-item a{color:var(--purple);text-decoration:none;font-weight:600;margin-left:4px;font-size:11px;padding:1px 6px;border-radius:4px;background:var(--purple-bg);transition:all .12s}
-.d-item a:hover{background:rgba(139,92,246,0.12)}
+.d-dot{width:5px;height:5px;border-radius:50%;flex-shrink:0;margin-top:6px}
+.d-dot.win{background:var(--green)}
+.d-dot.loss{background:var(--rose)}
+.d-dot.remain{background:var(--amber)}
+.d-agent{font-family:'DM Mono',monospace;font-size:9px;font-weight:600;padding:2px 7px;border-radius:4px;flex-shrink:0;margin-top:2px;letter-spacing:.02em;text-align:center;min-width:80px}
+.d-text{color:var(--text)}
+.d-text strong{font-weight:700}
+.d-text .metric{font-family:'DM Mono',monospace;font-weight:700;color:var(--green);font-size:11px}
+.d-text .metric.bad{color:var(--rose)}
+.d-item a.view-link{color:var(--purple);text-decoration:none;font-weight:600;margin-left:4px;font-size:11px;padding:1px 6px;border-radius:4px;background:var(--purple-bg);transition:all .12s}
+.d-item a.view-link:hover{background:rgba(139,92,246,0.12)}
 .loss-item .d-text{color:var(--text2)}
-/* Active remaining items — agent is working on this */
-.d-item.active-remaining{background:rgba(245,158,11,0.04);border-radius:6px}
-.d-dot.pulsing{animation:remainPulse 1.5s ease-in-out infinite}
-@keyframes remainPulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(1.4)}}
-/* Remaining - full width */
-.debrief-full{grid-column:1/-1}
 
-/* Retrospective section */
-.retro-section{background:var(--bg);border:1px solid var(--sep);border-radius:var(--radius);margin-bottom:24px;overflow:hidden}
-.retro-header{padding:16px 20px;display:flex;align-items:center;gap:10px;border-bottom:1px solid var(--sep);cursor:pointer;user-select:none}
+/* Sprint pills */
+.sprint-pill{font-family:'DM Mono',monospace;font-size:9px;font-weight:600;padding:1px 7px;border-radius:100px;flex-shrink:0;margin-top:2px;letter-spacing:.02em;white-space:nowrap}
+.sprint-pill.s1{background:rgba(139,92,246,0.1);color:#7c3aed}
+.sprint-pill.s2{background:rgba(59,130,246,0.1);color:#2563eb}
+.sprint-pill.s3{background:rgba(6,182,212,0.1);color:#0891b2}
+.sprint-pill.s4{background:rgba(34,197,94,0.1);color:#16a34a}
+.sprint-pill.s5{background:rgba(245,158,11,0.1);color:#92400e}
+.sprint-pill.s6{background:rgba(139,92,246,0.1);color:#7c3aed}
+.sprint-pill.s7{background:rgba(6,182,212,0.1);color:#0891b2}
+.sprint-pill.s8{background:rgba(34,197,94,0.1);color:#16a34a}
+.sprint-pill.s9{background:rgba(249,115,22,0.1);color:#ea580c}
+.sprint-pill.s10{background:rgba(139,92,246,0.1);color:#7c3aed}
+
+/* Auto-generated badge */
+.d-auto{font-family:'DM Mono',monospace;font-size:7px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;padding:1px 5px;border-radius:3px;background:var(--surface);color:var(--text3);flex-shrink:0;margin-top:3px;line-height:1.3}
+
+/* Agent badge colors in debrief */
+.d-agent.ag-orchestrator{background:rgba(139,92,246,0.1);color:#7c3aed}
+.d-agent.ag-beacon{background:rgba(245,158,11,0.1);color:#b45309}
+.d-agent.ag-compass{background:rgba(59,130,246,0.1);color:#2563eb}
+.d-agent.ag-overwatch{background:rgba(6,182,212,0.1);color:#0891b2}
+.d-agent.ag-polisher{background:rgba(236,72,153,0.1);color:#db2777}
+.d-agent.ag-retrospector{background:rgba(34,197,94,0.1);color:#16a34a}
+.d-agent.ag-integrator{background:rgba(249,115,22,0.1);color:#ea580c}
+.d-agent.ag-analyst{background:rgba(99,102,241,0.1);color:#6366f1}
+.d-agent.ag-video{background:rgba(220,38,38,0.1);color:#dc2626}
+.d-agent.ag-findings-analyst{background:rgba(147,51,234,0.1);color:#9333ea}
+.d-agent.ag-medic{background:rgba(5,150,105,0.1);color:#059669}
+.d-agent.ag-workflow{background:rgba(249,115,22,0.1);color:#ea580c}
+.d-agent.ag-pipeline{background:rgba(20,184,166,0.1);color:#0891b2}
+.d-agent.ag-morning{background:rgba(249,115,22,0.1);color:#f97316}
+.d-agent.ag-campaign-arch{background:rgba(139,92,246,0.1);color:#8b5cf6}
+.d-agent.ag-skill-creator{background:rgba(99,102,241,0.1);color:#6366f1}
+.d-agent.ag-dashboard{background:rgba(245,158,11,0.1);color:#d97706}
+.d-agent.ag-debrief{background:rgba(34,197,94,0.1);color:#16a34a}
+.d-agent.ag-grading{background:rgba(147,51,234,0.1);color:#9333ea}
+.d-agent.ag-memory{background:rgba(107,114,128,0.1);color:#4b5563}
+.d-agent.ag-lifecycle{background:rgba(6,182,212,0.1);color:#0891b2}
+.d-agent.ag-integration{background:rgba(59,130,246,0.1);color:#2563eb}
+.d-agent.ag-plugin{background:rgba(79,70,229,0.1);color:#4f46e5}
+.d-agent.ag-research{background:rgba(13,148,136,0.1);color:#0d9488}
+.d-agent.ag-default{background:rgba(100,116,139,0.1);color:#475569}
+
+/* Remaining group cards */
+.remaining-group{background:var(--bg);border:1px solid var(--sep);border-radius:var(--radius);overflow:hidden;margin-bottom:8px}
+.remaining-group.rg-must-close{border-left:4px solid var(--rose)}
+.remaining-group.rg-important{border-left:4px solid var(--amber)}
+.remaining-group.rg-can-wait{border-left:4px solid var(--blue)}
+.remaining-group-header{display:flex;align-items:center;gap:10px;padding:12px 16px;cursor:pointer;user-select:none;transition:background .12s}
+.remaining-group-header:hover{background:var(--bg2)}
+.remaining-group-name{font-family:'Plus Jakarta Sans',sans-serif;font-size:13px;font-weight:700;letter-spacing:-0.02em;flex:1}
+.remaining-group-priority{font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;padding:2px 8px;border-radius:100px}
+.remaining-group-priority.must-close{background:rgba(239,68,68,0.14);color:#dc2626;border:1.5px solid rgba(239,68,68,0.25)}
+.remaining-group-priority.important{background:rgba(245,158,11,0.14);color:#92400e;border:1.5px solid rgba(245,158,11,0.25)}
+.remaining-group-priority.can-wait{background:transparent;color:var(--blue);border:1.5px solid rgba(59,130,246,0.3)}
+.remaining-group-count{font-family:'DM Mono',monospace;font-size:10px;color:var(--text3);background:var(--surface);padding:2px 7px;border-radius:100px}
+.remaining-group-chevron{width:18px;height:18px;display:flex;align-items:center;justify-content:center;color:var(--text3);transition:transform .2s ease;flex-shrink:0}
+.remaining-group-chevron.open{transform:rotate(180deg)}
+.remaining-group-body{max-height:0;overflow:hidden;transition:max-height .3s ease}
+.remaining-group-body.open{max-height:800px}
+.remaining-group-list{padding:4px 16px 12px;display:flex;flex-direction:column;gap:2px}
+.remaining-group-list .d-item{padding:5px 8px}
+
+/* Deferred section */
+.deferred-section{background:var(--bg);border:1px solid var(--sep);border-radius:var(--radius);overflow:hidden;margin-bottom:12px;opacity:0.7}
+.deferred-section:hover{opacity:1}
+
+/* ── Timeline Tab ── */
+.timeline-container{display:flex;flex-direction:column;gap:16px}
+.story-link-btn{display:inline-flex;align-items:center;gap:6px;margin-top:20px;padding:12px 24px;background:var(--purple-bg);color:var(--purple);border:1.5px solid rgba(139,92,246,0.2);border-radius:10px;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:600;text-decoration:none;transition:all .15s}
+.story-link-btn:hover{background:rgba(139,92,246,0.12);transform:translateY(-1px)}
+/* ── Campaign Metrics Guide ── */
+.metrics-guide{background:var(--bg);border:1px solid var(--sep);border-radius:var(--radius);padding:0;margin-bottom:24px;overflow:hidden}
+.metrics-guide-header{padding:16px 24px 12px;border-bottom:1px solid var(--sep);display:flex;align-items:center;gap:10px;cursor:pointer;user-select:none;transition:background .12s}
+.metrics-guide-header:hover{background:var(--bg2)}
+.metrics-guide-header h4{font-family:'Plus Jakarta Sans',sans-serif;font-size:14px;font-weight:700;letter-spacing:-0.02em;flex:1}
+.metrics-guide-header .guide-badge{font-family:'DM Mono',monospace;font-size:9px;color:var(--text3);background:var(--surface);padding:2px 8px;border-radius:100px}
+.metrics-guide-chevron{width:20px;height:20px;display:flex;align-items:center;justify-content:center;color:var(--text3);transition:transform .25s ease;flex-shrink:0}
+.metrics-guide-chevron.open{transform:rotate(180deg)}
+.metrics-guide-body{max-height:0;overflow:hidden;transition:max-height .35s ease}
+.metrics-guide-body.open{max-height:2000px}
+.metrics-guide-inner{padding:20px 24px;display:grid;grid-template-columns:1fr 1fr;gap:24px}
+@media(max-width:700px){.metrics-guide-inner{grid-template-columns:1fr}}
+.guide-section{display:flex;flex-direction:column;gap:10px}
+.guide-section-title{font-family:'Plus Jakarta Sans',sans-serif;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text3);padding-bottom:6px;border-bottom:1px solid var(--sep)}
+.guide-row{display:flex;align-items:flex-start;gap:10px;font-size:12px;line-height:1.5;color:var(--text2)}
+.guide-dot{width:12px;height:12px;border-radius:50%;flex-shrink:0;margin-top:2px}
+.guide-grade{display:inline-flex;align-items:center;justify-content:center;width:24px;height:20px;border-radius:5px;font-size:10px;font-weight:800;flex-shrink:0;margin-top:1px}
+.guide-grade.ga{background:var(--green-bg);color:#16a34a}
+.guide-grade.gb{background:var(--blue-bg);color:var(--blue)}
+.guide-grade.gc{background:var(--amber-bg);color:#92400e}
+.guide-grade.gd{background:var(--rose-bg);color:var(--rose)}
+.guide-weight{font-family:'DM Mono',monospace;font-size:10px;color:var(--purple);background:var(--purple-bg);padding:1px 6px;border-radius:4px;white-space:nowrap;flex-shrink:0;margin-top:2px}
+.guide-formula{background:var(--surface);border-radius:8px;padding:12px 16px;font-family:'DM Mono',monospace;font-size:11px;line-height:1.6;color:var(--text2)}
+.guide-formula strong{color:var(--text);font-weight:700}
+.activity-feed{background:var(--bg);border:1px solid var(--sep);border-radius:var(--radius);padding:20px 24px}
+.activity-feed-title{font-family:'Plus Jakarta Sans',sans-serif;font-size:15px;font-weight:700;letter-spacing:-0.02em;margin-bottom:16px}
+.activity-item{display:flex;align-items:flex-start;gap:12px;padding:10px 0;border-bottom:1px solid var(--sep)}
+.activity-item:last-child{border-bottom:none}
+.activity-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;margin-top:4px}
+.activity-text{font-size:12.5px;line-height:1.5;flex:1}
+.activity-time{font-family:'DM Mono',monospace;font-size:10px;color:var(--text3);flex-shrink:0}
+
+/* ── Retro Tab ── */
+.retro-section{background:var(--bg);border:1px solid var(--sep);border-radius:var(--radius);margin-bottom:12px;overflow:hidden}
+.retro-header{padding:14px 20px;display:flex;align-items:center;gap:10px;border-bottom:1px solid var(--sep);cursor:pointer;user-select:none;transition:background .12s}
 .retro-header:hover{background:var(--bg2)}
 .retro-dot{width:8px;height:8px;border-radius:50%;background:var(--green)}
 .retro-title{font-family:'Plus Jakarta Sans',sans-serif;font-size:15px;font-weight:700;letter-spacing:-0.02em}
@@ -223,26 +621,50 @@ header{display:flex;align-items:center;justify-content:space-between;padding:0 c
 .retro-review-btn.mark{background:var(--green);color:#fff}
 .retro-review-btn.mark:hover{background:#16a34a}
 .retro-review-btn.unmark{background:var(--surface);color:var(--text3)}
-.retro-review-btn.unmark:hover{background:var(--surface2)}
 
-/* Scorecard highlight */
-.retro-score{display:inline-flex;align-items:center;gap:4px;font-family:'Plus Jakarta Sans',sans-serif;font-size:20px;font-weight:800;color:var(--purple);letter-spacing:-0.02em}
+/* ── Close-Out Tab ── */
+/* closeout-embed removed — using link button instead */
+.closeout-actions{display:flex;gap:12px;align-items:center;margin-bottom:20px;flex-wrap:wrap}
+.closeout-btn{padding:10px 24px;border-radius:980px;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:600;cursor:pointer;border:none;transition:all .15s}
+.closeout-btn.done{background:var(--green);color:#fff}
+.closeout-btn.done:hover{background:#16a34a}
+.closeout-btn.reopen{background:var(--surface);color:var(--text2);border:1px solid var(--sep)}
+.closeout-btn.reopen:hover{background:var(--surface2)}
+.closeout-status-msg{font-size:13px;color:var(--text3)}
 
-/* Campaign action buttons */
-.camp-action-btn{padding:8px 20px;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:600;cursor:pointer;transition:all .15s;border:none;background:var(--purple);color:#fff}
-.camp-action-btn:hover{background:#7c3aed;transform:scale(1.02)}
-.camp-action-btn.secondary{background:var(--surface);color:var(--text2);border:1px solid var(--sep)}
-.camp-action-btn.secondary:hover{background:var(--surface2)}
+/* ── Section Title Helper ── */
+.section-title{font-family:'Plus Jakarta Sans',sans-serif;font-size:18px;font-weight:700;letter-spacing:-0.03em;margin-bottom:16px;display:flex;align-items:center;gap:8px}
+.section-title .count{font-family:'DM Mono',monospace;font-size:11px;color:var(--text3);background:var(--surface);padding:2px 8px;border-radius:100px}
 
-/* Debrief filter buttons */
-.db-filter{padding:5px 12px;border-radius:6px;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:500;color:var(--text3);background:none;border:none;cursor:pointer;transition:all .12s}
-.db-filter:hover{color:var(--text2)}
-.db-filter.active{background:var(--bg);color:var(--text);box-shadow:0 1px 3px rgba(0,0,0,.06);font-weight:600}
+/* ── Scorecard (retro inline) ── */
+.scorecard{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:12px;margin:20px 0}
+.scorecard-item{background:var(--bg);border:1px solid var(--sep);border-radius:10px;padding:16px;text-align:center}
+.scorecard-value{font-family:'Plus Jakarta Sans',sans-serif;font-size:28px;font-weight:800;letter-spacing:-0.03em}
+.scorecard-label{font-family:'DM Mono',monospace;font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;margin-top:4px}
 
-/* Empty state */
-.empty-state{text-align:center;padding:48px;color:var(--text3);font-size:14px}
-.empty-state strong{display:block;font-size:18px;color:var(--text2);margin-bottom:6px}
+/* ── Responsive ── */
+@media(max-width:900px){
+  .header-nav{position:relative;left:0;transform:none;overflow-x:auto;max-width:60vw;-webkit-overflow-scrolling:touch}
+  .hero-inner{padding:24px 20px 20px}
+  .hero-name{font-size:24px}
+  .hero-stats{flex-wrap:wrap}
+  .hero-stat{min-width:80px;padding:12px 14px}
+  .hero-stat-value{font-size:20px}
+  .agents-grid{grid-template-columns:1fr}
+  .lifecycle-stages{overflow-x:auto}
+  .modal{width:96%;max-height:92vh}
+  .modal-inner{padding:20px 24px}
+  .tabs-bar{overflow-x:auto}
+}
+@media(max-width:600px){
+  .header-nav{max-width:55vw;gap:1px;padding:2px}
+  .nav-link{padding:4px 10px;font-size:12px}
+  .hero-stats{flex-direction:column}
+  .hero-stat{flex-direction:row;gap:8px;align-items:baseline;border-right:none;border-bottom:1px solid var(--sep);padding:10px 16px}
+  .hero-stat:last-child{border-bottom:none}
+}
 </style>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.14.1/dist/gsap.min.js"></script>
 </head>
 <body>
 
@@ -266,28 +688,17 @@ header{display:flex;align-items:center;justify-content:space-between;padding:0 c
 </header>
 
 <div class="shell" id="app">
-  <div class="empty-state">Loading campaigns...</div>
+  <div style="text-align:center;padding:48px;color:var(--text3);font-size:14px">Loading campaigns...</div>
 </div>
 
-<!-- Link Session Modal -->
-<div class="link-modal-bg" id="linkModal">
-  <div class="link-modal">
-    <h3>Link Session</h3>
-    <p>Select an active session from the Dashboard to link to this agent slot.</p>
-    <label>Active Sessions</label>
-    <select id="linkSelect"><option value="">Loading sessions...</option></select>
-    <div class="link-modal-actions">
-      <button onclick="closeLinkModal()">Cancel</button>
-      <button class="primary" onclick="confirmLink()">Link</button>
-    </div>
-  </div>
-</div>
+<!-- Report Card Modal -->
+<div class="modal-bg" id="modalBg" onclick="closeModal()"></div>
 
 <script>
 let campaigns = [];
 let sessions = [];
-let linkSlot = null;
-let linkCampaignId = null;
+let activeTab = 'agents';
+let _lastDataHash = '';
 
 async function load() {
   try {
@@ -295,11 +706,16 @@ async function load() {
       fetch('/api/campaigns'),
       fetch('/api/agents')
     ]);
-    campaigns = await cRes.json();
-    sessions = await sRes.json();
+    const newCampaigns = await cRes.json();
+    const newSessions = await sRes.json();
+    const hash = JSON.stringify(newCampaigns) + newSessions.map(s => s.sessionId + s.state + s.ts).join('');
+    if (hash === _lastDataHash) return;
+    _lastDataHash = hash;
+    campaigns = newCampaigns;
+    sessions = newSessions;
     render();
   } catch (e) {
-    document.getElementById('app').innerHTML = '<div class="empty-state"><strong>Failed to load</strong>' + e.message + '</div>';
+    document.getElementById('app').innerHTML = '<div style="text-align:center;padding:48px;color:var(--text3)"><strong style="display:block;font-size:18px;color:var(--text2);margin-bottom:6px">Failed to load</strong>' + e.message + '</div>';
   }
 }
 
@@ -314,541 +730,1666 @@ function agentCls(name) {
   if (n.includes('polisher')) return 'ag-polisher';
   if (n.includes('retrospect')) return 'ag-retrospector';
   if (n.includes('integrat')) return 'ag-integrator';
+  if (n.includes('findings an')) return 'ag-findings-analyst';
   if (n.includes('analyst')) return 'ag-analyst';
   if (n.includes('video')) return 'ag-video';
+  if (n.includes('workflow')) return 'ag-workflow';
+  if (n.includes('pipeline')) return 'ag-pipeline';
+  if (n.includes('morning')) return 'ag-morning';
   if (n.includes('medic')) return 'ag-medic';
-  if (n.includes('findings an')) return 'ag-findings-analyst';
-  return '';
+  if (n.includes('dashboard')) return 'ag-dashboard';
+  if (n.includes('campaign architect')) return 'ag-campaign-arch';
+  if (n.includes('skill creator')) return 'ag-skill-creator';
+  if (n.includes('debrief')) return 'ag-debrief';
+  if (n.includes('grading')) return 'ag-grading';
+  if (n.includes('memory')) return 'ag-memory';
+  if (n.includes('lifecycle')) return 'ag-lifecycle';
+  if (n.includes('integration')) return 'ag-integration';
+  if (n.includes('clickable') || n.includes('skill')) return 'ag-skill-creator';
+  if (n.includes('splitter')) return 'ag-analyst';
+  if (n.includes('plugin') || n.includes('audit')) return 'ag-plugin';
+  if (n.includes('research')) return 'ag-research';
+  if (n.includes('perf')) return 'ag-dashboard';
+  return 'ag-default';
 }
 
-// Smart formatting: bold text before colons/dashes, highlight metrics
+// Smart text formatting
 function smartFormat(text) {
-  // Bold text before first colon or em-dash
-  text = text.replace(/^([^:—]+)([::—])/, '<strong>$1</strong>$2');
-  // Highlight numbers with units (e.g., 18.5s, 1.4s, 13x, 15 items)
-  text = text.replace(/(\d+\.?\d*)(s|x|ms|%|MB)\b/g, '<span class="metric">$1$2</span>');
-  // Highlight standalone important numbers (like "7 prioritized", "4 new")
-  text = text.replace(/\b(\d+)\s+(new|prioritized|findings|principles?|recommendations?|items?|agents?|pages?|pain points?)/gi, '<span class="metric">$1</span> <strong>$2</strong>');
-  // Highlight down arrows / improvements
-  text = text.replace(/(down to|→)/g, '<span style="color:var(--green);font-weight:600">$1</span>');
-  // Highlight negative outcomes in losses
-  text = text.replace(/(wasted|falsely|missing|couldn.t|disaster|wrong|accidentally)/gi, '<span style="color:var(--rose);font-weight:600">$1</span>');
+  if (text.includes(':') || text.includes('\u2014')) {
+    text = text.replace(/^([^:\u2014]+)([::\u2014])/, '<strong>$1</strong>$2');
+  } else {
+    const words = text.split(' ');
+    if (words.length > 4) {
+      const cut = Math.min(6, words.findIndex((w,i) => i > 2 && (w.includes(',') || w.includes('--'))) || 6);
+      text = '<strong>' + words.slice(0, cut).join(' ') + '</strong> ' + words.slice(cut).join(' ');
+    }
+  }
+  text = text.replace(/(\d+\.?\d*)(s|x|ms|%|MB|GB|KB)\b/g, '<span class="metric">$1$2</span>');
+  text = text.replace(/\b(\d+)\s+(new|prioritized|findings?|principles?|recommendations?|items?|agents?|pages?|pain points?|ranked|broadly|wins|losses|dispatch|quotes?|segments)/gi, '<span class="metric">$1</span> <strong>$2</strong>');
+  text = text.replace(/(wasted|falsely|missing|couldn.t|disaster|wrong|accidentally|burned|stale|failed|broke)/gi, '<span style="color:var(--rose);font-weight:600">$1</span>');
   return text;
 }
 
+// Grade helpers
+function gradeToGPA(grade) {
+  const map = {'A+':4.3,'A':4.0,'A-':3.7,'B+':3.3,'B':3.0,'B-':2.7,'C+':2.3,'C':2.0,'C-':1.7,'D+':1.3,'D':1.0,'D-':0.7,'F':0};
+  return grade in map ? map[grade] : 0;
+}
+
+function gradeClass(grade) {
+  if (!grade) return '';
+  const letter = grade.charAt(0).toUpperCase();
+  if (letter === 'A') return 'grade-a';
+  if (letter === 'B') return 'grade-b';
+  if (letter === 'C') return 'grade-c';
+  return 'grade-d';
+}
+
+function gpaColor(gpa) {
+  if (gpa >= 3.5) return 'stat-green';
+  if (gpa >= 3.0) return 'stat-blue';
+  if (gpa >= 2.5) return 'stat-amber';
+  return 'stat-rose';
+}
+
+// Lifecycle rendering
+const STAGES = ['define','discover','execute','reason','verify','debrief'];
+const STAGE_LABELS = ['Define','Discover','Execute','Reason','Verify','Debrief'];
+
+function renderLifecycleDots(agent, size, liveStage) {
+  const dotSize = size === 'large' ? 14 : 8;
+  const connW = size === 'large' ? 20 : 12;
+  let h = '';
+  STAGES.forEach((stage, i) => {
+    const state = agent.lifecycle ? agent.lifecycle[stage] : 'skipped';
+    const isActiveStage = liveStage && liveStage.idx === i;
+    let cls;
+    if (isActiveStage) {
+      // Active stage: blinking purple dot
+      cls = 'active-stage';
+    } else if (liveStage && i < liveStage.idx && state === 'skipped') {
+      // Stages before the active one that aren't graded yet: show as in-progress
+      cls = 'partial';
+    } else {
+      cls = state === 'passed' ? 'passed' : state === 'partial' ? 'partial' : state === 'failed' ? 'failed' : 'skipped';
+    }
+    const title = isActiveStage ? STAGE_LABELS[i] + ': ACTIVE NOW' : STAGE_LABELS[i] + ': ' + (state || 'skipped');
+    h += '<span class="lc-dot ' + cls + '" style="width:' + dotSize + 'px;height:' + dotSize + 'px" title="' + title + '"></span>';
+    if (i < STAGES.length - 1) h += '<span class="lc-connector" style="width:' + connW + 'px"></span>';
+  });
+  return h;
+}
+
+// ── Live State Lookup ──
+// Cross-reference campaign agent → live dashboard session
+function getAgentLiveState(agent) {
+  if (!agent.sessionId || !sessions || !sessions.length) return null;
+  return sessions.find(s =>
+    s.sessionId === agent.sessionId ||
+    (s.chainedSessions && s.chainedSessions.includes(agent.sessionId))
+  );
+}
+
+// ── Lifecycle Stage Heuristic ──
+// Maps the tool-based state (from hook.js) to a lifecycle stage.
+// Rough but gives immediate visual feedback on campaigns page.
+// Accuracy: ~70%. For 95%, agents need to self-report stages.
+function inferLifecycleStage(live) {
+  if (!live || !live.active) return null;
+  const state = live.state;
+  const detail = (live.detail || '').toLowerCase();
+
+  // Launching state (pre-created by /api/launch)
+  if (state === 'launching') return { stage: 'define', label: 'LAUNCHING', idx: 0 };
+
+  // Reading skills directory → DISCOVER
+  if (state === 'investigating' && (detail.includes('.claude/skills') || detail.includes('ls ')))
+    return { stage: 'discover', label: 'DISCOVER', idx: 1 };
+
+  // Writing/editing code → EXECUTE
+  if (state === 'developing')
+    return { stage: 'execute', label: 'EXECUTE', idx: 2 };
+
+  // Running commands (tests, screenshots, curl) → VERIFY
+  if (state === 'verifying')
+    return { stage: 'verify', label: 'VERIFY', idx: 4 };
+
+  // Planning → DEFINE
+  if (state === 'planning')
+    return { stage: 'define', label: 'DEFINE', idx: 0 };
+
+  // Default: investigating early = DEFINE, thinking = between stages
+  if (state === 'investigating')
+    return { stage: 'define', label: 'DEFINE', idx: 0 };
+
+  if (state === 'thinking')
+    return { stage: 'reason', label: 'REASON', idx: 3 };
+
+  return null;
+}
+
+function renderLiveState(live) {
+  if (!live) return '';
+  const isActive = live.active && !live.done;
+  const isWaiting = live.state === 'waiting' || live.state === 'idle';
+  const isDone = live.done;
+
+  let stateClass, pulseClass, label, emoji;
+  if (isActive && !isWaiting) {
+    stateClass = 'is-active';
+    pulseClass = 'pulse-active';
+    emoji = live.emoji || '⚡';
+    label = live.label || live.state || 'ACTIVE';
+  } else if (isActive && isWaiting) {
+    stateClass = 'is-waiting';
+    pulseClass = 'pulse-waiting';
+    emoji = live.state === 'waiting' ? '🔔' : '⏸️';
+    label = live.state === 'waiting' ? 'NEEDS INPUT' : 'IDLE';
+  } else if (isDone) {
+    stateClass = 'is-done';
+    pulseClass = 'pulse-done';
+    emoji = '✓';
+    label = 'DONE';
+  } else {
+    return '';
+  }
+
+  const detail = live.tool && live.tool !== 'stop' ? live.tool : '';
+  return '<div class="live-state ' + stateClass + '">' +
+    '<span class="live-pulse ' + pulseClass + '"></span>' +
+    '<span>' + emoji + '</span>' +
+    '<span class="live-state-label">' + label + '</span>' +
+    (detail ? '<span class="live-state-detail">' + esc(detail) + '</span>' : '') +
+    '</div>';
+}
+
+// ── Render Agent Card ──
 function renderAgentCard(campaign, agent) {
+  const cls = agentCls(agent.name);
+  // FIX: Always compute grade from score when scoreBreakdown exists — prevents letter/score mismatch
+  const grade = (agent.scoreBreakdown && agent.scoreBreakdown.total) ? scoreToGrade(agent.scoreBreakdown.total) : (agent.grade || '');
+  const gCls = gradeClass(grade);
+
+  // Check for live session state
   const live = getAgentLiveState(agent);
-  const effectiveStatus = live ? 'active' : agent.status;
-  let c = '<div class="agent-card ' + agentCls(agent.name) + '">';
-  c += '<div class="agent-bar ' + esc(effectiveStatus) + '"></div>';
+  const isLive = live && live.active && !live.done;
+  const isWaitingInput = live && live.state === 'waiting';
+
+  // Structured focus
+  let focusHtml = '';
+  if (isLive) {
+    // Show live state instead of static delivered/missed when agent is running
+    focusHtml = renderLiveState(live);
+  } else {
+    if ((agent.delivered && agent.delivered.length) || (agent.missed && agent.missed.length)) {
+      focusHtml += '<div style="display:flex;gap:10px;font-size:11px;margin-bottom:4px">';
+      if (agent.delivered && agent.delivered.length) {
+        focusHtml += '<span style="color:var(--green);font-weight:700">✓ ' + agent.delivered.length + ' delivered</span>';
+      }
+      if (agent.missed && agent.missed.length) {
+        focusHtml += '<span style="color:var(--rose);font-weight:700">✗ ' + agent.missed.length + ' missed</span>';
+      }
+      focusHtml += '</div>';
+    }
+    if (live && live.done) {
+      focusHtml += renderLiveState(live);
+    } else {
+      const closedBy = agent.status === 'completed' ? 'Completed' : agent.status;
+      focusHtml += '<div class="focus-closed">Status: ' + esc(closedBy) + '</div>';
+    }
+  }
+
+  // Skills pills
+  let skillsHtml = '';
+  if (agent.skillsUsed && agent.skillsUsed.length) {
+    agent.skillsUsed.forEach(sk => {
+      skillsHtml += '<span class="skill-pill used">' + esc(sk) + '</span>';
+    });
+  } else {
+    skillsHtml = '<span class="skill-pill none">no skills used</span>';
+  }
+
+  const cardExtraClass = isLive ? ' is-live' : isWaitingInput ? ' is-waiting-input' : '';
+  let c = '<div class="agent-card ' + cls + cardExtraClass + '" onclick="openReportCard(\'' + esc(agent.slot) + '\',\'' + esc(campaign.id) + '\')">';
+  c += '<div class="agent-bar"></div>';
   c += '<div class="agent-inner">';
   c += '<div class="agent-top">';
   c += '<span class="agent-name">' + esc(agent.name) + '</span>';
-  c += '<span class="agent-status-badge ' + esc(effectiveStatus) + '">' + esc(effectiveStatus) + '</span>';
+  if (grade) c += '<span class="agent-grade ' + gCls + '">' + esc(grade) + '</span>';
   c += '</div>';
-  c += '<div class="agent-focus">' + esc(agent.focus) + '</div>';
-  if (live) {
-    c += '<div class="agent-live">';
-    // Status line: the human-readable "what it's doing right now"
-    if (live.statusLine) {
-      c += '<div class="agent-live-row"><span class="agent-live-dot ' + esc(live.state || '') + '" style="margin-top:1px"></span><span class="agent-live-value" style="font-size:12px">' + esc(live.statusLine) + '</span></div>';
-    } else {
-      c += '<div class="agent-live-row"><span class="agent-live-dot ' + esc(live.state || '') + '"></span><span class="agent-live-value"><span class="agent-live-state">' + esc(live.label || live.state || 'unknown') + '</span></span></div>';
-    }
-    if (live.elapsed) c += '<div class="agent-live-row" style="justify-content:flex-end"><span class="agent-live-value" style="font-size:10px;color:var(--text3)">' + esc(live.elapsed) + '</span></div>';
-    c += '</div>';
+  c += '<div class="agent-focus-struct">' + focusHtml + '</div>';
+  const liveStage = isLive ? inferLifecycleStage(live) : null;
+  c += '<div class="lifecycle-bar" title="Define \u2192 Discover \u2192 Execute \u2192 Reason \u2192 Verify \u2192 Debrief">' + renderLifecycleDots(agent, 'small', liveStage) + '</div>';
+  c += '<div class="skills-row">' + skillsHtml + '</div>';
+
+  // Review agent status indicator
+  if (agent.reviewStatus === 'reviewing') {
+    c += '<div style="font-family:\'DM Mono\',monospace;font-size:9px;color:#7c3aed;padding:4px 8px;margin-top:2px;display:flex;align-items:center;gap:4px"><span style="width:6px;height:6px;border-radius:50%;background:#7c3aed;animation:livePulse 1.5s ease-in-out infinite"></span>Review agent analyzing...</div>';
+  } else if (agent.reviewStatus === 'complete') {
+    c += '<div style="font-family:\'DM Mono\',monospace;font-size:9px;color:#16a34a;padding:4px 8px;margin-top:2px">✓ Reviewed</div>';
   }
-  if (agent.sessionId) {
-    c += '<div class="agent-session-id">Session: ' + esc(agent.sessionId.slice(0, 8)) + '...</div>';
-  }
-  if (effectiveStatus === 'pending') {
-    c += '<button class="agent-link-btn" style="background:rgba(139,92,246,0.08);color:var(--purple)" onclick="copyAgentPrompt(\'' + esc(agent.slot) + '\', this)">Copy Prompt</button>';
-  } else if (effectiveStatus === 'active') {
-    c += '<button class="agent-link-btn" onclick="openLinkModal(\'' + esc(campaign.id) + '\',\'' + esc(agent.slot) + '\')">' + (agent.sessionId ? 'Re-link' : 'Link Session') + '</button>';
-  }
+
   c += '</div></div>';
   return c;
 }
 
+// Bold-lead: bold the key part before a delimiter, lighter rest
+// Only split on " — " (em-dash with spaces) or ": " (colon with space), NOT on hyphens in words
+function boldLead(text) {
+  // Split on " — " or " – " (em/en dash with spaces)
+  const dashMatch = text.match(/^(.+?)\s[—–]\s(.+)$/);
+  if (dashMatch) return '<strong>' + dashMatch[1].trim() + '</strong> <span style="color:var(--text2)">— ' + dashMatch[2] + '</span>';
+  // Split on ": " (colon followed by space)
+  const colonIdx = text.indexOf(': ');
+  if (colonIdx > 0 && colonIdx < 40) {
+    return '<strong>' + text.slice(0, colonIdx) + ':</strong> <span style="color:var(--text2)">' + text.slice(colonIdx + 2) + '</span>';
+  }
+  // If has parenthetical, bold before paren
+  const parenMatch = text.match(/^(.+?)(\s*\(.+\))$/);
+  if (parenMatch) return '<strong>' + parenMatch[1] + '</strong><span style="color:var(--text2)">' + parenMatch[2] + '</span>';
+  // Otherwise bold first ~4 words
+  const words = text.split(' ');
+  if (words.length > 4) {
+    return '<strong>' + words.slice(0, 4).join(' ') + '</strong> <span style="color:var(--text2)">' + words.slice(4).join(' ') + '</span>';
+  }
+  return '<strong>' + text + '</strong>';
+}
+
+// ── Score Calculation ──
+function calculateScore(agent) {
+  const lc = agent.lifecycle || {};
+  const delivered = agent.delivered || [];
+  const missed = agent.missed || [];
+  const skills = agent.skillsUsed || [];
+  const sprint = agent.sprint || 1;
+
+  // Use pre-computed breakdown if available
+  if (agent.scoreBreakdown) return agent.scoreBreakdown;
+
+  // Don't compute a score for agents that haven't completed
+  const st = (agent.status || '').toLowerCase();
+  if (st === 'ready' || st === 'active' || st === 'pending') {
+    return { deliverables: 0, execution: 0, lifecycle: 0, skills: 0, total: 0 };
+  }
+  // Also skip if no grade, no deliverables, and all lifecycle stages are pending
+  const allPending = STAGES.every(s => (lc[s] || 'pending') === 'pending');
+  if (!agent.grade && delivered.length === 0 && missed.length === 0 && allPending) {
+    return { deliverables: 0, execution: 0, lifecycle: 0, skills: 0, total: 0 };
+  }
+
+  // Deliverables (40 pts)
+  const total = delivered.length + missed.length;
+  let delScore = total > 0 ? Math.round(40 * delivered.length / total) : 20;
+  const hasUserClose = missed.some(m => /closed.*user|user.*closed/i.test(m));
+  if (hasUserClose) delScore = Math.min(delScore, 15);
+
+  // Execution Quality (25 pts)
+  let execScore = 25;
+  if (hasUserClose) execScore -= 10;
+  if (missed.some(m => /waste|burned|token/i.test(m))) execScore -= 5;
+  if (missed.some(m => /failed|iteration|broke/i.test(m))) execScore -= 5;
+  if (missed.length > delivered.length && delivered.length > 0) execScore -= 3;
+  execScore = Math.max(3, execScore);
+
+  // Lifecycle (20 pts, 4 per stage)
+  const stagePts = { passed: 4, partial: 2, failed: 1, skipped: 0, 'in-progress': 2, pending: 0 };
+  let lcScore = 0;
+  STAGES.forEach(stage => {
+    const state = lc[stage] || 'skipped';
+    let pts = stagePts[state] !== undefined ? stagePts[state] : 0;
+    if (state === 'skipped' && sprint <= 3) pts = 2;
+    lcScore += pts;
+  });
+
+  // Skills (15 pts) — aligned with Discover lifecycle stage
+  const note = agent.skillsNote || '';
+  const discoverState = lc.discover || 'skipped';
+  let skillScore;
+  if (skills.length >= 2) skillScore = 15;
+  else if (skills.length === 1) skillScore = 13;
+  else if (/not expected|not needed|core job/i.test(note)) skillScore = 12;
+  else if (discoverState === 'failed') skillScore = 0;
+  else if (/would have benefited/i.test(note)) skillScore = 5;
+  else if (discoverState === 'skipped' || discoverState === 'pending') skillScore = 3;
+  else skillScore = 5;
+
+  return {
+    deliverables: delScore,
+    execution: execScore,
+    lifecycle: lcScore,
+    skills: skillScore,
+    total: delScore + execScore + lcScore + skillScore
+  };
+}
+
+function scoreToGrade(score) {
+  if (score >= 97) return 'A+';
+  if (score >= 93) return 'A';
+  if (score >= 90) return 'A-';
+  if (score >= 87) return 'B+';
+  if (score >= 83) return 'B';
+  if (score >= 80) return 'B-';
+  if (score >= 77) return 'C+';
+  if (score >= 73) return 'C';
+  if (score >= 70) return 'C-';
+  if (score >= 67) return 'D+';
+  if (score >= 63) return 'D';
+  if (score >= 60) return 'D-';
+  return 'F';
+}
+
+function getLifecycleDetail(agent, stage) {
+  const lc = agent.lifecycle || {};
+  const state = lc[stage] || 'skipped';
+  const skills = agent.skillsUsed || [];
+  const delivered = agent.delivered || [];
+  const missed = agent.missed || [];
+  const note = agent.skillsNote || '';
+
+  switch(stage) {
+    case 'define':
+      if (state === 'passed') return 'Read all specified context files and understood the mission before starting.';
+      if (state === 'partial') return 'Read some context but started execution before fully understanding requirements.';
+      if (state === 'failed') return 'Did not read required context. Started guessing.';
+      return 'Define stage was not tracked for this agent.';
+    case 'discover':
+      if (state === 'passed') return skills.length > 0
+        ? 'Checked available skills and used: ' + skills.join(', ') + '.'
+        : 'Checked available skills. Determined none were needed for this task type.';
+      if (state === 'partial') return note || ('Partially checked for skills. ' + (skills.length ? 'Used ' + skills.join(', ') + ' but missed others.' : 'Did not use relevant skills found.'));
+      if (state === 'failed') return note || ('Failed to discover available skills. ' + (skills.length ? 'Eventually used ' + skills.join(', ') + ' after failures.' : 'No skill usage despite relevance.'));
+      return note || 'Did not check for available skills or tools.';
+    case 'execute':
+      if (state === 'passed') return 'Delivered ' + delivered.length + ' item' + (delivered.length !== 1 ? 's' : '') + '. Clean implementation matching requirements.';
+      if (state === 'partial') return 'Partially executed. ' + delivered.length + ' delivered, ' + missed.length + ' missed.';
+      if (state === 'failed') return 'Execution failed. ' + (missed.length ? 'Key issues: ' + missed.slice(0,2).join('; ') + '.' : 'Multiple failed attempts.');
+      if (state === 'in-progress') return 'Execution is still in progress.';
+      return 'Never reached execution phase.';
+    case 'reason':
+      if (state === 'passed') return 'Reflected on output quality and evaluated against requirements.';
+      if (state === 'partial') return 'Some reflection but gaps in self-evaluation. Did not catch all issues before completion.';
+      if (state === 'failed') return 'Reflected but drew wrong conclusions or shipped despite known issues.';
+      return 'No reflection or reasoning phase observed.';
+    case 'verify':
+      if (state === 'passed') return 'Playwright screenshot taken and critically evaluated. Output confirmed working.';
+      if (state === 'partial') return 'Some verification but missed issues that required follow-up.';
+      if (state === 'failed') return 'Attempted verification but missed obvious issues.';
+      return 'No verification performed. User was first to see output.';
+    case 'debrief':
+      if (state === 'passed') return 'Self-reported delivered/missed/lessons before exit. Report card data is agent-authored.';
+      if (state === 'partial') return 'Partial self-report — some delivered/missed items but no lessons captured.';
+      if (state === 'failed') return 'Did not self-report. Delivered/missed data was manually added by orchestrator.';
+      return 'No debrief performed. Agent exited without self-reporting deliverables or lessons.';
+  }
+  return '';
+}
+
+function getSuggestedSkills(agent) {
+  const focus = (agent.focus || '').toLowerCase();
+  const used = (agent.skillsUsed || []).map(s => s.toLowerCase());
+  const suggestions = [];
+  if (/page|redesign|polish|ui|dashboard|modal|report|overhaul|visual/i.test(focus)) {
+    if (!used.includes('frontend-design')) suggestions.push('frontend-design');
+    if (!used.includes('impeccable-polish')) suggestions.push('impeccable-polish');
+  }
+  if (/overhaul|redesign|design|brainstorm/i.test(focus)) {
+    if (!used.includes('brainstorming')) suggestions.push('brainstorming');
+  }
+  if (/fix|bug|broken/i.test(focus)) {
+    if (!used.includes('systematic-debugging')) suggestions.push('systematic-debugging');
+  }
+  return suggestions;
+}
+
+// ── Report Card Modal ──
+function openReportCard(slot, campaignId) {
+  const camp = campaigns.find(c => c.id === campaignId);
+  if (!camp) return;
+  const agent = camp.agents.find(a => a.slot === slot);
+  if (!agent) return;
+  const cls = agentCls(agent.name);
+  const score = calculateScore(agent);
+  // FIX: Always use computed grade from score — prevents letter/score mismatch
+  const grade = score.total > 0 ? scoreToGrade(score.total) : (agent.grade || 'N/A');
+  const computedGrade = scoreToGrade(score.total);
+  const stageEmojis = ['\uD83C\uDFAF','\uD83D\uDD0D','\u26A1','\uD83E\uDDE0','\u2705','\uD83D\uDCDD'];
+  const stageStatusLabels = { passed:'Passed', partial:'Partial', failed:'Failed', skipped:'Skipped', 'in-progress':'Active', pending:'Pending' };
+  const stagePtsMap = { passed:4, partial:2, failed:1, skipped:0, 'in-progress':2, pending:0 };
+
+  let h = '<div class="modal" onclick="event.stopPropagation()">';
+  h += '<div class="modal-bar ' + cls + '"></div>';
+  h += '<div class="modal-inner">';
+
+  // Grade Header — large letter + info
+  const letterOnly = grade !== 'N/A' ? grade : '?';
+  const gColorCls = grade !== 'N/A' ? (grade.charAt(0).toLowerCase() === 'a' ? 'a' : grade.charAt(0).toLowerCase() === 'b' ? 'b' : grade.charAt(0).toLowerCase() === 'c' ? 'c' : grade.charAt(0).toLowerCase() === 'd' ? 'd' : 'f') : 'na';
+  h += '<div class="rc-grade-header">';
+  h += '<div class="rc-grade-letter grade-' + gColorCls + '">' + esc(letterOnly) + '</div>';
+  h += '<div class="rc-grade-info">';
+  h += '<div class="rc-agent-name ' + cls + ' agent-name">' + esc(agent.name) + '</div>';
+  h += '<div class="rc-grade-subtitle">Sprint ' + (agent.sprint || '?') + ' &middot; ' + esc(grade) + (grade !== 'N/A' ? ' &middot; Score: ' + score.total + '/100' : '') + '</div>';
+  if (agent.gradeReason) h += '<div class="rc-grade-reason">' + esc(agent.gradeReason) + '</div>';
+  h += '</div></div>';
+
+  // Requirements — what this agent was set out to do (from PRD)
+  if (agent.brief || agent.focus) {
+    h += '<div class="rc-collapse" style="margin-bottom:12px">';
+    h += '<div class="rc-collapse-head" onclick="toggleRcCollapse(this)">';
+    h += '<span class="rc-collapse-icon">📋</span>';
+    h += '<span class="rc-collapse-title">Requirements</span>';
+    h += '<span class="rc-collapse-chev"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M3 4.5L6 7.5L9 4.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></span>';
+    h += '</div>';
+    h += '<div class="rc-collapse-body"><div class="rc-collapse-inner" style="padding-top:8px">';
+    h += '<div style="font-size:13px;font-weight:600;color:var(--text);margin-bottom:6px">' + esc(agent.focus) + '</div>';
+    if (agent.brief) {
+      h += '<div id="rc-requirements-' + esc(slot) + '" style="font-size:12px;line-height:1.6;color:var(--text2)">Loading requirements...</div>';
+    }
+    h += '</div></div></div>';
+  }
+
+  // Lifecycle Breakdown — 5 clickable cards + shared dropdown
+  h += '<div class="rc-lifecycle">';
+  STAGES.forEach((stage, i) => {
+    const state = agent.lifecycle ? agent.lifecycle[stage] : 'skipped';
+    const statusCls = state === 'passed' ? 'passed' : state === 'partial' ? 'partial' : state === 'failed' ? 'failed' : 'skipped';
+    const statusLabel = stageStatusLabels[state] || 'Skipped';
+    const detail = getLifecycleDetail(agent, stage);
+    const sprint = agent.sprint || 1;
+    let pts = stagePtsMap[state] !== undefined ? stagePtsMap[state] : 0;
+    if (state === 'skipped' && sprint <= 3) pts = 2;
+
+    h += '<div class="rc-lc-card ' + statusCls + '" data-detail="' + esc(detail) + '" data-emoji="' + stageEmojis[i] + '" data-stage="' + STAGE_LABELS[i] + '" onclick="toggleLcDetail(this)">';
+    h += '<div class="rc-lc-emoji">' + stageEmojis[i] + '</div>';
+    h += '<div class="rc-lc-text"><div class="rc-lc-name">' + STAGE_LABELS[i] + '</div>';
+    h += '<div class="rc-lc-status">' + statusLabel + '</div></div>';
+    h += '</div>';
+  });
+  h += '</div>';
+  // Shared dropdown panel for lifecycle detail
+  h += '<div class="rc-lc-dropdown" id="rc-lc-dropdown"><div class="rc-lc-dropdown-inner"><span class="rc-lc-dropdown-emoji"></span><div><div class="rc-lc-dropdown-stage"></div><div class="rc-lc-dropdown-text"></div></div></div></div>';
+
+  // Score — total shown inline, breakdown is collapsible
+  // Only show score if agent has a grade or has progressed past pending
+  const _lc = agent.lifecycle || {};
+  const allPending = STAGES.every(s => (_lc[s] || 'pending') === 'pending');
+  const hasGradeData = agent.grade || agent.scoreBreakdown || !allPending;
+  const totalColor = score.total >= 85 ? '#16a34a' : score.total >= 73 ? '#2563eb' : score.total >= 60 ? '#92400e' : '#dc2626';
+  const factors = [
+    { label: 'Deliverables', value: score.deliverables, max: 40, fillCls: 'f-del' },
+    { label: 'Execution', value: score.execution, max: 25, fillCls: 'f-exec' },
+    { label: 'Lifecycle', value: score.lifecycle, max: 20, fillCls: 'f-lc' },
+    { label: 'Skills', value: score.skills, max: 15, fillCls: 'f-skill' }
+  ];
+  if (hasGradeData) {
+    h += '<div class="rc-collapse" style="margin-bottom:16px">';
+    h += '<div class="rc-collapse-head" onclick="toggleRcCollapse(this)">';
+    h += '<span class="rc-collapse-icon">📊</span>';
+    h += '<span class="rc-collapse-title">Score Breakdown</span>';
+    h += '<span style="font-family:\'Plus Jakarta Sans\',sans-serif;font-size:15px;font-weight:800;color:' + totalColor + ';margin-left:auto;margin-right:8px">' + score.total + '/100 (' + computedGrade + ')</span>';
+    h += '<span class="rc-collapse-chev"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M3 4.5L6 7.5L9 4.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></span>';
+    h += '</div>';
+    h += '<div class="rc-collapse-body"><div class="rc-collapse-inner" style="padding-top:12px">';
+    factors.forEach(f => {
+      const pct = Math.round((f.value / f.max) * 100);
+      h += '<div class="rc-score-row">';
+      h += '<span class="rc-score-label">' + f.label + '</span>';
+      h += '<div class="rc-score-bar"><div class="rc-score-fill ' + f.fillCls + '" style="width:' + pct + '%"></div></div>';
+      h += '<span class="rc-score-value">' + f.value + '/' + f.max + '</span>';
+      h += '</div>';
+    });
+    h += '</div></div></div>';
+  } else {
+    h += '<div style="background:var(--bg2);border:1px solid var(--sep);border-radius:10px;padding:16px 18px;margin-bottom:16px;text-align:center">';
+    h += '<span style="font-family:\'DM Sans\',sans-serif;font-size:12px;color:var(--text3)">Score available after agent completes</span>';
+    h += '</div>';
+  }
+
+  // ── Summary (open by default) — big picture: top delivered + all missed ──
+  const delivered = agent.delivered || [];
+  const missed = agent.missed || [];
+  const summaryItems = [];
+  delivered.slice(0, 3).forEach(d => summaryItems.push({ type: 'delivered', text: d }));
+  missed.slice(0, 2).forEach(m => summaryItems.push({ type: 'missed', text: m }));
+
+  if (summaryItems.length) {
+    h += '<div class="rc-collapse">';
+    h += '<div class="rc-collapse-head" onclick="toggleRcCollapse(this)">';
+    h += '<span class="rc-collapse-icon">📋</span>';
+    h += '<span class="rc-collapse-title">Summary</span>';
+    h += '<span class="rc-collapse-count">' + delivered.length + ' delivered, ' + missed.length + ' missed</span>';
+    h += '<span class="rc-collapse-chev" style="transform:rotate(180deg)"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M3 4.5L6 7.5L9 4.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></span>';
+    h += '</div>';
+    h += '<div class="rc-collapse-body" data-open="1" style="height:auto"><div class="rc-collapse-inner">';
+    h += '<div class="rc-items" style="padding-top:8px">';
+    summaryItems.forEach(item => {
+      const icon = item.type === 'delivered' ? '\u2713' : '\u2717';
+      const cls = item.type;
+      const pageMatch = item.text.match(/^\/([\w-]+)/);
+      let link = '';
+      if (pageMatch && item.type === 'delivered') link = ' <a href="/' + esc(pageMatch[1]) + '">View</a>';
+      h += '<div class="rc-item ' + cls + '"><span class="rc-item-icon">' + icon + '</span><div>' + boldLead(esc(item.text)) + link + '</div></div>';
+    });
+    if (delivered.length > 3) h += '<div style="font-size:11px;color:var(--text3);padding:4px 0 0 26px">+' + (delivered.length - 3) + ' more delivered</div>';
+    if (missed.length > 2) h += '<div style="font-size:11px;color:var(--text3);padding:2px 0 0 26px">+' + (missed.length - 2) + ' more missed</div>';
+    h += '</div></div></div></div>';
+  }
+
+  // ── Delivered (collapsed by default) ──
+  if (delivered.length) {
+    h += '<div class="rc-collapse">';
+    h += '<div class="rc-collapse-head" onclick="toggleRcCollapse(this)">';
+    h += '<span class="rc-collapse-icon" style="color:var(--green)">\u2713</span>';
+    h += '<span class="rc-collapse-title" style="color:#16a34a">Delivered</span>';
+    h += '<span class="rc-collapse-count">' + delivered.length + '</span>';
+    h += '<span class="rc-collapse-chev"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M3 4.5L6 7.5L9 4.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></span>';
+    h += '</div>';
+    h += '<div class="rc-collapse-body"><div class="rc-collapse-inner">';
+    h += '<div class="rc-items" style="padding-top:8px">';
+    delivered.forEach(d => {
+      const pageMatch = d.match(/^\/([\w-]+)/);
+      let link = '';
+      if (pageMatch) link = ' <a href="/' + esc(pageMatch[1]) + '">View</a>';
+      h += '<div class="rc-item delivered"><span class="rc-item-icon">\u2713</span><div>' + boldLead(esc(d)) + link + '</div></div>';
+    });
+    h += '</div></div></div></div>';
+  }
+
+  // ── Missed (collapsed by default) ──
+  if (missed.length) {
+    h += '<div class="rc-collapse">';
+    h += '<div class="rc-collapse-head" onclick="toggleRcCollapse(this)">';
+    h += '<span class="rc-collapse-icon" style="color:var(--rose)">\u2717</span>';
+    h += '<span class="rc-collapse-title" style="color:#dc2626">Missed</span>';
+    h += '<span class="rc-collapse-count">' + missed.length + '</span>';
+    h += '<span class="rc-collapse-chev"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M3 4.5L6 7.5L9 4.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></span>';
+    h += '</div>';
+    h += '<div class="rc-collapse-body"><div class="rc-collapse-inner">';
+    h += '<div class="rc-items" style="padding-top:8px">';
+    missed.forEach(m => {
+      h += '<div class="rc-item missed"><span class="rc-item-icon">\u2717</span><div>' + boldLead(esc(m)) + '</div></div>';
+    });
+    h += '</div></div></div></div>';
+  }
+
+  // Skills — used + missed (suggested)
+  h += '<div class="rc-section">';
+  h += '<div class="rc-section-label">Skills</div>';
+  h += '<div class="rc-skills-row">';
+  if (agent.skillsUsed && agent.skillsUsed.length) {
+    agent.skillsUsed.forEach(sk => {
+      h += '<span class="skill-pill used" style="font-size:11px;padding:3px 10px">' + esc(sk) + '</span>';
+    });
+  }
+  const suggested = hasGradeData ? getSuggestedSkills(agent) : [];
+  suggested.forEach(sk => {
+    h += '<span class="skill-pill missed-skill" style="font-size:11px;padding:3px 10px">' + esc(sk) + '</span>';
+  });
+  if (!(agent.skillsUsed && agent.skillsUsed.length) && !suggested.length) {
+    h += '<span class="skill-pill none" style="font-size:11px;padding:3px 10px">none</span>';
+  }
+  h += '</div>';
+  if (agent.skillsNote) {
+    h += '<div style="font-size:12px;line-height:1.5;color:var(--text2);font-style:italic;margin-top:4px">' + esc(agent.skillsNote) + '</div>';
+  }
+  h += '</div>';
+
+  // Footer
+  h += '<div class="rc-footer">';
+  h += '<button class="rc-btn" onclick="closeModal()">Close</button>';
+  if (agent.followUpBrief) {
+    h += '<button class="rc-btn secondary" onclick="copyFollowUp(\'' + esc(agent.slot) + '\')">Copy Follow-up</button>';
+  }
+  if (agent.brief) {
+    h += '<button class="rc-btn primary" onclick="copyBrief(\'' + esc(agent.slot) + '\')">Copy Initial Prompt</button>';
+  }
+  h += '</div>';
+
+  h += '</div></div>';
+
+  const bg = document.getElementById('modalBg');
+  bg.innerHTML = h;
+  bg.classList.add('open');
+
+  // Load PRD requirements asynchronously
+  if (agent.brief) {
+    const reqEl = document.getElementById('rc-requirements-' + slot);
+    if (reqEl) {
+      var briefFile = agent.brief.replace(/^coordinated-sprint\//, '');
+      fetch('/api/brief/' + encodeURIComponent(briefFile))
+        .then(function(r) { return r.ok ? r.text() : null; })
+        .then(function(text) {
+          if (!text || !reqEl) return;
+          // Extract mission line and key steps from PRD
+          var lines = text.split('\n');
+          var mission = '';
+          var steps = [];
+          var inExecute = false;
+          for (var i = 0; i < lines.length; i++) {
+            var line = lines[i].trim();
+            if (line.startsWith('## Mission:')) mission = line.replace('## Mission:', '').trim();
+            if (line.startsWith('**Step ') && line.includes(':')) {
+              var stepText = line.replace(/\*\*/g, '').replace(/^Step \d+:\s*/, '');
+              steps.push(stepText);
+            }
+          }
+          var html = '';
+          if (mission) html += '<div style="font-size:13px;font-weight:700;color:var(--purple);margin-bottom:8px">"' + mission + '"</div>';
+          if (steps.length) {
+            html += '<div style="font-size:11px;color:var(--text3);margin-bottom:4px">Key requirements from PRD:</div>';
+            steps.forEach(function(s) {
+              html += '<div style="font-size:12px;color:var(--text2);padding:2px 0;padding-left:12px;border-left:2px solid var(--sep)">' + s + '</div>';
+            });
+          }
+          if (!html) html = '<div style="font-size:12px;color:var(--text3)">PRD loaded — see Copy Initial Prompt for full details</div>';
+          reqEl.innerHTML = html;
+        })
+        .catch(function() { if (reqEl) reqEl.innerHTML = '<span style="color:var(--text3);font-size:11px">Could not load PRD</span>'; });
+    }
+  }
+}
+
+function toggleLcDetail(card) {
+  const dropdown = document.getElementById('rc-lc-dropdown');
+  if (!dropdown) return;
+  const wasExpanded = card.classList.contains('expanded');
+  // Clear all expanded states
+  card.parentElement.querySelectorAll('.rc-lc-card').forEach(c => c.classList.remove('expanded'));
+  if (wasExpanded) {
+    gsap.to(dropdown, { height: 0, marginBottom: 0, duration: 0.3, ease: 'power2.inOut' });
+    return;
+  }
+  // Populate dropdown
+  card.classList.add('expanded');
+  dropdown.querySelector('.rc-lc-dropdown-emoji').textContent = card.dataset.emoji || '';
+  const stageEl = dropdown.querySelector('.rc-lc-dropdown-stage');
+  stageEl.textContent = card.dataset.stage || '';
+  stageEl.style.color = card.classList.contains('passed') ? '#16a34a' : card.classList.contains('partial') ? '#92400e' : card.classList.contains('failed') ? '#dc2626' : 'var(--text3)';
+  dropdown.querySelector('.rc-lc-dropdown-text').textContent = card.dataset.detail || '';
+  // Animate open
+  gsap.to(dropdown, { height: 'auto', marginBottom: 16, duration: 0.35, ease: 'power2.out' });
+}
+
+function toggleRcCollapse(head) {
+  const body = head.nextElementSibling;
+  const chev = head.querySelector('.rc-collapse-chev');
+  if (!body) return;
+  const isOpen = body.dataset.open === '1';
+  if (isOpen) {
+    gsap.to(body, { height: 0, duration: 0.3, ease: 'power2.inOut' });
+    if (chev) gsap.to(chev, { rotation: 0, duration: 0.25, ease: 'power2.inOut' });
+    body.dataset.open = '0';
+  } else {
+    gsap.to(body, { height: 'auto', duration: 0.35, ease: 'power2.out' });
+    if (chev) gsap.to(chev, { rotation: 180, duration: 0.25, ease: 'power2.inOut' });
+    body.dataset.open = '1';
+  }
+}
+
+function closeModal() {
+  document.getElementById('modalBg').classList.remove('open');
+}
+
+// ── Infrastructure Attribution ──
+window._infraItems = [];
+
+function getInfraStaleness(createdBy, currentVersion) {
+  var ver = parseFloat((createdBy.match(/(\d+\.?\d*)/) || [0,0])[1]);
+  var gap = Math.round((currentVersion - ver) * 10);
+  if (gap <= 2) return 'current';
+  if (gap <= 4) return 'review';
+  return 'stale';
+}
+
+async function openInfraModal(idx) {
+  var item = window._infraItems[idx];
+  if (!item) return;
+  var type = item.type;
+  var name = item.name;
+  var content = '';
+
+  if (type === 'skill') {
+    try {
+      var r = await fetch('/api/skill/' + encodeURIComponent(name));
+      var d = await r.json();
+      content = d.content || d.error || 'Skill not found.';
+    } catch(e) {
+      content = 'Failed to load skill: ' + e.message;
+    }
+  } else if (type === 'hook') {
+    var hookPaths = [
+      'C:/Users/ephra/phredomade/.claude/hooks/' + name,
+      'C:/Users/ephra/phredomade/.claude/scripts/' + name,
+      'C:/Users/ephra/phredomade/.claude/agent-hub/' + name
+    ];
+    var found = false;
+    for (var pi = 0; pi < hookPaths.length; pi++) {
+      try {
+        var hr = await fetch('/api/hook-file/' + encodeURIComponent(hookPaths[pi]));
+        var hd = await hr.json();
+        if (hd.content) { content = hd.content; found = true; break; }
+      } catch(e) {}
+    }
+    if (!found) content = 'Hook file not found in standard locations.\n\nSearched:\n' + hookPaths.join('\n');
+    if (item.description) content = '// ' + item.description + '\n\n' + content;
+  } else {
+    content = 'Rules are defined in CLAUDE.md and the orchestrator-rules skill.\n\n' + name;
+  }
+
+  // Build modal — uses same pattern as openReportCard (esc() escapes all user content)
+  var bg = document.getElementById('modalBg');
+  var modal = document.createElement('div');
+  modal.className = 'modal';
+  modal.onclick = function(e) { e.stopPropagation(); };
+
+  var bar = document.createElement('div');
+  bar.className = 'modal-bar';
+  bar.style.background = 'linear-gradient(90deg,#8b5cf6,#6366f1)';
+  modal.appendChild(bar);
+
+  var inner = document.createElement('div');
+  inner.className = 'modal-inner';
+
+  var header = document.createElement('div');
+  header.style.cssText = 'display:flex;align-items:center;gap:12px;margin-bottom:20px;flex-wrap:wrap';
+  var titleEl = document.createElement('div');
+  titleEl.style.cssText = "font-family:'Plus Jakarta Sans',sans-serif;font-size:18px;font-weight:800;letter-spacing:-0.02em";
+  titleEl.textContent = name;
+  header.appendChild(titleEl);
+  var versionPill = document.createElement('span');
+  versionPill.className = 'infra-version';
+  versionPill.textContent = item.createdBy;
+  header.appendChild(versionPill);
+  var staleBadge = document.createElement('span');
+  staleBadge.className = 'infra-stale ' + item.staleness;
+  staleBadge.textContent = item.staleness === 'current' ? 'Current' : item.staleness === 'review' ? 'Review' : 'Stale';
+  header.appendChild(staleBadge);
+  inner.appendChild(header);
+
+  if (item.description) {
+    var descEl = document.createElement('div');
+    descEl.style.cssText = 'font-size:13px;color:var(--text2);margin-bottom:16px';
+    descEl.textContent = item.description;
+    inner.appendChild(descEl);
+  }
+
+  var contentEl = document.createElement('div');
+  contentEl.className = 'infra-modal-content';
+  contentEl.textContent = content;
+  inner.appendChild(contentEl);
+
+  var footer = document.createElement('div');
+  footer.style.cssText = 'padding-top:20px;text-align:right';
+  var closeBtn = document.createElement('button');
+  closeBtn.className = 'rc-btn';
+  closeBtn.textContent = 'Close';
+  closeBtn.onclick = closeModal;
+  footer.appendChild(closeBtn);
+  inner.appendChild(footer);
+
+  modal.appendChild(inner);
+  bg.textContent = '';
+  bg.appendChild(modal);
+  bg.classList.add('open');
+}
+
+function toggleInfraGroup(el) {
+  el.classList.toggle('collapsed');
+  var body = el.nextElementSibling;
+  if (body) body.style.display = el.classList.contains('collapsed') ? 'none' : 'block';
+}
+
+function toggleSprint(header) {
+  const grid = header.nextElementSibling;
+  const chevron = header.querySelector('.phase-chevron');
+  if (grid && grid.classList.contains('agents-grid')) {
+    grid.classList.toggle('sprint-hidden');
+    header.classList.toggle('collapsed');
+    if (chevron) chevron.textContent = grid.classList.contains('sprint-hidden') ? '\u25BE' : '\u25B4';
+    const sprintId = header.getAttribute('data-sprint');
+    if (sprintId) localStorage.setItem('mc-sprint-' + sprintId, grid.classList.contains('sprint-hidden') ? '0' : '1');
+  }
+}
+
+function toggleAllSprints() {
+  const headers = document.querySelectorAll('#tab-agents .phase-header');
+  const grids = document.querySelectorAll('#tab-agents .agents-grid');
+  const btn = document.getElementById('expand-all-btn');
+  const anyHidden = Array.from(grids).some(g => g.classList.contains('sprint-hidden'));
+  headers.forEach(h => {
+    const g = h.nextElementSibling;
+    const chevron = h.querySelector('.phase-chevron');
+    if (anyHidden) {
+      g.classList.remove('sprint-hidden');
+      h.classList.remove('collapsed');
+      if (chevron) chevron.textContent = '\u25B4';
+    } else {
+      g.classList.add('sprint-hidden');
+      h.classList.add('collapsed');
+      if (chevron) chevron.textContent = '\u25BE';
+    }
+  });
+  btn.textContent = anyHidden ? 'Collapse All' : 'Expand All';
+}
+
+async function copyBriefFile(filename, btnSelector, successLabel) {
+  try {
+    const res = await fetch('/api/brief/' + encodeURIComponent(filename));
+    if (!res.ok) throw new Error('File not found');
+    const text = await res.text();
+    await navigator.clipboard.writeText(text);
+    const btn = document.querySelector(btnSelector);
+    if (btn) { const orig = btn.textContent; btn.textContent = 'Copied!'; btn.style.background = 'var(--green)'; btn.style.color = '#fff'; setTimeout(() => { btn.textContent = orig; btn.style.background = ''; btn.style.color = ''; }, 2000); }
+    return true;
+  } catch(e) {
+    showToast('Failed to copy: ' + e.message);
+    return false;
+  }
+}
+
+async function copyBrief(slot) {
+  const camp = campaigns[0];
+  const agent = camp && camp.agents.find(a => a.slot === slot);
+  if (!agent || !agent.brief) return;
+  const filename = agent.brief.replace(/\\/g, '/').split('/').pop();
+  if (await copyBriefFile(filename, '.rc-btn.primary', 'Copy Initial Prompt')) {
+    showToast('Copied initial prompt for ' + agent.name);
+  }
+}
+
+async function copyFollowUp(slot) {
+  const camp = campaigns[0];
+  const agent = camp && camp.agents.find(a => a.slot === slot);
+  if (!agent || !agent.followUpBrief) return;
+  const filename = agent.followUpBrief.replace(/\\/g, '/').split('/').pop();
+  if (await copyBriefFile(filename, '.rc-btn.secondary', 'Copy Follow-up')) {
+    showToast('Copied follow-up prompt for ' + agent.name);
+  }
+}
+
+// ── Metrics Guide toggle ──
+function toggleGuide() {
+  const body = document.getElementById('guide-body');
+  const chev = document.getElementById('guide-chevron');
+  if (body) body.classList.toggle('open');
+  if (chev) chev.classList.toggle('open');
+}
+
+// ── Tab switching ──
+function switchTab(tab) {
+  activeTab = tab;
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.toggle('active', b.dataset.tab === tab));
+  document.querySelectorAll('.tab-content').forEach(t => t.classList.toggle('active', t.id === 'tab-' + tab));
+
+  // Load retro on first open
+  if (tab === 'retro' && campaigns.length) {
+    renderRetro(campaigns[0].id);
+  }
+}
+
+// ── Main Render ──
 function render() {
   const app = document.getElementById('app');
-  if (campaigns.length === 0) {
-    app.innerHTML = '<div class="empty-state"><strong>No campaigns yet</strong>Create a campaign to coordinate multi-agent efforts</div>';
+  if (!campaigns.length) {
+    app.innerHTML = '<div style="text-align:center;padding:48px;color:var(--text3)"><strong style="display:block;font-size:18px;color:var(--text2);margin-bottom:6px">No campaigns yet</strong>Create a campaign to coordinate multi-agent efforts</div>';
     return;
   }
 
-  let h = '';
-  for (const c of campaigns) {
-    // Campaign hero
-    const dateStr = c.created ? new Date(c.created).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }) : '';
-    h += '<div class="campaign-hero">';
-    h += '<div class="campaign-status-row">';
-    h += '<span class="campaign-status ' + esc(c.status) + '">' + esc(c.status) + '</span>';
-    if (dateStr) h += '<span class="campaign-date">Started ' + esc(dateStr) + '</span>';
-    h += '</div>';
-    h += '<div class="campaign-name">' + esc(c.name) + '</div>';
-    h += '<div class="campaign-desc">' + smartFormat(esc(c.description)) + '</div>';
-    // Campaign status actions
-    h += '<div style="display:flex;gap:8px;margin-top:16px">';
-    if (c.status === 'active') {
-      h += '<button class="camp-action-btn" onclick="setCampaignStatus(\'' + esc(c.id) + '\',\'completed\')">Mark Campaign Done</button>';
-      h += '<button class="camp-action-btn secondary" onclick="setCampaignStatus(\'' + esc(c.id) + '\',\'paused\')">Pause</button>';
-    } else if (c.status === 'paused') {
-      h += '<button class="camp-action-btn" onclick="setCampaignStatus(\'' + esc(c.id) + '\',\'active\')">Resume</button>';
-      h += '<button class="camp-action-btn secondary" onclick="setCampaignStatus(\'' + esc(c.id) + '\',\'completed\')">Mark Done</button>';
-    } else if (c.status === 'completed') {
-      h += '<button class="camp-action-btn secondary" onclick="setCampaignStatus(\'' + esc(c.id) + '\',\'active\')">Reopen</button>';
+  const c = campaigns[0]; // Single campaign view
+  const agents = c.agents || [];
+  const db = c.debrief || {};
+  const manualWins = (db.wins || []).map(w => Object.assign({}, w, { auto: false }));
+  const manualLosses = (db.losses || []).map(l => Object.assign({}, l, { auto: false }));
+  const remaining = db.remaining || [];
+  const deferred = db.deferred || [];
+
+  // ── Auto-populate wins/losses from agent grading data ──
+  const autoWins = [];
+  const autoLosses = [];
+  agents.forEach(a => {
+    if (a.delivered && a.delivered.length) {
+      a.delivered.forEach(item => {
+        autoWins.push({ agent: a.name, text: item, sprint: a.sprint, auto: true });
+      });
     }
+    if (a.missed && a.missed.length) {
+      a.missed.forEach(item => {
+        autoLosses.push({ agent: a.name, text: item, sprint: a.sprint, auto: true });
+      });
+    }
+  });
+
+  // Merge: manual first, then auto. Deduplicate (manual wins over auto).
+  function dedup(manual, auto) {
+    const manualTexts = manual.map(m => (m.text || '').toLowerCase());
+    const filtered = auto.filter(a => {
+      const at = (a.text || '').toLowerCase();
+      return !manualTexts.some(mt => mt.includes(at) || at.includes(mt));
+    });
+    const all = manual.concat(filtered);
+    all.sort((a, b) => {
+      const sa = a.sprint || 0, sb = b.sprint || 0;
+      if (sb !== sa) return sb - sa;
+      if (a.auto !== b.auto) return a.auto ? 1 : -1;
+      return 0;
+    });
+    return all;
+  }
+  const wins = dedup(manualWins, autoWins);
+  const losses = dedup(manualLosses, autoLosses);
+
+  // Calculate stats
+  const gradedAgents = agents.filter(a => a.grade);
+  const gpaSum = gradedAgents.reduce((s, a) => s + gradeToGPA(a.grade), 0);
+  const gpa = gradedAgents.length ? (gpaSum / gradedAgents.length).toFixed(2) : 'N/A';
+  const dateStr = c.created ? new Date(c.created + 'T00:00:00').toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }) : '';
+  const sprintCount = [...new Set(agents.map(a => a.sprint).filter(Boolean))].length;
+
+  let h = '';
+
+  // ── HERO ──
+  h += '<div class="hero">';
+  h += '<div class="hero-gradient"></div>';
+  h += '<div class="hero-inner">';
+  h += '<div class="hero-top">';
+  h += '<span class="hero-status ' + esc(c.status) + '">' + esc(c.status) + '</span>';
+  if (dateStr) h += '<span class="hero-date">Started ' + esc(dateStr) + '</span>';
+  h += '</div>';
+  h += '<div class="hero-name">' + esc(c.name) + '</div>';
+  h += '<div class="hero-desc">' + esc(c.description) + '</div>';
+
+  // Stats row
+  h += '<div class="hero-stats">';
+  h += '<div class="hero-stat gpa"><span class="hero-stat-value ' + gpaColor(parseFloat(gpa)) + '">' + gpa + '</span><span class="hero-stat-label">Campaign GPA</span></div>';
+  h += '<div class="hero-stat"><span class="hero-stat-value stat-purple">' + agents.length + '</span><span class="hero-stat-label">Agents</span></div>';
+  h += '<div class="hero-stat"><span class="hero-stat-value stat-green">' + wins.length + '</span><span class="hero-stat-label">Wins</span></div>';
+  h += '<div class="hero-stat"><span class="hero-stat-value stat-rose">' + losses.length + '</span><span class="hero-stat-label">Losses</span></div>';
+  h += '<div class="hero-stat"><span class="hero-stat-value stat-amber">' + remaining.length + '</span><span class="hero-stat-label">Remaining</span></div>';
+  h += '<div class="hero-stat"><span class="hero-stat-value stat-blue">' + sprintCount + '</span><span class="hero-stat-label">Sprints</span></div>';
+  h += '</div>';
+
+  // Data-driven execution plan from campaigns.json
+  const plan = c.executionPlan;
+  if (plan && plan.items) {
+    h += '<div class="hero-exec">';
+    h += '<div class="hero-exec-title">🎯 Execution Plan <span class="hero-exec-version">' + esc(plan.version) + '</span></div>';
+
+    // Group by sprint
+    const sprintGroups = {};
+    plan.items.forEach(item => {
+      const s = item.sprint || 0;
+      if (!sprintGroups[s]) sprintGroups[s] = [];
+      sprintGroups[s].push(item);
+    });
+    const sprintLabels = { 6: 'Sprint 6 — Overhaul', 7: 'Sprint 7 — Systems', 8: 'Sprint 8 — Auto-Dispatch', 9: 'Sprint 9 — Integration', 10: 'Sprint 10 — Polish' };
+
+    Object.keys(sprintGroups).sort((a,b) => a - b).forEach(sprint => {
+      const sLabel = sprintLabels[sprint] ? sprintLabels[sprint].split(' — ')[1] : '';
+      h += '<div class="hero-exec-sprint-header">Sprint ' + sprint + (sLabel ? ' <span style="color:var(--text3);font-weight:600">' + sLabel + '</span>' : '') + '</div>';
+      sprintGroups[sprint].forEach(item => {
+        const statusIcons = { done: '✅', ready: '⬜', 'in-progress': '⚡', blocked: '🔶', deferred: '⏸️' };
+        const rowClass = item.status === 'done' ? ' done' : item.status === 'in-progress' ? ' in-progress' : item.status === 'blocked' ? ' blocked' : '';
+        const nameClass = item.status === 'done' ? ' done-name' : '';
+        const pillClass = item.status === 'done' ? 'done' : item.status === 'in-progress' ? 'in-progress' : item.status === 'blocked' ? 'blocked' : item.status === 'ready' ? 'ready' : 'later';
+        const pillLabel = item.status === 'done' ? 'Done' : item.status === 'in-progress' ? 'Active' : item.status === 'blocked' ? 'Blocked' : item.status === 'ready' ? 'Ready' : 'Deferred';
+        // Find assigned agent
+        const assignedAgent = item.agentSlot ? agents.find(a => a.slot === item.agentSlot) : null;
+        const agentLabel = assignedAgent ? assignedAgent.name : (item.agentSlot ? item.agentSlot : '');
+        const agentIsLive = assignedAgent && assignedAgent.status === 'active';
+
+        h += '<div class="hero-exec-row' + rowClass + '">';
+        h += '<span class="hero-exec-icon">' + (statusIcons[item.status] || '⬜') + '</span>';
+        h += '<span class="hero-exec-priority ' + (item.priority || '').toLowerCase() + '">' + esc(item.priority || '') + '</span>';
+        h += '<span class="hero-exec-name' + nameClass + '">' + esc(item.task) + '</span>';
+        if (agentLabel) h += '<span class="d-agent ' + agentCls(agentLabel) + '">' + esc(agentLabel) + '</span>';
+        h += '<span class="hero-exec-pill ' + pillClass + '">' + pillLabel + '</span>';
+        h += '</div>';
+      });
+    });
+
+    // Summary line
+    const doneCount = plan.items.filter(i => i.status === 'done').length;
+    const totalCount = plan.items.length;
+    const activeCount = plan.items.filter(i => i.status === 'in-progress').length;
+    h += '<div style="padding:8px 16px;font-family:\'DM Mono\',monospace;font-size:10px;color:var(--text3);border-top:1px solid var(--sep)">';
+    h += doneCount + '/' + totalCount + ' complete';
+    if (activeCount > 0) h += ' · ' + activeCount + ' active';
+    h += '</div>';
+    h += '</div>';
+  }
+
+  // Actions
+  h += '<div class="hero-actions">';
+  h += '<a href="/morning-brief" class="hero-btn primary" style="text-decoration:none">🌅 Morning Brief</a>';
+  h += '<a href="/close-out" class="hero-btn secondary" style="text-decoration:none">View Close-Out</a>';
+  h += '<a href="/president" class="hero-btn secondary" style="text-decoration:none">View /president</a>';
+  if (c.status === 'active') {
+    h += '<button class="hero-btn ghost" onclick="setCampaignStatus(\'' + esc(c.id) + '\',\'retro\')">Move to Retro</button>';
+  } else if (c.status === 'retro') {
+    h += '<button class="hero-btn primary" onclick="setCampaignStatus(\'' + esc(c.id) + '\',\'done\')">Mark Done</button>';
+  } else if (c.status === 'done') {
+    h += '<button class="hero-btn ghost" onclick="setCampaignStatus(\'' + esc(c.id) + '\',\'active\')">Reopen</button>';
+  }
+  h += '</div>';
+  h += '</div></div>';
+
+  // ── TABS ──
+  h += '<div class="tabs-bar">';
+  // Separate orchestrator agents from regular agents
+  const orchAgents = agents.filter(a => (a.name || '').toLowerCase().includes('orchestr'));
+  const nonOrchAgents = agents.filter(a => !(a.name || '').toLowerCase().includes('orchestr'));
+
+  ['orchestrator','agents','debrief','timeline','retro','closeout'].forEach(tab => {
+    const labels = {orchestrator:'Orchestrator',agents:'Agents',debrief:'Debrief',timeline:'Timeline',retro:'Retro',closeout:'Close-Out'};
+    const counts = {orchestrator: orchAgents.length, agents:nonOrchAgents.length, debrief:wins.length+losses.length, timeline:'', retro:'', closeout:''};
+    h += '<button class="tab-btn' + (activeTab === tab ? ' active' : '') + '" data-tab="' + tab + '" onclick="switchTab(\'' + tab + '\')">' + labels[tab];
+    if (counts[tab]) h += '<span class="tab-count">' + counts[tab] + '</span>';
+    h += '</button>';
+  });
+  h += '</div>';
+
+  // ══════════════════════════════════════
+  // TAB: ORCHESTRATOR — Command center for the current orchestrator
+  // ══════════════════════════════════════
+  h += '<div class="tab-content' + (activeTab === 'orchestrator' ? ' active' : '') + '" id="tab-orchestrator">';
+
+  // Find the current (latest) orchestrator
+  const sortedOrch = orchAgents.slice().sort((a, b) => {
+    const va = parseFloat((a.name.match(/v?(\d+\.?\d*)/i) || [0,0])[1]);
+    const vb = parseFloat((b.name.match(/v?(\d+\.?\d*)/i) || [0,0])[1]);
+    return vb - va;
+  });
+  const currentOrch = sortedOrch[0];
+  const pastOrch = sortedOrch.slice(1);
+
+  // Current orchestrator hero card
+  if (currentOrch) {
+    const orchLive = getAgentLiveState(currentOrch);
+    const orchIsLive = orchLive && orchLive.active;
+    h += '<div style="background:linear-gradient(135deg,rgba(139,92,246,0.08),rgba(99,102,241,0.04));border:1.5px solid rgba(139,92,246,0.2);border-radius:16px;padding:28px 32px;margin-bottom:24px">';
+    h += '<div style="display:flex;align-items:center;gap:16px;margin-bottom:16px">';
+    h += '<div style="width:48px;height:48px;border-radius:12px;background:linear-gradient(135deg,#8b5cf6,#6366f1);display:flex;align-items:center;justify-content:center;color:#fff;font-family:\'Plus Jakarta Sans\',sans-serif;font-size:20px;font-weight:800">' + (orchIsLive ? '⚡' : '🟣') + '</div>';
+    h += '<div>';
+    h += '<div style="font-family:\'Plus Jakarta Sans\',sans-serif;font-size:20px;font-weight:800;color:#7c3aed;letter-spacing:-0.02em">' + esc(currentOrch.name) + '</div>';
+    h += '<div style="font-size:12px;color:var(--text3)">Sprint ' + (currentOrch.sprint || '?') + ' · ' + (orchIsLive ? '<span style="color:#16a34a;font-weight:600">ACTIVE NOW</span>' : esc(currentOrch.status || 'unknown')) + '</div>';
+    h += '</div>';
+    if (currentOrch.grade) h += '<span class="agent-grade ' + gradeClass(currentOrch.grade) + '" style="margin-left:auto;font-size:16px;padding:6px 14px">' + esc(currentOrch.grade) + '</span>';
     h += '</div>';
 
-    // Objectives
-    if (c.objectives && c.objectives.length > 0) {
-      h += '<div class="section-title" style="margin-top:20px;font-size:13px;color:var(--text3);text-transform:uppercase;letter-spacing:.06em">What we set out to do</div>';
-      h += '<div class="objectives">';
-      c.objectives.forEach(obj => {
-        h += '<div class="obj-item"><span class="obj-check"></span><span>' + smartFormat(esc(obj)) + '</span></div>';
+    // Live state if active
+    if (orchIsLive) {
+      h += renderLiveState(orchLive);
+    }
+
+    // Dispatched agents — children of the current orchestrator
+    const dispatchedAgents = sessions ? sessions.filter(s => s.parentSessionId && sortedOrch.some(o => o.sessionId === s.parentSessionId)) : [];
+    if (dispatchedAgents.length > 0) {
+      h += '<div style="margin-top:16px;padding-top:16px;border-top:1px solid rgba(139,92,246,0.12)">';
+      h += '<div style="font-family:\'Plus Jakarta Sans\',sans-serif;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.04em;color:var(--text3);margin-bottom:10px">Dispatched Agents</div>';
+      dispatchedAgents.forEach(da => {
+        const isActive = da.active && !da.done;
+        const dotColor = isActive ? '#22c55e' : da.done ? '#a1a1aa' : '#f59e0b';
+        const stateLabel = isActive ? (da.label || da.state || 'ACTIVE') : 'DONE';
+        const name = da.dispatchMeta ? da.dispatchMeta.agentName : (da.displayName || da.sessionId.slice(0,8));
+        h += '<div style="display:flex;align-items:center;gap:10px;padding:6px 0;font-size:13px">';
+        h += '<span style="width:8px;height:8px;border-radius:50%;background:' + dotColor + ';flex-shrink:0' + (isActive ? ';animation:livePulse 1.5s ease-in-out infinite' : '') + '"></span>';
+        h += '<span style="font-weight:600;color:var(--text)">' + esc(name) + '</span>';
+        h += '<span style="font-family:\'DM Mono\',monospace;font-size:10px;color:var(--text3);margin-left:auto">' + esc(stateLabel) + '</span>';
+        h += '</div>';
       });
       h += '</div>';
     }
+
+    // Focus
+    if (currentOrch.focus) {
+      h += '<div style="margin-top:12px;font-size:12px;color:var(--text2);line-height:1.6">' + esc(currentOrch.focus) + '</div>';
+    }
     h += '</div>';
-
-    // Agent cards — split by sprint
-    if (c.agents && c.agents.length > 0) {
-      const sprint1 = c.agents.filter(a => !a.sprint || a.sprint === 1);
-      const sprint2 = c.agents.filter(a => a.sprint === 2);
-
-      if (sprint1.length > 0) {
-        h += '<div class="section-title">Initial Push <span class="count">' + sprint1.length + ' agents</span></div>';
-        h += '<div class="agents-grid">';
-        sprint1.forEach(agent => { h += renderAgentCard(c, agent); });
-        h += '</div>';
-      }
-
-      if (sprint2.length > 0) {
-        h += '<div class="section-title" style="margin-top:8px">Follow-Up <span class="count">' + sprint2.length + ' agents</span></div>';
-        h += '<div class="agents-grid">';
-        sprint2.forEach(agent => { h += renderAgentCard(c, agent); });
-        h += '</div>';
-      }
-    }
-
-    // Debrief: Wins, Losses, Remaining
-    const db = c.debrief;
-    if (db && (db.wins || db.losses || db.remaining)) {
-      h += '<div style="display:flex;align-items:center;gap:12px;margin-top:8px">';
-      h += '<div class="section-title" style="margin:0">Campaign Debrief</div>';
-      h += '<div style="display:flex;gap:2px;padding:3px;background:var(--surface);border-radius:8px">';
-      h += '<button class="db-filter' + (debriefFilter === 'all' ? ' active' : '') + '" onclick="setDebriefFilter(\'all\')">All</button>';
-      h += '<button class="db-filter' + (debriefFilter === 1 ? ' active' : '') + '" onclick="setDebriefFilter(1)">Initial Push</button>';
-      h += '<button class="db-filter' + (debriefFilter === 2 ? ' active' : '') + '" onclick="setDebriefFilter(2)">Follow-Up</button>';
-      h += '</div>';
-      // Agent filter pills
-      const allAgentNames = new Set();
-      (db.wins || []).forEach(w => { if (w.agent) allAgentNames.add(w.agent); });
-      (db.remaining || []).forEach(r => { if (r.agent) allAgentNames.add(r.agent); });
-      if (allAgentNames.size > 1) {
-        h += '<div style="display:flex;gap:2px;padding:3px;background:var(--surface);border-radius:8px;margin-left:8px">';
-        h += '<button class="db-filter' + (agentFilter === 'all' ? ' active' : '') + '" onclick="setAgentFilter(\'all\')" style="font-size:11px">All Agents</button>';
-        allAgentNames.forEach(name => {
-          h += '<button class="db-filter ' + agentCls(name) + (agentFilter === name ? ' active' : '') + '" onclick="setAgentFilter(\'' + esc(name) + '\')" style="font-size:11px">' + esc(name) + '</button>';
-        });
-        h += '</div>';
-      }
-      h += '</div>';
-      h += '<div class="debrief">';
-
-      // Wins column
-      const fWins = filterDebrief(db.wins || []);
-      const fLosses = filterDebrief(db.losses || []);
-      if (fWins.length) {
-        h += '<div class="debrief-col">';
-        h += '<div class="debrief-col-header"><span class="col-dot win"></span><span class="col-label">Wins</span><span class="col-count">' + fWins.length + '</span></div>';
-        h += '<div class="debrief-list">';
-        fWins.forEach(w => {
-          h += '<div class="d-item"><span class="d-dot win"></span>';
-          if (w.agent) h += '<span class="d-agent ' + agentCls(w.agent) + '">' + esc(w.agent) + '</span>';
-          h += '<span class="d-text">' + smartFormat(esc(w.text));
-          if (w.link) h += ' <a href="' + esc(w.link) + '">View</a>';
-          h += '</span></div>';
-        });
-        h += '</div></div>';
-      }
-
-      // Losses column
-      if (fLosses.length) {
-        h += '<div class="debrief-col">';
-        h += '<div class="debrief-col-header"><span class="col-dot loss"></span><span class="col-label">Losses</span><span class="col-count">' + fLosses.length + '</span></div>';
-        h += '<div class="debrief-list">';
-        fLosses.forEach(l => {
-          h += '<div class="d-item loss-item"><span class="d-dot loss"></span><span class="d-text">' + smartFormat(esc(l.text)) + '</span></div>';
-        });
-        h += '</div></div>';
-      }
-
-      // Remaining - full width, agent-assigned items first
-      if (db.remaining && db.remaining.length) {
-        const sorted = [...db.remaining].sort((a, b) => (b.agent ? 1 : 0) - (a.agent ? 1 : 0));
-        h += '<div class="debrief-col debrief-full">';
-        h += '<div class="debrief-col-header"><span class="col-dot remain"></span><span class="col-label">Remaining</span><span class="col-count">' + db.remaining.length + '</span></div>';
-        h += '<div class="debrief-list">';
-        sorted.forEach(r => {
-          const hasAgent = r.agent;
-          const pulseClass = hasAgent ? ' active-remaining' : '';
-          h += '<div class="d-item' + pulseClass + '"><span class="d-dot remain' + (hasAgent ? ' pulsing' : '') + '"></span>';
-          if (hasAgent) h += '<span class="d-agent ' + agentCls(r.agent) + '">' + esc(r.agent) + '</span>';
-          h += '<span class="d-text">' + smartFormat(esc(r.text)) + '</span></div>';
-        });
-        h += '</div></div>';
-      }
-
-      h += '</div>';
-    }
-
-    // Retrospective section
-    h += '<div id="retro-' + esc(c.id) + '"></div>';
   }
 
+  // ── Infrastructure Attribution Section ──
+  var infra = c.infrastructure;
+  if (infra) {
+    var orchVersion = currentOrch ? parseFloat((currentOrch.name.match(/v?(\d+\.?\d*)/i) || [0,0])[1]) : 1.8;
+    window._infraItems = [];
+
+    var infraGroups = [
+      { icon: '\uD83D\uDD27', label: 'Skills', items: (infra.skills || []).slice(), type: 'skill' },
+      { icon: '\uD83E\uDE9D', label: 'Hooks', items: (infra.hooks || []).slice(), type: 'hook' },
+      { icon: '\uD83D\uDCCF', label: 'Rules', items: (infra.rules || []).slice(), type: 'rule' }
+    ];
+
+    // Sort: current first, review, stale last
+    var staleOrder = { current: 0, review: 1, stale: 2 };
+    infraGroups.forEach(function(grp) {
+      grp.items.forEach(function(it) { it._staleness = getInfraStaleness(it.createdBy, orchVersion); });
+      grp.items.sort(function(a, b) { return staleOrder[a._staleness] - staleOrder[b._staleness]; });
+    });
+
+    var totalInfra = (infra.skills || []).length + (infra.hooks || []).length + (infra.rules || []).length;
+    var allItems = infraGroups.reduce(function(acc, g) { return acc.concat(g.items); }, []);
+    var currentCount = allItems.filter(function(i) { return i._staleness === 'current'; }).length;
+    var reviewCount = allItems.filter(function(i) { return i._staleness === 'review'; }).length;
+    var staleCount = allItems.filter(function(i) { return i._staleness === 'stale'; }).length;
+
+    h += '<div class="infra-section">';
+    h += '<div class="infra-header">';
+    h += '<span class="infra-header-icon">\uD83C\uDFD7\uFE0F</span>';
+    h += '<span class="infra-header-title">Infrastructure Attribution</span>';
+    h += '<span class="infra-header-count">';
+    h += '<span class="hc-dot" style="background:#16a34a"></span><span style="color:#16a34a">' + currentCount + ' current</span>';
+    h += '<span style="color:var(--text3)">&middot;</span>';
+    h += '<span class="hc-dot" style="background:#d97706"></span><span style="color:#92400e">' + reviewCount + ' review</span>';
+    h += '<span style="color:var(--text3)">&middot;</span>';
+    h += '<span class="hc-dot" style="background:#dc2626"></span><span style="color:#dc2626">' + staleCount + ' stale</span>';
+    h += '</span>';
+    h += '</div>';
+
+    infraGroups.forEach(function(grp) {
+      if (grp.items.length === 0) return;
+      h += '<div class="infra-group">';
+      h += '<div class="infra-group-title collapsed" onclick="toggleInfraGroup(this)">';
+      h += '<span class="infra-chevron">\u25BE</span>';
+      h += ' ' + grp.icon + ' ' + esc(grp.label);
+      h += '<span style="margin-left:auto;font-family:\'DM Mono\',monospace;font-size:10px">' + grp.items.length + '</span>';
+      h += '</div>';
+      h += '<div style="display:none">';
+
+      if (grp.type === 'skill') {
+        // ── Skills: compact chip grid grouped by staleness ──
+        h += '<div class="infra-chip-grid">';
+        var stalenessGroups = ['current', 'review', 'stale'];
+        var stalenessLabels = { current: 'Current', review: 'Review', stale: 'Stale' };
+        stalenessGroups.forEach(function(sKey) {
+          var items = grp.items.filter(function(it) { return it._staleness === sKey; });
+          if (items.length === 0) return;
+          h += '<div class="infra-chip-subgroup">';
+          h += '<div class="infra-chip-subgroup-label"><span class="sg-dot" style="background:' + (sKey === 'current' ? '#16a34a' : sKey === 'review' ? '#d97706' : '#dc2626') + '"></span>' + stalenessLabels[sKey] + ' (' + items.length + ')</div>';
+          items.forEach(function(item) {
+            var idx = window._infraItems.length;
+            window._infraItems.push({ type: 'skill', name: item.name, createdBy: item.createdBy, description: item.description || '', staleness: sKey });
+            h += '<div class="infra-chip" onclick="openInfraModal(' + idx + ')" title="' + esc(item.name) + ' \u2014 ' + esc(item.createdBy) + '" data-staleness-label="' + stalenessLabels[sKey] + '">';
+            h += '<span class="chip-dot ' + sKey + '"></span>';
+            h += '<span class="chip-name">' + esc(item.name) + '</span>';
+            h += '<span class="chip-ver">' + esc(item.createdBy) + '</span>';
+            h += '</div>';
+          });
+          h += '</div>';
+        });
+        h += '</div>';
+      } else if (grp.type === 'hook') {
+        // ── Hooks: compact rows with description inline ──
+        grp.items.forEach(function(item) {
+          var staleness = item._staleness;
+          var stalenessLabel = staleness === 'current' ? 'Current' : staleness === 'review' ? 'Review' : 'Stale';
+          var idx = window._infraItems.length;
+          window._infraItems.push({ type: 'hook', name: item.name, createdBy: item.createdBy, description: item.description || '', staleness: staleness });
+          h += '<div class="infra-row" onclick="openInfraModal(' + idx + ')">';
+          h += '<span class="infra-name">' + esc(item.name);
+          if (item.description) h += ' <span class="infra-desc">\u2014 ' + esc(item.description) + '</span>';
+          h += '</span>';
+          h += '<span class="infra-version">' + esc(item.createdBy) + '</span>';
+          h += '<span class="infra-stale ' + staleness + '">' + stalenessLabel + '</span>';
+          h += '</div>';
+        });
+      } else {
+        // ── Rules: compact rows with source badge ──
+        grp.items.forEach(function(item) {
+          var staleness = item._staleness;
+          var stalenessLabel = staleness === 'current' ? 'Current' : staleness === 'review' ? 'Review' : 'Stale';
+          var idx = window._infraItems.length;
+          var isClaudeMd = item.name.toLowerCase().indexOf('rule') !== -1;
+          window._infraItems.push({ type: 'rule', name: item.name, createdBy: item.createdBy, description: item.description || '', staleness: staleness });
+          h += '<div class="infra-row" onclick="openInfraModal(' + idx + ')">';
+          h += '<span class="infra-name">' + esc(item.name);
+          h += ' <span class="infra-rule-source">' + (isClaudeMd ? 'CLAUDE.md' : 'orchestrator') + '</span>';
+          h += '</span>';
+          h += '<span class="infra-version">' + esc(item.createdBy) + '</span>';
+          h += '<span class="infra-stale ' + staleness + '">' + stalenessLabel + '</span>';
+          h += '</div>';
+        });
+      }
+
+      h += '</div></div>';
+    });
+
+    h += '</div>';
+  }
+
+  // Live execution plan — current sprint from campaigns.json
+  if (c.executionPlan && c.executionPlan.items) {
+    const currentSprint = currentOrch ? currentOrch.sprint : 9;
+    const sprintItems = c.executionPlan.items.filter(i => i.sprint === currentSprint);
+    const otherItems = c.executionPlan.items.filter(i => i.sprint !== currentSprint && i.status !== 'done');
+
+    h += '<div style="background:var(--bg);border:1px solid var(--sep);border-radius:var(--radius);overflow:hidden;margin-bottom:24px">';
+    h += '<div style="display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid var(--sep)">';
+    h += '<div style="font-family:\'Plus Jakarta Sans\',sans-serif;font-size:15px;font-weight:700;letter-spacing:-0.02em">Sprint ' + currentSprint + ' — Active Tasks</div>';
+    const sprintDone = sprintItems.filter(i => i.status === 'done').length;
+    h += '<span style="font-family:\'DM Mono\',monospace;font-size:11px;color:var(--text3)">' + sprintDone + '/' + sprintItems.length + ' done</span>';
+    h += '</div>';
+
+    sprintItems.forEach(item => {
+      const icons = { done: '✅', ready: '⬜', 'in-progress': '⚡', blocked: '🔶' };
+      const assignedAgent = item.agentSlot ? agents.find(a => a.slot === item.agentSlot) : null;
+      const agentName = assignedAgent ? assignedAgent.name : '';
+      const isActive = item.status === 'in-progress';
+      const isDone = item.status === 'done';
+
+      h += '<div style="display:grid;grid-template-columns:28px 1fr auto auto;align-items:center;gap:10px;padding:10px 20px;border-bottom:1px solid rgba(0,0,0,.04);font-size:13px' + (isDone ? ';background:rgba(34,197,94,0.03)' : isActive ? ';background:rgba(59,130,246,0.04)' : '') + '">';
+      h += '<span style="text-align:center">' + (icons[item.status] || '⬜') + '</span>';
+      h += '<div>';
+      h += '<span style="font-weight:600;color:' + (isDone ? '#16a34a' : 'var(--text)') + ';' + (isDone ? 'text-decoration:line-through;opacity:0.6' : '') + '">' + esc(item.task) + '</span>';
+      if (item.note) h += '<div style="font-size:11px;color:var(--text3);margin-top:2px">' + esc(item.note) + '</div>';
+      h += '</div>';
+      if (agentName) {
+        h += '<span class="d-agent ' + agentCls(agentName) + '">' + esc(agentName) + '</span>';
+      }
+      h += '<span class="hero-exec-priority ' + (item.priority || '').toLowerCase() + '">' + esc(item.priority || '') + '</span>';
+      h += '</div>';
+    });
+
+    // Upcoming (other sprints, non-done)
+    if (otherItems.length > 0) {
+      h += '<div style="padding:10px 20px;font-family:\'Plus Jakarta Sans\',sans-serif;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--text3);background:rgba(0,0,0,.02);border-top:1px solid var(--sep)">Upcoming (Sprint ' + (currentSprint + 1) + '+)</div>';
+      otherItems.forEach(item => {
+        h += '<div style="display:grid;grid-template-columns:28px 1fr auto;align-items:center;gap:10px;padding:8px 20px;font-size:12px;color:var(--text3);border-bottom:1px solid rgba(0,0,0,.02)">';
+        h += '<span style="text-align:center">⏳</span>';
+        h += '<span>' + esc(item.task) + '</span>';
+        h += '<span class="hero-exec-priority ' + (item.priority || '').toLowerCase() + '">' + esc(item.priority || '') + '</span>';
+        h += '</div>';
+      });
+    }
+    h += '</div>';
+  }
+
+  // Past orchestrators
+  if (pastOrch.length) {
+    h += '<div style="margin-top:8px">';
+    h += '<div style="font-family:\'Plus Jakarta Sans\',sans-serif;font-size:13px;font-weight:700;color:var(--text3);margin-bottom:12px">Previous Orchestrators</div>';
+    h += '<div class="agents-grid">';
+    pastOrch.forEach(agent => { h += renderAgentCard(c, agent); });
+    h += '</div></div>';
+  }
+
+  h += '</div>';
+
+  // ══════════════════════════════════════
+  // TAB: AGENTS (non-orchestrator agents only)
+  // ══════════════════════════════════════
+  h += '<div class="tab-content' + (activeTab === 'agents' ? ' active' : '') + '" id="tab-agents">';
+
+  // Lifecycle Reference Card
+  h += '<div class="lifecycle-ref">';
+  h += '<div class="lifecycle-ref-title">Agent Lifecycle Pipeline</div>';
+  h += '<div class="lifecycle-ref-sub">All campaign agents are graded on this 6-stage lifecycle</div>';
+  h += '<div class="lifecycle-stages">';
+  const stageDescs = [
+    'Understand the requirement',
+    'Find skills/tools in .claude/',
+    'Do the work, delegate',
+    'Reflect on quality, capture findings',
+    'Playwright screenshot, test, confirm',
+    'Self-report delivered, missed, lessons'
+  ];
+  STAGE_LABELS.forEach((label, i) => {
+    h += '<div class="lifecycle-stage">';
+    h += '<div class="lifecycle-dot-ref">' + (i + 1) + '</div>';
+    h += '<div class="lifecycle-stage-name">' + label + '</div>';
+    h += '<div class="lifecycle-stage-desc">' + stageDescs[i] + '</div>';
+    h += '</div>';
+  });
+  h += '</div></div>';
+
+  // Campaign Metrics Guide (collapsible)
+  h += '<div class="metrics-guide">';
+  h += '<div class="metrics-guide-header" onclick="toggleGuide()">';
+  h += '<h4>Campaign Metrics Guide</h4>';
+  h += '<span class="guide-badge">How agents are graded</span>';
+  h += '<span class="metrics-guide-chevron" id="guide-chevron"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M3 4.5L6 7.5L9 4.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></span>';
+  h += '</div>';
+  h += '<div class="metrics-guide-body" id="guide-body">';
+  h += '<div class="metrics-guide-inner">';
+
+  // LEFT: Lifecycle Stage Colors
+  h += '<div class="guide-section">';
+  h += '<div class="guide-section-title">Lifecycle Stage Status</div>';
+  h += '<div class="guide-row"><span class="guide-dot" style="background:#22c55e"></span><div><strong style="color:#16a34a">Passed</strong> (4 pts) — stage completed successfully</div></div>';
+  h += '<div class="guide-row"><span class="guide-dot" style="background:#22c55e;opacity:.5"></span><div><strong style="color:#16a34a;opacity:.7">Partial</strong> (2 pts) — attempted with gaps</div></div>';
+  h += '<div class="guide-row"><span class="guide-dot" style="background:#f59e0b"></span><div><strong style="color:#92400e">Failed</strong> (1 pt) — attempted but broke down here</div></div>';
+  h += '<div class="guide-row"><span class="guide-dot" style="background:#a1a1aa"></span><div><strong style="color:#71717a">Skipped</strong> (0 pts) — never attempted</div></div>';
+  h += '<div style="margin-top:14px;padding-top:12px;border-top:1px solid var(--sep)">';
+  h += '<div class="guide-section-title" style="margin-bottom:8px">What Each Stage Means</div>';
+  h += '<div class="guide-row" style="gap:8px"><span style="font-size:16px">🎯</span><div><strong>Define</strong> — read requirements, understand the mission</div></div>';
+  h += '<div class="guide-row" style="gap:8px"><span style="font-size:16px">🔍</span><div><strong>Discover</strong> — find skills in <code style="font-size:10px;padding:1px 4px;background:var(--surface);border-radius:3px">.claude/skills/</code></div></div>';
+  h += '<div class="guide-row" style="gap:8px"><span style="font-size:16px">⚡</span><div><strong>Execute</strong> — build the deliverable, delegate to sub-agents</div></div>';
+  h += '<div class="guide-row" style="gap:8px"><span style="font-size:16px">🧠</span><div><strong>Reason</strong> — reflect on quality, capture findings</div></div>';
+  h += '<div class="guide-row" style="gap:8px"><span style="font-size:16px">✅</span><div><strong>Verify</strong> — Playwright screenshot, test, confirm output</div></div>';
+  h += '</div>';
+  h += '</div>';
+
+  // RIGHT: Grading Rubric (data-driven, campaign-001)
+  h += '<div class="guide-section">';
+  h += '<div class="guide-section-title">Grading Rubric</div>';
+  h += '<div class="guide-row"><span class="guide-grade ga">A</span><div><strong style="color:#16a34a">Excellent</strong> — all deliverables met, clean execution, no waste. Score 85+/100.</div></div>';
+  h += '<div class="guide-row"><span class="guide-grade gb">B</span><div><strong style="color:var(--blue)">Good</strong> — deliverables met with minor gaps. Solid lifecycle adherence. Score 67-84.</div></div>';
+  h += '<div class="guide-row"><span class="guide-grade gc">C</span><div><strong style="color:#92400e">Below expectations</strong> — delivered with significant waste or process failures. Score 47-66.</div></div>';
+  h += '<div class="guide-row"><span class="guide-grade gd">D</span><div><strong style="color:var(--rose)">Failed</strong> — user intervention required. Minimal usable output. Score &lt;47.</div></div>';
+
+  // Grade factors (new weights — data-driven from campaign-001 analysis)
+  h += '<div style="margin-top:14px;padding-top:12px;border-top:1px solid var(--sep)">';
+  h += '<div class="guide-section-title" style="margin-bottom:8px">Grade Factors (100 pts)</div>';
+  h += '<div class="guide-row" style="gap:8px"><span class="guide-weight">40%</span><div><strong>Deliverables</strong> — did it build what was asked? Zero misses = full marks.</div></div>';
+  h += '<div class="guide-row" style="gap:8px"><span class="guide-weight">25%</span><div><strong>Execution quality</strong> — clean first try? No wasted iterations or token burn?</div></div>';
+  h += '<div class="guide-row" style="gap:8px"><span class="guide-weight">20%</span><div><strong>Lifecycle</strong> — quality at each of the 5 stages (4 pts each).</div></div>';
+  h += '<div class="guide-row" style="gap:8px"><span class="guide-weight">15%</span><div><strong>Discovery &amp; skills</strong> — checked for skills? Used appropriate ones?</div></div>';
+  h += '</div>';
+  h += '<div style="margin-top:12px;font-size:11px;color:var(--text3)"><strong>GPA</strong> = mean of all grades &nbsp;(A=4, B=3, C=2, D=1). Score visible in report card.</div>';
+
+  h += '</div>';  // guide-section
+  h += '</div>';  // metrics-guide-inner
+  h += '</div>';  // metrics-guide-body
+  h += '</div>';  // metrics-guide
+
+  // Expand All / Collapse All toggle
+  h += '<div style="display:flex;justify-content:flex-end;margin-bottom:12px">';
+  h += '<button onclick="toggleAllSprints()" id="expand-all-btn" style="font-family:\'DM Sans\',sans-serif;font-size:12px;font-weight:600;padding:6px 16px;border-radius:8px;border:1px solid var(--border);background:var(--surface);color:var(--text2);cursor:pointer;transition:all .15s">Expand All</button>';
+  h += '</div>';
+
+  // Agents grouped by sprint (excluding orchestrators — they're in the Orchestrator tab)
+  const phases = [
+    { id: 1, label: 'Initial Push', agents: nonOrchAgents.filter(a => !a.sprint || a.sprint === 1) },
+    { id: 2, label: 'Polish & Analysis', agents: nonOrchAgents.filter(a => a.sprint === 2) },
+    { id: 3, label: 'Deep Dives', agents: nonOrchAgents.filter(a => a.sprint === 3) },
+    { id: 4, label: 'Closing Sprint', agents: nonOrchAgents.filter(a => a.sprint === 4) },
+    { id: 5, label: 'Campaign Close', agents: nonOrchAgents.filter(a => a.sprint === 5) },
+    { id: 6, label: 'Overhaul Sprint', agents: nonOrchAgents.filter(a => a.sprint === 6) },
+    { id: 7, label: 'Workflow & Systems', agents: nonOrchAgents.filter(a => a.sprint === 7) },
+    { id: 8, label: 'Auto-Dispatch Integration', agents: nonOrchAgents.filter(a => a.sprint === 8) },
+    { id: 9, label: 'v1.5 Integration', agents: nonOrchAgents.filter(a => a.sprint === 9) },
+    { id: 10, label: 'Cleanup & Enforcement', agents: nonOrchAgents.filter(a => a.sprint === 10) },
+  ].filter(p => p.agents.length > 0);
+
+  phases.forEach(phase => {
+    const isLatest = phase.id === phases[phases.length - 1].id;
+    // Check localStorage for persisted state, fallback to default (latest=open, rest=collapsed)
+    const stored = localStorage.getItem('mc-sprint-' + phase.id);
+    const isOpen = stored !== null ? stored === '1' : isLatest;
+    const collapsed = isOpen ? '' : ' collapsed';
+    h += '<div class="phase-header' + collapsed + '" data-sprint="' + phase.id + '" onclick="toggleSprint(this)" style="cursor:pointer;user-select:none">';
+    h += '<span class="phase-num p' + phase.id + '">' + phase.id + '</span>';
+    h += '<span class="phase-label">' + phase.label + '</span>';
+    h += '<span class="phase-count">' + phase.agents.length + ' agent' + (phase.agents.length !== 1 ? 's' : '') + '</span>';
+    h += '<span class="phase-chevron">' + (isOpen ? '\u25B4' : '\u25BE') + '</span>';
+    h += '</div>';
+    h += '<div class="agents-grid' + (isOpen ? '' : ' sprint-hidden') + '">';
+    phase.agents.forEach(agent => { h += renderAgentCard(c, agent); });
+    h += '</div>';
+  });
+  h += '</div>';
+
+  // ══════════════════════════════════════
+  // TAB: DEBRIEF
+  // ══════════════════════════════════════
+  h += '<div class="tab-content' + (activeTab === 'debrief' ? ' active' : '') + '" id="tab-debrief">';
+
+  const chevronSvg = '<svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M3 4.5L6 7.5L9 4.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+
+  // Wins
+  if (wins.length) {
+    const wOpen = getCollapseState('db-wins', false);
+    h += '<div class="debrief-section">';
+    h += '<div class="debrief-section-header" onclick="toggleCollapse(\'db-wins\')">';
+    h += '<span class="col-dot" style="background:var(--green)"></span>';
+    h += '<span class="col-label">Wins</span>';
+    h += '<span class="col-count">' + wins.length + '</span>';
+    h += '<span class="section-chevron' + (wOpen ? ' open' : '') + '" id="chev-db-wins">' + chevronSvg + '</span>';
+    h += '</div>';
+    h += '<div class="section-body' + (wOpen ? ' open' : '') + '" id="body-db-wins">';
+    h += '<div class="debrief-list">';
+    wins.forEach(w => {
+      h += '<div class="d-item"><span class="d-dot win"></span>';
+      if (w.agent) h += '<span class="d-agent ' + agentCls(w.agent) + '">' + esc(w.agent) + '</span>';
+      if (w.sprint) h += '<span class="sprint-pill s' + w.sprint + '">S' + w.sprint + '</span>';
+      if (w.auto) h += '<span class="d-auto">auto</span>';
+      h += '<span class="d-text">' + smartFormat(esc(w.text));
+      if (w.link) h += ' <a class="view-link" href="' + esc(w.link) + '">View</a>';
+      h += '</span></div>';
+    });
+    h += '</div></div></div>';
+  }
+
+  // Losses
+  if (losses.length) {
+    const lOpen = getCollapseState('db-losses', false);
+    h += '<div class="debrief-section">';
+    h += '<div class="debrief-section-header" onclick="toggleCollapse(\'db-losses\')">';
+    h += '<span class="col-dot" style="background:var(--rose)"></span>';
+    h += '<span class="col-label">Losses</span>';
+    h += '<span class="col-count">' + losses.length + '</span>';
+    h += '<span class="section-chevron' + (lOpen ? ' open' : '') + '" id="chev-db-losses">' + chevronSvg + '</span>';
+    h += '</div>';
+    h += '<div class="section-body' + (lOpen ? ' open' : '') + '" id="body-db-losses">';
+    h += '<div class="debrief-list">';
+    losses.forEach(l => {
+      h += '<div class="d-item loss-item"><span class="d-dot loss"></span>';
+      if (l.agent) h += '<span class="d-agent ' + agentCls(l.agent) + '">' + esc(l.agent) + '</span>';
+      if (l.sprint) h += '<span class="sprint-pill s' + l.sprint + '">S' + l.sprint + '</span>';
+      if (l.auto) h += '<span class="d-auto">auto</span>';
+      h += '<span class="d-text">' + smartFormat(esc(l.text)) + '</span></div>';
+    });
+    h += '</div></div></div>';
+  }
+
+  // Remaining (grouped, open by default)
+  if (remaining.length) {
+    const rOpen = getCollapseState('db-remaining', true);
+    h += '<div class="debrief-section">';
+    h += '<div class="debrief-section-header" onclick="toggleCollapse(\'db-remaining\')">';
+    h += '<span class="col-dot" style="background:var(--amber)"></span>';
+    h += '<span class="col-label">Remaining</span>';
+    h += '<span class="col-count">' + remaining.length + '</span>';
+    h += '<span class="section-chevron' + (rOpen ? ' open' : '') + '" id="chev-db-remaining">' + chevronSvg + '</span>';
+    h += '</div>';
+    h += '<div class="section-body' + (rOpen ? ' open' : '') + '" id="body-db-remaining">';
+
+    // Group by group field
+    const groups = {};
+    const ungrouped = [];
+    remaining.forEach(r => {
+      if (r.group) {
+        if (!groups[r.group]) groups[r.group] = { items: [], priority: r.priority || 'can-wait' };
+        groups[r.group].items.push(r);
+      } else { ungrouped.push(r); }
+    });
+
+    const groupLabels = {
+      'A-campaigns-overhaul': 'Campaigns Page Overhaul',
+      'B-dashboard': 'Dashboard Upgrades',
+      'C-infrastructure': 'Infrastructure',
+      'D-nav-ux': 'Nav + UX',
+      'E-content': 'Content & Research',
+      'F-analytics': 'Analytics & Meta',
+      'G-calibration': 'Calibration'
+    };
+    const priorityOrder = { 'must-close': 0, 'important': 1, 'can-wait': 2 };
+    const sortedGroupKeys = Object.keys(groups).sort((a, b) => {
+      const aOrd = groups[a].priority in priorityOrder ? priorityOrder[groups[a].priority] : 3;
+      const bOrd = groups[b].priority in priorityOrder ? priorityOrder[groups[b].priority] : 3;
+      return aOrd - bOrd;
+    });
+
+    h += '<div style="padding:10px 14px;display:flex;flex-direction:column;gap:6px">';
+    sortedGroupKeys.forEach(gKey => {
+      const g = groups[gKey];
+      const gId = 'rg-' + gKey.replace(/[^a-zA-Z0-9]/g, '-');
+      const gOpen = getCollapseState(gId, false);
+      const pCls = g.priority === 'must-close' ? 'rg-must-close' : g.priority === 'important' ? 'rg-important' : 'rg-can-wait';
+      const pLabel = g.priority === 'must-close' ? 'Must Close' : g.priority === 'important' ? 'Important' : 'Can Wait';
+      h += '<div class="remaining-group ' + pCls + '">';
+      h += '<div class="remaining-group-header" onclick="toggleCollapse(\'' + gId + '\')">';
+      h += '<span class="remaining-group-name">' + esc(groupLabels[gKey] || gKey) + '</span>';
+      h += '<span class="remaining-group-priority ' + esc(g.priority) + '">' + pLabel + '</span>';
+      h += '<span class="remaining-group-count">' + g.items.length + '</span>';
+      h += '<span class="remaining-group-chevron' + (gOpen ? ' open' : '') + '" id="chev-' + gId + '">' + chevronSvg + '</span>';
+      h += '</div>';
+      h += '<div class="remaining-group-body' + (gOpen ? ' open' : '') + '" id="body-' + gId + '">';
+      h += '<div class="remaining-group-list">';
+      g.items.forEach(r => {
+        h += '<div class="d-item"><span class="d-dot remain"></span>';
+        h += '<span class="d-text">' + smartFormat(esc(r.text)) + '</span></div>';
+      });
+      h += '</div></div></div>';
+    });
+
+    if (ungrouped.length) {
+      h += '<div style="padding:4px 0">';
+      ungrouped.forEach(r => {
+        h += '<div class="d-item"><span class="d-dot remain"></span><span class="d-text">' + smartFormat(esc(r.text)) + '</span></div>';
+      });
+      h += '</div>';
+    }
+    h += '</div></div></div>';
+  }
+
+  // Deferred
+  if (deferred.length) {
+    const dOpen = getCollapseState('db-deferred', false);
+    h += '<div class="deferred-section">';
+    h += '<div class="debrief-section-header" onclick="toggleCollapse(\'db-deferred\')">';
+    h += '<span class="col-dot" style="background:var(--text3)"></span>';
+    h += '<span class="col-label" style="color:var(--text2)">Deferred to Campaign-002</span>';
+    h += '<span class="col-count">' + deferred.length + '</span>';
+    h += '<span class="section-chevron' + (dOpen ? ' open' : '') + '" id="chev-db-deferred">' + chevronSvg + '</span>';
+    h += '</div>';
+    h += '<div class="section-body' + (dOpen ? ' open' : '') + '" id="body-db-deferred">';
+    h += '<div class="debrief-list">';
+    deferred.forEach(d => {
+      const text = typeof d === 'string' ? d : d.text || '';
+      h += '<div class="d-item"><span class="d-dot" style="background:var(--surface2)"></span>';
+      h += '<span class="d-text" style="color:var(--text2)">' + esc(text) + '</span></div>';
+    });
+    h += '</div></div></div>';
+  }
+  h += '</div>';
+
+  // ══════════════════════════════════════
+  // TAB: TIMELINE
+  // ══════════════════════════════════════
+  h += '<div class="tab-content' + (activeTab === 'timeline' ? ' active' : '') + '" id="tab-timeline">';
+
+  // Activity feed
+  h += '<div class="activity-feed" style="margin-bottom:16px">';
+  h += '<div class="activity-feed-title">Agent Activity Timeline</div>';
+  // Build chronological activity from agents
+  const activities = [];
+  agents.forEach(a => {
+    const sprint = a.sprint || 1;
+    const color = agentCls(a.name);
+    activities.push({
+      sprint,
+      text: '<strong style="' + getAgentNameStyle(a.name) + '">' + esc(a.name) + '</strong> ' + (a.delivered && a.delivered.length ? 'delivered ' + a.delivered.length + ' item' + (a.delivered.length > 1 ? 's' : '') : 'completed'),
+      status: a.status,
+      grade: a.grade
+    });
+  });
+  // Sort by sprint
+  activities.sort((a, b) => b.sprint - a.sprint); // Most recent first
+  activities.forEach(act => {
+    const statusEmoji = act.status === 'completed' ? '✅' : '🔄';
+    h += '<div class="activity-item">';
+    h += '<span style="font-size:14px;flex-shrink:0;margin-top:1px">' + statusEmoji + '</span>';
+    h += '<span class="activity-text">' + act.text + (act.grade ? ' <span class="agent-grade ' + gradeClass(act.grade) + '" style="font-size:10px;padding:1px 6px">' + esc(act.grade) + '</span>' : '') + '</span>';
+    h += '<span class="activity-time">Sprint ' + act.sprint + '</span>';
+    h += '</div>';
+  });
+  h += '</div>';
+
+  // Story link (not iframe — avoids inception)
+  h += '<a href="/story" target="_blank" class="story-link-btn">Open Full Campaign Story &rarr;</a>';
+  h += '</div>';
+
+  // ══════════════════════════════════════
+  // TAB: RETRO
+  // ══════════════════════════════════════
+  h += '<div class="tab-content' + (activeTab === 'retro' ? ' active' : '') + '" id="tab-retro">';
+
+  // Inline scorecard for campaign-001
+  h += '<div class="section-title">Campaign Scorecard</div>';
+  h += '<div class="scorecard">';
+  h += '<div class="scorecard-item"><div class="scorecard-value stat-blue">' + gpa + '</div><div class="scorecard-label">Campaign GPA</div></div>';
+  h += '<div class="scorecard-item"><div class="scorecard-value stat-purple">' + agents.length + '</div><div class="scorecard-label">Agents</div></div>';
+  h += '<div class="scorecard-item"><div class="scorecard-value stat-green">' + wins.length + '</div><div class="scorecard-label">Wins</div></div>';
+  h += '<div class="scorecard-item"><div class="scorecard-value stat-rose">' + losses.length + '</div><div class="scorecard-label">Losses</div></div>';
+  const skillUsers = agents.filter(a => a.skillsUsed && a.skillsUsed.length > 0).length;
+  h += '<div class="scorecard-item"><div class="scorecard-value stat-amber">' + skillUsers + '/' + agents.length + '</div><div class="scorecard-label">Used Skills</div></div>';
+  const verifiers = agents.filter(a => a.lifecycle && (a.lifecycle.verify === 'passed' || a.lifecycle.verify === 'partial')).length;
+  h += '<div class="scorecard-item"><div class="scorecard-value stat-purple">' + verifiers + '/' + agents.length + '</div><div class="scorecard-label">Verified</div></div>';
+  h += '</div>';
+
+  // Retro content loads async
+  h += '<div id="retro-content-area"></div>';
+  h += '</div>';
+
+  // ══════════════════════════════════════
+  // TAB: CLOSE-OUT
+  // ══════════════════════════════════════
+  h += '<div class="tab-content' + (activeTab === 'closeout' ? ' active' : '') + '" id="tab-closeout">';
+  h += '<div class="closeout-actions">';
+  if (c.status !== 'done') {
+    h += '<button class="closeout-btn done" onclick="setCampaignStatus(\'' + esc(c.id) + '\',\'done\')">Mark Campaign Done</button>';
+    h += '<span class="closeout-status-msg">This will close campaign-001 and defer remaining items to campaign-002</span>';
+  } else {
+    h += '<button class="closeout-btn reopen" onclick="setCampaignStatus(\'' + esc(c.id) + '\',\'active\')">Reopen Campaign</button>';
+    h += '<span class="closeout-status-msg" style="color:var(--green)">Campaign is closed</span>';
+  }
+  h += '</div>';
+  // Close-out link (not iframe — avoids inception)
+  h += '<a href="/close-out" target="_blank" class="story-link-btn">Open Full Close-Out Page &rarr;</a>';
+  h += '</div>';
+
+  // Render
   const scrollY = window.scrollY;
   app.innerHTML = h;
   window.scrollTo(0, scrollY);
 
-  // Load retrospectives only on first render (not every poll)
-  if (!window._retroLoaded) {
-    window._retroLoaded = true;
-    for (const c of campaigns) {
-      renderRetro(c.id);
-    }
+  // Load retro if tab is active
+  if (activeTab === 'retro') {
+    renderRetro(c.id);
   }
 }
 
-function getAgentLiveState(agent) {
-  if (!agent.sessionId) return null;
-  const s = sessions.find(s => s.sessionId === agent.sessionId || (s.chainedSessions && s.chainedSessions.includes(agent.sessionId)));
-  if (!s || !s.active) return null;
-  const elapsed = s.ts ? formatElapsed(Date.now() - s.ts) : null;
-  return {
-    state: s.state || 'idle',
-    label: s.label || s.state || 'idle',
-    lastTool: s.lastTool || null,
-    lastFile: s.lastFile || null,
-    statusLine: s.statusLine || null,
-    elapsed: elapsed
+// Agent name style helper
+function getAgentNameStyle(name) {
+  const colors = {
+    'orchestr': '#7c3aed', 'beacon': '#d97706', 'compass': '#2563eb', 'overwatch': '#0891b2',
+    'polisher': '#db2777', 'retrospect': '#16a34a', 'integrat': '#ea580c', 'analyst': '#6366f1',
+    'video': '#dc2626', 'workflow': '#ea580c', 'pipeline': '#0891b2', 'morning': '#f97316',
+    'medic': '#059669', 'findings': '#9333ea', 'dashboard': '#d97706'
   };
-}
-
-function formatElapsed(ms) {
-  if (ms < 60000) return Math.round(ms / 1000) + 's ago';
-  if (ms < 3600000) return Math.round(ms / 60000) + 'm ago';
-  return Math.round(ms / 3600000) + 'h ago';
-}
-
-function shortenPath(p) {
-  if (!p) return '';
-  // Show last 3 segments
-  const parts = p.replace(/\\/g, '/').split('/');
-  return parts.length > 3 ? '.../' + parts.slice(-3).join('/') : p;
-}
-
-// Link session modal
-function openLinkModal(campaignId, slot) {
-  linkCampaignId = campaignId;
-  linkSlot = slot;
-  const select = document.getElementById('linkSelect');
-  let opts = '<option value="">-- Select a session --</option>';
-  const alive = sessions.filter(s => s.alive);
-  if (alive.length === 0) {
-    opts = '<option value="">No active sessions found</option>';
-  } else {
-    alive.forEach(s => {
-      const label = s.mission || s.tagline || s.sessionId.slice(0, 8) + '...';
-      const stateLabel = s.label || s.state || 'unknown';
-      opts += '<option value="' + esc(s.sessionId) + '">' + esc(label) + ' (' + esc(stateLabel) + ')</option>';
-    });
+  const n = (name || '').toLowerCase();
+  for (const [key, color] of Object.entries(colors)) {
+    if (n.includes(key)) return 'color:' + color;
   }
-  select.innerHTML = opts;
-  document.getElementById('linkModal').classList.add('open');
+  return '';
 }
 
-function closeLinkModal() {
-  document.getElementById('linkModal').classList.remove('open');
-  linkSlot = null;
-  linkCampaignId = null;
+// ── Collapse state management ──
+function getCollapseState(key, defaultOpen) {
+  const stored = localStorage.getItem('mc-db-section-' + key);
+  if (stored === null) return !!defaultOpen;
+  return stored === '1';
 }
 
-async function confirmLink() {
-  const sid = document.getElementById('linkSelect').value;
-  if (!sid || !linkCampaignId || !linkSlot) return;
-  try {
-    await fetch('/api/campaigns/link', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ campaignId: linkCampaignId, slot: linkSlot, sessionId: sid })
-    });
-    closeLinkModal();
-    await load();
-  } catch (e) {
-    alert('Failed to link: ' + e.message);
-  }
+function toggleCollapse(key) {
+  const body = document.getElementById('body-' + key);
+  const chevron = document.getElementById('chev-' + key);
+  if (!body) return;
+  const isOpen = body.classList.toggle('open');
+  if (chevron) chevron.classList.toggle('open', isOpen);
+  localStorage.setItem('mc-db-section-' + key, isOpen ? '1' : '0');
 }
 
-// Agent prompts for one-click copy from campaign cards
-const agentPrompts = {
-  'polisher': `Hey, this is a follow-up sprint on Mission Control. You're the Polisher agent, working on 2 pages.
-
-Context: we just ran our first coordinated 4-agent campaign on MC. One agent (Compass) drafted a /why page at .claude/agent-hub/why-page.html, live at localhost:3033/why. It needs work.
-
-Your 2 tasks:
-
-1. Polish /why page. The script is decent but visually it needs to pop for screen-sharing. Make it color-friendly, rich, Apple keynote quality. But more importantly, reframe the VALUE PROPOSITION around these truths:
-
-- Target user: someone at a company like Microsoft who has Claude Code access and wants to be more productive with agents. They're not learning agents from scratch, they just can't surface what's happening across sessions.
-- MC is an interface layer on top of CLI. You don't need an IDE. You don't need to look at files. Your job is to create, not to read code. MC gives you command-level visibility without touching the code.
-- The "oh shit" moment: "I can see all my agents, what they're doing, what they learned, and what went wrong, without opening a single file."
-- MC is both a product AND a self-evolving research project. The more you use it, the better it gets. Findings from mistakes become rules that prevent future mistakes. That flywheel is the killer feature.
-- User stories matter. Write for the person thinking "would this make MY life easier?" not for someone evaluating architecture.
-
-2. Create /demo-guide page at .claude/agent-hub/demo-guide.html. Separate from /why. This is internal, for Ephratah to reference before showing MC to someone. Include: what to show first/second/third, talking points per MC page, what's impressive vs rough, pre-demo checklist, how to handle questions. Wire it as a route in server.js at /demo-guide (same pattern as /why).
-
-Read CLAUDE.md at C:\\Users\\ephra\\phredomade\\CLAUDE.md first.
-
-Key files:
-- .claude/agent-hub/why-page.html (existing, improve it)
-- .claude/agent-hub/server.js (add /demo-guide route)
-- .claude/agent-hub/campaigns.json (read debrief for context)
-- .claude/agent-hub/findings.json (read for learning loop narrative)
-
-DON'T touch dispatch-page.html, campaigns-page.html, hook.js, or prompt-hook.js.
-
-Design: Plus Jakarta Sans headings, DM Sans body, DM Mono data. Purple #8b5cf6. Apple-inspired. CLAUDE.md Rule #10: every UI must be human-centered and polished.
-
-Tell me your plan before building.`,
-
-  'findings-analyst': `Hey, you're the Findings Analyst agent. You have access to the richest data source Mission Control has ever had: a full transcript of a 2-hour demo session plus a first-pass analysis.
-
-Your job: deep data-analytics pass. Think like a data scientist, not a summarizer. The Video Analyzer already did a surface-level overview. You go deeper.
-
-Input files (read ALL of these first):
-- C:\\Users\\ephra\\phredomade\\.claude\\agent-hub\\coordinated-sprint\\demo-transcript.txt (80KB full transcript)
-- C:\\Users\\ephra\\phredomade\\.claude\\agent-hub\\coordinated-sprint\\demo-transcript-timestamped.txt (with timestamps)
-- C:\\Users\\ephra\\phredomade\\.claude\\agent-hub\\coordinated-sprint\\video-analysis.md (Video Analyzer's first pass)
-- C:\\Users\\ephra\\phredomade\\.claude\\agent-hub\\coordinated-sprint\\video-quotes.md (extracted quotes)
-- C:\\Users\\ephra\\phredomade\\.claude\\agent-hub\\findings.json (existing findings to cross-reference)
-- C:\\Users\\ephra\\phredomade\\.claude\\agent-hub\\dispatch-home.json (existing tasks to cross-reference)
-
-Your deliverables:
-
-1. Create a beautiful analytics page at .claude/agent-hub/video-findings-page.html. Model it after the /cost page style: clean data cards, KEY METRIC badges, color-coded sections, actionable insights. NOT a wall of text. This should be visually stunning.
-
-Sections for the page:
-- SESSION OVERVIEW: duration, word count, estimated talk time, topic count
-- TOP FINDINGS: things said that should become findings (cross-ref against findings.json, don't duplicate)
-- NEW DISPATCH ITEMS: ideas mentioned that don't have tasks yet (cross-ref against dispatch-home.json)
-- VALUE PROPOSITION GEMS: the strongest articulations of why MC matters, with direct quotes
-- FUTURE VISION: roadmap ideas stated or implied
-- AUDIENCE REACTIONS: where the friend reacted, what landed, what didn't
-- PAIN POINTS: friction mentioned during demo
-- TOPIC FLOW: timeline of what was discussed when (use timestamps)
-
-2. Wire it in server.js as /video-findings route (same pattern as /why and /health).
-
-3. Write new findings to .claude/agent-hub/coordinated-sprint/video-new-findings.json (array of finding objects matching the findings.json schema). Don't write directly to findings.json.
-
-4. Write new dispatch items to .claude/agent-hub/coordinated-sprint/video-new-tasks.json.
-
-Read CLAUDE.md at C:\\Users\\ephra\\phredomade\\CLAUDE.md first. Rule #10 is critical: every UI must be human-centered and polished.
-
-DON'T touch dispatch-page.html, campaigns-page.html, findings.json, dispatch-home.json, hook.js, or prompt-hook.js. Write your NEW data to separate files in coordinated-sprint/.
-
-Design: Plus Jakarta Sans headings, DM Sans body, DM Mono data. Purple #8b5cf6. Apple-inspired. Data cards with badges.
-
-Start by reading the transcript and cross-reference files. Then build.`,
-
-  'medic': `Hey, you're the Medic agent. Build a /health page for Mission Control that shows system integrity at a glance.
-
-This page should be the "is everything working?" dashboard. Model the visual style after the /cost page's data cards: clean sections, KEY METRIC badges, color-coded status, actionable insights. Not a wall of text.
-
-Build these sections:
-
-1. API Health: hit every MC API endpoint and show green/red status with response time. Endpoints: /api/agents, /api/campaigns, /api/dispatch, /api/findings, /api/areas, /api/workstreams, /api/mode, /api/toolbox-context, /api/northstar
-
-2. Data Integrity: count state files, log files, prompt files. Flag orphans (state without log, log without state). Check JSON validity of key files (campaigns.json, dispatch-home.json, dispatch-work.json, findings.json, workstreams.json). Show file sizes.
-
-3. Hook Health: check if hook.js and prompt-hook.js exist and are valid JS. Show last state file modification time (indicates hooks are firing). Count active vs stale vs archived sessions.
-
-4. Regression Detection: curl each MC page route (/, /dispatch, /findings, /campaigns, /workflow, /postmortems, /tools, /logic, /radar, /cost, /why, /prompts) and verify 200 status + check for key content markers (e.g., dispatch page should contain "Dispatch", campaigns should contain "Campaign Debrief"). Flag any page returning errors or missing expected content.
-
-5. Session Stats: active sessions count, total sessions, average session duration, most active session today.
-
-Create the page at .claude/agent-hub/health-page.html. Wire it in server.js as a route at /health (same pattern as /why — add the route near the other page routes).
-
-Read CLAUDE.md at C:\\Users\\ephra\\phredomade\\CLAUDE.md first.
-
-Key files:
-- .claude/agent-hub/server.js (add /health route, study existing API endpoints)
-- .claude/agent-hub/hook.js (understand what hooks write)
-- .claude/agent-hub/states/ (session state files)
-- .claude/agent-hub/logs/ (activity logs)
-- All JSON data files in .claude/agent-hub/
-
-The page should auto-refresh every 30 seconds. Use fetch() to hit the APIs from the browser. For regression detection, add a server-side API endpoint GET /api/health that runs the checks and returns JSON.
-
-DON'T touch dispatch-page.html, campaigns-page.html, findings.json, hook.js, or prompt-hook.js.
-
-Design: Plus Jakarta Sans headings, DM Sans body, DM Mono for data. Apple-inspired, clean cards. Green for healthy, red for broken, amber for warnings. CLAUDE.md Rule #10 applies.
-
-Tell me your plan before building.`,
-
-  'video-analyzer': `Hey, you're the Video Analyzer agent. I have a 2-hour screen recording of me demoing Mission Control to a friend on Discord. This is the richest data source MC has ever had. I need you to process it.
-
-The video is at: C:\\Users\\ephra\\Videos\\NVIDIA\\Desktop\\Desktop 2026.03.07 - 00.20.50.21.mp4
-It's 15GB (NVIDIA recording at full bitrate). You need to extract audio first.
-
-Step 1: Extract audio (don't touch the video directly)
-Run: ffmpeg -i "C:\\Users\\ephra\\Videos\\NVIDIA\\Desktop\\Desktop 2026.03.07 - 00.20.50.21.mp4" -vn -acodec libmp3lame -q:a 4 "C:\\Users\\ephra\\Videos\\demo-session-audio.mp3"
-This will take a few minutes. Wait for it.
-
-Step 2: Transcribe
-Use whisper or any available transcription tool. If whisper isn't installed, check if there's a Python whisper package available, or use the Bash tool to find what's available. Save transcript to: .claude/agent-hub/coordinated-sprint/demo-transcript.txt
-
-Step 3: First-pass analysis
-Read the full transcript and produce a structured analysis document. Model the output after the /cost page's "Prompt Engineering for Cost" style: clean data cards with KEY METRIC badges, INSIGHT badges, section headers, and actionable takeaways. NOT a wall of text.
-
-Structure your analysis as:
-
-OVERVIEW CARD: Session duration, estimated talk time, number of topics covered, key participants
-
-VALUE PROPOSITION GEMS: Direct quotes where Ephratah articulates why MC matters. These are gold. Tag each with context.
-
-FUTURE IDEAS: Things mentioned as "we should do X" or "imagine if Y." Each one becomes a potential dispatch item. Tag as [stated] vs [inferred].
-
-AUDIENCE REACTIONS: Where the friend reacted, asked questions, seemed confused or impressed. This tells us what lands and what doesn't.
-
-PAIN POINTS DISCUSSED: Friction points mentioned during the demo. Cross-reference with existing findings in .claude/agent-hub/findings.json.
-
-STRATEGIC INSIGHTS: High-level observations about MC's direction, identity, and positioning.
-
-KEY QUOTES: The 10-15 most important sentences from the entire recording. These feed into /why and the President's Report.
-
-Write your output to: .claude/agent-hub/coordinated-sprint/video-analysis.md
-Also write raw extracted quotes to: .claude/agent-hub/coordinated-sprint/video-quotes.md
-
-Read CLAUDE.md at C:\\Users\\ephra\\phredomade\\CLAUDE.md first.
-
-IMPORTANT: This will be a long-running task. The ffmpeg extraction alone may take 5+ minutes. The transcription may take longer. Be patient. Don't skip steps.
-
-DON'T touch any MC code files. You're analyzing, not building.
-
-Start with the ffmpeg extraction immediately.`,
-
-  'analyst': `Hey, you're the Analyst agent. I need you to build session analytics for Mission Control Dashboard agent cards.
-
-I interact with agents primarily through voice (Wispr Flow voice-to-text). I want to see metrics on each agent card that tell me things like: how long was I talking, how many prompts did I send, how long was the session, what tools were used most.
-
-Your task: build an Analytics tab on Dashboard agent cards with these metrics:
-
-1. Estimated talk time: prompt word count / 150 wpm (since I use voice-to-text)
-2. Total prompts sent + average prompt length
-3. Session duration (first prompt to last activity)
-4. Tool call breakdown (Read, Write, Edit, Bash, Agent, etc.)
-5. A mini summary line like: "45 min session, ~20 min talking, 47 prompts, 89 tool calls"
-
-Data sources (all already exist):
-- Prompt files: .claude/agent-hub/prompts/{sessionId}.ndjson (hook-captured prompts)
-- Transcript files: C:\\Users\\ephra\\.claude\\projects\\C--Users-ephra-phredomade\\{sessionId}.jsonl
-- State files: .claude/agent-hub/states/{sessionId}.json (timestamps, tool counts)
-- Activity logs: .claude/agent-hub/logs/{sessionId}.ndjson (timestamped tool events)
-
-Read CLAUDE.md at C:\\Users\\ephra\\phredomade\\CLAUDE.md first.
-
-Implementation:
-- Add GET /api/analytics/:sessionId endpoint to server.js that computes these metrics
-- Add an "Analytics" tab to the Dashboard agent card detail view (HTML is embedded in server.js, search for "Summary" and "Prompts" tabs)
-- Keep it lightweight: compute on demand, cache briefly
-- Design: clean numbers, maybe a small bar chart for tool breakdown. DM Mono for numbers. Color the talk time estimate in green.
-
-DON'T touch dispatch-page.html, campaigns-page.html, findings.json, hook.js, or prompt-hook.js.
-
-Tell me your plan before building.`,
-
-  'integrator': `Hey, you're the Integrator agent. I need you to add a Retrospective tab to the Dashboard agent cards in Mission Control.
-
-Context: we built an /end-session command (in .claude/commands/end-session.md) that writes structured retrospectives to .claude/agent-hub/retrospectives/{sessionId}.json. But the Dashboard doesn't show them yet. When an agent closes and has a retrospective, I want to see it.
-
-Your task:
-
-1. Add a "Retrospective" tab next to Summary/Prompts/Timeline on Dashboard agent cards. It should show the retrospective data if it exists: accomplishments, decisions, unfinished work, insights.
-
-2. The tab should only appear if a retrospective file exists for that session. If no retrospective, don't show the tab.
-
-3. Make it visually clean. Accomplishments in green, unfinished in amber, insights in blue. Keep it scannable, not a wall of text.
-
-4. Add an API endpoint GET /api/retrospectives/:sessionId that reads from the retrospectives directory.
-
-Read CLAUDE.md at C:\\Users\\ephra\\phredomade\\CLAUDE.md first.
-
-Key files:
-- .claude/agent-hub/server.js (Dashboard HTML is embedded here, search for "Summary" and "Prompts" tabs. Also add the API endpoint)
-- .claude/agent-hub/retrospectives/ (where /end-session writes JSON files)
-- .claude/commands/end-session.md (understand what data gets written)
-
-DON'T touch dispatch-page.html, campaigns-page.html, findings.json, hook.js, or prompt-hook.js.
-
-The Dashboard HTML is embedded in server.js, not a separate file. Search for the tab rendering code.
-
-Tell me your plan before building.`,
-
-  'retrospector': `Hey, I need you to write the campaign retrospective for the MC Evolution Sprint. You're the Retrospector agent. This is critically important.
-
-Context: we just ran our first ever coordinated 4-agent campaign on Mission Control. 4 agents (Orchestrator, Beacon, Compass, Overwatch) worked simultaneously. A lot went right, a lot went wrong, and we learned a ton. I need you to distill this into broadly applicable lessons.
-
-Your task: produce a retrospective that answers:
-1. What patterns made this campaign succeed? (What should we ALWAYS do in future campaigns?)
-2. What patterns caused failures? (What should we NEVER do again?)
-3. What was the single biggest insight from this entire sprint?
-4. How should the orchestrator role work differently next time?
-5. What should the campaign Setup phase look like to prevent missed items?
-6. Rate this campaign: was it worth running 4 agents simultaneously?
-
-Read these files to understand what happened:
-- C:\\Users\\ephra\\phredomade\\.claude\\agent-hub\\campaigns.json (wins, losses, remaining)
-- C:\\Users\\ephra\\phredomade\\.claude\\agent-hub\\findings.json (all findings, especially f023-f032)
-- C:\\Users\\ephra\\phredomade\\.claude\\agent-hub\\coordinated-sprint\\agent-b-output.md (Compass analysis)
-- C:\\Users\\ephra\\phredomade\\.claude\\agent-hub\\coordinated-sprint\\agent-c-output.md (Overwatch analysis)
-- C:\\Users\\ephra\\phredomade\\CLAUDE.md (behavioral rules)
-
-Your retrospective must be BROADLY APPLICABLE. Not "we should have wired the /why page" but "orchestrators must audit all agent output files for accessibility after a sprint." Think principles, not incidents.
-
-Write your output to: .claude/agent-hub/coordinated-sprint/retrospective.md
-
-DON'T modify any existing MC code or data files. You're analyzing and writing.
-
-Start by reading everything, then produce the retrospective.`
-};
-
-async function copyAgentPrompt(slot, btn) {
-  const prompt = agentPrompts[slot];
-  if (!prompt) { btn.textContent = 'No prompt'; return; }
-  try {
-    await navigator.clipboard.writeText(prompt);
-    btn.textContent = 'Copied!';
-    btn.style.background = 'rgba(34,197,94,0.12)';
-    btn.style.color = '#16a34a';
-    showToast('Copied ' + slot + ' prompt');
-    setTimeout(() => { btn.textContent = 'Copy Prompt'; btn.style.background = ''; btn.style.color = ''; }, 2000);
-  } catch(e) {
-    btn.textContent = 'Failed';
-  }
-}
-
-function showToast(msg) {
-  let t = document.getElementById('cToast');
-  if (!t) { t = document.createElement('div'); t.id = 'cToast'; t.style.cssText = 'position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);background:#1a1a1a;color:#fff;padding:10px 24px;border-radius:10px;font-size:13px;font-weight:600;opacity:0;transition:all .25s ease;pointer-events:none;z-index:100'; document.body.appendChild(t); }
-  t.textContent = msg;
-  t.style.opacity = '1'; t.style.transform = 'translateX(-50%) translateY(0)';
-  setTimeout(() => { t.style.opacity = '0'; t.style.transform = 'translateX(-50%) translateY(80px)'; }, 2000);
-}
-
-// ── Campaign status changes ──
+// ── Campaign status ──
 async function setCampaignStatus(campaignId, status) {
   try {
     await fetch('/api/campaigns/status', {
@@ -856,13 +2397,13 @@ async function setCampaignStatus(campaignId, status) {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ campaignId, status })
     });
-    window._retroLoaded = false; // allow retro re-render
+    _lastDataHash = ''; // Force re-render
     await load();
     showToast('Campaign ' + status);
   } catch(e) { showToast('Failed: ' + e.message); }
 }
 
-// ── Load and render retrospective ──
+// ── Retrospective ──
 let retroCache = {};
 async function loadRetro(campaignId) {
   if (retroCache[campaignId]) return retroCache[campaignId];
@@ -897,7 +2438,7 @@ function parseMarkdownBasic(md) {
       return '<tr>' + cells.map(c => '<' + tag + '>' + c.trim() + '</' + tag + '>').join('') + '</tr>';
     })
     .replace(/(<tr>.*<\/tr>\s*)+/g, '<table>$&</table>');
-  // Color-code agent names in text
+  // Color-code agent names
   html = html.replace(/\b(Orchestrator)\b/g, '<span style="color:#7c3aed;font-weight:600">$1</span>');
   html = html.replace(/\b(Beacon)\b/g, '<span style="color:#d97706;font-weight:600">$1</span>');
   html = html.replace(/\b(Compass)\b/g, '<span style="color:#2563eb;font-weight:600">$1</span>');
@@ -905,12 +2446,10 @@ function parseMarkdownBasic(md) {
   html = html.replace(/\b(Polisher)\b/g, '<span style="color:#db2777;font-weight:600">$1</span>');
   html = html.replace(/\b(Retrospector)\b/g, '<span style="color:#16a34a;font-weight:600">$1</span>');
   html = html.replace(/\b(Integrator)\b/g, '<span style="color:#ea580c;font-weight:600">$1</span>');
-  // Highlight scores
   html = html.replace(/(\d+)\/10/g, '<span style="font-family:\'Plus Jakarta Sans\',sans-serif;font-weight:800;color:var(--purple)">$1/10</span>');
   return html;
 }
 
-// Split retrospective into named sections
 function splitRetroSections(md) {
   const sections = [];
   const lines = md.split('\n');
@@ -937,28 +2476,34 @@ function setReviewState(campaignId, sectionIdx, reviewed) {
   localStorage.setItem('mc-retro-reviewed-' + campaignId, JSON.stringify(state));
 }
 
+function getRetroOpenState(campaignId) {
+  return JSON.parse(localStorage.getItem('mc-retro-open-' + campaignId) || '{}');
+}
+
 async function renderRetro(campaignId) {
-  const el = document.getElementById('retro-' + campaignId);
+  const el = document.getElementById('retro-content-area');
   if (!el) return;
   const md = await loadRetro(campaignId);
-  if (!md) { el.innerHTML = ''; return; }
+  if (!md) { el.innerHTML = '<div style="text-align:center;padding:32px;color:var(--text3)">No retrospective found</div>'; return; }
 
   const sections = splitRetroSections(md);
   const reviewed = getReviewState(campaignId);
   const totalSections = sections.length;
   const reviewedCount = Object.values(reviewed).filter(Boolean).length;
+  const chevronSvg = '<svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M3 4.5L6 7.5L9 4.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>';
 
-  let h = '<div class="section-title" style="margin-top:8px">Retrospective <span class="count">' + reviewedCount + '/' + totalSections + ' reviewed</span></div>';
+  let h = '<div class="section-title" style="margin-top:24px">Retrospective <span class="count">' + reviewedCount + '/' + totalSections + ' reviewed</span></div>';
 
   sections.forEach((s, i) => {
     const isReviewed = reviewed[i];
+    const openState = getRetroOpenState(campaignId);
     h += '<div class="retro-section">';
     h += '<div class="retro-header" onclick="toggleRetro(\'' + campaignId + '\',' + i + ')">';
     h += '<span class="retro-dot" style="background:' + (isReviewed ? 'var(--green)' : 'var(--amber)') + '"></span>';
     h += '<span class="retro-title">' + esc(s.title) + '</span>';
     h += '<span class="retro-badge ' + (isReviewed ? 'reviewed' : 'unreviewed') + '">' + (isReviewed ? 'Reviewed' : 'Unreviewed') + '</span>';
     h += '</div>';
-    h += '<div class="retro-body" id="retro-body-' + campaignId + '-' + i + '">';
+    h += '<div class="retro-body' + (openState[i] ? ' open' : '') + '" id="retro-body-' + campaignId + '-' + i + '">';
     h += '<div class="retro-content">' + parseMarkdownBasic(s.lines.join('\n')) + '</div>';
     h += '<div class="retro-actions">';
     if (!isReviewed) {
@@ -974,7 +2519,12 @@ async function renderRetro(campaignId) {
 
 function toggleRetro(campaignId, idx) {
   const body = document.getElementById('retro-body-' + campaignId + '-' + idx);
-  if (body) body.classList.toggle('open');
+  if (body) {
+    body.classList.toggle('open');
+    const state = getRetroOpenState(campaignId);
+    state[idx] = body.classList.contains('open');
+    localStorage.setItem('mc-retro-open-' + campaignId, JSON.stringify(state));
+  }
 }
 
 function markRetroReviewed(campaignId, idx, reviewed) {
@@ -982,77 +2532,30 @@ function markRetroReviewed(campaignId, idx, reviewed) {
   renderRetro(campaignId);
 }
 
-// ── Agent state change notifications ──
-let prevAgentStates = {};
-const NOTIFY_SOUND = new Audio('data:audio/wav;base64,UklGRlYAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YTIAAABkZGRkZGRkZH9/f39/f39/ZGRkZGRkZGRJSUlJSUlJSWRkZGRkZGRkf39/f39/f38A');
-function checkAgentChanges() {
-  if (!campaigns.length) return;
-  for (const c of campaigns) {
-    if (!c.agents) continue;
-    for (const agent of c.agents) {
-      const live = getAgentLiveState(agent);
-      const key = agent.slot;
-      const prev = prevAgentStates[key];
-      const curr = live ? live.state : (agent.status === 'active' ? 'working' : agent.status);
-      if (prev && prev !== curr) {
-        // State changed
-        if (curr === 'waiting' || curr === 'idle') {
-          // Agent needs input or finished
-          const msg = curr === 'waiting'
-            ? agent.name + ' needs your input'
-            : agent.name + ' finished';
-          showToast(msg);
-          try { NOTIFY_SOUND.play(); } catch(e) {}
-          // Browser notification if permitted
-          if (Notification.permission === 'granted') {
-            new Notification('Mission Control', { body: msg, icon: '/favicon.ico' });
-          }
-        }
-      }
-      prevAgentStates[key] = curr;
-    }
+// ── Toast ──
+function showToast(msg) {
+  let t = document.getElementById('cToast');
+  if (!t) {
+    t = document.createElement('div');
+    t.id = 'cToast';
+    t.style.cssText = 'position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);background:#1a1a1a;color:#fff;padding:10px 24px;border-radius:10px;font-size:13px;font-weight:600;opacity:0;transition:all .25s ease;pointer-events:none;z-index:300';
+    document.body.appendChild(t);
   }
+  t.textContent = msg;
+  t.style.opacity = '1';
+  t.style.transform = 'translateX(-50%) translateY(0)';
+  setTimeout(() => { t.style.opacity = '0'; t.style.transform = 'translateX(-50%) translateY(80px)'; }, 2000);
 }
 
-// Request notification permission on first interaction
+// ── Notification permission ──
 document.addEventListener('click', function once() {
   if (Notification.permission === 'default') Notification.requestPermission();
   document.removeEventListener('click', once);
 }, { once: true });
 
-// ── Debrief sprint filter ──
-let debriefFilter = 'all'; // 'all', 1, 2
-let agentFilter = 'all'; // 'all' or agent name
-const sprint1Agents = new Set(['orchestrator', 'beacon', 'compass', 'overwatch']);
-
-function itemSprint(item) {
-  if (!item.agent) return 1;
-  const n = item.agent.toLowerCase();
-  return sprint1Agents.has(n) ? 1 : 2;
-}
-
-function filterDebrief(items) {
-  let result = items;
-  if (debriefFilter !== 'all') result = result.filter(i => itemSprint(i) === debriefFilter);
-  if (agentFilter !== 'all') result = result.filter(i => i.agent && i.agent.toLowerCase() === agentFilter.toLowerCase());
-  return result;
-}
-
-function setDebriefFilter(v) {
-  debriefFilter = v;
-  agentFilter = 'all';
-  render();
-}
-
-function setAgentFilter(v) {
-  agentFilter = v;
-  render();
-}
-
-// Auto-refresh every 5 seconds to pick up live state changes
+// ── Auto-refresh (5s polling) ──
 async function refreshLoop() {
   await load();
-  checkAgentChanges();
 }
 refreshLoop();
 setInterval(refreshLoop, 5000);

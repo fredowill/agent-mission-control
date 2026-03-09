@@ -52,7 +52,8 @@ try {
 // The activity log (hook.js) only sees Read/Edit/Bash states — it CANNOT see Skill tool calls.
 // The transcript (.jsonl) contains the full tool_use record with name:"Skill".
 // Also check for Playwright screenshot files created by the agent.
-const TRANSCRIPTS_DIR = path.join(__dirname, '..', '..', '.claude', 'projects');
+// Transcripts are in the USER HOME .claude/projects/, not the project .claude/projects/
+const TRANSCRIPTS_DIR = path.join(process.env.HOME || process.env.USERPROFILE || '', '.claude', 'projects');
 let transcriptSkills = [];
 let transcriptHasScreenshots = false;
 let transcriptHasDebrief = false;
@@ -93,6 +94,7 @@ for (const pd of projectDirs) {
 }
 
 // Also check for screenshot files in screenshots/ dir
+// Screenshots dir is in the project root (2 levels up from .claude/agent-hub/)
 const screenshotsDir = path.join(__dirname, '..', '..', 'screenshots');
 if (fs.existsSync(screenshotsDir)) {
   const agentScreenshots = fs.readdirSync(screenshotsDir)
