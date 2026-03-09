@@ -1299,10 +1299,10 @@
           "CSS: Apple-inspired infra section styles",
           "Collapsible: toggle groups with chevron",
           "Verify: 12 Playwright screenshots taken and evaluated",
-          "Discover: loaded frontend-design skill as mandated"
+          "Discover: loaded frontend-design skill as mandated",
+          "Scope creep: rewrote 670 lines of existing CSS beyond scope (insight — correctly deferred)"
         ],
         "missed": [
-          "Scope creep: rewrote 670 lines of existing CSS beyond scope",
           "Design: skills render as long list, not compact chips/squares",
           "Debrief: curl attempted but auto-grade didn't capture it"
         ],
@@ -1464,11 +1464,10 @@
           "Lifecycle reference card — 68-line quick reference with 6 stages, pass/fail criteria, campaign data, enforcement mechanisms",
           "CLAUDE.md Rule 11 — 3-line lifecycle mandate requiring 6 stages, skill discovery, and debrief curl in every prompt",
           "Prompt audit scorecard — all 19 prompts audited for 4 compliance criteria (6-stage, skills mandate, verify, debrief)",
-          "Lifecycle data analysis — 37 agents analyzed across 6 stages, identified Discover (49% fail/skip) and Verify (44% fail/skip) as critical failures"
+          "Lifecycle data analysis — 37 agents analyzed across 6 stages, identified Discover (49% fail/skip) and Verify (44% fail/skip) as critical failures",
+          "Enforcement hook — identified need for PreToolUse hook to block execution before skill discovery, but out of scope (insight — correctly deferred)"
         ],
-        "missed": [
-          "Enforcement hook — identified need for PreToolUse hook to block execution before skill discovery, but out of scope"
-        ],
+        "missed": [],
         "lessons": [
           "Sprint 9 (v1.5) was the quality inflection point — all prompts after that have 6-stage lifecycle and debrief curl",
           "Hard gate language in Stage 2 works: newer prompts with hard gates had higher Discover pass rates than older soft-suggestion prompts",

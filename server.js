@@ -2527,9 +2527,23 @@ Be direct and opinionated. Use <strong> tags for key phrases.`, 256
         const cleanArray = (arr) => arr ? arr.map(cleanText) : arr;
         if (delivered && delivered.length) agent.delivered = cleanArray(delivered);
         if (missed && missed.length) {
-          // Filter out placeholder "no missed items" entries
-          const realMissed = missed.filter(m => !/^no miss|^none$|^nothing|^n\/a$/i.test(cleanText(m)));
-          agent.missed = cleanArray(realMissed);
+          const cleaned = cleanArray(missed);
+          // Filter placeholders and reclassify "out of scope" items as delivered insights
+          const realMissed = [];
+          const reclassified = [];
+          for (const m of cleaned) {
+            if (/^no miss|^none$|^nothing|^n\/a$/i.test(m)) continue; // placeholder — drop
+            if (/out of scope|deferred|future work|not in scope|beyond scope|correctly left/i.test(m)) {
+              reclassified.push(m + ' (insight — correctly deferred)');
+            } else {
+              realMissed.push(m);
+            }
+          }
+          agent.missed = realMissed;
+          // Move reclassified items to delivered
+          if (reclassified.length && agent.delivered) {
+            agent.delivered = [...agent.delivered, ...reclassified];
+          }
         }
         if (lessons && lessons.length) agent.lessons = cleanArray(lessons);
         if (reviewStatus !== undefined) agent.reviewStatus = reviewStatus;

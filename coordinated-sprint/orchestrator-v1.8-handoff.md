@@ -98,3 +98,6 @@ v1.8 is at high context after a very productive session (4 agents dispatched, 15
 3. **First action:** Push the remaining fixes to GitHub (auto-grade, debrief API, guard hook, auto-colors, CLAUDE.md 11+12).
 4. **Second action:** Test work laptop sync (user has work tomorrow — CARES guide + FHL hooks demo).
 5. **Context:** Pipeline is proven. Auto-grade is accurate. Foundation is solid. v1.9 can start dispatching feature agents confidently.
+6. **Unpushed commit:** `ad646f8` + one more (out-of-scope reclassification, debrief API fix, handoff update). Push at END of v1.9 session, not mid-session.
+7. **Idea from user:** Agents should write their own state updates to MC directly (via the Claude terminal's own API calls), instead of going through Cerebras summarization. Would eliminate rate limiting. Investigate in v1.9.
+8. **Push workflow rule:** Only push to GitHub at the end of an orchestrator session, not mid-session. Check in with user before pushing.
