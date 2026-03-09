@@ -1456,20 +1456,14 @@ async function openInfraModal(idx) {
       content = 'Failed to load skill: ' + e.message;
     }
   } else if (type === 'hook') {
-    var hookPaths = [
-      'C:/Users/ephra/phredomade/.claude/hooks/' + name,
-      'C:/Users/ephra/phredomade/.claude/scripts/' + name,
-      'C:/Users/ephra/phredomade/.claude/agent-hub/' + name
-    ];
+    // Try hook name via /api/hook/<name> which resolves paths server-side (no hardcoded user paths)
     var found = false;
-    for (var pi = 0; pi < hookPaths.length; pi++) {
-      try {
-        var hr = await fetch('/api/hook-file/' + encodeURIComponent(hookPaths[pi]));
-        var hd = await hr.json();
-        if (hd.content) { content = hd.content; found = true; break; }
-      } catch(e) {}
-    }
-    if (!found) content = 'Hook file not found in standard locations.\n\nSearched:\n' + hookPaths.join('\n');
+    try {
+      var hr = await fetch('/api/hook/' + encodeURIComponent(name));
+      var hd = await hr.json();
+      if (hd.content) { content = hd.content; found = true; }
+    } catch(e) {}
+    if (!found) content = 'Hook file not found. The server checks .claude/scripts/, .claude/hooks/, and .claude/agent-hub/ automatically.';
     if (item.description) content = '// ' + item.description + '\n\n' + content;
   } else {
     content = 'Rules are defined in CLAUDE.md and the orchestrator-rules skill.\n\n' + name;

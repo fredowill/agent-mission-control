@@ -2860,7 +2860,27 @@ Be direct and opinionated. Use <strong> tags for key phrases.`, 256
     return res.end(JSON.stringify(readToolsData()));
   }
 
-  // Hook file reader API — reads script content for workflow page detail view
+  // Hook lookup by name — searches all known hook/script dirs, no hardcoded user paths
+  if (url.startsWith('/api/hook/') && req.method === 'GET' && !url.startsWith('/api/hook-file/')) {
+    const hookName = decodeURIComponent(url.slice('/api/hook/'.length));
+    const searchDirs = [
+      path.join(__dirname, '..', 'scripts'),  // .claude/scripts/
+      path.join(__dirname, '..', 'hooks'),     // .claude/hooks/
+      __dirname,                                // .claude/agent-hub/
+    ];
+    for (const dir of searchDirs) {
+      const candidate = path.join(dir, hookName);
+      if (fs.existsSync(candidate)) {
+        const content = fs.readFileSync(candidate, 'utf8');
+        res.writeHead(200, { 'Content-Type': 'application/json', 'Cache-Control': 'no-store' });
+        return res.end(JSON.stringify({ name: hookName, path: candidate, content }));
+      }
+    }
+    res.writeHead(404, { 'Content-Type': 'application/json' });
+    return res.end(JSON.stringify({ error: 'not found' }));
+  }
+
+  // Hook file reader API — reads script content for workflow page detail view (legacy, uses full paths)
   // Only allows reading from .claude/scripts/ and .claude/agent-hub/ for safety
   if (url.startsWith('/api/hook-file/') && req.method === 'GET') {
     const reqPath = decodeURIComponent(url.slice('/api/hook-file/'.length));
