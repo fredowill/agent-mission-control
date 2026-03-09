@@ -2521,9 +2521,17 @@ Be direct and opinionated. Use <strong> tags for key phrases.`, 256
         if (!campaign) { res.writeHead(404); return res.end('{"error":"campaign not found"}'); }
         const agent = campaign.agents.find(a => a.slot === slot);
         if (!agent) { res.writeHead(404); return res.end('{"error":"agent not found"}'); }
-        if (delivered && delivered.length) agent.delivered = delivered;
-        if (missed && missed.length) agent.missed = missed;
-        if (lessons && lessons.length) agent.lessons = lessons;
+        // Strip markdown formatting from debrief items — agents write **bold** and em-dashes
+        // that don't render on the campaigns page. Clean on write so data is always plain text.
+        const cleanText = (s) => s.replace(/\*\*/g, '').replace(/�/g, '—').replace(/\u{FFFD}/gu, '—');
+        const cleanArray = (arr) => arr ? arr.map(cleanText) : arr;
+        if (delivered && delivered.length) agent.delivered = cleanArray(delivered);
+        if (missed && missed.length) {
+          // Filter out placeholder "no missed items" entries
+          const realMissed = missed.filter(m => !/^no miss|^none$|^nothing|^n\/a$/i.test(cleanText(m)));
+          agent.missed = cleanArray(realMissed);
+        }
+        if (lessons && lessons.length) agent.lessons = cleanArray(lessons);
         if (reviewStatus !== undefined) agent.reviewStatus = reviewStatus;
         // Mark debrief lifecycle stage
         if (!agent.lifecycle) agent.lifecycle = {};

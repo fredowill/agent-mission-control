@@ -1025,5 +1025,16 @@
     "meta": "Session: orchestrator-v1.5, campaign-001",
     "id": "f088",
     "context": "campaign-001"
+  },
+  {
+    "id": "f093",
+    "tier": "tier1",
+    "tag": "principle",
+    "title": "Always fix the system, not the symptom",
+    "quote": "You shouldn't try and make a band-aid fix. You should make a systematic fix that would retroactively stop that from happening again.",
+    "body": "v1.8 caught itself making band-aid fixes multiple times in one session: (1) manually swapping agent card colors instead of auto-generating from name hash, (2) cleaning markdown from data instead of stripping it at the API layer, (3) hardcoding paths instead of making them relative. Each time the user caught it and pushed for the systemic fix. The guard-destructive hook whitelisting MC server PID by port lookup (not hardcoded PID) was praised as 'crazy that you caught this' - the first time the orchestrator self-applied the systemic principle without prompting.",
+    "lesson": "When fixing any bug or addressing any post-mortem: ask 'what system allowed this to happen?' not 'how do I fix this instance?' The fix should make the problem impossible to recur, not just patch the current occurrence. Band-aid = fix data. Systemic = fix the API/hook/generator that produces the data.",
+    "meta": "Session: orchestrator-v1.8, campaign-001",
+    "context": "campaign-001"
   }
 ]

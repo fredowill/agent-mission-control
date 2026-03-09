@@ -255,11 +255,21 @@ const agent_check = campaign_check ? campaign_check.agents.find(a => a.slot === 
 const hasDeliverables = agent_check && agent_check.delivered && agent_check.delivered.length > 0;
 
 if (hasDeliverables) {
-  // Agent has pre-populated deliverables — use lifecycle-based heuristic
-  if (lifecycle.verify !== 'skipped') delScore = 30;
-  else if (lifecycle.execute !== 'skipped') delScore = 25;
-  else if (lifecycle.define !== 'skipped') delScore = 15;
-  else delScore = 10;
+  // Score based on actual delivered vs missed ratio
+  const delivered = agent_check.delivered || [];
+  const missed = agent_check.missed || [];
+  // Filter out placeholder "no missed items" entries
+  const realMissed = missed.filter(m => !/no miss|none|nothing|n\/a/i.test(m));
+  const total_items = delivered.length + realMissed.length;
+  if (total_items > 0) {
+    delScore = Math.round(40 * delivered.length / total_items);
+  } else {
+    delScore = 30; // Has deliverables array but both are empty — assume decent
+  }
+  // Bonus: if verify passed and zero real misses, bump to at least 35
+  if (lifecycle.verify !== 'skipped' && realMissed.length === 0 && delivered.length >= 3) {
+    delScore = Math.max(delScore, 35);
+  }
 } else {
   // No deliverables data — be conservative. Agent must prove it delivered.
   // Review agent or orchestrator will fill in actual data and re-grade.
@@ -309,18 +319,18 @@ try {
   agent.skillsUsed = skillsUsed.length ? skillsUsed : agent.skillsUsed || [];
   agent.status = 'completed';
 
-  // Only set grade if not already manually graded
-  if (!agent.grade || agent.grade === null) {
-    agent.grade = grade;
-    agent.gradeReason = `Auto-graded: ${total}/100. Lifecycle ${lcScore}/20, Skills ${skillScore}/15, Exec ${execScore}/25, Deliverables ${delScore}/40 (default — needs manual review).`;
-    agent.scoreBreakdown = {
-      deliverables: delScore,
-      execution: execScore,
-      lifecycle: lcScore,
-      skills: skillScore,
+  // Always update grade + breakdown. Re-runs should produce better scores
+  // as more data becomes available (transcript, debrief). Manual overrides
+  // happen via direct campaigns.json edits, not via auto-grade.
+  agent.grade = grade;
+  agent.gradeReason = `Auto-graded: ${total}/100. Lifecycle ${lcScore}/20, Skills ${skillScore}/15, Exec ${execScore}/25, Deliverables ${delScore}/40.`;
+  agent.scoreBreakdown = {
+    deliverables: delScore,
+    execution: execScore,
+    lifecycle: lcScore,
+    skills: skillScore,
       total
     };
-  }
 
   fs.writeFileSync(CAMPAIGNS_F, JSON.stringify(campaigns, null, 2));
   console.log(`[auto-grade] ${meta.agentName}: ${grade} (${total}/100)`);

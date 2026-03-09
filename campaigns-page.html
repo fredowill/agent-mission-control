@@ -92,6 +92,7 @@ header{display:flex;align-items:center;justify-content:space-between;padding:0 c
 .hero-exec-pill.in-progress{background:rgba(245,158,11,0.1);color:#d97706;animation:livePulse 1.5s ease-in-out infinite}
 .hero-exec-pill.blocked{background:rgba(239,68,68,0.08);color:#dc2626}
 .hero-exec-pill.later{background:var(--surface);color:var(--text3)}
+.hero-exec.collapsed .exec-chevron{transform:rotate(-90deg)}
 .hero-btn{padding:8px 20px;border-radius:980px;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:600;cursor:pointer;transition:all .15s;border:1.5px solid transparent;text-decoration:none;display:inline-flex;align-items:center;gap:6px}
 .hero-btn.primary{background:var(--purple);color:#fff;border-color:var(--purple)}
 .hero-btn.primary:hover{background:#7c3aed}
@@ -298,6 +299,19 @@ header{display:flex;align-items:center;justify-content:space-between;padding:0 c
 .modal-bar.ag-dashboard{background:linear-gradient(90deg,#fbbf24,#d97706) !important}
 .modal-bar.ag-plugin{background:linear-gradient(90deg,#818cf8,#4f46e5) !important}
 .modal-bar.ag-research{background:linear-gradient(90deg,#2dd4bf,#0d9488) !important}
+/* Sprint 10 distinct agent colors */
+.agent-card.ag-infra-attr .agent-bar{background:linear-gradient(90deg,#06b6d4,#0e7490)}
+.agent-card.ag-infra-attr{border-color:rgba(6,182,212,0.15)}
+.agent-card.ag-infra-attr .agent-name{color:#0e7490}
+.agent-card.ag-infra-polish .agent-bar{background:linear-gradient(90deg,#ec4899,#be185d)}
+.agent-card.ag-infra-polish{border-color:rgba(236,72,153,0.15)}
+.agent-card.ag-infra-polish .agent-name{color:#be185d}
+.agent-card.ag-critic .agent-bar{background:linear-gradient(90deg,#f97316,#c2410c)}
+.agent-card.ag-critic{border-color:rgba(249,115,22,0.15)}
+.agent-card.ag-critic .agent-name{color:#c2410c}
+.modal-bar.ag-infra-attr{background:linear-gradient(90deg,#06b6d4,#0e7490) !important}
+.modal-bar.ag-infra-polish{background:linear-gradient(90deg,#ec4899,#be185d) !important}
+.modal-bar.ag-critic{background:linear-gradient(90deg,#f97316,#c2410c) !important}
 .modal-bar.ag-default{background:linear-gradient(90deg,#94a3b8,#64748b) !important}
 
 /* ── Infrastructure Section ── */
@@ -721,36 +735,49 @@ async function load() {
 
 function esc(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 
+// Agent color system: known agents get handpicked colors, new agents get auto-generated unique colors from name hash.
+// No more gray defaults — every agent is visually distinct.
+const AGENT_COLOR_MAP = {
+  'orchestr': { bar: '#a78bfa,#7c3aed', border: 'rgba(139,92,246,0.15)', text: '#7c3aed' },
+  'beacon': { bar: '#fbbf24,#d97706', border: 'rgba(251,191,36,0.15)', text: '#d97706' },
+  'compass': { bar: '#60a5fa,#2563eb', border: 'rgba(59,130,246,0.15)', text: '#2563eb' },
+  'overwatch': { bar: '#22d3ee,#0891b2', border: 'rgba(6,182,212,0.15)', text: '#0891b2' },
+  'polisher': { bar: '#f472b6,#db2777', border: 'rgba(244,114,182,0.15)', text: '#db2777' },
+  'workflow': { bar: '#f97316,#ef4444', border: 'rgba(249,115,22,0.15)', text: '#ea580c' },
+  'campaign arch': { bar: '#8b5cf6,#ec4899', border: 'rgba(139,92,246,0.15)', text: '#9333ea' },
+  'grading': { bar: '#a78bfa,#9333ea', border: 'rgba(147,51,234,0.15)', text: '#9333ea' },
+  'dashboard': { bar: '#fbbf24,#d97706', border: 'rgba(251,191,36,0.15)', text: '#d97706' },
+  'plugin': { bar: '#818cf8,#4f46e5', border: 'rgba(99,102,241,0.15)', text: '#4f46e5' },
+  'video': { bar: '#f97316,#dc2626', border: 'rgba(249,115,22,0.15)', text: '#dc2626' },
+};
+
+// Generate a consistent HSL color from a string hash — ensures every unique name gets a unique hue
+function nameToColor(name) {
+  let hash = 0;
+  for (let i = 0; i < name.length; i++) hash = name.charCodeAt(i) + ((hash << 5) - hash);
+  const hue = ((hash % 360) + 360) % 360;
+  const sat = 65 + (hash % 20); // 65-85% saturation
+  return {
+    bar: 'hsl(' + hue + ',' + sat + '%,55%),hsl(' + ((hue + 30) % 360) + ',' + sat + '%,40%)',
+    border: 'hsla(' + hue + ',' + sat + '%,50%,0.15)',
+    text: 'hsl(' + hue + ',' + sat + '%,35%)'
+  };
+}
+
+function getAgentColor(name) {
+  const n = (name || '').toLowerCase();
+  for (const [key, colors] of Object.entries(AGENT_COLOR_MAP)) {
+    if (n.includes(key)) return colors;
+  }
+  return nameToColor(n); // Auto-generate for unknown agents
+}
+
 function agentCls(name) {
+  // Return 'ag-auto' for all agents — colors are applied inline via getAgentColor()
+  // Keep legacy classes only for orchestrators (they have special page-level styling)
   const n = (name || '').toLowerCase();
   if (n.includes('orchestr')) return 'ag-orchestrator';
-  if (n.includes('beacon')) return 'ag-beacon';
-  if (n.includes('compass')) return 'ag-compass';
-  if (n.includes('overwatch')) return 'ag-overwatch';
-  if (n.includes('polisher')) return 'ag-polisher';
-  if (n.includes('retrospect')) return 'ag-retrospector';
-  if (n.includes('integrat')) return 'ag-integrator';
-  if (n.includes('findings an')) return 'ag-findings-analyst';
-  if (n.includes('analyst')) return 'ag-analyst';
-  if (n.includes('video')) return 'ag-video';
-  if (n.includes('workflow')) return 'ag-workflow';
-  if (n.includes('pipeline')) return 'ag-pipeline';
-  if (n.includes('morning')) return 'ag-morning';
-  if (n.includes('medic')) return 'ag-medic';
-  if (n.includes('dashboard')) return 'ag-dashboard';
-  if (n.includes('campaign architect')) return 'ag-campaign-arch';
-  if (n.includes('skill creator')) return 'ag-skill-creator';
-  if (n.includes('debrief')) return 'ag-debrief';
-  if (n.includes('grading')) return 'ag-grading';
-  if (n.includes('memory')) return 'ag-memory';
-  if (n.includes('lifecycle')) return 'ag-lifecycle';
-  if (n.includes('integration')) return 'ag-integration';
-  if (n.includes('clickable') || n.includes('skill')) return 'ag-skill-creator';
-  if (n.includes('splitter')) return 'ag-analyst';
-  if (n.includes('plugin') || n.includes('audit')) return 'ag-plugin';
-  if (n.includes('research')) return 'ag-research';
-  if (n.includes('perf')) return 'ag-dashboard';
-  return 'ag-default';
+  return 'ag-auto';
 }
 
 // Smart text formatting
@@ -950,11 +977,12 @@ function renderAgentCard(campaign, agent) {
   }
 
   const cardExtraClass = isLive ? ' is-live' : isWaitingInput ? ' is-waiting-input' : '';
-  let c = '<div class="agent-card ' + cls + cardExtraClass + '" onclick="openReportCard(\'' + esc(agent.slot) + '\',\'' + esc(campaign.id) + '\')">';
-  c += '<div class="agent-bar"></div>';
+  const agentColor = getAgentColor(agent.name);
+  let c = '<div class="agent-card ' + cls + cardExtraClass + '" style="border-color:' + agentColor.border + '" onclick="openReportCard(\'' + esc(agent.slot) + '\',\'' + esc(campaign.id) + '\')">';
+  c += '<div class="agent-bar" style="background:linear-gradient(90deg,' + agentColor.bar + ')"></div>';
   c += '<div class="agent-inner">';
   c += '<div class="agent-top">';
-  c += '<span class="agent-name">' + esc(agent.name) + '</span>';
+  c += '<span class="agent-name" style="color:' + agentColor.text + '">' + esc(agent.name) + '</span>';
   if (grade) c += '<span class="agent-grade ' + gCls + '">' + esc(grade) + '</span>';
   c += '</div>';
   c += '<div class="agent-focus-struct">' + focusHtml + '</div>';
@@ -1156,8 +1184,9 @@ function openReportCard(slot, campaignId) {
   const stageStatusLabels = { passed:'Passed', partial:'Partial', failed:'Failed', skipped:'Skipped', 'in-progress':'Active', pending:'Pending' };
   const stagePtsMap = { passed:4, partial:2, failed:1, skipped:0, 'in-progress':2, pending:0 };
 
+  const modalColor = getAgentColor(agent.name);
   let h = '<div class="modal" onclick="event.stopPropagation()">';
-  h += '<div class="modal-bar ' + cls + '"></div>';
+  h += '<div class="modal-bar" style="background:linear-gradient(90deg,' + modalColor.bar + ') !important"></div>';
   h += '<div class="modal-inner">';
 
   // Grade Header — large letter + info
@@ -1705,7 +1734,7 @@ function render() {
   const plan = c.executionPlan;
   if (plan && plan.items) {
     h += '<div class="hero-exec">';
-    h += '<div class="hero-exec-title">🎯 Execution Plan <span class="hero-exec-version">' + esc(plan.version) + '</span></div>';
+    h += '<div class="hero-exec-title" style="cursor:pointer" onclick="var body=this.nextElementSibling;if(!body)return;var wrap=this.parentElement;if(wrap.classList.contains(\'collapsed\')){wrap.classList.remove(\'collapsed\');wrap.style.maxHeight=\'\'}else{wrap.classList.add(\'collapsed\');wrap.style.maxHeight=this.offsetHeight+2+\'px\';wrap.style.overflow=\'hidden\'}"><span style="transition:transform .15s;display:inline-block;margin-right:4px" class="exec-chevron">▼</span> 🎯 Execution Plan <span class="hero-exec-version">' + esc(plan.version) + '</span><span style="margin-left:auto;font-family:\'DM Mono\',monospace;font-size:10px;color:var(--text3)">' + plan.items.filter(function(i){return i.status==="done"}).length + '/' + plan.items.length + ' done</span></div><div>';
 
     // Group by sprint
     const sprintGroups = {};
@@ -1748,7 +1777,7 @@ function render() {
     h += doneCount + '/' + totalCount + ' complete';
     if (activeCount > 0) h += ' · ' + activeCount + ' active';
     h += '</div>';
-    h += '</div>';
+    h += '</div></div>'; // close exec body wrapper + hero-exec
   }
 
   // Actions
