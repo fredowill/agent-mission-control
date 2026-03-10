@@ -23,6 +23,16 @@ Two system-level improvements that affect every session on every machine. No age
 
 ## Critical Tasks for v2.8
 
+### P0: Unify MC repo name and path across machines
+Home: `~/.claude/agent-hub/`. Work: `~/Claude/projects/agent-mission-control/`. Same repo, different names. Breaks hook paths, sync prompts, server.js path resolution.
+
+**Recommendation: Work laptop moves to match home.** Reasons:
+- Home path (`~/.claude/agent-hub/`) is shorter, cleaner, and inside `.claude/` where Claude Code expects project infrastructure
+- Home has a symlink/junction already wired (`~/.claude/agent-hub -> phredomade/.claude/agent-hub`)
+- All hook paths in `settings.json`, all `server.js` path resolution, and all handoff docs assume the `agent-hub` name
+- Work laptop has fewer sessions and fewer hardcoded references to fix
+- Action: `cd ~/Claude/projects && mv agent-mission-control agent-hub` (or reclone to `~/.claude/agent-hub/`), then update work laptop settings.json paths
+
 ### P0: Cross-machine file sync for .claude/
 The `.claude/` directory is gitignored in phredomade. Files created this session (`00-topic-context.md`, `00-agent-lifecycle.md`, `skill-index.md`, `skill-activation-hook.sh`, `session-context.js`) live locally only. They need a transport mechanism to the work laptop. Options:
 1. Add them to agent-hub repo (already done for skill-index via toolbox-sync)
