@@ -224,9 +224,9 @@
   },
   {
     "id": "hb125ey0",
-    "title": "Refactor Cerebras agent summary prompts for better card taglines",
-    "description": "The AI-generated mission/tagline text on agent cards could be written better. Review and improve the prompts sent to Cerebras for summarizing agent sessions  the current output is too generic. Want punchier, more descriptive one-liners that actually distinguish what each agent is doing.",
-    "status": "todo",
+    "title": "[CLOSED v2.6] Refactor Cerebras agent summary prompts for better card taglines",
+    "description": "CLOSED: Cerebras deprecated (v2.3 Cerebras Migration agent). Card redesign completed (v2.2 agent-card-builder A+). Taglines now come from focus field + Claude CLI summaries.",
+    "status": "done",
     "priority": "p1",
     "workstream": "mission-control",
     "tags": [
@@ -426,9 +426,9 @@
   },
   {
     "id": "k5vh3ftx",
-    "title": "Create retrospective skill for post-incident learning",
-    "description": "Build a /retro skill that triggers after wasted iterations, failed approaches, or stupid bugs that took too long to find. The skill should:\n\n1. Capture what happened -- the symptom, how many iterations were wasted, what was tried\n2. Root cause analysis -- why did it take so long? What assumption was wrong?\n3. What signal was missed -- what could have been checked first that would have caught it immediately?\n4. Prevention rule -- a concrete check to add to the workflow so this class of bug never wastes time again\n5. Optionally persist the lesson to memory files so future sessions benefit\n\nExample trigger: \"We spent 5 iterations fixing ghost positioning because we never checked if CSS zoom was applied. The fix was one line dividing by the zoom factor. We should always check computed zoom/transform on html/body before doing any position:fixed coordinate math.\"\n\nThe skill should produce a short, sharp writeup -- not a novel. Think incident postmortem but for dev workflow inefficiencies.",
-    "status": "todo",
+    "title": "[CLOSED v2.6] Create retrospective skill for post-incident learning",
+    "description": "CLOSED: filing-postmortems skill built by v2.3 covers this. Reads existing PMs, enforces blameless format, quality gates, API integration. Wired into orchestrator-rules (Rule 21).",
+    "status": "done",
     "priority": "p0",
     "workstream": "mission-control",
     "tags": [
@@ -1566,5 +1566,44 @@
     "context": "campaign-002",
     "created": "2026-03-10T05:24:07.902701Z",
     "updated": "2026-03-10T05:24:07.902701Z"
+  },
+  {
+    "id": "pm031",
+    "title": "Post-Mortem: Orchestrator v2.6 told user to manually dispatch + dispatch.sh Cygwin /tmp/ crash",
+    "description": "## Incident (2026-03-10)\nOrchestrator v2.6 wrote 3 agent prompt files, added campaign cards, verified the API -- then told the user to 'Open the agent report card on /campaigns, click Copy Full Prompt, and paste into a new terminal.' The /api/launch endpoint exists specifically for programmatic dispatch. This is an exact repeat of PM023 (v2.0). Additionally, when /api/launch was used, dispatch.sh crashed with 'virtual Cygwin directory' error because its self-buffer mechanism copies to /tmp/ which is a Cygwin virtual path.\n\n## What actually happened\nThe orchestrator completed the full creating-agents pipeline correctly (skill-mandate, create-agent-prompt, watermark, campaign cards, API verification). Then at the final step -- actually launching the agents -- it defaulted to telling the user to copy-paste manually. The user had to correct this. When /api/launch was then used, all 3 agents crashed with exit code 126 because dispatch.sh self-buffered to /tmp/dispatch-XXXXXX.sh, and Windows executables (claude.exe, node.exe) cannot run from a Cygwin virtual working directory.\n\n## Failure 1: Manual dispatch regression (PM023 repeat)\n- /api/launch exists and works. The orchestrator-dispatch skill mentions it.\n- v2.0 had PM023 filed for this exact mistake.\n- The dispatch checklist Step 5 says 'Tell the user' with copy instructions -- this text is ambiguous and led the orchestrator to present manual instructions instead of using the API.\n- **Lesson:** The dispatch checklist Step 5 should say 'Launch via /api/launch' not 'Tell the user to copy-paste.'\n- **Systemic fix:** Update orchestrator-dispatch skill Step 5 to mandate /api/launch as the dispatch mechanism. Remove copy-paste instructions from the checklist entirely.\n\n## Failure 2: dispatch.sh /tmp/ Cygwin virtual directory crash\n- The self-buffer mechanism (added by v2.5 to prevent bash race condition) copies dispatch.sh to /tmp/dispatch-XXXXXX.sh\n- /tmp/ is a Cygwin virtual directory that does not exist as a real Windows path\n- Windows native executables (claude.exe, node.exe) cannot start from a virtual CWD\n- All 3 agents crashed with exit code 126 on first launch attempt\n- First fix attempt ($TEMP variable) failed because $TEMP was empty in the wt.exe bash context\n- Second fix (copy to script's own directory) worked\n- **Lesson:** Never use /tmp/ for files that Windows executables need to access. Always use real Windows paths.\n- **Systemic fix:** dispatch.sh self-buffer now copies to scripts/_dispatch-buffer-$$.sh (same directory as the script, always a real Windows path). The buffer file self-cleans after use.\n\n## Action items\n1. Update orchestrator-dispatch skill Step 5 to mandate /api/launch (todo)\n2. dispatch.sh /tmp/ fix applied (done -- uses script directory instead)\n3. File as finding: /tmp/ is unsafe for Windows interop in Git Bash scripts (todo)\n4. Consider adding /api/launch to the dispatch checklist as a hard gate (todo)",
+    "status": "open",
+    "priority": "p0",
+    "workstream": "mission-control",
+    "tags": [
+      "post-mortem",
+      "orchestrator",
+      "dispatch",
+      "windows",
+      "regression",
+      "machine:home"
+    ],
+    "linkedSession": null,
+    "context": "campaign-002",
+    "created": "2026-03-10T09:00:00.000Z",
+    "updated": "2026-03-10T09:00:00.000Z"
+  },
+  {
+    "id": "pm032",
+    "title": "Post-Mortem: Sound design agent dispatched in auto mode when it required user interaction -- orchestrator doesn't reason about dispatch mode",
+    "description": "## Incident (2026-03-10)\nOrchestrator v2.6 dispatched the sound-design-system agent in auto mode (headless, no user interaction). The agent produced a technically correct beep sequence system, but the user never heard the sounds, never approved the tones, and never got to pick from alternatives. Sound design is inherently subjective -- it requires the user's ears and taste. Auto mode was the wrong choice.\n\n## What actually happened\nThe orchestrator wrote the sound-design-system prompt with console beep sequences (C-E-G ascending, descending error tones, etc.) and launched it via /api/launch in auto mode. The agent executed perfectly -- 8 deliverables, B+ grade. But when the user asked to hear the sounds, they said: 'Shouldn't I have heard the sounds? This is a big gap. I'm not able to interact with agents that I should be able to interact with and you didn't even ask if this was something that I wanted to do.'\n\n## Failure 1: No reasoning about auto vs interactive dispatch mode\n- v2.5 built an interactive dispatch system specifically for this: AUQ MCP server, mode flag, checkpoint counter, stop gate\n- The /api/launch endpoint supports a mode field ('auto' or 'interactive')\n- The orchestrator never considered which agents need user interaction\n- Sound design, UI review, and preference-based tasks REQUIRE interactive mode\n- **Lesson:** Before dispatching each agent, the orchestrator must ask: 'Does this task require user taste, approval, or subjective judgment?' If yes, dispatch in interactive mode.\n- **Systemic fix:** Add a dispatch mode decision step to the orchestrator-dispatch checklist. For subjective/creative tasks (sound, UI polish, design choices), mandate interactive mode. For deterministic tasks (hooks, scripts, data cleanup), auto mode is fine.\n\n## Failure 2: Agent used console beeps instead of exploring real sound options\n- The prompt specified 'built-in SystemSounds or console::beep()' as a constraint\n- This was too restrictive -- the user wants to PICK sounds from libraries, not accept auto-generated beep sequences\n- Free sound libraries exist: Pixabay, Mixkit (36 notification sounds), Uppbeat, ElevenLabs AI generator\n- The agent should have presented options for the user to listen to and choose from\n- **Lesson:** Creative tasks need exploration and user choice, not just implementation.\n- **Systemic fix:** For creative/subjective agents, the prompt should include a 'present options to user' step before finalizing.\n\n## Action items\n1. Add dispatch mode reasoning to orchestrator-dispatch checklist (todo)\n2. Re-dispatch sound design as interactive agent with sound library exploration (todo)\n3. Add finding: auto mode is wrong for subjective/creative tasks (todo)\n4. Update sound-design prompt to include sound library browsing + user selection (todo)",
+    "status": "open",
+    "priority": "p0",
+    "workstream": "mission-control",
+    "tags": [
+      "post-mortem",
+      "orchestrator",
+      "interactive-dispatch",
+      "sound-design",
+      "machine:home"
+    ],
+    "linkedSession": null,
+    "context": "campaign-002",
+    "created": "2026-03-10T09:30:00.000Z",
+    "updated": "2026-03-10T09:30:00.000Z"
   }
 ]

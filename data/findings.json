@@ -1217,5 +1217,22 @@
       "handoff",
       "context-management"
     ]
+  },
+  {
+    "id": "f109",
+    "tier": "tier1",
+    "tag": "paradigm-shift",
+    "title": "The orchestrator's job is to build agents that can work -- not to dispatch headless chickens",
+    "quote": "You say 'I'll dispatch agents, we have the workflow working' but now we have a bunch of headless chickens running around and you picking up after them and I'm picking up after you. It's not a good system.",
+    "description": "Current orchestrators optimize for throughput (how many agents dispatched) not effectiveness (how well each agent performs). The pipeline enforces prompt FORMAT but not agent INTELLIGENCE. A perfectly formatted prompt for a dumb agent is still a dumb agent. Key gaps: (1) orchestrator never reasons about auto vs interactive mode -- PM032 sound design was dispatched headless when it required user ears, (2) agents run blind with no ability to pause and consult the user, (3) the heavy MC pipeline (campaigns, grades, dispatch) is overkill for simple tasks and adds complexity without improving agent quality. The shift: spend 80% of time designing how the agent should behave (when to ask, when to show options, when to pause), 20% on logistics. Build one smart agent instead of many dumb ones. Consider deprecating the heavy dispatch pipeline for simple tasks and creating a standalone 'builder agent' that inherits MC learnings (skills, patterns, rules) without needing the full orchestrator infrastructure.",
+    "source": "User feedback, v2.6 orchestrator session, 2026-03-10",
+    "campaign": "campaign-002",
+    "sprint": 6,
+    "tags": [
+      "agent-quality",
+      "paradigm-shift",
+      "interactive-dispatch",
+      "orchestrator-evolution"
+    ]
   }
 ]

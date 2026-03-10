@@ -387,6 +387,53 @@ header{display:flex;align-items:center;justify-content:space-between;padding:0 c
 .safety-desc{font-size:11px;color:var(--text3);line-height:1.4;margin-top:2px}
 .safety-desc code{font-family:'DM Mono',monospace;font-size:10px;background:var(--surface);padding:1px 5px;border-radius:4px;color:var(--text2)}
 
+/* ── Hook Category Headers ── */
+.hook-cat-row td{background:var(--surface);font-family:'Plus Jakarta Sans',sans-serif;font-weight:700;font-size:11px;text-transform:uppercase;letter-spacing:.06em;padding:10px 10px 6px;border:none;border-bottom:1px solid var(--sep)}
+.hook-cat-dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:6px}
+.hook-badge{font-family:'DM Mono',monospace;font-size:9px;padding:2px 8px;border-radius:4px;white-space:nowrap;display:inline-block}
+.hook-badge.removed{background:var(--rose-bg);color:var(--rose)}
+.hook-badge.active{background:var(--green-bg);color:var(--green)}
+.hook-badge.interactive{background:var(--amber-bg);color:#92400e}
+.hook-scope{font-family:'DM Mono',monospace;font-size:9px;padding:1px 5px;border-radius:3px;background:var(--surface);color:var(--text3)}
+
+/* ── Hardstop System ── */
+.hardstop-card{background:var(--bg);border:1px solid var(--sep);border-radius:var(--radius);padding:28px;margin-bottom:20px;box-shadow:0 1px 4px rgba(0,0,0,.02)}
+.hardstop-label{font-family:'Plus Jakarta Sans',sans-serif;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--text3);margin-bottom:6px;text-align:center}
+.hardstop-subtitle{font-family:'Plus Jakarta Sans',sans-serif;font-size:16px;font-weight:800;letter-spacing:-0.02em;text-align:center;margin-bottom:24px}
+.hardstop-layers{display:flex;flex-direction:column;gap:8px;max-width:620px;margin:0 auto}
+.hs-layer{display:flex;align-items:center;gap:14px;padding:14px 18px;border-radius:10px;border-left:4px solid;transition:all .15s}
+.hs-layer:hover{box-shadow:0 3px 12px rgba(0,0,0,.05);transform:translateY(-1px)}
+.hs-emoji{font-size:20px;flex-shrink:0}
+.hs-pct{font-family:'Plus Jakarta Sans',sans-serif;font-size:22px;font-weight:800;min-width:52px;flex-shrink:0;text-align:right}
+.hs-text{flex:1}
+.hs-title{font-family:'Plus Jakarta Sans',sans-serif;font-size:13px;font-weight:700;letter-spacing:-0.01em}
+.hs-desc{font-size:11px;color:var(--text3);line-height:1.5;margin-top:2px}
+.hs-desc code{font-family:'DM Mono',monospace;font-size:10px;background:var(--surface);padding:1px 5px;border-radius:4px;color:var(--text2)}
+.hs-layer.l-green{background:rgba(34,197,94,0.04);border-left-color:var(--green)}
+.hs-layer.l-green .hs-pct{color:var(--green)}
+.hs-layer.l-amber{background:rgba(245,158,11,0.04);border-left-color:var(--amber)}
+.hs-layer.l-amber .hs-pct{color:var(--amber)}
+.hs-layer.l-rose{background:rgba(239,68,68,0.04);border-left-color:var(--rose)}
+.hs-layer.l-rose .hs-pct{color:var(--rose)}
+.hs-layer.l-cyan{background:rgba(6,182,212,0.04);border-left-color:var(--cyan)}
+.hs-layer.l-cyan .hs-pct{color:var(--cyan)}
+.hs-layer.l-purple{background:rgba(139,92,246,0.04);border-left-color:var(--purple)}
+.hs-layer.l-purple .hs-pct{color:var(--purple)}
+.hs-state-file{text-align:center;margin-top:16px;font-family:'DM Mono',monospace;font-size:11px;color:var(--text3)}
+.hs-state-file code{background:var(--surface);padding:2px 8px;border-radius:4px}
+
+/* ── Rules Directory ── */
+.rules-dir-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.rules-dir-card{display:flex;align-items:flex-start;gap:10px;padding:12px 14px;border-radius:8px;background:var(--surface);transition:all .12s}
+.rules-dir-card:hover{background:var(--surface2)}
+.rules-dir-file{font-family:'DM Mono',monospace;font-size:11px;font-weight:600;color:var(--purple)}
+.rules-dir-desc{font-size:11px;color:var(--text2);line-height:1.4;margin-top:2px}
+
+/* ── Interactive Dispatch ── */
+.interactive-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:20px}
+.interactive-card{background:var(--bg);border:1px solid var(--sep);border-radius:10px;padding:14px 16px;display:flex;align-items:flex-start;gap:10px;transition:all .12s}
+.interactive-card:hover{box-shadow:0 2px 8px rgba(0,0,0,.04);border-color:var(--surface2)}
+
 /* ── Expand All Button ── */
 .expand-all-btn{position:sticky;top:72px;z-index:10;float:right;margin-bottom:12px;padding:6px 16px;border-radius:8px;background:var(--surface);border:1px solid var(--sep);font-family:'DM Sans',sans-serif;font-size:12px;font-weight:600;color:var(--text2);cursor:pointer;transition:all .15s}
 .expand-all-btn:hover{background:var(--surface2);color:var(--text)}
@@ -404,6 +451,8 @@ header{display:flex;align-items:center;justify-content:space-between;padding:0 c
   .orch-skill-stats{grid-template-columns:repeat(3,1fr)}
   .compare-grid{grid-template-columns:1fr}
   .safety-grid{grid-template-columns:1fr}
+  .interactive-grid{grid-template-columns:1fr}
+  .rules-dir-grid{grid-template-columns:1fr}
   .ba-grid{grid-template-columns:1fr}
   .stats-bar{flex-direction:column}
   .stat-item{border-right:none;border-bottom:1px solid var(--sep);flex-direction:row;gap:8px;align-items:baseline;padding:10px 16px}
@@ -603,6 +652,69 @@ header{display:flex;align-items:center;justify-content:space-between;padding:0 c
       <div class="expand-body" id="rules-body"><div class="expand-inner" id="rules-content"></div></div>
     </div>
 
+    <!-- Expandable: .claude/rules/ Directory -->
+    <div class="expand-section" id="rulesdir">
+      <div class="expand-head" onclick="toggle('rulesdir')">
+        <div class="expand-left">
+          <div class="expand-icon" style="background:var(--purple-bg);color:var(--purple);border:1px solid rgba(139,92,246,0.12)">📂</div>
+          <div class="expand-label">.claude/rules/ Directory</div>
+        </div>
+        <div class="expand-count">7 files</div>
+        <div class="expand-chev" id="rulesdir-chevron"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></div>
+      </div>
+      <div class="expand-body" id="rulesdir-body">
+        <div class="expand-inner">
+          <div style="font-size:13px;color:var(--text2);line-height:1.6;margin-bottom:14px">
+            <strong>v2.5 restructured CLAUDE.md</strong> into 7 thematic rule files. CLAUDE.md is now a lean index table (14 rules). Each file is auto-loaded by Claude Code on session start -- no manual import needed.
+          </div>
+          <div class="rules-dir-grid">
+            <div class="rules-dir-card">
+              <div>
+                <div class="rules-dir-file">01-investigation.md</div>
+                <div class="rules-dir-desc">Root cause first, ask "is this by design?", fix the system not the symptom (Rules 1, 3, 12)</div>
+              </div>
+            </div>
+            <div class="rules-dir-card">
+              <div>
+                <div class="rules-dir-file">02-user-respect.md</div>
+                <div class="rules-dir-desc">Respect stated truths, propose don't ship when uncertain (Rules 2, 4)</div>
+              </div>
+            </div>
+            <div class="rules-dir-card">
+              <div>
+                <div class="rules-dir-file">03-agent-safety.md</div>
+                <div class="rules-dir-desc">Never kill processes without confirmation, watch for cross-agent file conflicts (Rules 5, 8)</div>
+              </div>
+            </div>
+            <div class="rules-dir-card">
+              <div>
+                <div class="rules-dir-file">04-ui-quality.md</div>
+                <div class="rules-dir-desc">Playwright verify every UI change, Apple Design quality standard, no SVGs ever (Rules 7, 10)</div>
+              </div>
+            </div>
+            <div class="rules-dir-card">
+              <div>
+                <div class="rules-dir-file">05-mc-operations.md</div>
+                <div class="rules-dir-desc">Don't restart servers unnecessarily, never write non-ASCII to data files (Rules 6, 14)</div>
+              </div>
+            </div>
+            <div class="rules-dir-card">
+              <div>
+                <div class="rules-dir-file">06-output-format.md</div>
+                <div class="rules-dir-desc">Tables and emoji coding for all CLI output, KISS principle (Rules 9, 13)</div>
+              </div>
+            </div>
+            <div class="rules-dir-card" style="grid-column:1/-1">
+              <div>
+                <div class="rules-dir-file">07-agent-lifecycle.md</div>
+                <div class="rules-dir-desc">6-stage Agent Lifecycle mandatory, PRD text is aspirational -- hooks are enforceable, research online first through skills (Rule 11)</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
   </div><!-- /tab-start -->
 
 
@@ -613,7 +725,7 @@ header{display:flex;align-items:center;justify-content:space-between;padding:0 c
 
     <!-- Hero: Agent Lifecycle -->
     <div class="lifecycle-card">
-      <div class="lifecycle-label">Agent Lifecycle — 5 Mandatory Stages</div>
+      <div class="lifecycle-label">Agent Lifecycle — 6 Mandatory Stages</div>
       <div class="lc-stepper">
 
         <div class="lc-stage">
@@ -644,6 +756,12 @@ header{display:flex;align-items:center;justify-content:space-between;padding:0 c
           <div class="lc-dot-main" style="background:var(--cyan-bg);color:var(--cyan);border-color:rgba(6,182,212,0.3)">✅</div>
           <div class="lc-name" style="color:var(--cyan)">VERIFY</div>
           <div class="lc-desc">Playwright screenshot, tests — evidence before assertion</div>
+        </div>
+
+        <div class="lc-stage">
+          <div class="lc-dot-main" style="background:var(--rose-bg);color:var(--rose);border-color:rgba(239,68,68,0.3)">📋</div>
+          <div class="lc-name" style="color:var(--rose)">DEBRIEF</div>
+          <div class="lc-desc">Report delivered/missed items, lessons learned via API</div>
         </div>
 
       </div>
@@ -886,6 +1004,82 @@ header{display:flex;align-items:center;justify-content:space-between;padding:0 c
 
     </div>
 
+    <!-- ═══ Hardstop System (v2.5) ═══ -->
+    <div class="hardstop-card">
+      <div class="hardstop-label">Context Management</div>
+      <div class="hardstop-subtitle" style="color:var(--rose)">Triple-Layer Hardstop System</div>
+      <div style="font-size:12px;color:var(--text2);text-align:center;margin-bottom:20px;max-width:500px;margin-left:auto;margin-right:auto;line-height:1.6">Three independent layers prevent context window exhaustion. Each layer triggers at a different threshold. If one fails, the next catches it.</div>
+      <div class="hardstop-layers">
+        <div class="hs-layer l-green">
+          <div class="hs-emoji">📊</div>
+          <div class="hs-pct">60%</div>
+          <div class="hs-text">
+            <div class="hs-title">Layer 1: StatusLine Monitor</div>
+            <div class="hs-desc"><code>statusline-hardstop.js</code> reads context % on every render cycle. Writes threshold state to <code>hardstop-state.json</code>. Shows <code>[60%]</code> indicator.</div>
+          </div>
+        </div>
+        <div class="hs-layer l-amber">
+          <div class="hs-emoji">⚠️</div>
+          <div class="hs-pct">75%</div>
+          <div class="hs-text">
+            <div class="hs-title">Layer 2: Prompt-Hook Warnings</div>
+            <div class="hs-desc"><code>prompt-hook.js</code> injects urgency warnings at 60/75/85%. At 75%, auto-generates a pre-filled handoff doc with real campaign data. Shows <code>[75% HANDOFF]</code>.</div>
+          </div>
+        </div>
+        <div class="hs-layer l-rose">
+          <div class="hs-emoji">🛑</div>
+          <div class="hs-pct">85%</div>
+          <div class="hs-text">
+            <div class="hs-title">Layer 3: Emergency Handoff</div>
+            <div class="hs-desc"><code>precompact-handoff.js</code> fires on PreCompact (auto-compaction ~83.5%). Creates emergency handoff with session state, files modified, and context metrics. Shows <code>[85% STOP]</code>.</div>
+          </div>
+        </div>
+        <div class="hs-layer l-purple" style="margin-top:4px">
+          <div class="hs-emoji">🔢</div>
+          <div class="hs-pct" style="font-size:16px">30/50/75</div>
+          <div class="hs-text">
+            <div class="hs-title">Prompt Count Guards</div>
+            <div class="hs-desc">Independent of context %. <code>prompt-hook.js</code> tracks prompt count per session and injects warnings at 30, 50, and 75 prompts.</div>
+          </div>
+        </div>
+      </div>
+      <div class="hs-state-file">State: <code>data/hardstop-state.json</code> -- Tests: <code>scripts/test-hardstop.js</code> (23/23 passing)</div>
+    </div>
+
+    <!-- ═══ Interactive Dispatch System (v2.5) ═══ -->
+    <div class="sec-title">Interactive Dispatch System</div>
+    <div style="font-size:12px;color:var(--text2);margin-bottom:14px;line-height:1.6">Agents can now run in <strong>interactive mode</strong> -- they pause at checkpoints to consult the user before continuing. Built in v2.5.</div>
+    <div class="interactive-grid">
+      <div class="interactive-card" style="border-left:3px solid var(--blue)">
+        <div class="safety-emoji">💬</div>
+        <div>
+          <div class="safety-title" style="color:var(--blue)">AUQ MCP Server</div>
+          <div class="safety-desc">Ask-User-Questions MCP server allows agents to consult the user mid-task. Configured in <code>.mcp.json</code>. Used by interactive-mode agents.</div>
+        </div>
+      </div>
+      <div class="interactive-card" style="border-left:3px solid var(--amber)">
+        <div class="safety-emoji">🔢</div>
+        <div>
+          <div class="safety-title" style="color:#92400e">Checkpoint Counter</div>
+          <div class="safety-desc"><code>checkpoint-counter.js</code> counts Write/Edit calls. Every 5 writes, prompts interactive agents to check in with the user. Config: <code>checkpoint-config.json</code>.</div>
+        </div>
+      </div>
+      <div class="interactive-card" style="border-left:3px solid var(--rose)">
+        <div class="safety-emoji">🚫</div>
+        <div>
+          <div class="safety-title" style="color:var(--rose)">Stop Gate</div>
+          <div class="safety-desc"><code>stop-gate.js</code> blocks interactive-mode agents from finishing without consulting the user. Exit code 2 = blocked, agent must call AUQ first.</div>
+        </div>
+      </div>
+      <div class="interactive-card" style="border-left:3px solid var(--green)">
+        <div class="safety-emoji">🏷️</div>
+        <div>
+          <div class="safety-title" style="color:var(--green)">Mode Flag</div>
+          <div class="safety-desc"><code>/api/launch</code> accepts <code>mode: "interactive"</code> or <code>"auto"</code>. Stored in agent state file. Hooks read mode to decide behavior.</div>
+        </div>
+      </div>
+    </div>
+
     <!-- Auto-Dispatch Pipeline -->
     <div class="dispatch-pipeline">
       <div class="dispatch-pipeline-label">Auto-Dispatch Pipeline — From Orchestrator to Graded Agent</div>
@@ -935,13 +1129,20 @@ header{display:flex;align-items:center;justify-content:space-between;padding:0 c
     </div>
 
     <!-- Safety & Tracking -->
-    <div class="sec-title">Safety &amp; Tracking</div>
+    <div class="sec-title">Safety, Security &amp; Tracking</div>
     <div class="safety-grid">
       <div class="safety-card" style="border-left:3px solid var(--rose)">
         <div class="safety-emoji">🛡️</div>
         <div>
           <div class="safety-title" style="color:var(--rose)">Guard Destructive</div>
           <div class="safety-desc"><code>guard-destructive.sh</code> — PreToolUse hook that blocks <code>rm -r</code>, force push, hard reset, process kills, <code>npm publish</code>, DB drops</div>
+        </div>
+      </div>
+      <div class="safety-card" style="border-left:3px solid var(--blue)">
+        <div class="safety-emoji">🐕</div>
+        <div>
+          <div class="safety-title" style="color:var(--blue)">Dippy <span class="hook-badge active">active</span></div>
+          <div class="safety-desc">AST-based bash command approval. Parses commands before execution, blocks dangerous patterns. Pure Python, no deps. <code>PreToolUse Bash</code> in user settings.</div>
         </div>
       </div>
       <div class="safety-card" style="border-left:3px solid var(--purple)">
@@ -965,6 +1166,13 @@ header{display:flex;align-items:center;justify-content:space-between;padding:0 c
           <div class="safety-desc"><span class="grade-weight">40%</span> deliverables · <span class="grade-weight">25%</span> execution · <span class="grade-weight">20%</span> lifecycle · <span class="grade-weight">15%</span> skills</div>
         </div>
       </div>
+      <div class="safety-card" style="border-left:3px solid var(--text3);opacity:.65">
+        <div class="safety-emoji">🪢</div>
+        <div>
+          <div class="safety-title" style="color:var(--text3)">Lasso <span class="hook-badge removed">removed</span></div>
+          <div class="safety-desc">Prompt injection defender (PostToolUse Read|WebFetch|Bash|Grep). Removed -- false positive rate too high, no path config. Was scanning 50+ injection patterns in tool outputs.</div>
+        </div>
+      </div>
     </div>
 
     <!-- Version History -->
@@ -976,7 +1184,13 @@ header{display:flex;align-items:center;justify-content:space-between;padding:0 c
         <tr><td><strong>v1.1</strong></td><td><span class="v-grade" style="background:var(--blue-bg);color:var(--blue)">B+</span></td><td>5</td><td><strong>Coordinate-only.</strong> Built /story, /close-out, captured 7 findings. First skill usage (brainstorming)</td></tr>
         <tr><td><strong>v1.2</strong></td><td><span class="v-grade" style="background:var(--surface);color:var(--text3)">—</span></td><td>6</td><td><strong>Graded all agents,</strong> enriched campaigns.json, wrote design docs, dispatched Campaign Architect + Skill Creator</td></tr>
         <tr><td><strong>v1.3</strong></td><td><span class="v-grade" style="background:var(--blue-bg);color:var(--blue)">B+</span></td><td>7</td><td><strong>Brainstormed workflow redesign,</strong> captured f064-f067, updated orchestrator skill, dispatched Workflow Builder</td></tr>
-        <tr><td><strong>v1.4</strong></td><td><span class="v-grade" style="background:var(--surface);color:var(--text3)">active</span></td><td>8</td><td><strong>Auto-dispatch infrastructure</strong> — dispatch.sh, /api/launch, auto-grading, safety hooks, LoL notifications, orchestrator tab updated</td></tr>
+        <tr><td><strong>v1.4</strong></td><td><span class="v-grade" style="background:var(--blue-bg);color:var(--blue)">B+</span></td><td>8</td><td><strong>Auto-dispatch infrastructure</strong> — dispatch.sh, /api/launch, auto-grading, safety hooks, LoL notifications</td></tr>
+        <tr><td><strong>v2.0</strong></td><td><span class="v-grade" style="background:var(--blue-bg);color:var(--blue)">B</span></td><td>9</td><td><strong>Campaign-002 kickoff.</strong> First post-calibration orchestrator, restructured file layout, new page routes</td></tr>
+        <tr><td><strong>v2.1</strong></td><td><span class="v-grade" style="background:var(--blue-bg);color:var(--blue)">B+</span></td><td>10</td><td><strong>Dispatch polish.</strong> Multi-machine support (home/work toggle), mc-backlog.json, dispatch CRUD API</td></tr>
+        <tr><td><strong>v2.2</strong></td><td><span class="v-grade" style="background:var(--blue-bg);color:var(--blue)">B+</span></td><td>11</td><td><strong>Sound + notifications.</strong> play-chime.ps1, auto-grade.js integration, review agent pipeline</td></tr>
+        <tr><td><strong>v2.3</strong></td><td><span class="v-grade" style="background:var(--green-bg);color:var(--green)">A-</span></td><td>12</td><td><strong>Rules directory.</strong> CLAUDE.md split into 7 thematic rule files in .claude/rules/. Handoff gate updates (9 to 13)</td></tr>
+        <tr><td><strong>v2.4</strong></td><td><span class="v-grade" style="background:var(--blue-bg);color:var(--blue)">B+</span></td><td>13</td><td><strong>Deep research sessions.</strong> Hard stops research, interactive agents research, ecosystem scan (Dippy, Lasso, claude-code-tools)</td></tr>
+        <tr><td><strong>v2.5</strong></td><td><span class="v-grade" style="background:var(--green-bg);color:var(--green)">A-</span></td><td>14</td><td><strong>Infrastructure sprint.</strong> Triple-layer hardstop, interactive dispatch system, Dippy + Lasso, .claude/rules/, Rules 23-25</td></tr>
       </tbody>
     </table>
 
@@ -987,7 +1201,7 @@ header{display:flex;align-items:center;justify-content:space-between;padding:0 c
           <div class="expand-icon" style="background:var(--purple-bg);color:var(--purple);border:1px solid rgba(139,92,246,0.12)">🎼</div>
           <div class="expand-label">Orchestrator Skill</div>
         </div>
-        <div class="expand-count">8 phases · 16 rules · 3 versions</div>
+        <div class="expand-count">9 phases · 25 rules · 10 versions</div>
         <div class="expand-chev" id="orch-skill-chevron"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></div>
       </div>
       <div class="expand-body" id="orch-skill-body">
@@ -995,9 +1209,9 @@ header{display:flex;align-items:center;justify-content:space-between;padding:0 c
 
           <!-- Stats -->
           <div class="orch-skill-stats">
-            <div class="orch-skill-stat"><div class="orch-skill-stat-val" style="color:var(--purple)">8</div><div class="orch-skill-stat-label">Phases</div></div>
-            <div class="orch-skill-stat"><div class="orch-skill-stat-val" style="color:var(--blue)">16</div><div class="orch-skill-stat-label">Rules</div></div>
-            <div class="orch-skill-stat"><div class="orch-skill-stat-val" style="color:var(--green)">3</div><div class="orch-skill-stat-label">Versions Used</div></div>
+            <div class="orch-skill-stat"><div class="orch-skill-stat-val" style="color:var(--purple)">9</div><div class="orch-skill-stat-label">Phases</div></div>
+            <div class="orch-skill-stat"><div class="orch-skill-stat-val" style="color:var(--blue)">25</div><div class="orch-skill-stat-label">Rules</div></div>
+            <div class="orch-skill-stat"><div class="orch-skill-stat-val" style="color:var(--green)">10</div><div class="orch-skill-stat-label">Versions Used</div></div>
           </div>
 
           <!-- Description -->
@@ -1016,10 +1230,11 @@ header{display:flex;align-items:center;justify-content:space-between;padding:0 c
             <div class="orch-phase-row"><div class="orch-phase-num" style="background:var(--cyan)">6</div><div class="orch-phase-emoji">📡</div><div class="orch-phase-text"><strong>Monitor &amp; Grade</strong> <span>— track progress, grade A–F on completion, detect dead agents</span></div></div>
             <div class="orch-phase-row"><div class="orch-phase-num" style="background:var(--blue)">7</div><div class="orch-phase-emoji">🔍</div><div class="orch-phase-text"><strong>Capture Findings</strong> <span>— real-time, not post-hoc, tier + tag system</span></div></div>
             <div class="orch-phase-row"><div class="orch-phase-num" style="background:var(--green)">8</div><div class="orch-phase-emoji">🔄</div><div class="orch-phase-text"><strong>Sprint Transition</strong> <span>— auto-generate next execution plan, debrief, handoff (f061)</span></div></div>
+            <div class="orch-phase-row"><div class="orch-phase-num" style="background:var(--rose)">9</div><div class="orch-phase-emoji">📤</div><div class="orch-phase-text"><strong>Handoff &amp; Version Upgrade</strong> <span>— 13 quality gates, auto-skeleton handoff doc, push confirmation</span></div></div>
           </div>
 
           <!-- Key Rules -->
-          <div class="orch-section-label">Key Rules (16 total)</div>
+          <div class="orch-section-label">Key Rules (25 total)</div>
           <div class="orch-rules-list">
             <div><span class="orch-rule-num">1.</span> <strong>Coordinate, don't build.</strong> Every line of code is written by a dispatched agent.</div>
             <div><span class="orch-rule-num">2.</span> <strong>Pause after deliverables.</strong> User's next action > your next edit.</div>
@@ -1036,7 +1251,16 @@ header{display:flex;align-items:center;justify-content:space-between;padding:0 c
             <div><span class="orch-rule-num">13.</span> <strong>Never kill a process without asking.</strong> Check session context first.</div>
             <div><span class="orch-rule-num">14.</span> <strong>Keep campaigns page current.</strong> Verify after every campaigns.json change.</div>
             <div><span class="orch-rule-num">15.</span> <strong>User loves emojis.</strong> Use them in stages, statuses, labels.</div>
-            <div><span class="orch-rule-num">16.</span> <strong>5-step dispatch checklist.</strong> Write PRD → add card → add to /prompts → verify render → tell user.</div>
+            <div><span class="orch-rule-num">16.</span> <strong>5-step dispatch checklist.</strong> Write PRD -> add card -> add to /prompts -> verify render -> tell user.</div>
+            <div><span class="orch-rule-num">17.</span> <strong>Use existing agents.</strong> Check .claude/agents/ before doing work yourself.</div>
+            <div><span class="orch-rule-num">18.</span> <strong>Online research first.</strong> Search before building from scratch -- through skills, not raw WebSearch.</div>
+            <div><span class="orch-rule-num">19.</span> <strong>Search smarter.</strong> Short, targeted queries. One concept per search. Universal language, not internal jargon.</div>
+            <div><span class="orch-rule-num">20.</span> <strong>Deep research pattern.</strong> Outline -> focused deep search per item -> structured output. Human approves outline first.</div>
+            <div><span class="orch-rule-num">21.</span> <strong>No raw WebSearch.</strong> Always load /deep-research skill first. 7-phase protocol is mandatory.</div>
+            <div><span class="orch-rule-num">22.</span> <strong>Skill activation is mandatory.</strong> Hook injects skill check into every prompt.</div>
+            <div><span class="orch-rule-num">23.</span> <strong>Deep research at init.</strong> Load /deep-research during Phase 1 of every orchestrator session.</div>
+            <div><span class="orch-rule-num">24.</span> <strong>Creating-agents pipeline.</strong> Never write PRDs directly -- always use creating-agents -> skill-mandate -> create-agent-prompt.</div>
+            <div><span class="orch-rule-num">25.</span> <strong>Stop and investigate failures.</strong> Never band-aid and move on. Momentum bias is the enemy.</div>
           </div>
 
           <a href="/tools" class="orch-toolbox-link">View Full Skill in Toolbox →</a>
@@ -1231,9 +1455,9 @@ header{display:flex;align-items:center;justify-content:space-between;padding:0 c
     <!-- Stats Bar -->
     <div class="stats-bar">
       <div class="stat-item"><div class="stat-value" style="color:var(--blue)" id="stat-findings">—</div><div class="stat-label">Findings</div></div>
-      <div class="stat-item"><div class="stat-value" style="color:var(--green)">16</div><div class="stat-label">CLAUDE.md Rules</div></div>
-      <div class="stat-item"><div class="stat-value" style="color:var(--purple)" id="stat-hooks">—</div><div class="stat-label">Active Hooks</div></div>
-      <div class="stat-item"><div class="stat-value" style="color:var(--amber)">21</div><div class="stat-label">Agents Graded</div></div>
+      <div class="stat-item"><div class="stat-value" style="color:var(--green)">14</div><div class="stat-label">CLAUDE.md Rules</div></div>
+      <div class="stat-item"><div class="stat-value" style="color:var(--purple)">7</div><div class="stat-label">Rule Files</div></div>
+      <div class="stat-item"><div class="stat-value" style="color:var(--cyan)" id="stat-hooks">—</div><div class="stat-label">Active Hooks</div></div>
     </div>
 
     <!-- Expandable: Calibration -->
@@ -1251,10 +1475,13 @@ header{display:flex;align-items:center;justify-content:space-between;padding:0 c
             <p><strong>Calibration</strong> is the phase between campaigns — the time to analyze misses, update CLAUDE.md, refactor memory, improve prompts, and update the Workflow page.</p>
             <p style="margin-top:8px"><strong>The principle:</strong> "Each version discovers → next version automates."</p>
             <div style="background:var(--surface);border-radius:8px;padding:12px 16px;margin-top:12px;font-size:12px;line-height:1.7;color:var(--text2)">
-              <div><strong>v1.0 discovered:</strong> agents need Playwright verification → v1.1 added CLAUDE.md Rule 7</div>
-              <div><strong>v1.1 discovered:</strong> agents don't use skills → v1.2 added Agent Lifecycle with mandatory DISCOVER stage</div>
-              <div><strong>v1.2 discovered:</strong> agents need grades → v1.3 enriched campaigns.json with grading data</div>
-              <div><strong>v1.3 discovered:</strong> orchestrator must use its own skills on init → orchestrator skill updated with mandatory checklist</div>
+              <div><strong>v1.0 discovered:</strong> agents need Playwright verification -> v1.1 added CLAUDE.md Rule 7</div>
+              <div><strong>v1.1 discovered:</strong> agents don't use skills -> v1.2 added Agent Lifecycle with mandatory DISCOVER stage</div>
+              <div><strong>v1.2 discovered:</strong> agents need grades -> v1.3 enriched campaigns.json with grading data</div>
+              <div><strong>v1.3 discovered:</strong> orchestrator must use its own skills on init -> orchestrator skill updated with mandatory checklist</div>
+              <div><strong>v2.3 discovered:</strong> CLAUDE.md too long for context -> split into 7 thematic rule files in .claude/rules/</div>
+              <div><strong>v2.4 discovered:</strong> need hard stops + interactive agents -> deep research sessions on tooling ecosystem</div>
+              <div><strong>v2.5 discovered:</strong> PRD text is aspirational, hooks are enforceable -> built triple-layer hardstop + stop gate</div>
             </div>
           </div>
         </div>
@@ -1392,53 +1619,107 @@ function renderMd(md) {
   return '<p>' + md + '</p>';
 }
 
-/* ═══ Hook Summary Rendering ═══ */
-const hookMeta = {
-  'hook.js': { name:'State Tracker', desc:'Writes agent state to dashboard cards' },
-  'prompt-hook.js': { name:'Prompt Capture', desc:'Records prompts, sets display name, auto-links campaigns' },
-  'session-start-compact.js': { name:'Context Restore', desc:'Injects "where you left off" briefing after compaction' },
-  'check-code-change.sh': { name:'Stale Build Guard', desc:'Warns if server runs prod build after edits' },
-  'check-file-conflict.js': { name:'File Conflict Check', desc:'Detects conflicting file edits across agents' },
-  'check-server.sh': { name:'Server Health', desc:'Verifies dev server after shell commands' },
-  'verify-deploy.sh': { name:'Deploy Verifier', desc:'Checks deployment state after shell commands' },
+/* ═══ Hook Summary Rendering (v2.5 -- categorized, comprehensive) ═══ */
+/* NOTE: innerHTML used throughout this internal dashboard for local settings data -- no untrusted input */
+const HOOK_REGISTRY = {
+  'hook.js': { name:'State Tracker', desc:'Writes agent state to Dashboard cards -- tool, file, lifecycle stage', cat:'MC Telemetry', catDot:'var(--purple)' },
+  'prompt-hook.js': { name:'Prompt Capture', desc:'Records prompts, sets display name, auto-links campaigns, injects hardstop warnings at 60/75/85%', cat:'MC Telemetry', catDot:'var(--purple)' },
+  'update-profile.sh': { name:'Profile Update', desc:'Updates user profile data on session end', cat:'MC Telemetry', catDot:'var(--purple)' },
+  'guard-destructive.sh': { name:'Guard Destructive', desc:'Blocks rm -rf, force push, hard reset, process kills, npm publish, DB drops', cat:'Safety Guards', catDot:'var(--rose)' },
+  'guard-claude-md.sh': { name:'Guard CLAUDE.md', desc:'Protects CLAUDE.md and rule files from unintended edits', cat:'Safety Guards', catDot:'var(--rose)' },
+  'check-file-conflict.js': { name:'File Conflict Check', desc:'Detects when another agent recently edited the same file -- prevents overwrites', cat:'Safety Guards', catDot:'var(--rose)' },
+  'validate-html-js.js': { name:'HTML/JS Validator', desc:'Validates JavaScript syntax in HTML files after edits', cat:'Safety Guards', catDot:'var(--rose)' },
+  'check-code-change.sh': { name:'Code Change Tracker', desc:'Tracks file changes, warns if server runs stale build after edits', cat:'Code Quality', catDot:'var(--green)' },
+  'check-server.sh': { name:'Server Health', desc:'Verifies dev server is responding after shell commands', cat:'Code Quality', catDot:'var(--green)' },
+  'verify-deploy.sh': { name:'Deploy Verifier', desc:'Checks deployment state after shell commands', cat:'Code Quality', catDot:'var(--green)' },
+  'statusline-hardstop.js': { name:'Hardstop Monitor', desc:'Reads context %, writes threshold state (60/75/85%), shows status indicator', cat:'Context Management', catDot:'var(--cyan)' },
+  'precompact-handoff.js': { name:'Emergency Handoff', desc:'Creates handoff doc with session state, files modified, context metrics on auto-compaction', cat:'Context Management', catDot:'var(--cyan)' },
+  'session-start-compact.js': { name:'Context Restore', desc:'Injects "where you left off" briefing after compaction', cat:'Context Management', catDot:'var(--cyan)' },
+  'skill-activation-hook.sh': { name:'Skill Activation', desc:'Injects mandatory skill check into every prompt -- ensures agents discover tools', cat:'Agent Workflow', catDot:'var(--amber)' },
+  'checkpoint-counter.js': { name:'Checkpoint Counter', desc:'Counts Write/Edit calls; every 5 writes, prompts interactive agents to check in with user', cat:'Agent Workflow', catDot:'var(--amber)' },
+  'stop-gate.js': { name:'Stop Gate', desc:'Blocks interactive-mode agents from finishing without consulting the user via AUQ', cat:'Agent Workflow', catDot:'var(--amber)' },
+  'dippy-hook': { name:'Dippy', desc:'AST-based bash command approval -- parses commands before execution, blocks dangerous patterns', cat:'Security', catDot:'var(--blue)' },
+  'play-chime.ps1': { name:'LoL Ping', desc:'Plays notification chime when agent finishes -- "Enemy Missing" ping at 40% volume', cat:'Notifications', catDot:'var(--green)' },
+  'VERIFY BEFORE DONE': { name:'Anti-Rationalization', desc:'Reminds agent to verify work before claiming done -- run tests, take screenshots', cat:'Verification', catDot:'var(--amber)' },
 };
+
+const REMOVED_HOOKS = [
+  { name:'Lasso (Prompt Injection Defender)', desc:'Scanned tool outputs for 50+ injection patterns. Removed -- false positive rate too high, no path config.', cat:'Security', catDot:'var(--blue)', event:'PostToolUse', matcher:'Read|WebFetch|Bash|Grep' }
+];
+
 const eventColors = {
+  PreToolUse: { bg:'var(--rose-bg)', color:'var(--rose)' },
   PostToolUse: { bg:'var(--amber-bg)', color:'#92400e' },
   UserPromptSubmit: { bg:'var(--blue-bg)', color:'var(--blue)' },
   SessionStart: { bg:'var(--green-bg)', color:'var(--green)' },
-  Stop: { bg:'var(--rose-bg)', color:'var(--rose)' },
+  PreCompact: { bg:'var(--cyan-bg)', color:'var(--cyan)' },
+  StatusLine: { bg:'var(--purple-bg)', color:'var(--purple)' },
+  Stop: { bg:'rgba(239,68,68,0.06)', color:'var(--rose)' },
 };
 
 function classifyHook(cmd) {
-  if (cmd.includes('VERIFY BEFORE DONE')) return { name:'Anti-Rationalization', desc:'Reminds agent to verify work before claiming done' };
+  if (cmd.includes('VERIFY BEFORE DONE')) return HOOK_REGISTRY['VERIFY BEFORE DONE'];
+  if (cmd.includes('dippy')) return HOOK_REGISTRY['dippy-hook'];
   const key = cmd.split(/[\/\\]/).pop();
-  return hookMeta[key] || { name:key, desc:'Custom hook' };
+  return HOOK_REGISTRY[key] || { name: key, desc: 'Custom hook', cat: 'Other', catDot: 'var(--text3)' };
 }
 
 function renderHookTable(projectSettings, globalSettings) {
   const hooks = [];
+  const seen = new Set();
+
   for (const [settings, scope] of [[projectSettings, 'Project'], [globalSettings, 'Global']]) {
     for (const [event, matchers] of Object.entries(settings.hooks || {})) {
       for (const m of matchers) {
         for (const h of (m.hooks || [])) {
           const meta = classifyHook(h.command || '');
-          hooks.push({ ...meta, scope, event });
+          const key = meta.name + '|' + event;
+          if (seen.has(key)) continue;
+          seen.add(key);
+          hooks.push({ ...meta, scope, event, matcher: m.matcher || '.*' });
         }
       }
     }
+    if (settings.statusLine && settings.statusLine.command) {
+      const meta = classifyHook(settings.statusLine.command);
+      const key = meta.name + '|StatusLine';
+      if (!seen.has(key)) { seen.add(key); hooks.push({ ...meta, scope, event: 'StatusLine', matcher: '' }); }
+    }
   }
 
-  document.getElementById('hooks-count').textContent = hooks.length + ' hooks';
+  // Inject interactive dispatch hooks (wired at dispatch time, not in settings.json)
+  for (const [regKey, ev, mt, note] of [['checkpoint-counter.js','PostToolUse','Edit|Write','interactive'],['stop-gate.js','Stop','','interactive']]) {
+    const meta = HOOK_REGISTRY[regKey];
+    if (meta && !seen.has(meta.name + '|' + ev)) { seen.add(meta.name + '|' + ev); hooks.push({ ...meta, scope:'Dispatch', event:ev, matcher:mt, note }); }
+  }
+
+  const catOrder = ['MC Telemetry','Safety Guards','Code Quality','Context Management','Agent Workflow','Security','Notifications','Verification','Other'];
+  const grouped = {};
+  for (const h of hooks) { const c = h.cat || 'Other'; if (!grouped[c]) grouped[c] = []; grouped[c].push(h); }
+
+  document.getElementById('hooks-count').textContent = hooks.length + ' active';
   document.getElementById('stat-hooks').textContent = hooks.length;
 
-  let html = '<table class="compact-table"><thead><tr><th>Hook</th><th>Fires On</th><th>What It Does</th></tr></thead><tbody>';
-  for (const h of hooks) {
-    const ec = eventColors[h.event] || { bg:'var(--surface)', color:'var(--text3)' };
-    html += '<tr>';
-    html += '<td class="hook-name">' + h.name + '</td>';
-    html += '<td><span class="event-badge" style="background:' + ec.bg + ';color:' + ec.color + '">' + h.event + '</span></td>';
-    html += '<td>' + h.desc + '</td>';
-    html += '</tr>';
+  let html = '<table class="compact-table"><thead><tr><th>Hook</th><th>Event</th><th>Matcher</th><th>Purpose</th></tr></thead><tbody>';
+  for (const cat of catOrder) {
+    if (!grouped[cat]) continue;
+    html += '<tr class="hook-cat-row"><td colspan="4"><span class="hook-cat-dot" style="background:' + grouped[cat][0].catDot + '"></span>' + cat + '</td></tr>';
+    for (const h of grouped[cat]) {
+      const ec = eventColors[h.event] || { bg:'var(--surface)', color:'var(--text3)' };
+      html += '<tr><td class="hook-name">' + h.name + (h.note === 'interactive' ? ' <span class="hook-badge interactive">interactive</span>' : '') + '</td>';
+      html += '<td><span class="event-badge" style="background:' + ec.bg + ';color:' + ec.color + '">' + h.event + '</span></td>';
+      html += '<td style="font-family:\'DM Mono\',monospace;font-size:10px;color:var(--text3)">' + (h.matcher || '--') + '</td>';
+      html += '<td>' + h.desc + '</td></tr>';
+    }
+  }
+  if (REMOVED_HOOKS.length) {
+    html += '<tr class="hook-cat-row"><td colspan="4"><span class="hook-cat-dot" style="background:var(--text3)"></span>Removed / Deprecated</td></tr>';
+    for (const r of REMOVED_HOOKS) {
+      html += '<tr style="opacity:.55"><td class="hook-name" style="text-decoration:line-through;color:var(--text3)">' + r.name + ' <span class="hook-badge removed">removed</span></td>';
+      html += '<td><span class="event-badge" style="background:var(--surface);color:var(--text3)">' + r.event + '</span></td>';
+      html += '<td style="font-family:\'DM Mono\',monospace;font-size:10px;color:var(--text3)">' + (r.matcher || '--') + '</td>';
+      html += '<td style="color:var(--text3)">' + r.desc + '</td></tr>';
+    }
   }
   html += '</tbody></table>';
   document.getElementById('hooks-content').innerHTML = html;

@@ -4096,10 +4096,234 @@
           "skills": 15,
           "total": 97
         }
+      },
+      {
+        "slot": "orchestrator-v2.6",
+        "name": "Orchestrator v2.6",
+        "focus": "Baseline agent quality + infrastructure. Universal lifecycle, skill-activation fix, dispatch fixes, 3 agents, aichat-search, Rust toolchain.",
+        "sessionId": null,
+        "status": "active",
+        "retro": "coordinated-sprint/orchestrator-v2.6-handoff.md",
+        "brief": null,
+        "sprint": 6,
+        "grade": null,
+        "gradeReason": null,
+        "lifecycle": {
+          "define": "passed",
+          "discover": "passed",
+          "execute": "passed",
+          "reason": "passed",
+          "verify": "passed"
+        },
+        "lifecycleReached": "debrief",
+        "lifecycleFailedAt": null,
+        "skillsUsed": [
+          "orchestrator-init",
+          "orchestrator-rules",
+          "deep-research",
+          "orchestrator-plan",
+          "orchestrator-dispatch",
+          "creating-agents",
+          "skill-mandate",
+          "create-agent-prompt",
+          "filing-postmortems",
+          "orchestrator-handoff"
+        ],
+        "skillsNote": "10 skills loaded. First orchestrator to fix skill-activation hook (Windows path bug), build universal agent lifecycle, install Rust + aichat-search.",
+        "delivered": [
+          "Universal agent lifecycle (.claude/rules/00-agent-lifecycle.md) -- 6 stages: READ, RECALL, DISCOVER, RESEARCH, BUILD, VERIFY",
+          "Default behaviors (.claude/rules/00-defaults.md) -- emoji coding, tables, research-first, no SVGs",
+          "Skill-activation hook FIXED -- Windows path bug meant keyword matching never fired in production. Now 18/18 categories pass.",
+          "skill-rules.json expanded from 10 to 18 categories (eval-harness, verification-loop, continuous-learning, writing-plans, security-review, skill-builder, impeccable-polish, coding-standards)",
+          "Skill-activation hook wired to user-level settings -- fires for ALL projects, not just phredomade",
+          "3 Sprint 6 agents dispatched via /api/launch: toolbox-sync-hook (A-), workflow-page-refresh (A), sound-design-system (B+)",
+          "dispatch.sh /tmp/ Cygwin crash fixed -- self-buffer now uses script directory instead of virtual /tmp/",
+          "Rust 1.94 + MSVC Build Tools installed, cargo config.toml with explicit linker path",
+          "aichat-search Rust binary built and working -- JSON mode for session search across 480+ sessions",
+          "Lasso prompt-injection-defender removed (justified -- no path exclusion config, binary on/off only)",
+          "PM031 filed + closed: manual dispatch regression + /tmp/ crash (4-layer systemic fix)",
+          "PM032 filed: interactive dispatch gap -- sound design dispatched headless when it needed user interaction",
+          "f109 filed: paradigm shift -- orchestrator job is to build agents that can work, not dispatch headless chickens",
+          "Rule 26 added: always dispatch via /api/launch, never copy-paste",
+          "Gates 14-15 added to handoff skill: dispatch board cleanup + /api/launch verification",
+          "Execution plan cleaned: 4 stale items fixed, 2 dispatch-home items closed",
+          "Deep research at init (Rule 23 compliant) -- 7 findings, 5 hypotheses tested, community tools surveyed",
+          "Session search used to find user's Toolbox feedback from past 5 days"
+        ],
+        "missed": [
+          "Toolbox page refresh not dispatched -- scoping took full session, user feedback gathered but agent not written",
+          "Sound design needs redo as interactive agent -- user never heard the sounds (PM032)",
+          "Lasso re-investigation deferred -- removed without trying to fix first (user approved removal)",
+          "CLAUDE.md review skill still not started (carried 4 sessions)"
+        ]
+      },
+      {
+        "slot": "toolbox-sync-hook",
+        "name": "Toolbox Sync Hook",
+        "focus": "User: 'make it a hook.' PostToolUse hook auto-copies to toolbox/ when Write/Edit targets .claude/skills/, agents/, tools/. Unblocks Gates 10/13.",
+        "sessionId": "e367ddc9-8f48-45b3-af58-faa64d3c5164",
+        "status": "completed",
+        "brief": "coordinated-sprint/toolbox-sync-hook-prompt.md",
+        "sprint": 6,
+        "grade": "A-",
+        "gradeReason": "Auto-graded: 92/100. Lifecycle 20/20, Skills 15/15, Exec 22/25, Deliverables 35/40.",
+        "lifecycle": {
+          "define": "partial",
+          "discover": "passed",
+          "execute": "passed",
+          "reason": "passed",
+          "verify": "partial",
+          "debrief": "passed"
+        },
+        "skillsUsed": [
+          "coding-standards",
+          "verification-before-completion"
+        ],
+        "delivered": [
+          "toolbox-sync.js PostToolUse hook script (42 lines, Node.js)",
+          "Hook registered in .claude/settings.json under Edit|Write PostToolUse matcher",
+          "Path mapping: skills->toolbox/skills, agents->toolbox/agents, tools->toolbox/scripts",
+          "Windows backslash normalization",
+          "Auto-creates destination directories via mkdirSync recursive",
+          "Exit 0 always -- never blocks agent",
+          "End-to-end verified: created test skill, confirmed copy to toolbox, diffed contents match, cleaned up"
+        ],
+        "missed": [
+          "Execution time ~75ms (vs 50ms target) -- 60ms is Node.js startup overhead, script logic is sub-ms"
+        ],
+        "mandatedSkills": [
+          "coding-standards",
+          "verification-before-completion"
+        ],
+        "mode": "auto",
+        "lessons": [
+          "Node.js cold start adds ~60ms overhead unavoidable for any Node hook -- 50ms target unrealistic for Node scripts",
+          "Guard-destructive hook blocks dangerous patterns in JSON payloads -- use file-based curl for complex data",
+          "Backslash escaping in bash echo does not reliably pass through to Node stdin -- use file-based tests instead"
+        ],
+        "scoreBreakdown": {
+          "deliverables": 35,
+          "execution": 22,
+          "lifecycle": 20,
+          "skills": 15,
+          "total": 92
+        }
+      },
+      {
+        "slot": "workflow-page-refresh",
+        "name": "Workflow Page Refresh",
+        "focus": "User: 'haven't touched in eons.' Update workflow-page.html with hardstop system, all hooks, .claude/rules/, interactive dispatch, removed tools.",
+        "sessionId": "0ffbb0f8-24bf-4687-8519-ef0c1c732667",
+        "status": "completed",
+        "brief": "coordinated-sprint/workflow-page-refresh-prompt.md",
+        "sprint": 6,
+        "grade": "A",
+        "gradeReason": "Auto-graded: 94/100. Lifecycle 20/20, Skills 15/15, Exec 22/25, Deliverables 37/40.",
+        "lifecycle": {
+          "define": "passed",
+          "discover": "passed",
+          "execute": "passed",
+          "reason": "passed",
+          "verify": "passed",
+          "debrief": "passed"
+        },
+        "skillsUsed": [
+          "frontend-design",
+          "impeccable-polish"
+        ],
+        "delivered": [
+          "Complete hook inventory with 8 categories + removed section (20 active hooks, Lasso removed)",
+          "Rules directory section showing all 7 .claude/rules/ files with descriptions",
+          "Triple-layer hardstop system visualization (60/75/85% + prompt count guards)",
+          "Interactive dispatch system section (AUQ, checkpoint counter, stop gate, mode flag)",
+          "Dippy active + Lasso removed in safety grid with status badges",
+          "Version history extended from v1.4 through v2.5 (7 new entries)",
+          "Orchestrator skill updated to 9 phases, 25 rules, Rules 17-25 added",
+          "Agent lifecycle fixed from 5 to 6 stages (DEBRIEF added)",
+          "Stats bar updated (14 rules, 7 rule files, dynamic hook count)",
+          "Calibration section extended with v2.3-v2.5 discoveries",
+          "Responsive CSS for new components",
+          "All Playwright verified across 4 tabs at 1440px"
+        ],
+        "missed": [
+          "No server.js changes needed -- all data available from existing API"
+        ],
+        "mandatedSkills": [
+          "frontend-design",
+          "impeccable-polish"
+        ],
+        "mode": "auto",
+        "lessons": [
+          "The dynamic hook rendering from settings.json is powerful but the metadata registry needed to be comprehensive for new hooks",
+          "StatusLine hook lives at root of settings (not under hooks array) requiring special extraction",
+          "Interactive dispatch hooks (checkpoint-counter, stop-gate) are wired at dispatch time not in global settings -- needed hardcoded injection in JS",
+          "Deduplication by name+event was essential since hook.js and prompt-hook.js appear in both project and global settings"
+        ],
+        "scoreBreakdown": {
+          "deliverables": 37,
+          "execution": 22,
+          "lifecycle": 20,
+          "skills": 15,
+          "total": 94
+        }
+      },
+      {
+        "slot": "sound-design-system",
+        "name": "Sound Design System",
+        "focus": "Carried 4 sessions. Different chimes for different events: done, needs-input, error, orchestrator-alert. PowerShell + SystemSounds.",
+        "sessionId": "27a8f0d5-07e8-4c34-a1f0-f5d517f14663",
+        "status": "completed",
+        "brief": "coordinated-sprint/sound-design-system-prompt.md",
+        "sprint": 6,
+        "grade": "B+",
+        "gradeReason": "Auto-graded: 87/100. Lifecycle 20/20, Skills 15/15, Exec 22/25, Deliverables 30/40.",
+        "lifecycle": {
+          "define": "partial",
+          "discover": "passed",
+          "execute": "passed",
+          "reason": "passed",
+          "verify": "partial",
+          "debrief": "passed"
+        },
+        "skillsUsed": [
+          "coding-standards",
+          "verification-before-completion"
+        ],
+        "delivered": [
+          "Script: play-sound.ps1 with 4 events",
+          "Config: sound-config.json beep sequences",
+          "Wrapper: play-chime.ps1 backward compatible",
+          "Hook: settings.json Stop updated",
+          "Skills: both mandated skills loaded",
+          "Verify: all 4 sounds tested",
+          "Debrief: self-debrief API called",
+          "Bonus: dispatch.sh Cygwin /tmp fix"
+        ],
+        "missed": [
+          "Lifecycle: verify stage not tracked",
+          "Hooks: other events not wired yet"
+        ],
+        "mandatedSkills": [
+          "coding-standards",
+          "verification-before-completion"
+        ],
+        "mode": "auto",
+        "lessons": [
+          "Console beep needs zero dependencies",
+          "Config-driven approach enables extensibility",
+          "Audio tasks need no Playwright verification"
+        ],
+        "scoreBreakdown": {
+          "deliverables": 30,
+          "execution": 22,
+          "lifecycle": 20,
+          "skills": 15,
+          "total": 87
+        }
       }
     ],
     "executionPlan": {
-      "version": "v2.2",
+      "version": "v2.6",
       "items": [
         {
           "id": 1,
@@ -4239,20 +4463,20 @@
         {
           "id": 17,
           "task": "Live agent modal v2 -- lifecycle self-reporting + auto-refresh + monotonic tracking",
-          "status": "in-progress",
+          "status": "done",
           "priority": "P0",
           "sprint": 3,
           "agentSlot": "live-modal-overhaul-v2",
-          "note": "Prompt ready. Research complete (Option C hybrid). Dispatching now."
+          "note": "A- grade. Auto-refresh + monotonic tracking + partial amber dots. Completed Sprint 3."
         },
         {
           "id": 18,
           "task": "Install ui-ux-pro-max-skill + sync to toolbox",
-          "status": "in-progress",
+          "status": "done",
           "priority": "P0",
           "sprint": 3,
           "agentSlot": "skill-installer",
-          "note": "User explicitly requested. Dispatch via creating-agents pipeline."
+          "note": "B grade. Installed with Apple override. Python search needs manual install."
         },
         {
           "id": 19,
@@ -4320,11 +4544,11 @@
         {
           "id": 26,
           "task": "Research agent card UX -- mine orchestrator history for all pain points, propose card redesign",
-          "status": "in-progress",
+          "status": "done",
           "priority": "P0",
           "sprint": 3,
           "agentSlot": "agent-card-research",
-          "note": "User: 'There is more information that should be on the card that I cant think of right now.' Read-only research. Output: coordinated-sprint/agent-card-research.md."
+          "note": "B+ grade. 22 pain points, complete redesign spec, task-type colors. Implemented by agent-card-builder (A+)."
         },
         {
           "id": 27,
@@ -4437,11 +4661,11 @@
         {
           "id": 39,
           "task": "Orchestrator hard stops -- auto-handoff triggers based on context/token budget",
-          "status": "todo",
+          "status": "done",
           "priority": "P0",
-          "sprint": 4,
-          "agentSlot": null,
-          "note": "User pain point: orchestrators drag too long, regress, waste time. Needs brainstorming + design."
+          "sprint": 5,
+          "agentSlot": "hardstop-builder",
+          "note": "A+ grade. Triple-layer system: StatusLine + prompt-hook thresholds + PreCompact handoff. 23/23 tests. v2.5."
         }
       ]
     },

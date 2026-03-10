@@ -1,0 +1,38 @@
+{
+  "done": {
+    "type": "beep",
+    "sequence": [
+      { "frequency": 523, "duration": 150 },
+      { "frequency": 659, "duration": 150 },
+      { "frequency": 784, "duration": 200 }
+    ],
+    "description": "Ascending C-E-G major chord -- uplifting completion tone"
+  },
+  "needs-input": {
+    "type": "beep",
+    "sequence": [
+      { "frequency": 800, "duration": 120 },
+      { "frequency": 800, "duration": 120 }
+    ],
+    "pause": 80,
+    "description": "Two quick same-pitch beeps -- attention needed"
+  },
+  "error": {
+    "type": "beep",
+    "sequence": [
+      { "frequency": 600, "duration": 200 },
+      { "frequency": 400, "duration": 300 }
+    ],
+    "description": "Descending two-tone -- something went wrong"
+  },
+  "orchestrator-alert": {
+    "type": "beep",
+    "sequence": [
+      { "frequency": 880, "duration": 100 },
+      { "frequency": 660, "duration": 100 },
+      { "frequency": 880, "duration": 100 },
+      { "frequency": 1047, "duration": 200 }
+    ],
+    "description": "Four-note melody (A-E-A-C) -- orchestrator notification"
+  }
+}

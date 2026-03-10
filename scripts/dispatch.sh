@@ -19,10 +19,19 @@
 # See: interactive-dispatch-builder incident, 2026-03-10.
 if [ -z "$_DISPATCH_BUFFERED" ]; then
   export _DISPATCH_BUFFERED=1
-  _TMPSCRIPT=$(mktemp /tmp/dispatch-XXXXXX.sh)
+  # CRITICAL: Do NOT use /tmp/ — it's a virtual Cygwin directory.
+  # Windows executables (claude.exe, node.exe) fail from Cygwin virtual dirs.
+  # Use the script's own directory for the buffer copy.
+  _TMPSCRIPT="$(dirname "$0")/_dispatch-buffer-$$.sh"
   cp "$0" "$_TMPSCRIPT"
   exec bash "$_TMPSCRIPT" "$@"
 fi
+
+# Clean up self-buffer copy
+[ -f "$(dirname "$0")/_dispatch-buffer-$$.sh" ] && rm -f "$(dirname "$0")/_dispatch-buffer-$$.sh" 2>/dev/null
+
+# Ensure CWD is a real Windows directory (not Cygwin virtual)
+cd "${PHREDOMADE_ROOT:-$HOME}" 2>/dev/null
 
 AGENT_NAME="$1"
 PROMPT_FILE="$2"

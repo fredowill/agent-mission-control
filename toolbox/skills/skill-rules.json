@@ -1,0 +1,106 @@
+{
+  "rules": [
+    {
+      "keywords": ["post-mortem", "postmortem", "PM", "file a PM", "this should be a PM", "incident"],
+      "skill": "filing-postmortems",
+      "priority": "critical",
+      "message": "Load /filing-postmortems before writing any post-mortem content."
+    },
+    {
+      "keywords": ["dispatch agent", "create agent", "new agent", "launch agent"],
+      "skill": "creating-agents",
+      "priority": "critical",
+      "message": "Load /creating-agents pipeline. Never call create-agent-prompt directly."
+    },
+    {
+      "keywords": ["build", "create feature", "add feature", "new component", "implement", "make a", "set up", "write a", "design a", "add a"],
+      "skill": "brainstorming",
+      "priority": "high",
+      "message": "Load /brainstorming BEFORE any implementation. Explore intent first."
+    },
+    {
+      "keywords": ["write code", "fix code", "refactor", "clean up", "typescript", "javascript", "react", "next.js", "function", "class"],
+      "skill": "coding-standards",
+      "priority": "high",
+      "message": "Load /coding-standards for any code writing task."
+    },
+    {
+      "keywords": ["design page", "redesign", "UI component", "visual design", "layout fix", "CSS fix", "build page", "overhaul page"],
+      "skill": "frontend-design",
+      "priority": "high",
+      "message": "Load /frontend-design for any UI work."
+    },
+    {
+      "keywords": ["bug", "broken", "failing", "error", "not working", "debug"],
+      "skill": "systematic-debugging",
+      "priority": "high",
+      "message": "Load /systematic-debugging before proposing fixes."
+    },
+    {
+      "keywords": ["performance", "slow", "optimize", "speed", "bundle", "faster", "laggy", "loading time"],
+      "skill": "impeccable-optimize",
+      "priority": "high",
+      "message": "Load /impeccable-optimize for performance work."
+    },
+    {
+      "keywords": ["research", "investigate", "look into", "find out", "explore options", "what are the best", "compare approaches", "deep dive", "look online", "search for"],
+      "skill": "deep-research",
+      "priority": "critical",
+      "message": "Load /deep-research for ANY research task. NEVER do raw WebSearch with kitchen-sink queries. The 7-phase protocol (classify, scope, hypothesize, plan, query, triangulate, synthesize) is mandatory. PM030/f107."
+    },
+    {
+      "keywords": ["animate", "animation", "motion", "interactive", "scroll effect", "micro-interaction", "wow factor"],
+      "skill": "impeccable-animate",
+      "priority": "high",
+      "message": "Load /impeccable-animate for any animation work. No SVGs (f106)."
+    },
+    {
+      "keywords": ["done", "finished", "complete", "shipped", "created skill", "created agent", "new skill", "new hook", "all set", "ready to go"],
+      "skill": "verification-before-completion",
+      "priority": "critical",
+      "message": "STOP. Run end-to-end test before claiming done. Verify the output renders correctly, data flows through the full pipeline, and the user would see what they expect."
+    },
+    {
+      "keywords": ["eval", "evaluate", "grade", "score", "measure", "benchmark", "test quality"],
+      "skill": "eval-harness",
+      "priority": "high",
+      "message": "Load /eval-harness for formal evaluation of code or agent sessions."
+    },
+    {
+      "keywords": ["verify", "check", "confirm", "test", "validate", "make sure", "does it work"],
+      "skill": "verification-loop",
+      "priority": "high",
+      "message": "Load /verification-loop to enforce verification before completion."
+    },
+    {
+      "keywords": ["learn", "pattern", "remember", "extract lesson", "what did we learn", "improve"],
+      "skill": "continuous-learning",
+      "priority": "high",
+      "message": "Load /continuous-learning to extract reusable patterns from this session."
+    },
+    {
+      "keywords": ["plan", "strategy", "approach", "how should we", "what order", "step by step", "roadmap"],
+      "skill": "writing-plans",
+      "priority": "high",
+      "message": "Load /writing-plans before starting multi-step implementation."
+    },
+    {
+      "keywords": ["security", "auth", "password", "token", "secret", "api key", "injection", "XSS", "vulnerability"],
+      "skill": "security-review",
+      "priority": "critical",
+      "message": "Load /security-review for any code handling auth, user input, secrets, or API endpoints."
+    },
+    {
+      "keywords": ["skill", "create skill", "new skill", "build skill", "write skill", "hook", "create hook"],
+      "skill": "skill-builder",
+      "priority": "high",
+      "message": "Load /skill-builder for creating or modifying Claude Code skills."
+    },
+    {
+      "keywords": ["polish", "cleanup", "spacing", "alignment", "pixel perfect", "final pass", "looks off"],
+      "skill": "impeccable-polish",
+      "priority": "high",
+      "message": "Load /impeccable-polish for final visual quality pass."
+    }
+  ]
+}

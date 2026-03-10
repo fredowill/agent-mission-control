@@ -78,9 +78,12 @@ For EACH agent being dispatched, complete ALL of these steps in order:
 - If the sprint is new, add it with a label and CSS gradient color
 - Curl or check `/api/campaigns` to confirm the agent appears
 
-**Step 5: Tell the user**
-- "Agent card is on /campaigns under Sprint [N]. Copy the prompt from the agent's report card (Copy Full Prompt button) or from /prompts."
-- Do NOT say "copy-paste this" or "read this file." The UI handles delivery.
+**Step 5: Launch via /api/launch (MANDATORY — PM031)**
+- Launch EVERY agent programmatically via the API. NEVER tell the user to copy-paste or manually open terminals.
+- API call: `curl -X POST http://localhost:3033/api/launch -H "Content-Type: application/json" -d '{"campaignId":"<id>","slot":"<slot>","agentName":"<name>","promptFile":"<path>"}'`
+- Verify the response contains `{"ok":true,"sessionId":"..."}` before proceeding to the next agent.
+- If /api/launch fails, investigate the error. Do NOT fall back to manual dispatch.
+- This is a hard gate. Manual dispatch instructions = graded failure. (PM023, PM031 — regressed twice.)
 
 ## Follow-up Prompts (f072)
 
