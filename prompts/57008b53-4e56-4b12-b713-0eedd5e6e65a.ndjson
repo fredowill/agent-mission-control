@@ -1,0 +1,1 @@
+{"prompt":"Can you investigate for me why my active tab in localhost:2033 mission control is bugged? I currently have 4, because I opened 2 Claude process terminals, but the way it's set up is to where there should be one for every terminal. I don't know what's wrong or what's happening. Did something reset it or fuck it up?","ts":1772760949551,"type":"user"}

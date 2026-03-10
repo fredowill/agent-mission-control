@@ -3,222 +3,177 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>The v1.0 Story &mdash; Mission Control</title>
+<title>The Story &mdash; Mission Control</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=DM+Sans:wght@400;500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
 :root{
-  --bg:#fff;--bg2:#fafafa;--surface:#f4f4f5;--surface2:#e4e4e7;
-  --text:#09090b;--text2:#52525b;--text3:#a1a1aa;--sep:#e4e4e7;
+  --bg:#fafafa;--bg2:#fff;--surface:#f4f4f5;--surface2:#e4e4e7;
+  --text:#0f0d15;--text2:#52525b;--text3:#a1a1aa;--sep:#e4e4e7;
   --purple:#8b5cf6;--purple-bg:rgba(139,92,246,0.06);
   --blue:#3b82f6;--blue-bg:rgba(59,130,246,0.06);
   --green:#22c55e;--green-bg:rgba(34,197,94,0.06);
   --amber:#f59e0b;--amber-bg:rgba(245,158,11,0.06);
   --rose:#ef4444;--rose-bg:rgba(239,68,68,0.05);
   --cyan:#06b6d4;--cyan-bg:rgba(6,182,212,0.06);
-  --radius:12px;
+  --radius:10px;
 }
-body{background:var(--bg2);color:var(--text);font-family:'DM Sans',-apple-system,sans-serif;-webkit-font-smoothing:antialiased;min-height:100vh}
+body{background:var(--bg);color:var(--text);font-family:'DM Sans',-apple-system,sans-serif;-webkit-font-smoothing:antialiased;min-height:100vh;overflow-x:hidden}
 
-/* Header */
-header{display:flex;align-items:center;justify-content:space-between;padding:0 clamp(24px,4vw,48px);height:64px;background:var(--bg);border-bottom:1px solid var(--sep);position:sticky;top:0;z-index:50}
+/* ── Header ── */
+header{display:flex;align-items:center;justify-content:space-between;padding:0 clamp(24px,4vw,48px);height:64px;background:var(--bg2);border-bottom:1px solid var(--sep);position:sticky;top:0;z-index:50}
 .logo{display:flex;align-items:center;gap:10px}
 .logo-dot{width:8px;height:8px;border-radius:50%;background:var(--purple)}
 .logo-text{font-family:'Plus Jakarta Sans',sans-serif;font-size:14px;font-weight:700;letter-spacing:-0.02em}
 .header-nav{display:flex;gap:2px;padding:3px;background:var(--surface);border-radius:8px;position:absolute;left:50%;transform:translateX(-50%)}
 .nav-link{padding:5px 14px;border-radius:6px;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;color:var(--text3);text-decoration:none;transition:all .15s;white-space:nowrap}
 .nav-link:hover{color:var(--text2)}
-.nav-link.active{background:var(--bg);color:var(--text);box-shadow:0 1px 3px rgba(0,0,0,.06)}
+.nav-link.active{background:var(--bg2);color:var(--text);box-shadow:0 1px 3px rgba(0,0,0,.06)}
 .header-right{display:flex;align-items:center;gap:8px}
 
-/* Shell */
-.shell{max-width:960px;margin:0 auto;padding:48px 20px 80px}
+/* ── Sections ── */
+.section{padding:clamp(56px,8vw,112px) clamp(20px,4vw,48px)}
+.section-inner{max-width:1100px;margin:0 auto}
+.section-alt{background:var(--bg2)}
 
-/* Hero */
-.story-hero{text-align:center;margin-bottom:56px}
-.hero-eyebrow{font-family:'DM Mono',monospace;font-size:11px;font-weight:500;text-transform:uppercase;letter-spacing:.1em;color:var(--purple);margin-bottom:12px}
-.hero-title{font-family:'Plus Jakarta Sans',sans-serif;font-size:clamp(36px,5vw,52px);font-weight:800;letter-spacing:-0.04em;line-height:1.1;margin-bottom:16px;background:linear-gradient(135deg,var(--text) 0%,var(--text2) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
-.hero-subtitle{font-size:16px;color:var(--text2);line-height:1.6;max-width:520px;margin:0 auto 32px}
+/* ── Hero ── */
+.hero{min-height:88vh;display:flex;align-items:center;background:var(--bg2);border-bottom:1px solid var(--sep);padding-top:0}
+.hero-content{max-width:800px}
+.eyebrow{font-family:'DM Mono',monospace;font-size:11px;font-weight:500;text-transform:uppercase;letter-spacing:.1em;color:var(--purple);display:block;margin-bottom:24px}
+.display{font-family:'Plus Jakarta Sans',sans-serif;font-size:clamp(52px,9vw,104px);font-weight:800;letter-spacing:-0.05em;line-height:.92;color:var(--text);margin-bottom:32px}
+.hero-lead{font-size:clamp(16px,2vw,20px);line-height:1.7;color:var(--text2);max-width:600px;margin-bottom:40px}
+.hero-lead strong{color:var(--text);font-weight:700}
+.hl{font-family:'Plus Jakarta Sans',sans-serif;font-weight:800;letter-spacing:-0.02em}
+.hl.purple{color:var(--purple)}
+.hl.blue{color:var(--blue)}
+.hl.green{color:var(--green)}
+.hl.amber{color:var(--amber)}
+.hero-line{width:80px;height:3px;background:var(--purple);border-radius:2px}
 
-/* Stats Row */
-.stats-row{display:flex;justify-content:center;gap:4px;flex-wrap:wrap}
-.stat-pill{display:flex;align-items:center;gap:6px;padding:8px 18px;background:var(--bg);border:1px solid var(--sep);border-radius:100px;font-size:13px;font-weight:500;transition:transform .15s}
-.stat-pill:hover{transform:translateY(-1px)}
-.stat-value{font-family:'Plus Jakarta Sans',sans-serif;font-weight:800;letter-spacing:-0.02em}
-.stat-value.purple{color:var(--purple)}
-.stat-value.blue{color:var(--blue)}
-.stat-value.green{color:var(--green)}
-.stat-value.amber{color:var(--amber)}
-.stat-value.cyan{color:var(--cyan)}
-.stat-label{color:var(--text3);font-size:12px}
+/* ── Campaign Chapter ── */
+.chapter{position:relative;overflow:hidden;border-bottom:1px solid var(--sep)}
+.chapter-watermark{position:absolute;right:clamp(20px,5vw,60px);top:clamp(40px,6vw,80px);font-family:'Plus Jakarta Sans',sans-serif;font-size:clamp(140px,18vw,240px);font-weight:800;line-height:1;pointer-events:none;opacity:.035;letter-spacing:-0.06em}
+.chapter-eyebrow{font-family:'DM Mono',monospace;font-size:11px;font-weight:500;text-transform:uppercase;letter-spacing:.1em;margin-bottom:12px}
+.chapter-title{font-family:'Plus Jakarta Sans',sans-serif;font-size:clamp(28px,4vw,40px);font-weight:800;letter-spacing:-0.04em;line-height:1.1;margin-bottom:12px}
+.chapter-desc{font-size:15px;color:var(--text2);line-height:1.7;max-width:640px;margin-bottom:32px}
+.chapter-meta{display:flex;gap:24px;flex-wrap:wrap;margin-bottom:36px}
+.chapter-stat{display:flex;flex-direction:column;gap:2px}
+.chapter-stat-val{font-family:'Plus Jakarta Sans',sans-serif;font-size:24px;font-weight:800;letter-spacing:-0.03em;line-height:1}
+.chapter-stat-label{font-family:'DM Mono',monospace;font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.06em}
 
-/* Timeline */
-.timeline{position:relative;padding-left:0}
+/* Agent Pills */
+.agent-grid{display:flex;flex-wrap:wrap;gap:6px}
+.agent-pill{display:inline-flex;align-items:center;gap:7px;padding:7px 12px;border-radius:8px;background:var(--surface);font-size:12px;font-weight:500;color:var(--text);transition:all .2s;cursor:default;border:1px solid transparent}
+.agent-pill:hover{background:var(--bg2);border-color:var(--sep);transform:translateY(-1px);box-shadow:0 4px 12px rgba(0,0,0,.06)}
+.grade-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+.agent-pill .grade-label{font-family:'DM Mono',monospace;font-size:10px;font-weight:700;margin-left:auto;padding-left:4px}
 
-/* Phase Section */
-.phase{margin-bottom:48px;position:relative}
-.phase:last-child{margin-bottom:0}
+/* Objectives */
+.objectives{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:36px}
+.obj-tag{font-size:11px;font-weight:500;padding:4px 12px;border-radius:100px;border:1px solid var(--sep);color:var(--text2);background:var(--bg2)}
 
-/* Phase Header */
-.phase-head{display:flex;align-items:center;gap:16px;margin-bottom:24px}
-.phase-badge{width:40px;height:40px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-family:'Plus Jakarta Sans',sans-serif;font-size:16px;font-weight:800;color:#fff;flex-shrink:0}
-.phase-badge.p1{background:linear-gradient(135deg,#8b5cf6,#6366f1)}
-.phase-badge.p2{background:linear-gradient(135deg,#3b82f6,#2563eb)}
-.phase-badge.p3{background:linear-gradient(135deg,#06b6d4,#0891b2)}
-.phase-badge.p4{background:linear-gradient(135deg,#22c55e,#16a34a)}
-.phase-info{flex:1}
-.phase-name{font-family:'Plus Jakarta Sans',sans-serif;font-size:20px;font-weight:800;letter-spacing:-0.03em}
-.phase-meta{font-size:12px;color:var(--text3);margin-top:2px}
-.phase-count{font-family:'DM Mono',monospace;font-size:11px;color:var(--text3);background:var(--surface);padding:3px 12px;border-radius:100px;flex-shrink:0}
+/* ── Lineage (purple section) ── */
+.lineage{background:linear-gradient(160deg,#1a1030 0%,#261845 50%,#1e1338 100%);color:#e8e0f6;overflow:hidden;position:relative}
+.lineage::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 30% 20%,rgba(139,92,246,0.08),transparent 70%);pointer-events:none}
+.lineage .eyebrow{color:rgba(139,92,246,0.7)}
+.lineage .section-title{color:#f0ebfa;font-family:'Plus Jakarta Sans',sans-serif;font-size:clamp(24px,3.5vw,36px);font-weight:800;letter-spacing:-0.04em;margin-bottom:8px}
+.lineage .section-sub{color:rgba(232,224,246,0.5);font-size:14px;margin-bottom:48px;max-width:500px}
+.lineage-chart{display:flex;align-items:flex-end;gap:clamp(4px,1vw,10px);height:220px;padding-bottom:32px;position:relative}
+.lineage-chart::before{content:'';position:absolute;bottom:32px;left:0;right:0;height:1px;background:rgba(255,255,255,0.08)}
+.bar-col{display:flex;flex-direction:column;align-items:center;gap:6px;flex:1;min-width:0}
+.bar-wrap{height:188px;display:flex;align-items:flex-end;width:100%}
+.bar{width:100%;border-radius:4px 4px 0 0;min-height:4px;transition:height 1s cubic-bezier(0.16,1,0.3,1);position:relative}
+.bar-grade{position:absolute;top:-22px;left:50%;transform:translateX(-50%);font-family:'DM Mono',monospace;font-size:10px;font-weight:700;white-space:nowrap;opacity:.9}
+.bar-version{font-family:'DM Mono',monospace;font-size:clamp(8px,1vw,10px);color:rgba(232,224,246,0.4);white-space:nowrap;text-align:center;overflow:hidden;text-overflow:ellipsis;max-width:100%}
+.lineage-trend{margin-top:32px;display:flex;align-items:center;gap:12px;font-size:14px;color:rgba(232,224,246,0.6)}
+.lineage-trend strong{color:#a78bfa;font-weight:700}
 
-/* Timeline Track */
-.tl-track{position:relative;padding-left:48px}
-.tl-track::before{content:'';position:absolute;left:15px;top:0;bottom:0;width:2px;border-radius:1px}
-.phase.p1 .tl-track::before{background:rgba(139,92,246,0.25)}
-.phase.p2 .tl-track::before{background:rgba(59,130,246,0.25)}
-.phase.p3 .tl-track::before{background:rgba(6,182,212,0.25)}
-.phase.p4 .tl-track::before{background:rgba(34,197,94,0.25)}
+/* ── Fleet ── */
+.fleet-section .section-title{font-family:'Plus Jakarta Sans',sans-serif;font-size:clamp(24px,3.5vw,36px);font-weight:800;letter-spacing:-0.04em;margin-bottom:8px}
+.fleet-section .section-sub{color:var(--text2);font-size:14px;margin-bottom:40px}
+.fleet-group{margin-bottom:36px}
+.fleet-group:last-child{margin-bottom:0}
+.fleet-group-label{font-family:'DM Mono',monospace;font-size:10px;font-weight:500;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.fleet-group-label::after{content:'';flex:1;height:1px;background:var(--sep)}
+.fleet-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(44px,1fr));gap:4px}
+.fleet-cell{aspect-ratio:1;border-radius:6px;display:flex;align-items:center;justify-content:center;font-family:'DM Mono',monospace;font-size:9px;font-weight:700;color:#fff;cursor:default;transition:all .2s;position:relative}
+.fleet-cell:hover{transform:scale(1.25);z-index:2;border-radius:8px;box-shadow:0 4px 20px rgba(0,0,0,.2)}
+.fleet-tooltip{display:none;position:absolute;bottom:calc(100% + 8px);left:50%;transform:translateX(-50%);background:var(--text);color:#fff;padding:6px 12px;border-radius:6px;font-family:'DM Sans',sans-serif;font-size:11px;font-weight:500;white-space:nowrap;pointer-events:none;z-index:10}
+.fleet-tooltip::after{content:'';position:absolute;top:100%;left:50%;transform:translateX(-50%);border:4px solid transparent;border-top-color:var(--text)}
+.fleet-cell:hover .fleet-tooltip{display:block}
 
-/* Timeline Node */
-.tl-node{position:relative;margin-bottom:14px}
-.tl-node:last-child{margin-bottom:0}
-.tl-node::before{content:'';position:absolute;left:-33px;top:18px;width:10px;height:10px;border-radius:50%;border:2.5px solid var(--bg2);z-index:2;box-shadow:0 0 0 1px rgba(0,0,0,.04)}
-.phase.p1 .tl-node::before{background:var(--purple)}
-.phase.p2 .tl-node::before{background:var(--blue)}
-.phase.p3 .tl-node::before{background:var(--cyan)}
-.phase.p4 .tl-node::before{background:var(--green)}
+/* ── Findings ── */
+.findings-section .section-title{font-family:'Plus Jakarta Sans',sans-serif;font-size:clamp(24px,3.5vw,36px);font-weight:800;letter-spacing:-0.04em;margin-bottom:8px}
+.findings-section .section-sub{color:var(--text2);font-size:14px;margin-bottom:24px}
+.tier-filters{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:24px}
+.tier-btn{font-family:'DM Mono',monospace;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;padding:5px 14px;border-radius:100px;border:1.5px solid var(--sep);background:var(--bg2);color:var(--text3);cursor:pointer;transition:all .15s}
+.tier-btn:hover,.tier-btn.active{color:var(--text);border-color:var(--text2);background:var(--surface)}
+.findings-mosaic{display:flex;flex-wrap:wrap;gap:5px}
+.f-pill{display:inline-flex;align-items:center;gap:4px;padding:4px 10px;border-radius:5px;font-family:'DM Mono',monospace;font-size:10px;font-weight:500;cursor:default;transition:all .2s;position:relative}
+.f-pill:hover{transform:translateY(-2px);box-shadow:0 4px 12px rgba(0,0,0,.08);z-index:2}
+.f-pill .f-title{display:none;position:absolute;bottom:calc(100% + 6px);left:0;background:var(--text);color:#fff;padding:6px 12px;border-radius:6px;font-family:'DM Sans',sans-serif;font-size:11px;font-weight:500;white-space:nowrap;max-width:300px;overflow:hidden;text-overflow:ellipsis;pointer-events:none;z-index:10}
+.f-pill:hover .f-title{display:block}
+.f-pill.t1{background:rgba(124,58,237,0.08);color:#7c3aed}
+.f-pill.t2{background:rgba(37,99,235,0.08);color:#2563eb}
+.f-pill.t3{background:rgba(8,145,178,0.08);color:#0891b2}
+.f-pill.t4{background:rgba(217,119,6,0.08);color:#d97706}
+.f-pill.t5{background:rgba(220,38,38,0.08);color:#dc2626}
+.f-pill.hidden{display:none}
+.findings-stats{display:flex;gap:24px;flex-wrap:wrap;margin-top:32px;padding-top:24px;border-top:1px solid var(--sep)}
+.finding-stat{display:flex;flex-direction:column;gap:2px}
+.finding-stat-val{font-family:'Plus Jakarta Sans',sans-serif;font-size:20px;font-weight:800;letter-spacing:-0.03em}
+.finding-stat-label{font-family:'DM Mono',monospace;font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.06em}
 
-/* Agent Card (timeline variant) */
-.agent-tl-card{background:var(--bg);border:1px solid var(--sep);border-radius:var(--radius);padding:16px 20px;transition:all .2s;box-shadow:0 1px 4px rgba(0,0,0,.03)}
-.agent-tl-card:hover{box-shadow:0 4px 16px rgba(0,0,0,.06);transform:translateY(-1px)}
-.agent-tl-top{display:flex;align-items:center;gap:10px;margin-bottom:8px}
-.agent-tl-name{font-family:'Plus Jakarta Sans',sans-serif;font-size:15px;font-weight:700;letter-spacing:-0.02em}
-.agent-tl-deliverables{font-size:13px;color:var(--text2);line-height:1.7}
-.agent-tl-deliverables ul{list-style:none;padding:0;margin:0}
-.agent-tl-deliverables li{margin-bottom:3px;padding-left:16px;position:relative}
-.agent-tl-deliverables li::before{content:'';position:absolute;left:0;top:9px;width:5px;height:5px;border-radius:50%;background:var(--surface2)}
-.agent-tl-deliverables strong{color:var(--text);font-weight:600}
-.agent-tl-deliverables .metric{font-family:'DM Mono',monospace;font-weight:700;color:var(--green);font-size:11px}
-.agent-tl-deliverables .metric.bad{color:var(--rose)}
+/* ── Loop ── */
+.loop-section{border-top:1px solid var(--sep)}
+.loop-section .section-title{font-family:'Plus Jakarta Sans',sans-serif;font-size:clamp(24px,3.5vw,36px);font-weight:800;letter-spacing:-0.04em;margin-bottom:8px}
+.loop-section .section-sub{color:var(--text2);font-size:15px;line-height:1.7;margin-bottom:48px;max-width:560px}
+.loop-flow{display:flex;align-items:stretch;gap:0;flex-wrap:wrap;margin-bottom:48px}
+.loop-node{flex:1;min-width:120px;padding:20px 16px;text-align:center;position:relative;background:var(--bg2);border:1px solid var(--sep);border-radius:var(--radius)}
+.loop-node:not(:last-child){margin-right:28px}
+.loop-node:not(:last-child)::after{content:'';position:absolute;right:-22px;top:50%;transform:translateY(-50%);width:16px;height:2px;background:var(--sep)}
+.loop-icon{font-size:20px;margin-bottom:8px;display:block}
+.loop-label{font-family:'Plus Jakarta Sans',sans-serif;font-size:12px;font-weight:700;letter-spacing:-0.01em;margin-bottom:4px}
+.loop-desc{font-family:'DM Mono',monospace;font-size:9px;color:var(--text3);line-height:1.4}
+.loop-closing{font-size:15px;color:var(--text2);line-height:1.7;max-width:600px;padding:32px 0;border-top:1px solid var(--sep)}
+.loop-closing strong{color:var(--text);font-weight:700}
 
-/* Agent name colors */
-.ag-name-orchestrator{color:#7c3aed}
-.ag-name-beacon{color:#d97706}
-.ag-name-compass{color:#2563eb}
-.ag-name-overwatch{color:#0891b2}
-.ag-name-polisher{color:#db2777}
-.ag-name-retrospector{color:#16a34a}
-.ag-name-integrator{color:#ea580c}
-.ag-name-analyst{color:#6366f1}
-.ag-name-video{color:#dc2626}
-.ag-name-medic{color:#059669}
-.ag-name-findings-analyst{color:#9333ea}
-.ag-name-pipeline{color:#0891b2}
-.ag-name-workflow{color:#ea580c}
-.ag-name-dashboard{color:#3b82f6}
-.ag-name-morning{color:#f97316}
+/* ── Animations ── */
+.reveal{opacity:0;transform:translateY(24px);transition:opacity .7s cubic-bezier(.16,1,.3,1),transform .7s cubic-bezier(.16,1,.3,1)}
+.reveal.visible{opacity:1;transform:none}
+.reveal-d1{transition-delay:.08s}
+.reveal-d2{transition-delay:.16s}
+.reveal-d3{transition-delay:.24s}
+.reveal-d4{transition-delay:.32s}
+.reveal-d5{transition-delay:.4s}
 
-/* Key Moment */
-.tl-moment{position:relative;margin-bottom:14px}
-.tl-moment:last-child{margin-bottom:0}
-.tl-moment::before{content:'';position:absolute;left:-36px;top:14px;width:16px;height:16px;border-radius:50%;border:2.5px solid var(--bg2);z-index:2}
-.tl-moment.win::before{background:var(--green)}
-.tl-moment.loss::before{background:var(--rose)}
-.tl-moment.insight::before{background:var(--amber)}
+/* ── Loading ── */
+.loading{display:flex;align-items:center;justify-content:center;min-height:60vh;font-family:'DM Mono',monospace;font-size:13px;color:var(--text3)}
+.loading-dot{display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--purple);margin-left:8px;animation:loadPulse 1.2s ease infinite}
+@keyframes loadPulse{0%,100%{opacity:.3;transform:scale(.8)}50%{opacity:1;transform:scale(1)}}
 
-.moment-card{border-radius:var(--radius);padding:14px 18px;font-size:13px;line-height:1.6;display:flex;align-items:flex-start;gap:10px}
-.moment-card.win{background:var(--green-bg);border:1px solid rgba(34,197,94,0.12)}
-.moment-card.loss{background:var(--rose-bg);border:1px solid rgba(239,68,68,0.1)}
-.moment-card.insight{background:var(--amber-bg);border:1px solid rgba(245,158,11,0.12)}
-.moment-icon{font-size:14px;flex-shrink:0;margin-top:1px}
-.moment-text{color:var(--text)}
-.moment-text strong{font-weight:700}
-.moment-text em{font-style:italic;color:var(--text2)}
-
-/* Lessons Grid */
-.lessons-section{margin-top:56px}
-.section-heading{font-family:'Plus Jakarta Sans',sans-serif;font-size:22px;font-weight:800;letter-spacing:-0.04em;margin-bottom:8px}
-.section-sub{font-size:14px;color:var(--text2);margin-bottom:24px}
-.lessons-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
-@media(max-width:768px){.lessons-grid{grid-template-columns:1fr}}
-@media(min-width:769px) and (max-width:960px){.lessons-grid{grid-template-columns:repeat(2,1fr)}}
-.lesson-card{background:var(--bg);border:1px solid var(--sep);border-radius:var(--radius);padding:20px;transition:all .2s}
-.lesson-card:hover{box-shadow:0 4px 16px rgba(0,0,0,.06);transform:translateY(-1px)}
-.lesson-num{font-family:'DM Mono',monospace;font-size:10px;font-weight:500;color:var(--text3);margin-bottom:8px;text-transform:uppercase;letter-spacing:.06em}
-.lesson-title{font-family:'Plus Jakarta Sans',sans-serif;font-size:14px;font-weight:700;letter-spacing:-0.02em;margin-bottom:6px;line-height:1.3}
-.lesson-body{font-size:12.5px;color:var(--text2);line-height:1.6}
-
-/* Scorecard */
-.scorecard-section{margin-top:56px}
-.scorecard{background:var(--bg);border:1px solid var(--sep);border-radius:16px;padding:28px 32px;position:relative;overflow:hidden}
-.scorecard::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--purple),var(--blue),var(--cyan),var(--green))}
-.scorecard-title{font-family:'Plus Jakarta Sans',sans-serif;font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text3);margin-bottom:20px}
-.scorecard-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:16px}
-@media(max-width:900px){.scorecard-grid{grid-template-columns:repeat(3,1fr)}}
-@media(max-width:500px){.scorecard-grid{grid-template-columns:repeat(2,1fr)}}
-.sc-item{text-align:center}
-.sc-score{font-family:'Plus Jakarta Sans',sans-serif;font-size:28px;font-weight:800;letter-spacing:-0.03em;line-height:1}
-.sc-score .sc-max{font-size:14px;font-weight:500;color:var(--text3)}
-.sc-label{font-size:11px;color:var(--text2);margin-top:6px;line-height:1.3}
-.sc-score.excellent{color:var(--green)}
-.sc-score.good{color:var(--blue)}
-.sc-score.mid{color:var(--amber)}
-.sc-score.low{color:var(--rose)}
-.sc-score.perfect{color:var(--purple)}
-
-.scorecard-overall{display:flex;align-items:center;justify-content:center;gap:12px;margin-top:24px;padding-top:20px;border-top:1px solid var(--sep)}
-.sc-overall-label{font-size:14px;font-weight:600;color:var(--text2)}
-.sc-overall-score{font-family:'Plus Jakarta Sans',sans-serif;font-size:32px;font-weight:800;letter-spacing:-0.03em}
-.sc-arrow{font-size:18px;color:var(--green);font-weight:700}
-
-/* Phase connector dots between phases */
-.phase-connector{display:flex;justify-content:center;margin:-24px 0 24px;position:relative;z-index:1}
-.phase-connector-dots{display:flex;gap:4px}
-.phase-connector-dot{width:4px;height:4px;border-radius:50%;background:var(--surface2)}
-
-/* Responsive */
-@media(max-width:600px){
-  .shell{padding:24px 16px 60px}
-  .stats-row{gap:6px}
-  .stat-pill{padding:6px 12px;font-size:12px}
-  .tl-track{padding-left:40px}
-  .tl-node::before{left:-25px}
-  .tl-moment::before{left:-28px;width:14px;height:14px}
-  .phase-badge{width:34px;height:34px;font-size:14px}
-  .phase-name{font-size:17px}
+/* ── Responsive ── */
+@media(max-width:768px){
+  .hero{min-height:auto;padding-top:48px;padding-bottom:48px}
+  .display{font-size:clamp(40px,12vw,64px)}
+  .chapter-watermark{font-size:100px;right:10px;top:20px}
+  .lineage-chart{height:160px}
+  .bar-wrap{height:128px}
+  .fleet-grid{grid-template-columns:repeat(auto-fill,minmax(36px,1fr))}
+  .loop-flow{flex-direction:column;gap:12px}
+  .loop-node{min-width:auto}
+  .loop-node:not(:last-child){margin-right:0;margin-bottom:12px}
+  .loop-node:not(:last-child)::after{display:none}
 }
-
-/* Scroll reveal animation — CSS-only, respects prefers-reduced-motion */
-@keyframes fadeSlideUp{
-  from{opacity:0;transform:translateY(16px)}
-  to{opacity:1;transform:translateY(0)}
+@media(max-width:480px){
+  .agent-pill{padding:5px 8px;font-size:11px}
+  .chapter-meta{gap:16px}
 }
-@media(prefers-reduced-motion: no-preference){
-  .tl-node{animation:fadeSlideUp .5s ease both}
-  .tl-moment{animation:fadeSlideUp .5s ease both}
-  .lesson-card{animation:fadeSlideUp .4s ease both}
-  .sc-item{animation:fadeSlideUp .4s ease both}
-  /* Stagger within each phase */
-  .tl-node:nth-child(1),.tl-moment:nth-child(1){animation-delay:0s}
-  .tl-node:nth-child(2),.tl-moment:nth-child(2){animation-delay:.06s}
-  .tl-node:nth-child(3),.tl-moment:nth-child(3){animation-delay:.12s}
-  .tl-node:nth-child(4),.tl-moment:nth-child(4){animation-delay:.18s}
-  .tl-node:nth-child(5),.tl-moment:nth-child(5){animation-delay:.24s}
-  .tl-node:nth-child(6),.tl-moment:nth-child(6){animation-delay:.3s}
-  .lesson-card:nth-child(1){animation-delay:0s}
-  .lesson-card:nth-child(2){animation-delay:.06s}
-  .lesson-card:nth-child(3){animation-delay:.08s}
-  .lesson-card:nth-child(4){animation-delay:.1s}
-  .lesson-card:nth-child(5){animation-delay:.12s}
-  .lesson-card:nth-child(6){animation-delay:.14s}
-  .sc-item:nth-child(1){animation-delay:0s}
-  .sc-item:nth-child(2){animation-delay:.05s}
-  .sc-item:nth-child(3){animation-delay:.1s}
-  .sc-item:nth-child(4){animation-delay:.15s}
-  .sc-item:nth-child(5){animation-delay:.2s}
-  .sc-item:nth-child(6){animation-delay:.25s}
+@media(prefers-reduced-motion:reduce){
+  .reveal{transition:none;opacity:1;transform:none}
+  .bar{transition:none}
 }
 </style>
 </head>
@@ -239,397 +194,326 @@ header{display:flex;align-items:center;justify-content:space-between;padding:0 c
   <div class="header-right"></div>
 </header>
 
-<div class="shell">
+<main id="app">
+  <div class="loading">Loading the story<span class="loading-dot"></span></div>
+</main>
 
-  <!-- Hero -->
-  <div class="story-hero">
-    <div class="hero-eyebrow">Orchestrator v1.0 &mdash; March 2, 2026</div>
-    <h1 class="hero-title">The v1.0 Story</h1>
-    <p class="hero-subtitle">10 hours. 15 agents. 4 phases. The first coordinated multi-agent campaign.</p>
-    <div class="stats-row">
-      <div class="stat-pill"><span class="stat-value purple">10h</span><span class="stat-label">duration</span></div>
-      <div class="stat-pill"><span class="stat-value blue">15</span><span class="stat-label">agents</span></div>
-      <div class="stat-pill"><span class="stat-value green">27</span><span class="stat-label">wins</span></div>
-      <div class="stat-pill"><span class="stat-value amber">47</span><span class="stat-label">findings</span></div>
-      <div class="stat-pill"><span class="stat-value cyan">8<span style="font-size:12px;color:var(--text3)">/10</span></span><span class="stat-label">rating</span></div>
+<script>
+/* All data is from local MC server APIs — trusted internal source */
+(async function() {
+  const GPA_MAP = {'A+':4.3,'A':4.0,'A-':3.7,'B+':3.3,'B':3.0,'B-':2.7,'C+':2.3,'C':2.0,'C-':1.7,'D+':1.3,'D':1.0,'F':0};
+  function gradeToGPA(g) { return GPA_MAP[g] ?? null; }
+  function gradeColor(g) {
+    if (!g || g === 'None') return '#a1a1aa';
+    if (g.startsWith('A')) return '#16a34a';
+    if (g.startsWith('B')) return '#2563eb';
+    if (g.startsWith('C')) return '#d97706';
+    return '#dc2626';
+  }
+  const CAMPAIGN_COLORS = ['#8b5cf6', '#3b82f6', '#06b6d4'];
+  const TIER_COLORS = { tier1:'#7c3aed', tier2:'#2563eb', tier3:'#0891b2', tier4:'#d97706', tier5:'#dc2626' };
+
+  function computeGPA(agents) {
+    const graded = agents.filter(a => gradeToGPA(a.grade) !== null);
+    if (!graded.length) return null;
+    return graded.reduce((s, a) => s + gradeToGPA(a.grade), 0) / graded.length;
+  }
+  function esc(s) { const d = document.createElement('div'); d.textContent = String(s); return d.innerHTML; }
+  function truncate(s, n) { return s.length > n ? s.substring(0, n - 3) + '...' : s; }
+
+  let campaigns, findings;
+  try {
+    [campaigns, findings] = await Promise.all([
+      fetch('/api/campaigns').then(r => r.json()),
+      fetch('/api/findings').then(r => r.json())
+    ]);
+  } catch (e) {
+    document.getElementById('app').textContent = 'Failed to load data. Is the server running?';
+    return;
+  }
+
+  const allAgents = campaigns.flatMap(c => c.agents || []);
+  const totalDelivered = allAgents.reduce((s, a) => s + (a.delivered?.length || 0), 0);
+
+  /* De-duplicate orchestrators by slot */
+  const orchMap = new Map();
+  for (const c of campaigns) {
+    for (const a of (c.agents || [])) {
+      if (a.slot && /^orchestrator-v\d/.test(a.slot)) {
+        if (!orchMap.has(a.slot)) orchMap.set(a.slot, { ...a, campaign: c.name });
+      }
+    }
+  }
+  const orchestrators = [...orchMap.values()].sort((a, b) => {
+    const va = parseFloat(a.slot.replace('orchestrator-v', ''));
+    const vb = parseFloat(b.slot.replace('orchestrator-v', ''));
+    return va - vb;
+  });
+
+  const allSkills = new Set();
+  allAgents.forEach(a => (a.skillsUsed || []).forEach(s => allSkills.add(s)));
+
+  /* ── Build DOM ── */
+  const app = document.getElementById('app');
+  app.textContent = '';
+
+  /* Helper to create sections */
+  function makeSection(className, html) {
+    const el = document.createElement('section');
+    el.className = className;
+    /* Safe: all dynamic values passed through esc() */
+    el.innerHTML = html;
+    app.appendChild(el);
+    return el;
+  }
+
+  /* ═══ HERO ═══ */
+  makeSection('section hero', `
+    <div class="section-inner"><div class="hero-content">
+      <span class="eyebrow reveal">MISSION CONTROL</span>
+      <h1 class="display reveal reveal-d1">The<br>Evolution</h1>
+      <p class="hero-lead reveal reveal-d2">
+        Over <strong class="hl purple">${esc(campaigns.length)}</strong> campaigns,
+        <strong class="hl blue">${esc(allAgents.length)}</strong> agents have shipped
+        <strong class="hl green">${esc(totalDelivered)}</strong> deliverables,
+        surfaced <strong class="hl amber">${esc(findings.length)}</strong> findings,
+        and evolved through <strong class="hl purple">${esc(orchestrators.length)}</strong> orchestrator versions.
+      </p>
+      <div class="hero-line reveal reveal-d3"></div>
+    </div></div>
+  `);
+
+  /* ═══ CAMPAIGN CHAPTERS ═══ */
+  campaigns.forEach((c, i) => {
+    const agents = c.agents || [];
+    const color = CAMPAIGN_COLORS[i] || CAMPAIGN_COLORS[0];
+    const gpa = computeGPA(agents);
+    const delivered = agents.reduce((s, a) => s + (a.delivered?.length || 0), 0);
+    const graded = agents.filter(a => gradeToGPA(a.grade) !== null);
+    const sorted = [...graded].sort((a, b) => (gradeToGPA(b.grade) || 0) - (gradeToGPA(a.grade) || 0));
+    const topAgent = sorted[0];
+    const chapterNum = String(i + 1).padStart(2, '0');
+
+    const objHtml = (c.objectives || []).map(o =>
+      '<span class="obj-tag">' + esc(truncate(o, 60)) + '</span>'
+    ).join('');
+
+    const agentHtml = agents.map(a =>
+      '<div class="agent-pill" title="' + esc(a.focus || a.name || a.slot) + '">' +
+        '<span class="grade-dot" style="background:' + gradeColor(a.grade) + '"></span>' +
+        '<span>' + esc(a.name || a.slot) + '</span>' +
+        '<span class="grade-label" style="color:' + gradeColor(a.grade) + '">' + esc(a.grade || '\u2014') + '</span>' +
+      '</div>'
+    ).join('');
+
+    makeSection('section chapter' + (i % 2 === 0 ? '' : ' section-alt'), `
+      <div class="chapter-watermark">${esc(chapterNum)}</div>
+      <div class="section-inner">
+        <div class="chapter-eyebrow reveal" style="color:${color}">${esc((c.status || 'active').toUpperCase())} \u2014 ${esc(c.created || '')}</div>
+        <h2 class="chapter-title reveal reveal-d1">${esc(c.name)}</h2>
+        <p class="chapter-desc reveal reveal-d2">${esc(c.description || '')}</p>
+        ${objHtml ? '<div class="objectives reveal reveal-d2">' + objHtml + '</div>' : ''}
+        <div class="chapter-meta reveal reveal-d3">
+          <div class="chapter-stat">
+            <span class="chapter-stat-val" style="color:${color}">${esc(agents.length)}</span>
+            <span class="chapter-stat-label">Agents</span>
+          </div>
+          <div class="chapter-stat">
+            <span class="chapter-stat-val" style="color:var(--green)">${esc(delivered)}</span>
+            <span class="chapter-stat-label">Delivered</span>
+          </div>
+          ${gpa !== null ? `<div class="chapter-stat">
+            <span class="chapter-stat-val" style="color:${gradeColor(topAgent?.grade)}">${gpa.toFixed(2)}</span>
+            <span class="chapter-stat-label">GPA</span>
+          </div>` : ''}
+          ${topAgent ? `<div class="chapter-stat">
+            <span class="chapter-stat-val" style="color:${gradeColor(topAgent.grade)}">${esc(topAgent.grade)}</span>
+            <span class="chapter-stat-label">Top Grade</span>
+          </div>` : ''}
+        </div>
+        <div class="agent-grid reveal reveal-d4">${agentHtml}</div>
+      </div>
+    `);
+  });
+
+  /* ═══ ORCHESTRATOR LINEAGE ═══ */
+  const gradedOrchs = orchestrators.filter(o => gradeToGPA(o.grade) !== null);
+  const firstGPA = gradedOrchs.length ? gradeToGPA(gradedOrchs[0].grade) : 0;
+  const lastGPA = gradedOrchs.length ? gradeToGPA(gradedOrchs[gradedOrchs.length - 1].grade) : 0;
+  const gpaDelta = (lastGPA - firstGPA).toFixed(1);
+
+  const barsHtml = orchestrators.map(o => {
+    const gpa = gradeToGPA(o.grade);
+    const pct = gpa !== null ? (gpa / 4.3) * 100 : 8;
+    const col = gradeColor(o.grade);
+    const version = o.slot.replace('orchestrator-', '');
+    return '<div class="bar-col">' +
+      '<div class="bar-wrap">' +
+        '<div class="bar" data-height="' + pct + '" style="height:0%;background:' + col + '">' +
+          '<span class="bar-grade" style="color:' + col + '">' + esc(o.grade || '\u2014') + '</span>' +
+        '</div>' +
+      '</div>' +
+      '<span class="bar-version">' + esc(version) + '</span>' +
+    '</div>';
+  }).join('');
+
+  makeSection('section lineage', `
+    <div class="section-inner">
+      <span class="eyebrow reveal">THE LINEAGE</span>
+      <h2 class="section-title reveal reveal-d1">${esc(orchestrators.length)} Orchestrator Versions</h2>
+      <p class="section-sub reveal reveal-d2">Each version learned from the last. The grade chart tells the story.</p>
+      <div class="lineage-chart reveal reveal-d3" id="lineage-chart">${barsHtml}</div>
+      ${gradedOrchs.length >= 2 ? `<div class="lineage-trend reveal reveal-d4">
+        From <strong>${esc(gradedOrchs[0].grade)}</strong> to <strong>${esc(gradedOrchs[gradedOrchs.length-1].grade)}</strong> \u2014
+        ${parseFloat(gpaDelta) >= 0 ? '+' : ''}${gpaDelta} GPA across ${esc(orchestrators.length)} versions
+      </div>` : ''}
     </div>
-  </div>
+  `);
 
-  <!-- Phase 1 -->
-  <div class="phase p1">
-    <div class="phase-head">
-      <div class="phase-badge p1">1</div>
-      <div class="phase-info">
-        <div class="phase-name">Initial Push</div>
-        <div class="phase-meta">4 agents launched simultaneously</div>
-      </div>
-      <div class="phase-count">4 agents</div>
+  /* ═══ AGENT FLEET ═══ */
+  const fleetSection = makeSection('section section-alt fleet-section', `
+    <div class="section-inner">
+      <span class="eyebrow reveal" style="color:var(--blue)">THE FLEET</span>
+      <h2 class="section-title reveal reveal-d1">${esc(allAgents.length)} Agents, Visualized</h2>
+      <p class="section-sub reveal reveal-d2">Every square is an agent. Color represents grade.</p>
+      <div id="fleet-content" class="reveal reveal-d3"></div>
     </div>
-    <div class="tl-track">
-      <div class="tl-node">
-        <div class="agent-tl-card">
-          <div class="agent-tl-top">
-            <span class="agent-tl-name ag-name-orchestrator">Orchestrator</span>
-          </div>
-          <div class="agent-tl-deliverables">
-            <ul>
-              <li>Built the <strong>Campaigns page</strong> from scratch</li>
-              <li>Created <strong>Sprint Prompts</strong> system for agent coordination</li>
-              <li><strong>13x page load fix</strong> &mdash; <span class="metric">18.5s</span> down to <span class="metric">1.4s</span></li>
-            </ul>
-          </div>
-        </div>
-      </div>
-      <div class="tl-node">
-        <div class="agent-tl-card">
-          <div class="agent-tl-top">
-            <span class="agent-tl-name ag-name-beacon">Beacon</span>
-          </div>
-          <div class="agent-tl-deliverables">
-            <ul>
-              <li>Terminal auto-naming system</li>
-              <li><strong>/name</strong> command for manual session naming</li>
-              <li><strong>/end-session</strong> for clean session close</li>
-            </ul>
-          </div>
-        </div>
-      </div>
-      <div class="tl-node">
-        <div class="agent-tl-card">
-          <div class="agent-tl-top">
-            <span class="agent-tl-name ag-name-compass">Compass</span>
-          </div>
-          <div class="agent-tl-deliverables">
-            <ul>
-              <li>&ldquo;Air traffic control for AI agents&rdquo; pitch</li>
-              <li><strong>/why</strong> page &mdash; value proposition narrative</li>
-              <li><strong>7 recommendations</strong> for product direction</li>
-            </ul>
-          </div>
-        </div>
-      </div>
-      <div class="tl-node">
-        <div class="agent-tl-card">
-          <div class="agent-tl-top">
-            <span class="agent-tl-name ag-name-overwatch">Overwatch</span>
-          </div>
-          <div class="agent-tl-deliverables">
-            <ul>
-              <li>Inspector panel spec for live session monitoring</li>
-              <li><strong>Competitive analysis</strong> across existing tools</li>
-              <li>Activity feed concept design</li>
-            </ul>
-          </div>
-        </div>
-      </div>
+  `);
 
-      <!-- Key Moments -->
-      <div class="tl-moment loss">
-        <div class="moment-card loss">
-          <span class="moment-icon">&#10007;</span>
-          <span class="moment-text"><strong>Loss:</strong> Wrong prompt pasted into 2 terminals &mdash; wasted an entire session</span>
-        </div>
-      </div>
-      <div class="tl-moment win">
-        <div class="moment-card win">
-          <span class="moment-icon">&#10003;</span>
-          <span class="moment-text"><strong>Win:</strong> <em>&ldquo;Findings is the killer feature&rdquo;</em> &mdash; insight from Compass that reframed product positioning</span>
-        </div>
-      </div>
+  const fleetContent = fleetSection.querySelector('#fleet-content');
+  campaigns.forEach(c => {
+    const agents = c.agents || [];
+    const group = document.createElement('div');
+    group.className = 'fleet-group';
+
+    const labelDiv = document.createElement('div');
+    labelDiv.className = 'fleet-group-label';
+    labelDiv.textContent = c.name + ' \u2014 ' + agents.length + ' agents';
+    group.appendChild(labelDiv);
+
+    const gridDiv = document.createElement('div');
+    gridDiv.className = 'fleet-grid';
+    agents.forEach(a => {
+      const cell = document.createElement('div');
+      cell.className = 'fleet-cell';
+      cell.style.background = gradeColor(a.grade);
+      const initials = (a.name || a.slot).split(/[\s-]+/).map(w => (w[0] || '').toUpperCase()).join('').substring(0, 2);
+      cell.textContent = initials;
+
+      const tip = document.createElement('div');
+      tip.className = 'fleet-tooltip';
+      tip.textContent = (a.name || a.slot) + ' (' + (a.grade || 'Ungraded') + ')';
+      cell.appendChild(tip);
+      gridDiv.appendChild(cell);
+    });
+    group.appendChild(gridDiv);
+    fleetContent.appendChild(group);
+  });
+
+  /* ═══ FINDINGS MOSAIC ═══ */
+  const tierCounts = {};
+  const tagCounts = {};
+  findings.forEach(f => {
+    tierCounts[f.tier] = (tierCounts[f.tier] || 0) + 1;
+    tagCounts[f.tag] = (tagCounts[f.tag] || 0) + 1;
+  });
+
+  const tierBtnsHtml = '<button class="tier-btn active" data-tier="all">All (' + findings.length + ')</button>' +
+    Object.entries(tierCounts).sort().map(([t, count]) =>
+      '<button class="tier-btn" data-tier="' + esc(t) + '">' + esc(t.replace('tier', 'Tier ')) + ' (' + count + ')</button>'
+    ).join('');
+
+  const pillsHtml = findings.map(f => {
+    const tierClass = 't' + (f.tier ? f.tier.replace('tier', '') : '1');
+    return '<span class="f-pill ' + tierClass + '" data-tier="' + esc(f.tier) + '">' +
+      esc(f.id) +
+      '<span class="f-title">' + esc(truncate(f.title || '', 70)) + '</span>' +
+    '</span>';
+  }).join('');
+
+  const tagStatsHtml = Object.entries(tagCounts).sort((a,b) => b[1]-a[1]).slice(0, 6).map(([tag, count]) =>
+    '<div class="finding-stat"><span class="finding-stat-val">' + esc(count) + '</span>' +
+    '<span class="finding-stat-label">' + esc(tag) + '</span></div>'
+  ).join('');
+
+  const findingsEl = makeSection('section findings-section', `
+    <div class="section-inner">
+      <span class="eyebrow reveal" style="color:var(--green)">THE KNOWLEDGE</span>
+      <h2 class="section-title reveal reveal-d1">${esc(findings.length)} Findings</h2>
+      <p class="section-sub reveal reveal-d2">Every lesson the system has learned, codified and searchable.</p>
+      <div class="tier-filters reveal reveal-d3">${tierBtnsHtml}</div>
+      <div class="findings-mosaic reveal reveal-d4">${pillsHtml}</div>
+      <div class="findings-stats reveal reveal-d5">${tagStatsHtml}</div>
     </div>
-  </div>
+  `);
 
-  <div class="phase-connector"><div class="phase-connector-dots"><span class="phase-connector-dot"></span><span class="phase-connector-dot"></span><span class="phase-connector-dot"></span></div></div>
+  findingsEl.querySelectorAll('.tier-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      findingsEl.querySelectorAll('.tier-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      const tier = btn.dataset.tier;
+      findingsEl.querySelectorAll('.f-pill').forEach(pill => {
+        pill.classList.toggle('hidden', tier !== 'all' && pill.dataset.tier !== tier);
+      });
+    });
+  });
 
-  <!-- Phase 2 -->
-  <div class="phase p2">
-    <div class="phase-head">
-      <div class="phase-badge p2">2</div>
-      <div class="phase-info">
-        <div class="phase-name">Polish &amp; Analysis</div>
-        <div class="phase-meta">4 agents, focused on refining Phase 1 output</div>
-      </div>
-      <div class="phase-count">4 agents</div>
-    </div>
-    <div class="tl-track">
-      <div class="tl-node">
-        <div class="agent-tl-card">
-          <div class="agent-tl-top">
-            <span class="agent-tl-name ag-name-polisher">Polisher</span>
-          </div>
-          <div class="agent-tl-deliverables">
-            <ul>
-              <li><strong>/why</strong> polished to screen-share quality</li>
-              <li><strong>/demo-guide</strong> created for live presentations</li>
-            </ul>
-          </div>
-        </div>
-      </div>
-      <div class="tl-node">
-        <div class="agent-tl-card">
-          <div class="agent-tl-top">
-            <span class="agent-tl-name ag-name-retrospector">Retrospector</span>
-          </div>
-          <div class="agent-tl-deliverables">
-            <ul>
-              <li>Full campaign retrospective</li>
-              <li><strong>7 broadly applicable lessons</strong> for future campaigns</li>
-            </ul>
-          </div>
-        </div>
-      </div>
-      <div class="tl-node">
-        <div class="agent-tl-card">
-          <div class="agent-tl-top">
-            <span class="agent-tl-name ag-name-integrator">Integrator</span>
-          </div>
-          <div class="agent-tl-deliverables">
-            <ul>
-              <li>Retrospective tab on Dashboard agent cards</li>
-              <li>Integrated review workflow into campaign UI</li>
-            </ul>
-          </div>
-        </div>
-      </div>
-      <div class="tl-node">
-        <div class="agent-tl-card">
-          <div class="agent-tl-top">
-            <span class="agent-tl-name ag-name-analyst">Analyst</span>
-          </div>
-          <div class="agent-tl-deliverables">
-            <ul>
-              <li>Session analytics infrastructure</li>
-              <li>Discovered <strong>sub-agent visibility gap</strong> (P0 finding)</li>
-            </ul>
-          </div>
-        </div>
-      </div>
+  /* ═══ THE LOOP ═══ */
+  const loopSteps = [
+    ['\u26A1', 'Mistake', 'Agent error or user correction'],
+    ['\uD83D\uDD0D', 'Post-Mortem', 'Root cause analysis'],
+    ['\uD83D\uDCCB', 'Finding', 'Codified lesson (f001\u2013f' + String(findings.length).padStart(3,'0') + ')'],
+    ['\uD83D\uDCDC', 'Rule', 'Added to CLAUDE.md or skill'],
+    ['\uD83D\uDD17', 'Hook', 'Automated enforcement'],
+    ['\uD83D\uDEE1\uFE0F', 'Prevention', 'Error becomes impossible']
+  ];
+  const loopNodesHtml = loopSteps.map(([icon, label, desc]) =>
+    '<div class="loop-node"><span class="loop-icon">' + icon + '</span>' +
+    '<div class="loop-label">' + esc(label) + '</div>' +
+    '<div class="loop-desc">' + esc(desc) + '</div></div>'
+  ).join('');
 
-      <!-- Key Moment -->
-      <div class="tl-moment insight">
-        <div class="moment-card insight">
-          <span class="moment-icon">&#9670;</span>
-          <span class="moment-text"><strong>Insight:</strong> <em>&ldquo;One long orchestrator + many short executors&rdquo;</em> &mdash; the pattern that defines multi-agent campaigns</span>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <div class="phase-connector"><div class="phase-connector-dots"><span class="phase-connector-dot"></span><span class="phase-connector-dot"></span><span class="phase-connector-dot"></span></div></div>
-
-  <!-- Phase 3 -->
-  <div class="phase p3">
-    <div class="phase-head">
-      <div class="phase-badge p3">3</div>
-      <div class="phase-info">
-        <div class="phase-name">Deep Dives</div>
-        <div class="phase-meta">3 agents, processing data and building diagnostics</div>
-      </div>
-      <div class="phase-count">3 agents</div>
-    </div>
-    <div class="tl-track">
-      <div class="tl-node">
-        <div class="agent-tl-card">
-          <div class="agent-tl-top">
-            <span class="agent-tl-name ag-name-video">Video Analyzer</span>
-          </div>
-          <div class="agent-tl-deliverables">
-            <ul>
-              <li>Processed <strong>2-hour demo recording</strong></li>
-              <li>Generated <strong>80KB transcript</strong> with timestamps</li>
-              <li>Extracted <strong>15 value proposition quotes</strong></li>
-            </ul>
-          </div>
-        </div>
-      </div>
-      <div class="tl-node">
-        <div class="agent-tl-card">
-          <div class="agent-tl-top">
-            <span class="agent-tl-name ag-name-findings-analyst">Findings Analyst</span>
-          </div>
-          <div class="agent-tl-deliverables">
-            <ul>
-              <li><strong>8 new findings</strong> (f036&ndash;f043) catalogued</li>
-              <li><strong>12 dispatch items</strong> created from analysis</li>
-            </ul>
-          </div>
-        </div>
-      </div>
-      <div class="tl-node">
-        <div class="agent-tl-card">
-          <div class="agent-tl-top">
-            <span class="agent-tl-name ag-name-medic">Medic</span>
-          </div>
-          <div class="agent-tl-deliverables">
-            <ul>
-              <li><strong>/health</strong> diagnostics page for system monitoring</li>
-            </ul>
-          </div>
-        </div>
-      </div>
-
-      <!-- Key Moments -->
-      <div class="tl-moment loss">
-        <div class="moment-card loss">
-          <span class="moment-icon">&#10007;</span>
-          <span class="moment-text"><strong>Loss:</strong> Wrong CUDA version on Video Analyzer &mdash; <span class="metric bad">30&ndash;40%</span> token waste on transcription</span>
-        </div>
-      </div>
-      <div class="tl-moment win">
-        <div class="moment-card win">
-          <span class="moment-icon">&#10003;</span>
-          <span class="moment-text"><strong>Win:</strong> <em>&ldquo;Self-evolving loop is the moat&rdquo;</em> (f036) &mdash; MC&rsquo;s competitive advantage identified</span>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <div class="phase-connector"><div class="phase-connector-dots"><span class="phase-connector-dot"></span><span class="phase-connector-dot"></span><span class="phase-connector-dot"></span></div></div>
-
-  <!-- Phase 4 -->
-  <div class="phase p4">
-    <div class="phase-head">
-      <div class="phase-badge p4">4</div>
-      <div class="phase-info">
-        <div class="phase-name">Closing Sprint</div>
-        <div class="phase-meta">4 agents, finishing up</div>
-      </div>
-      <div class="phase-count">4 agents</div>
-    </div>
-    <div class="tl-track">
-      <div class="tl-node">
-        <div class="agent-tl-card">
-          <div class="agent-tl-top">
-            <span class="agent-tl-name ag-name-pipeline">Pipeline Architect</span>
-          </div>
-          <div class="agent-tl-deliverables">
-            <ul>
-              <li><strong>/capture</strong> &mdash; mobile idea intake pipeline</li>
-              <li><strong>/president</strong> &mdash; CEO dashboard view</li>
-            </ul>
-          </div>
-        </div>
-      </div>
-      <div class="tl-node">
-        <div class="agent-tl-card">
-          <div class="agent-tl-top">
-            <span class="agent-tl-name ag-name-workflow">Workflow Redesign</span>
-          </div>
-          <div class="agent-tl-deliverables">
-            <ul>
-              <li>Workflow page revamp <span style="font-size:11px;color:var(--amber);font-weight:600">(in progress)</span></li>
-            </ul>
-          </div>
-        </div>
-      </div>
-      <div class="tl-node">
-        <div class="agent-tl-card">
-          <div class="agent-tl-top">
-            <span class="agent-tl-name ag-name-dashboard">Dashboard Fix</span>
-          </div>
-          <div class="agent-tl-deliverables">
-            <ul>
-              <li>Blank card bug fixed &mdash; PM008/PM011 resolved</li>
-            </ul>
-          </div>
-        </div>
-      </div>
-      <div class="tl-node">
-        <div class="agent-tl-card">
-          <div class="agent-tl-top">
-            <span class="agent-tl-name ag-name-morning">Morning Brief</span>
-          </div>
-          <div class="agent-tl-deliverables">
-            <ul>
-              <li>Wake-up summary for session continuity</li>
-            </ul>
-          </div>
-        </div>
+  makeSection('section section-alt loop-section', `
+    <div class="section-inner">
+      <span class="eyebrow reveal" style="color:var(--amber)">THE THESIS</span>
+      <h2 class="section-title reveal reveal-d1">The Self-Evolving Loop</h2>
+      <p class="section-sub reveal reveal-d2">
+        Every mistake feeds back into the system. That\u2019s not a philosophy \u2014 it\u2019s infrastructure.
+        ${esc(findings.length)} findings, ${esc(allSkills.size)} skills, and counting.
+      </p>
+      <div class="loop-flow reveal reveal-d3">${loopNodesHtml}</div>
+      <div class="loop-closing reveal reveal-d4">
+        <strong>${esc(campaigns.length)} campaigns. ${esc(allAgents.length)} agents. ${esc(findings.length)} findings.</strong>
+        The system that built this page was shaped by every agent that came before it.
+        Each one left a lesson. Each lesson became a rule. Each rule made the next agent better.
+        That\u2019s the story.
       </div>
     </div>
-  </div>
+  `);
 
-  <!-- Lessons Learned -->
-  <div class="lessons-section">
-    <div class="section-heading">Lessons Learned</div>
-    <div class="section-sub">What we took away from the first coordinated campaign.</div>
-    <div class="lessons-grid">
-      <div class="lesson-card">
-        <div class="lesson-num">Lesson 01</div>
-        <div class="lesson-title">&ldquo;Playwright test everything&rdquo;</div>
-        <div class="lesson-body">Broke the Dashboard 3 times during the sprint. Never tested with a screenshot. Visual verification is non-negotiable.</div>
-      </div>
-      <div class="lesson-card">
-        <div class="lesson-num">Lesson 02</div>
-        <div class="lesson-title">&ldquo;Pause after delivering&rdquo;</div>
-        <div class="lesson-body">The user needs to act before you move on. Shipping three things in a row overwhelms. Deliver, wait, iterate.</div>
-      </div>
-      <div class="lesson-card">
-        <div class="lesson-num">Lesson 03</div>
-        <div class="lesson-title">&ldquo;Never dump prompts inline&rdquo;</div>
-        <div class="lesson-body">Use /prompts, not terminal text. Pasting multi-line prompts into terminals caused the worst session waste of the sprint.</div>
-      </div>
-      <div class="lesson-card">
-        <div class="lesson-num">Lesson 04</div>
-        <div class="lesson-title">&ldquo;Setup checklist before agents&rdquo;</div>
-        <div class="lesson-body">20 minutes of setup prevents 2 hours of recovery. Pre-flight checks for every agent launch.</div>
-      </div>
-      <div class="lesson-card">
-        <div class="lesson-num">Lesson 05</div>
-        <div class="lesson-title">&ldquo;Research agents are highest-value&rdquo;</div>
-        <div class="lesson-body">Not every agent should write code. Compass and Analyst produced insights worth more than any single feature.</div>
-      </div>
-      <div class="lesson-card">
-        <div class="lesson-num">Lesson 06</div>
-        <div class="lesson-title">&ldquo;Data change &#x2260; UI change&rdquo;</div>
-        <div class="lesson-body">The user sees the screen, not the JSON. If data updated but the UI didn&rsquo;t refresh, the user sees nothing.</div>
-      </div>
-    </div>
-  </div>
+  /* ── Scroll Animations ── */
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) { e.target.classList.add('visible'); observer.unobserve(e.target); }
+    });
+  }, { threshold: 0.08, rootMargin: '0px 0px -40px 0px' });
+  document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
 
-  <!-- Scorecard -->
-  <div class="scorecard-section">
-    <div class="scorecard">
-      <div class="scorecard-title">Campaign Scorecard</div>
-      <div class="scorecard-grid">
-        <div class="sc-item">
-          <div class="sc-score excellent">9<span class="sc-max">/10</span></div>
-          <div class="sc-label">Brief Quality</div>
-        </div>
-        <div class="sc-item">
-          <div class="sc-score good">8<span class="sc-max">/10</span></div>
-          <div class="sc-label">Agent Output</div>
-        </div>
-        <div class="sc-item">
-          <div class="sc-score mid">5<span class="sc-max">/10</span></div>
-          <div class="sc-label">Orchestrator</div>
-        </div>
-        <div class="sc-item">
-          <div class="sc-score low">4<span class="sc-max">/10</span></div>
-          <div class="sc-label">Coordination</div>
-        </div>
-        <div class="sc-item">
-          <div class="sc-score perfect">10<span class="sc-max">/10</span></div>
-          <div class="sc-label">Meta-learning</div>
-        </div>
-        <div class="sc-item">
-          <div class="sc-score good" style="display:flex;align-items:baseline;justify-content:center;gap:6px">
-            <span style="font-size:16px;color:var(--text3);font-weight:500;text-decoration:line-through">7</span>
-            <span class="sc-arrow">&rarr;</span>
-            8<span class="sc-max">/10</span>
-          </div>
-          <div class="sc-label">Overall</div>
-        </div>
-      </div>
-      <div class="scorecard-overall">
-        <span class="sc-overall-label">The verdict:</span>
-        <span style="font-size:14px;color:var(--text2);line-height:1.5;max-width:500px">Messy orchestration, exceptional output. The agents delivered more in 10 hours than expected. The meta-learning loop proved itself.</span>
-      </div>
-    </div>
-  </div>
+  /* ── Lineage Bar Animation ── */
+  const chartObs = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.querySelectorAll('.bar').forEach((bar, i) => {
+          setTimeout(() => { bar.style.height = bar.dataset.height + '%'; }, i * 60);
+        });
+        chartObs.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.2 });
+  const chart = document.getElementById('lineage-chart');
+  if (chart) chartObs.observe(chart);
 
-</div>
-
-<!-- No JavaScript needed — animations are CSS-only -->
+})();
+</script>
 </body>
 </html>

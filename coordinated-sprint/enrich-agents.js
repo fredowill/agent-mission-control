@@ -1,5 +1,5 @@
 const fs = require('fs');
-const camps = JSON.parse(fs.readFileSync('C:/Users/ephra/phredomade/.claude/agent-hub/campaigns.json','utf8'));
+const camps = JSON.parse(fs.readFileSync('C:/Users/ephra/phredomade/.claude/agent-hub/data/campaigns.json','utf8'));
 
 const enrichment = {
   'orchestrator-v1': {
@@ -188,7 +188,7 @@ camps[0].agents.forEach(agent => {
   }
 });
 
-fs.writeFileSync('C:/Users/ephra/phredomade/.claude/agent-hub/campaigns.json', JSON.stringify(camps, null, 2));
+fs.writeFileSync('C:/Users/ephra/phredomade/.claude/agent-hub/data/campaigns.json', JSON.stringify(camps, null, 2));
 console.log('Enriched', Object.keys(enrichment).length, 'agents in campaigns.json');
 console.log();
 console.log('=== GRADE SUMMARY ===');

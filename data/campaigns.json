@@ -26,7 +26,7 @@
         "retro": "coordinated-sprint/orchestrator-v1.0-retrospective.md",
         "sprint": 1,
         "grade": "C+",
-        "gradeReason": "High throughput (campaigns page, 13x perf gain, 15 agents coordinated) but broke Dashboard 3x, no Playwright, dumped prompts inline, built instead of delegating â€” context hit 2GB.",
+        "gradeReason": "High throughput (campaigns page, 13x perf gain, 15 agents coordinated) but broke Dashboard 3x, no Playwright, dumped prompts inline, built instead of delegating -- context hit 2GB.",
         "lifecycle": {
           "define": "passed",
           "discover": "failed",
@@ -55,7 +55,7 @@
       {
         "slot": "orchestrator-v1.1",
         "name": "Orchestrator v1.1",
-        "focus": "Coordinate-only. Built /story, /close-out, cleaned memory, captured 9 findings (f048-f056), condensed 49â†’37 remaining. Handoff at 7% context.",
+        "focus": "Coordinate-only. Built /story, /close-out, cleaned memory, captured 9 findings (f048-f056), condensed 49\u00c3\u00a2\u00e2\u20ac\u00a0'37 remaining. Handoff at 7% context.",
         "sessionId": null,
         "status": "completed",
         "brief": null,
@@ -154,7 +154,7 @@
         "status": "completed",
         "brief": ".claude/agent-hub/coordinated-sprint/agent-c-agent-interface.md",
         "grade": "B",
-        "gradeReason": "Good research output â€” inspector panel spec and competitive analysis. Research-only agent, no implementation.",
+        "gradeReason": "Good research output -- inspector panel spec and competitive analysis. Research-only agent, no implementation.",
         "lifecycle": {
           "define": "passed",
           "discover": "passed",
@@ -171,7 +171,7 @@
           "Competitive analysis (Kubernetes Lens, Jenkins Blue Ocean)"
         ],
         "missed": [
-          "No implementation â€” spec only"
+          "No implementation -- spec only"
         ]
       },
       {
@@ -228,7 +228,7 @@
           "Orchestrator protocol definition"
         ],
         "missed": [
-          "Retro now stale â€” does not cover sprints 3-5"
+          "Retro now stale -- does not cover sprints 3-5"
         ]
       },
       {
@@ -373,7 +373,7 @@
       {
         "slot": "workflow-redesign",
         "name": "Workflow Redesign",
-        "focus": "Redesign Workflow page. Partial delivery: hook pipeline flow + collapsible sections. Learning Loop prototype exists (needs circle layout). 3 failed iterations before delegating to design sub-agent. Closed by user â€” prompt quality was insufficient.",
+        "focus": "Redesign Workflow page. Partial delivery: hook pipeline flow + collapsible sections. Learning Loop prototype exists (needs circle layout). 3 failed iterations before delegating to design sub-agent. Closed by user -- prompt quality was insufficient.",
         "sessionId": "81bb8744-749e-4449-abdf-ed64026fad79",
         "status": "completed",
         "brief": null,
@@ -456,7 +456,7 @@
         "lifecycleReached": "verify",
         "lifecycleFailedAt": null,
         "skillsUsed": [],
-        "skillsNote": "Bug fix â€” skill discovery not expected.",
+        "skillsNote": "Bug fix -- skill discovery not expected.",
         "delivered": [
           "Blank card bug fixed (PM008/PM011)"
         ],
@@ -545,7 +545,7 @@
         "skillsUsed": [
           "brainstorming"
         ],
-        "skillsNote": "Used brainstorming AFTER user pointed out the miss. Failed to discover on init â€” loaded brainstorming late. f064 captured.",
+        "skillsNote": "Used brainstorming AFTER user pointed out the miss. Failed to discover on init -- loaded brainstorming late. f064 captured.",
         "delivered": [
           "Workflow page design doc (approved)",
           "4 findings: f064-f067",
@@ -556,9 +556,9 @@
         "missed": [
           "Skipped brainstorming on init (f064)",
           "Dumped PRD inline instead of to file (f067)",
-          "Ran sub-agent from orchestrator â€” f058 violation (f068, PM011)",
-          "Sprint 7 not in campaigns page phases â€” agent cards invisible",
-          "Copy Full Prompt button broken â€” didn't verify it worked",
+          "Ran sub-agent from orchestrator -- f058 violation (f068, PM011)",
+          "Sprint 7 not in campaigns page phases -- agent cards invisible",
+          "Copy Full Prompt button broken -- didn't verify it worked",
           "Used scout without evaluating scout quality first"
         ]
       },
@@ -586,7 +586,7 @@
           "impeccable-polish",
           "impeccable-critique"
         ],
-        "skillsNote": "Used 3 skills â€” first agent in campaign to use multiple skills. Breaking the 2/16 pattern.",
+        "skillsNote": "Used 3 skills -- first agent in campaign to use multiple skills. Breaking the 2/16 pattern.",
         "delivered": [
           "Tabbed campaign page (5 tabs)",
           "Agent report cards with grades/lifecycle/skills",
@@ -621,9 +621,9 @@
         "lifecycleReached": "verify",
         "lifecycleFailedAt": null,
         "skillsUsed": [],
-        "skillsNote": "Text-only skill creation â€” no UI skills needed. Did read existing skills for format reference.",
+        "skillsNote": "Text-only skill creation -- no UI skills needed. Did read existing skills for format reference.",
         "delivered": [
-          ".claude/skills/orchestrator/SKILL.md â€” 200 lines, 8 phases, 10 rules"
+          ".claude/skills/orchestrator/SKILL.md -- 200 lines, 8 phases, 10 rules"
         ],
         "missed": []
       },
@@ -636,7 +636,7 @@
         "brief": "coordinated-sprint/workflow-polisher-prompt.md",
         "sprint": 7,
         "grade": "B",
-        "gradeReason": "Delivered all 4 tabs with correct content and structure (1289 lines). Orchestrator swimlane and learning loop present but visually flat â€” user requested top-down flowchart revision. Skills usage unclear. Needed follow-up polisher agent.",
+        "gradeReason": "Delivered all 4 tabs with correct content and structure (1289 lines). Orchestrator swimlane and learning loop present but visually flat -- user requested top-down flowchart revision. Skills usage unclear. Needed follow-up polisher agent.",
         "lifecycle": {
           "define": "passed",
           "discover": "partial",
@@ -664,10 +664,10 @@
           "95 expandable sections across all tabs"
         ],
         "missed": [
-          "Orchestrator swimlane visually flat â€” same colors, hard to follow (needs top-down flowchart)",
-          "Orchestrator skill in modal â€” too small for content (needs expandable dropdown)",
+          "Orchestrator swimlane visually flat -- same colors, hard to follow (needs top-down flowchart)",
+          "Orchestrator skill in modal -- too small for content (needs expandable dropdown)",
           "Stats may be stale (finding count, rule count)",
-          "Skills usage unverified â€” PRD mandated impeccable-polish"
+          "Skills usage unverified -- PRD mandated impeccable-polish"
         ]
       },
       {
@@ -695,9 +695,9 @@
         ],
         "skillsNote": "Used frontend-design for report card UI. impeccable-polish usage unclear.",
         "delivered": [
-          "Data-driven analysis of 21 agents â€” deliverables as #1 grade predictor",
+          "Data-driven analysis of 21 agents -- deliverables as #1 grade predictor",
           "New weight system: 40% deliverables, 25% execution, 20% lifecycle, 15% skills",
-          "Grading skill at .claude/skills/agent-grading/SKILL.md â€” 7-step auto-grade checklist",
+          "Grading skill at .claude/skills/agent-grading/SKILL.md -- 7-step auto-grade checklist",
           "Lifecycle stage scoring table with precise definitions",
           "3 example grade walkthroughs (Polisher A, Campaign Architect B+, Workflow Redesign D+)",
           "Score breakdown gradient bars in report card",
@@ -705,10 +705,10 @@
           "Skill gap visualization (used + missed pills)"
         ],
         "missed": [
-          "Modal too tall â€” gets cut off on smaller screens, needs max-height + scroll",
-          "Lifecycle card expansion finicky â€” needs clean dropdown behavior",
-          "Delivered/missed items not bold-lead â€” plain text, no color coding on keywords",
-          "JS syntax error introduced â€” had to be fixed"
+          "Modal too tall -- gets cut off on smaller screens, needs max-height + scroll",
+          "Lifecycle card expansion finicky -- needs clean dropdown behavior",
+          "Delivered/missed items not bold-lead -- plain text, no color coding on keywords",
+          "JS syntax error introduced -- had to be fixed"
         ]
       },
       {
@@ -737,8 +737,8 @@
         ],
         "skillsNote": "Used both mandated skills. Orchestrator flowchart shows strong design skill application.",
         "delivered": [
-          "Top-down orchestrator flowchart â€” hero purple node, 8 phases with unique colors, dispatch branch to agents, grade arrows back",
-          "Expandable orchestrator skill dropdown replacing modal â€” 8 phases, 16 rules, stats grid",
+          "Top-down orchestrator flowchart -- hero purple node, 8 phases with unique colors, dispatch branch to agents, grade arrows back",
+          "Expandable orchestrator skill dropdown replacing modal -- 8 phases, 16 rules, stats grid",
           "Stats updated: rules 16, agents 21, findings dynamic from API",
           "Bold-lead text on version history",
           "Font and color consistency across all 4 tabs",
@@ -746,7 +746,7 @@
           "Removed old modal HTML/JS (clean replacement)"
         ],
         "missed": [
-          "Campaign Flow still superficial â€” 7 circles with one-word labels, doesn't match orchestrator section quality",
+          "Campaign Flow still superficial -- 7 circles with one-word labels, doesn't match orchestrator section quality",
           "Learning loop animation not verified in screenshots"
         ]
       },
@@ -759,7 +759,7 @@
         "brief": "coordinated-sprint/integration-test-prompt.md",
         "sprint": 8,
         "grade": "D+",
-        "gradeReason": "Re-graded by v1.7: 68/100 â†’ D+. Was B- due to grade/score mismatch bug.",
+        "gradeReason": "Re-graded by v1.7: 68/100 \u00c3\u00a2\u00e2\u20ac\u00a0' D+. Was B- due to grade/score mismatch bug.",
         "lifecycle": {
           "define": "passed",
           "discover": "partial",
@@ -787,7 +787,7 @@
         "brief": "coordinated-sprint/orchestrator-v1.4-execution-plan.md",
         "sprint": 8,
         "grade": "A",
-        "gradeReason": "Shipped auto-dispatch â€” the most impactful MC workflow automation. dispatch.sh, /api/launch, auto-grading, LoL ping, safety hooks, orchestrator tab. Clean infrastructure delivery with 6 findings captured.",
+        "gradeReason": "Shipped auto-dispatch -- the most impactful MC workflow automation. dispatch.sh, /api/launch, auto-grading, LoL ping, safety hooks, orchestrator tab. Clean infrastructure delivery with 6 findings captured.",
         "lifecycle": {
           "define": "passed",
           "discover": "passed",
@@ -857,7 +857,7 @@
           "11 findings (f078-f088)"
         ],
         "missed": [
-          "Dashboard Perf agent failed (F) â€” not re-dispatched",
+          "Dashboard Perf agent failed (F) -- not re-dispatched",
           "Sound Design System not started",
           "Clickable Skills not dispatched",
           "Did not self-register in campaigns.json (user had to manually update Orchestrator tab)",
@@ -892,10 +892,10 @@
           "brainstorming"
         ],
         "delivered": [
-          "Skill activation hook (UserPromptSubmit) â€” community-researched pattern",
+          "Skill activation hook (UserPromptSubmit) -- community-researched pattern",
           "3 plugins enabled: security-guidance, code-review, pr-review-toolkit",
-          "Auto-grade defaults fix â€” empty deliverables no longer inflated",
-          "Grade letter/score sync â€” UI computes from scoreBreakdown",
+          "Auto-grade defaults fix -- empty deliverables no longer inflated",
+          "Grade letter/score sync -- UI computes from scoreBreakdown",
           "/api/launch auto-creates agent cards (needs server restart)",
           "Orchestrator rules 16+17: research online + use own agents",
           "v1.5 graded B+ with orchestrator-specific rubric",
@@ -906,7 +906,7 @@
           "Orchestrator icon fix",
           "Self-registration mandated in orchestrator-init skill",
           "MEMORY.md updated with 4 new critical rules",
-          "7 online sources researched â€” first orchestrator to use WebSearch",
+          "7 online sources researched -- first orchestrator to use WebSearch",
           "Handoff doc for v1.7"
         ],
         "missed": [
@@ -947,22 +947,22 @@
         ],
         "delivered": [
           "create-agent-prompt skill (133 lines, 8 quality gates, 6 task types)",
-          "Review agent fix â€” run-review.sh checks git diff in both repos",
-          "Server restart â€” cost cache 12x faster, auto-grade fix live, /api/launch auto-cards",
-          "Grade cleanup â€” 4 agents audited, 2 mismatches fixed",
+          "Review agent fix -- run-review.sh checks git diff in both repos",
+          "Server restart -- cost cache 12x faster, auto-grade fix live, /api/launch auto-cards",
+          "Grade cleanup -- 4 agents audited, 2 mismatches fixed",
           "Orchestrator rules 18+19 (Deep Research pattern, destructive fallback check)",
-          "orchestrator-dispatch updated â€” Step 1 references create-agent-prompt, Stage 2 includes research",
+          "orchestrator-dispatch updated -- Step 1 references create-agent-prompt, Stage 2 includes research",
           "PM014 closed (vague PRDs), PM015 closed (fragmented dispatch)",
           "PM017 filed (reversibility assumption), PM018 filed (ignored research instruction)",
-          "15+ sources researched â€” first orchestrator to adopt external research methodology",
-          "Server-review agent dispatched via /api/launch â€” first API-dispatched agent",
+          "15+ sources researched -- first orchestrator to adopt external research methodology",
+          "Server-review agent dispatched via /api/launch -- first API-dispatched agent",
           "MEMORY.md updated (search methodology, Deep Research, stale entries)",
           "Handoff doc for v1.8"
         ],
         "missed": [
           "Ignored user instruction to find research skill before researching (PM018)",
           "Proposed git checkout as safe revert without checking (PM017)",
-          "Bad web search queries with internal jargon â€” fixed mid-session",
+          "Bad web search queries with internal jargon -- fixed mid-session",
           "create-agent-prompt skill not yet tested by a real dispatched agent",
           "PM016 still partially open (2 P2 items remain)"
         ]
@@ -988,12 +988,12 @@
         },
         "skillsUsed": [],
         "delivered": [
-          "Cost cache review â€” traced data flow, validated mtime invalidation, confirmed no memory leaks, verified error handling",
-          "Launch endpoint review â€” validated parameter handling, card creation logic, no-overwrite behavior, response format",
-          "Scope creep audit â€” catalogued all 18 modified areas, flagged 8 unrelated changes (Captures API, debrief, plan, brief, 6 pages)",
-          "Security check â€” path traversal in /api/brief/ is safe, agentName injection is low-risk, no body size limits noted",
-          "Syntax verification â€” node -c passes, all referenced files exist, function hoisting confirmed",
-          "Restart verdict â€” SAFE WITH CAVEATS (scope creep confirmed, concurrent write race noted, agentName injection flagged)"
+          "Cost cache review -- traced data flow, validated mtime invalidation, confirmed no memory leaks, verified error handling",
+          "Launch endpoint review -- validated parameter handling, card creation logic, no-overwrite behavior, response format",
+          "Scope creep audit -- catalogued all 18 modified areas, flagged 8 unrelated changes (Captures API, debrief, plan, brief, 6 pages)",
+          "Security check -- path traversal in /api/brief/ is safe, agentName injection is low-risk, no body size limits noted",
+          "Syntax verification -- node -c passes, all referenced files exist, function hoisting confirmed",
+          "Restart verdict -- SAFE WITH CAVEATS (scope creep confirmed, concurrent write race noted, agentName injection flagged)"
         ],
         "missed": [
           "Skills: no skills loaded despite PRD mandate",
@@ -1026,7 +1026,7 @@
         "brief": "coordinated-sprint/debrief-liveness-prompt.md",
         "sprint": 9,
         "grade": "C+",
-        "gradeReason": "Core deliverable met (95 wins, 49 losses auto-populated). But Discover failed â€” zero skills used despite PRD mandate. No visual distinction between auto/manual entries. Skills: 0/15.",
+        "gradeReason": "Core deliverable met (95 wins, 49 losses auto-populated). But Discover failed -- zero skills used despite PRD mandate. No visual distinction between auto/manual entries. Skills: 0/15.",
         "lifecycle": {
           "define": "passed",
           "discover": "failed",
@@ -1036,7 +1036,7 @@
           "debrief": "passed"
         },
         "skillsUsed": [],
-        "skillsNote": "Zero skills used. PRD mandated frontend-design and impeccable-polish â€” both ignored.",
+        "skillsNote": "Zero skills used. PRD mandated frontend-design and impeccable-polish -- both ignored.",
         "delivered": [
           "Auto-populates 95 wins and 49 losses from agent data",
           "Agent name pills with color coding",
@@ -1063,7 +1063,7 @@
         "brief": "coordinated-sprint/workflow-update-prompt.md",
         "sprint": 9,
         "grade": "C+",
-        "gradeReason": "Good delivery (7 items), but Discover failed â€” zero skills used despite PRD mandate. Safety section missed. Skills: 0/15.",
+        "gradeReason": "Good delivery (7 items), but Discover failed -- zero skills used despite PRD mandate. Safety section missed. Skills: 0/15.",
         "lifecycle": {
           "define": "passed",
           "discover": "failed",
@@ -1072,7 +1072,7 @@
           "verify": "partial"
         },
         "skillsUsed": [],
-        "skillsNote": "Zero skills used. PRD mandated frontend-design and impeccable-polish â€” both ignored.",
+        "skillsNote": "Zero skills used. PRD mandated frontend-design and impeccable-polish -- both ignored.",
         "delivered": [
           "Phase 5 updated: Auto-Dispatch Agents via /api/launch",
           "Phase 6 updated: Auto-Monitor & Grade with hook.js and auto-grade.js",
@@ -1107,7 +1107,7 @@
           "debrief": "failed"
         },
         "skillsUsed": [],
-        "skillsNote": "Zero skills used. PRD mandated impeccable-optimize and systematic-debugging â€” both ignored.",
+        "skillsNote": "Zero skills used. PRD mandated impeccable-optimize and systematic-debugging -- both ignored.",
         "delivered": [],
         "missed": [
           "Profiling: no instrumentation added",
@@ -1135,7 +1135,7 @@
         "brief": "coordinated-sprint/dashboard-perf-v2-prompt.md",
         "sprint": 10,
         "grade": "C-",
-        "gradeReason": "Manual re-grade by v1.6 (71/100 = C-). Agent DID implement per-session cost cache (498 insertions in server.js). Review agent incorrectly reported 'server.js unmodified' â€” couldn't see uncommitted file changes. Docked for: scope creep (1637 lines changed vs targeted fix), no skills loaded, no self-debrief.",
+        "gradeReason": "Manual re-grade by v1.6 (71/100 = C-). Agent DID implement per-session cost cache (498 insertions in server.js). Review agent incorrectly reported 'server.js unmodified' -- couldn't see uncommitted file changes. Docked for: scope creep (1637 lines changed vs targeted fix), no skills loaded, no self-debrief.",
         "lifecycle": {
           "define": "passed",
           "discover": "partial",
@@ -1146,7 +1146,7 @@
         },
         "skillsUsed": [],
         "delivered": [
-          "Per-session cost cache â€” COST_SESSION_CACHE_F with mtime checking",
+          "Per-session cost cache -- COST_SESSION_CACHE_F with mtime checking",
           "computeCostData() refactored to skip unchanged transcripts",
           "Syntax validation passed (node -c server.js)",
           "Skill loaded during session (activity log confirms)"
@@ -1223,7 +1223,7 @@
       {
         "slot": "clickable-skills",
         "name": "Clickable Skills",
-        "focus": "Make skill pills clickable on agent report cards â€” show SKILL.md content on click.",
+        "focus": "Make skill pills clickable on agent report cards -- show SKILL.md content on click.",
         "sessionId": null,
         "status": "ready",
         "brief": "coordinated-sprint/clickable-skills-prompt.md",
@@ -1264,7 +1264,7 @@
           "debrief": "passed"
         },
         "skillsUsed": [],
-        "skillsNote": "Zero skills used. PRD mandated skill-builder or skill-creator â€” both ignored.",
+        "skillsNote": "Zero skills used. PRD mandated skill-builder or skill-creator -- both ignored.",
         "delivered": [
           "Split: 6 phase skills + hub created",
           "Hub: lean 37-line orchestrator reference table",
@@ -1292,7 +1292,7 @@
       {
         "slot": "infra-attribution",
         "name": "Infra Attribution",
-        "focus": "Add Infrastructure section to Orchestrator tab â€” skills, hooks, rules with version attribution, staleness badges, clickable content modals.",
+        "focus": "Add Infrastructure section to Orchestrator tab -- skills, hooks, rules with version attribution, staleness badges, clickable content modals.",
         "sessionId": "670f87c4-78cc-4a8d-9d7b-a8cb104511a9",
         "status": "completed",
         "brief": "coordinated-sprint/infra-attribution-prompt.md",
@@ -1313,22 +1313,22 @@
         "delivered": [
           "Rendering: infra section on Orchestrator tab with 3 groups",
           "Groups: skills (25), hooks (8), rules (14) with icons and counts",
-          "Staleness: version-gap badges â€” Current/Review/Stale with correct colors",
+          "Staleness: version-gap badges -- Current/Review/Stale with correct colors",
           "Modal: click-to-view skill/hook content via existing API",
           "Sorting: stale-first ordering within groups",
           "CSS: Apple-inspired infra section styles",
           "Collapsible: toggle groups with chevron",
           "Verify: 12 Playwright screenshots taken and evaluated",
           "Discover: loaded frontend-design skill as mandated",
-          "Scope creep: rewrote 670 lines of existing CSS beyond scope (insight — correctly deferred)"
+          "Scope creep: rewrote 670 lines of existing CSS beyond scope (insight -- correctly deferred)"
         ],
         "missed": [
           "Design: skills render as long list, not compact chips/squares",
           "Debrief: curl attempted but auto-grade didn't capture it"
         ],
         "lessons": [
-          "Auto-grade can't detect Playwright screenshots in filesystem â€” only checks git diff",
-          "Auto-grade doesn't parse transcripts for skill loading â€” skillsUsed stays empty",
+          "Auto-grade can't detect Playwright screenshots in filesystem -- only checks git diff",
+          "Auto-grade doesn't parse transcripts for skill loading -- skillsUsed stays empty",
           "CSS classes already existing in the file doesn't prevent agents from rewriting them",
           "PRD constraint 'use existing CSS' needs stronger enforcement language"
         ],
@@ -1347,7 +1347,7 @@
       {
         "slot": "orchestrator-v1.8",
         "name": "Orchestrator v1.8",
-        "focus": "Pipeline verification sprint. Proved create-agent-prompt → dispatch → auto-grade → review pipeline end-to-end. 4 agents dispatched, all graded correctly. First 100% skill compliance sprint. 15+ systemic fixes.",
+        "focus": "Pipeline verification sprint. Proved create-agent-prompt -> dispatch -> auto-grade -> review pipeline end-to-end. 4 agents dispatched, all graded correctly. First 100% skill compliance sprint. 15+ systemic fixes.",
         "sessionId": null,
         "status": "completed",
         "brief": null,
@@ -1391,7 +1391,7 @@
           "4 agents dispatched with 100% skill compliance"
         ],
         "missed": [
-          "Unpushed commits — never pushed to GitHub before handoff (auto-grade, debrief API, guard hook, auto-colors, CLAUDE.md 11+12)",
+          "Unpushed commits -- never pushed to GitHub before handoff (auto-grade, debrief API, guard hook, auto-colors, CLAUDE.md 11+12)",
           "Started building CSS instead of dispatching (PM019)",
           "Missed dispatch-home.json and dispatch-work.json on init (fixed mid-session)",
           "Handoff doc buried the Cerebras-to-hooks migration idea as a minor note when user considered it P0 (PM020)"
@@ -1440,7 +1440,7 @@
           "Handoff doc for v2.0"
         ],
         "missed": [
-          "Initially missed Cerebras-to-hooks migration from v1.8 prompts (PM020 — fixed same session)",
+          "Initially missed Cerebras-to-hooks migration from v1.8 prompts (PM020 -- fixed same session)",
           "Emoji coding missing from first output (fixed after feedback)",
           "Chime volume too low on first attempt (fixed to 0.8)"
         ]
@@ -1522,13 +1522,13 @@
           "Agent Lifecycle fixed from 5?6 stages in MEMORY.md and principles.md",
           "Stale auto-dispatch-research.md deleted (research artifact, feature is built)",
           "local-ports.md: removed stale Last verified date",
-          "Orchestrator skill duplication stripped — dispatch checklist, init checklist, pipeline details replaced with skill references"
+          "Orchestrator skill duplication stripped -- dispatch checklist, init checklist, pipeline details replaced with skill references"
         ],
         "missed": [],
         "lessons": [
-          "Memory principle f071 validated: volatile data (counts, versions, dates) rots fastest — never store it",
+          "Memory principle f071 validated: volatile data (counts, versions, dates) rots fastest -- never store it",
           "CLAUDE.md reference-by-number pattern works well: line 15 captures all 10 rules in one line without duplication",
-          "auto-dispatch-research.md was 114 lines of stale research — research artifacts should be deleted once the feature ships"
+          "auto-dispatch-research.md was 114 lines of stale research -- research artifacts should be deleted once the feature ships"
         ],
         "scoreBreakdown": {
           "deliverables": 40,
@@ -1564,15 +1564,15 @@
           "agent-development"
         ],
         "delivered": [
-          "Lifecycle reference card — 68-line quick reference with 6 stages, pass/fail criteria, campaign data, enforcement mechanisms",
-          "CLAUDE.md Rule 11 — 3-line lifecycle mandate requiring 6 stages, skill discovery, and debrief curl in every prompt",
-          "Prompt audit scorecard — all 19 prompts audited for 4 compliance criteria (6-stage, skills mandate, verify, debrief)",
-          "Lifecycle data analysis — 37 agents analyzed across 6 stages, identified Discover (49% fail/skip) and Verify (44% fail/skip) as critical failures",
-          "Enforcement hook — identified need for PreToolUse hook to block execution before skill discovery, but out of scope (insight — correctly deferred)"
+          "Lifecycle reference card -- 68-line quick reference with 6 stages, pass/fail criteria, campaign data, enforcement mechanisms",
+          "CLAUDE.md Rule 11 -- 3-line lifecycle mandate requiring 6 stages, skill discovery, and debrief curl in every prompt",
+          "Prompt audit scorecard -- all 19 prompts audited for 4 compliance criteria (6-stage, skills mandate, verify, debrief)",
+          "Lifecycle data analysis -- 37 agents analyzed across 6 stages, identified Discover (49% fail/skip) and Verify (44% fail/skip) as critical failures",
+          "Enforcement hook -- identified need for PreToolUse hook to block execution before skill discovery, but out of scope (insight -- correctly deferred)"
         ],
         "missed": [],
         "lessons": [
-          "Sprint 9 (v1.5) was the quality inflection point — all prompts after that have 6-stage lifecycle and debrief curl",
+          "Sprint 9 (v1.5) was the quality inflection point -- all prompts after that have 6-stage lifecycle and debrief curl",
           "Hard gate language in Stage 2 works: newer prompts with hard gates had higher Discover pass rates than older soft-suggestion prompts",
           "Three enforcement layers exist (CLAUDE.md rule, skill-activation hook, auto-grading) but none structurally blocks an agent from skipping stages"
         ],
@@ -1597,7 +1597,7 @@
         "brief": "coordinated-sprint/campaign-card-polish-prompt.md",
         "sprint": 12,
         "grade": "B+",
-        "gradeReason": "Manual override from C- auto-grade. Agent delivered visible card improvements: bolded taglines, richer stats (delivered/missed/active), sprint badge, subtitle. Loaded 2 mandated skills (impeccable-polish, frontend-design). Full lifecycle. Debrief was partial — didn't post delivered list, causing auto-grade to see 0 deliverables. Work was real, reporting was incomplete.",
+        "gradeReason": "Manual override from C- auto-grade. Agent delivered visible card improvements: bolded taglines, richer stats (delivered/missed/active), sprint badge, subtitle. Loaded 2 mandated skills (impeccable-polish, frontend-design). Full lifecycle. Debrief was partial -- didn't post delivered list, causing auto-grade to see 0 deliverables. Work was real, reporting was incomplete.",
         "lifecycle": {
           "define": "passed",
           "discover": "passed",
@@ -1618,7 +1618,7 @@
           "Improved card visual hierarchy and spacing"
         ],
         "missed": [
-          "Debrief incomplete — did not post delivered/missed lists via API",
+          "Debrief incomplete -- did not post delivered/missed lists via API",
           "Color-coded taglines not implemented (description still monochrome)"
         ],
         "scoreBreakdown": {
@@ -1642,7 +1642,7 @@
         "brief": "coordinated-sprint/campaign-nav-review-prompt.md",
         "sprint": 12,
         "grade": "B+",
-        "gradeReason": "Excellent review output: 2 CRITICAL XSS, 1 HIGH, 3 MEDIUM, 2 LOW findings. Rich debrief with actionable lessons. But: zero skill usage (skipped Stage 2 entirely — should have loaded code-review skill), no Playwright verification. Auto-grade couldn't run (dispatch.sh path bug). Capped at B+ per rubric: skipping Discover prevents A-tier.",
+        "gradeReason": "Excellent review output: 2 CRITICAL XSS, 1 HIGH, 3 MEDIUM, 2 LOW findings. Rich debrief with actionable lessons. But: zero skill usage (skipped Stage 2 entirely -- should have loaded code-review skill), no Playwright verification. Auto-grade couldn't run (dispatch.sh path bug). Capped at B+ per rubric: skipping Discover prevents A-tier.",
         "lifecycle": {
           "define": "passed",
           "discover": "failed",
@@ -1652,7 +1652,7 @@
           "debrief": "passed"
         },
         "skillsUsed": [],
-        "skillsNote": "Skipped Stage 2 — no skills loaded. Would have benefited from code-review skill.",
+        "skillsNote": "Skipped Stage 2 -- no skills loaded. Would have benefited from code-review skill.",
         "delivered": [
           "XSS via unescaped class injection in wsClass/stClass (CRITICAL)",
           "XSS risk in onclick handler with encodeURIComponent (CRITICAL)",
@@ -1699,17 +1699,17 @@
           "verification-before-completion"
         ],
         "delivered": [
-          "Verified agent card auto-creation via /api/launch — slot, sessionId, status, sprint all correct",
-          "Verified dispatch.sh uses $SCRIPT_DIR paths (line 76: node $SCRIPT_DIR/auto-grade.js) — portable across machines",
-          "Verified create-agent-prompt debrief template has populated example arrays (line 140) — empty arrays = C- cap enforced",
+          "Verified agent card auto-creation via /api/launch -- slot, sessionId, status, sprint all correct",
+          "Verified dispatch.sh uses $SCRIPT_DIR paths (line 76: node $SCRIPT_DIR/auto-grade.js) -- portable across machines",
+          "Verified create-agent-prompt debrief template has populated example arrays (line 140) -- empty arrays = C- cap enforced",
           "Wrote e2e-pipeline-validation.md summary in coordinated-sprint/",
           "Verified agent card exists in live /api/campaigns response via curl"
         ],
         "missed": [],
         "lessons": [
           "The debrief must always have populated delivered arrays to avoid C- auto-grade",
-          "Windows Node.js does not support /dev/stdin — use process.stdin event-based reading instead",
-          "Skill discovery gate (Stage 2) is critical — skipping it caps grade at C regardless of deliverables"
+          "Windows Node.js does not support /dev/stdin -- use process.stdin event-based reading instead",
+          "Skill discovery gate (Stage 2) is critical -- skipping it caps grade at C regardless of deliverables"
         ],
         "scoreBreakdown": {
           "deliverables": 40,
@@ -1810,7 +1810,7 @@
           "priority": "P1",
           "sprint": null,
           "agentSlot": null,
-          "note": "Interactive mode — different sounds for different events. Never started. Carry to campaign-002."
+          "note": "Interactive mode -- different sounds for different events. Never started. Carry to campaign-002."
         },
         {
           "id": 11,
@@ -1927,7 +1927,7 @@
           "priority": "P0",
           "sprint": 10,
           "agentSlot": "orchestrator-v1.6",
-          "note": "Systemic fixes implemented â€” close the PMs"
+          "note": "Systemic fixes implemented -- close the PMs"
         },
         {
           "id": 23,
@@ -2118,7 +2118,7 @@
         {
           "name": "hook.js",
           "createdBy": "v1.0",
-          "description": "MC telemetry â€” PostToolUse + Stop"
+          "description": "MC telemetry -- PostToolUse + Stop"
         },
         {
           "name": "prompt-hook.js",
@@ -2128,32 +2128,32 @@
         {
           "name": "guard-destructive.sh",
           "createdBy": "v1.4",
-          "description": "PreToolUse safety â€” blocks rm -rf, force push"
+          "description": "PreToolUse safety -- blocks rm -rf, force push"
         },
         {
           "name": "check-file-conflict.js",
           "createdBy": "v1.4",
-          "description": "PostToolUse â€” warns on cross-agent file edits"
+          "description": "PostToolUse -- warns on cross-agent file edits"
         },
         {
           "name": "check-code-change.sh",
           "createdBy": "v1.4",
-          "description": "PostToolUse â€” tracks file modifications"
+          "description": "PostToolUse -- tracks file modifications"
         },
         {
           "name": "validate-html-js.js",
           "createdBy": "v1.5",
-          "description": "PostToolUse â€” syntax validates JS in HTML files"
+          "description": "PostToolUse -- syntax validates JS in HTML files"
         },
         {
           "name": "skill-activation-hook.sh",
           "createdBy": "v1.6",
-          "description": "UserPromptSubmit â€” mandatory skill check injection"
+          "description": "UserPromptSubmit -- mandatory skill check injection"
         },
         {
           "name": "session-start-compact.js",
           "createdBy": "v1.4",
-          "description": "SessionStart â€” compact context on init"
+          "description": "SessionStart -- compact context on init"
         }
       ],
       "rules": [
@@ -2353,15 +2353,15 @@
       ],
       "losses": [
         {
-          "text": "Prompts dumped inline â€” wrong prompt pasted into two terminals, wasted a session",
+          "text": "Prompts dumped inline -- wrong prompt pasted into two terminals, wasted a session",
           "sprint": 1
         },
         {
-          "text": "No setup-phase checklist â€” missed video dissection + /why wiring",
+          "text": "No setup-phase checklist -- missed video dissection + /why wiring",
           "sprint": 1
         },
         {
-          "text": "Orchestrator v1.0 built features instead of coordinating â€” context bloated to 2GB",
+          "text": "Orchestrator v1.0 built features instead of coordinating -- context bloated to 2GB",
           "sprint": 1
         },
         {
@@ -2369,25 +2369,25 @@
           "sprint": 3
         },
         {
-          "text": "Debrief went stale â€” wins not tracked as agents completed",
+          "text": "Debrief went stale -- wins not tracked as agents completed",
           "sprint": 3
         },
         {
-          "text": "Workflow Redesign: 3 failed iterations before using skills/sub-agents. Closed by user â€” prompt quality.",
+          "text": "Workflow Redesign: 3 failed iterations before using skills/sub-agents. Closed by user -- prompt quality.",
           "sprint": 4
         },
         {
-          "text": "Agents don't use skills or sub-agents â€” 34+ skills exist but near-zero organic usage",
+          "text": "Agents don't use skills or sub-agents -- 34+ skills exist but near-zero organic usage",
           "sprint": 4
         },
         {
-          "text": "Remaining items ballooned to 49 â€” no condensation or grouping until v1.1",
+          "text": "Remaining items ballooned to 49 -- no condensation or grouping until v1.1",
           "sprint": 5
         }
       ],
       "remaining": [
         {
-          "text": "Campaign states: setup â†’ active â†’ retro â†’ done lifecycle",
+          "text": "Campaign states: setup \u00c3\u00a2\u00e2\u20ac\u00a0' active \u00c3\u00a2\u00e2\u20ac\u00a0' retro \u00c3\u00a2\u00e2\u20ac\u00a0' done lifecycle",
           "group": "A-campaigns-overhaul",
           "priority": "must-close"
         },
@@ -2427,7 +2427,7 @@
           "priority": "must-close"
         },
         {
-          "text": "Refresh retrospective â€” stale, v1.0 wrote it, doesn't cover sprints 3-5",
+          "text": "Refresh retrospective -- stale, v1.0 wrote it, doesn't cover sprints 3-5",
           "group": "A-campaigns-overhaul",
           "priority": "must-close"
         },
@@ -2482,7 +2482,7 @@
           "priority": "important"
         },
         {
-          "text": "Sub-agent tool visibility (P0 platform limitation â€” sidechain transcripts invisible)",
+          "text": "Sub-agent tool visibility (P0 platform limitation -- sidechain transcripts invisible)",
           "group": "C-infrastructure",
           "priority": "important"
         },
@@ -2502,7 +2502,7 @@
           "priority": "can-wait"
         },
         {
-          "text": "Notification sound (PM007 â€” #1 productivity blocker, raised 5+ times, f066)",
+          "text": "Notification sound (PM007 -- #1 productivity blocker, raised 5+ times, f066)",
           "group": "D-nav-ux",
           "priority": "must-close"
         },
@@ -2552,7 +2552,7 @@
           "priority": "must-close"
         },
         {
-          "text": "Workflow page: auto-update mechanism â€” postmortems/findings should trigger workflow review",
+          "text": "Workflow page: auto-update mechanism -- postmortems/findings should trigger workflow review",
           "group": "G-calibration",
           "priority": "must-close"
         },
@@ -2582,7 +2582,7 @@
           "priority": "must-close"
         },
         {
-          "text": "Dashboard summary shows skill name instead of real user prompt â€” deep-summary captures /skill (expanded) not the PRD",
+          "text": "Dashboard summary shows skill name instead of real user prompt -- deep-summary captures /skill (expanded) not the PRD",
           "group": "B-dashboard",
           "priority": "important"
         }
@@ -2662,7 +2662,7 @@
           "Used Agent tool for implementation (PM022 regression)",
           "Told user to open terminals manually instead of /api/launch (PM023)",
           "Forgot git commit before handoff",
-          "Added CLAUDE.md rules hastily — user reverted them"
+          "Added CLAUDE.md rules hastily -- user reverted them"
         ]
       },
       {
@@ -2674,16 +2674,16 @@
         "brief": null,
         "retro": "coordinated-sprint/orchestrator-v2.1-handoff.md",
         "sprint": 1,
-        "grade": null,
-        "gradeReason": null,
+        "grade": "A-",
+        "gradeReason": "Most productive orchestrator session. 10 skills used, 11 agents dispatched (3.74 GPA Sprint 1), built creating-agents pipeline + 3 new skills + auto-grade-orchestrator.js. First to use orchestrator-handoff skill. Minor misses: deferred CARES and ui-ux install to focus on standardization (reasonable scope management).",
         "lifecycle": {
           "define": "passed",
           "discover": "passed",
-          "execute": "pending",
-          "reason": "pending",
-          "verify": "pending"
+          "execute": "passed",
+          "reason": "passed",
+          "verify": "partial"
         },
-        "lifecycleReached": "discover",
+        "lifecycleReached": "verify",
         "lifecycleFailedAt": null,
         "skillsUsed": [
           "orchestrator-init",
@@ -2700,13 +2700,13 @@
         "skillsNote": "10 skills used. First orchestrator to use creating-agents pipeline. First to use orchestrator-handoff skill.",
         "delivered": [
           "creating-agents pipeline (skill-mandate + create-agent-prompt chain)",
-          "skill-mandate skill — auto-discovers mandated skills by task type",
-          "orchestrator-handoff skill — 9 quality gates + push confirmation",
-          "auto-grade-orchestrator.js — 4-factor orchestrator grading rubric",
+          "skill-mandate skill -- auto-discovers mandated skills by task type",
+          "orchestrator-handoff skill -- 9 quality gates + push confirmation",
+          "auto-grade-orchestrator.js -- 4-factor orchestrator grading rubric",
           "6-stage orchestrator lifecycle (Orient/Plan/Dispatch/Monitor/Synthesize/Handoff)",
           "Live orchestrator card with lifecycle bar, dispatched agents, stats",
           "Live agent modal with lifecycle inference + mission status",
-          "mandatedSkills system — prompt-parsed, not keyword-guessed",
+          "mandatedSkills system -- prompt-parsed, not keyword-guessed",
           "Skills sanitization in auto-grade.js",
           "Slot-based orchestrator filter (replaced name band-aid)",
           "Dropdown persistence (localStorage for all interactive elements)",
@@ -2746,17 +2746,17 @@
           "brainstorming"
         ],
         "delivered": [
-          "Orchestrator lifecycle — 6-stage lifecycle (Orient, Plan, Dispatch, Monitor, Synthesize, Handoff) with research-backed rationale",
-          "Grading criteria — passed/partial/failed definitions for all 6 stages plus 4-factor orchestrator-specific grading weights",
-          "Mapping table — all 9 orchestrator phases mapped to 6 lifecycle stages with sub-agent comparison table",
-          "9 external sources — Anthropic, Amazon, Microsoft Azure, arXiv (x2), QuantumBlack McKinsey, AI4HUMAN, Temporal/Airflow, Confident AI",
-          "Visual design notes — 6-dot progress bar with color coding, grouped sub-stages for expanded view, campaign page integration plan"
+          "Orchestrator lifecycle -- 6-stage lifecycle (Orient, Plan, Dispatch, Monitor, Synthesize, Handoff) with research-backed rationale",
+          "Grading criteria -- passed/partial/failed definitions for all 6 stages plus 4-factor orchestrator-specific grading weights",
+          "Mapping table -- all 9 orchestrator phases mapped to 6 lifecycle stages with sub-agent comparison table",
+          "9 external sources -- Anthropic, Amazon, Microsoft Azure, arXiv (x2), QuantumBlack McKinsey, AI4HUMAN, Temporal/Airflow, Confident AI",
+          "Visual design notes -- 6-dot progress bar with color coding, grouped sub-stages for expanded view, campaign page integration plan"
         ],
         "missed": [],
         "lessons": [
-          "Orchestrator evaluation requires fundamentally different metrics than builder agents — coordination quality, planning quality, and knowledge continuity replace deliverables, execution quality, and skills",
+          "Orchestrator evaluation requires fundamentally different metrics than builder agents -- coordination quality, planning quality, and knowledge continuity replace deliverables, execution quality, and skills",
           "The OODA loop (Orient-Observe-Decide-Act) is a better mental model for coordinators than the builder lifecycle (Define-Build-Verify)",
-          "6 stages is the sweet spot — matches sub-agent visual footprint while allowing orchestrator-specific labels that signal different grading expectations"
+          "6 stages is the sweet spot -- matches sub-agent visual footprint while allowing orchestrator-specific labels that signal different grading expectations"
         ],
         "scoreBreakdown": {
           "deliverables": 40,
@@ -2802,8 +2802,8 @@
         ],
         "missed": [],
         "lessons": [
-          "Skill design benefits from reading multiple handoff docs to find the actual failure patterns — v2.0 handoff revealed 4 specific gaps (git commit, open PMs, PM021, prompt review) that became gates",
-          "306 lines is well under the 500-line target — progressive disclosure works when gate definitions are self-contained with Check/Pass/Fail sections",
+          "Skill design benefits from reading multiple handoff docs to find the actual failure patterns -- v2.0 handoff revealed 4 specific gaps (git commit, open PMs, PM021, prompt review) that became gates",
+          "306 lines is well under the 500-line target -- progressive disclosure works when gate definitions are self-contained with Check/Pass/Fail sections",
           "The skill-builder convention says use gerund names, but matching the existing orchestrator-* naming convention is more important for discoverability in this ecosystem"
         ],
         "scoreBreakdown": {
@@ -2842,9 +2842,9 @@
           "auto-grade-orchestrator.js with 4-factor orchestrator rubric (Coordination 35%, Planning 25%, Lifecycle 20%, Continuity 20%)",
           "6-stage orchestrator lifecycle (Orient/Plan/Dispatch/Monitor/Synthesize/Handoff) with stage-by-stage specific reasoning",
           "Bug Fix #1: Stage reasoning references specific data (skills loaded, agents dispatched, findings count) instead of generic text",
-          "Bug Fix #2: Skills sanitization — strips shell output (pipes, redirects, globs) and validates against actual skills directory",
-          "Bug Fix #3: Relevant skills only — only mandated orchestrator skills flagged as missed, not irrelevant ones like frontend-design",
-          "Bug Fix #4: Score calibration — partials cap at 92 max, 2+ partials cap at 85, failed stages cap further. No more 97 with partial stages",
+          "Bug Fix #2: Skills sanitization -- strips shell output (pipes, redirects, globs) and validates against actual skills directory",
+          "Bug Fix #3: Relevant skills only -- only mandated orchestrator skills flagged as missed, not irrelevant ones like frontend-design",
+          "Bug Fix #4: Score calibration -- partials cap at 92 max, 2+ partials cap at 85, failed stages cap further. No more 97 with partial stages",
           "Test mode (--test flag) validates all 14 orchestrators produce valid JSON with reasonable scores",
           "Session mode compatible with existing dispatch pipeline (same interface as auto-grade.js)",
           "Edge case handling: close-out sprints with 0 agents evaluate campaign management quality instead"
@@ -2854,8 +2854,8 @@
           "Transcript parsing for orchestrator sessions not deeply tested (reused auto-grade.js logic)"
         ],
         "lessons": [
-          "Orchestrator grading requires fundamentally different inputs than sub-agent grading — coordination quality depends on fleet outcomes, not individual output",
-          "Score calibration caps are essential — without them, lifecycle factor alone cannot prevent grade inflation when other factors score high",
+          "Orchestrator grading requires fundamentally different inputs than sub-agent grading -- coordination quality depends on fleet outcomes, not individual output",
+          "Score calibration caps are essential -- without them, lifecycle factor alone cannot prevent grade inflation when other factors score high",
           "The 6-stage orchestrator lifecycle (Orient/Plan/Dispatch/Monitor/Synthesize/Handoff) maps cleanly to the existing 6-dot visual format"
         ],
         "scoreBreakdown": {
@@ -2898,7 +2898,7 @@
           "Item 5: Previous orchestrators collapsed row with version chips, grade badges, and +N more expander",
           "Item 6: Auto-replacement working via existing version-sort logic",
           "Item 7: Close-out sprint detection with accurate messaging",
-          "Item 1: Tooltip on hover for lifecycle stages showing grading criteria summary (deferred) (insight — correctly deferred)"
+          "Item 1: Tooltip on hover for lifecycle stages showing grading criteria summary (deferred) (insight -- correctly deferred)"
         ],
         "missed": [],
         "lessons": [
@@ -2949,7 +2949,7 @@
         ],
         "missed": [],
         "lessons": [
-          "PID-based liveness detection fails for the orchestrator itself (it IS the current session) — status field is a reliable fallback",
+          "PID-based liveness detection fails for the orchestrator itself (it IS the current session) -- status field is a reliable fallback",
           "Mini-cards with focus text provide much better information scent than version+grade chips",
           "The Apple Design template spacing scale (8/12/16/24) keeps things consistent without arbitrary values"
         ],
@@ -2993,9 +2993,9 @@
         ],
         "missed": [],
         "lessons": [
-          "The existing getAgentLiveState() function already cross-references campaign agents to live sessions — no need to build new matching logic",
-          "The /api/session/:id endpoint already returns activity logs — reusing it avoids needing new server endpoints",
-          "Active campaign agents may not have sessionId linked (like orchestrator-v2.1) — the live section gracefully shows waiting message in that case"
+          "The existing getAgentLiveState() function already cross-references campaign agents to live sessions -- no need to build new matching logic",
+          "The /api/session/:id endpoint already returns activity logs -- reusing it avoids needing new server endpoints",
+          "Active campaign agents may not have sessionId linked (like orchestrator-v2.1) -- the live section gracefully shows waiting message in that case"
         ],
         "scoreBreakdown": {
           "deliverables": 40,
@@ -3030,15 +3030,15 @@
           "impeccable-polish"
         ],
         "delivered": [
-          "Full-width lifecycle bar with space-between layout — no dead space on sides",
+          "Full-width lifecycle bar with space-between layout -- no dead space on sides",
           "Styled mission text with emoji prefix, bold Focus: label, color-coded, ellipsis overflow",
-          "Tightened hero card spacing — padding 24->20px, gaps 16->12px, margins reduced throughout"
+          "Tightened hero card spacing -- padding 24->20px, gaps 16->12px, margins reduced throughout"
         ],
         "missed": [],
         "lessons": [
-          "Lifecycle bar just needed flex:1 on stages + space-between on container — simple CSS fix",
+          "Lifecycle bar just needed flex:1 on stages + space-between on container -- simple CSS fix",
           "Connector widths should be fixed (flex:0 0 12px) while stages flex to fill remaining space",
-          "Polish passes work best with small, targeted changes — 6 edits total covered all 3 issues"
+          "Polish passes work best with small, targeted changes -- 6 edits total covered all 3 issues"
         ],
         "scoreBreakdown": {
           "deliverables": 40,
@@ -3070,13 +3070,13 @@
         "delivered": [
           "Evaluation document with feature comparison table (7 capabilities across 5 skills)",
           "Installation steps for Claude Code (3 methods: CLI, Marketplace, Manual)",
-          "Recommendation: Install with customization — complements existing stack, add CLAUDE.md override for Apple aesthetic projects"
+          "Recommendation: Install with customization -- complements existing stack, add CLAUDE.md override for Apple aesthetic projects"
         ],
         "missed": [
           "npm package security audit (recommended but not performed per research-only constraint)"
         ],
         "lessons": [
-          "UI/UX Pro Max fills a different layer (database) than our existing skills (behavioral prompts) — they are complementary not competing",
+          "UI/UX Pro Max fills a different layer (database) than our existing skills (behavioral prompts) -- they are complementary not competing",
           "Python 3.x dependency is the main friction point for installation",
           "Aesthetic tension between 67 styles and our Apple-only aesthetic requires project-level scoping rules"
         ],
@@ -3110,18 +3110,18 @@
           "frontend-design"
         ],
         "delivered": [
-          "Item 1: lifecycle stage inference from activity patterns — walks activity log to detect Define/Discover/Execute/Reason/Verify/Debrief stages",
-          "Item 2: mission status line replacing tool activity — human-readable sentences like Building the deliverable instead of tool names",
-          "Item 3: live lifecycle progress bar in modal — 6-dot progress with green passed, blue pulsing active, gray pending",
-          "Item 4: removed tool counts and activity timeline — no tool names or counts anywhere in active modal",
-          "Item 5: async stage refinement — activity fetch updates both dots AND stage label/mission text for accuracy"
+          "Item 1: lifecycle stage inference from activity patterns -- walks activity log to detect Define/Discover/Execute/Reason/Verify/Debrief stages",
+          "Item 2: mission status line replacing tool activity -- human-readable sentences like Building the deliverable instead of tool names",
+          "Item 3: live lifecycle progress bar in modal -- 6-dot progress with green passed, blue pulsing active, gray pending",
+          "Item 4: removed tool counts and activity timeline -- no tool names or counts anywhere in active modal",
+          "Item 5: async stage refinement -- activity fetch updates both dots AND stage label/mission text for accuracy"
         ],
         "missed": [
-          "Item 1: polling auto-refresh of the modal content every 5s (existing 5s polling refreshes sessions but modal must be re-opened to see updates — same as before)"
+          "Item 1: polling auto-refresh of the modal content every 5s (existing 5s polling refreshes sessions but modal must be re-opened to see updates -- same as before)"
         ],
         "lessons": [
           "Lesson 1: Two-layer inference (instant snapshot + async activity walk) gives much better accuracy than snapshot alone",
-          "Lesson 2: The existing inferLifecycleStage function was already in the codebase — enhancing it rather than replacing kept backward compatibility with card-level rendering"
+          "Lesson 2: The existing inferLifecycleStage function was already in the codebase -- enhancing it rather than replacing kept backward compatibility with card-level rendering"
         ],
         "scoreBreakdown": {
           "deliverables": 33,
@@ -3151,19 +3151,19 @@
         },
         "skillsUsed": [],
         "delivered": [
-          "Research doc with 3 options assessed (A: enhanced heuristic, B: explicit self-report, C: hybrid) — recommended Option C",
+          "Research doc with 3 options assessed (A: enhanced heuristic, B: explicit self-report, C: hybrid) -- recommended Option C",
           "State file schema changes: 3 new fields (lifecycleStage, lifecycleHistory, lifecycleOverride) with backward compatibility",
           "Modal auto-refresh solution: selective DOM update with anti-flicker techniques (compare-before-swap, scroll preservation, morphdom option)",
           "6-step implementation plan with code examples and 5-hour effort estimate",
           "6 online sources cited including disler multi-agent observability repo and AgentOps framework"
         ],
         "missed": [
-          "No items missed — all 7 required sections delivered"
+          "No items missed -- all 7 required sections delivered"
         ],
         "lessons": [
-          "Monotonic lifecycle tracking solves the biggest accuracy gap (Read during Execute regressing to Define) — this single insight raises accuracy from 70% to ~85% without any agent cooperation",
-          "The debrief API is already a self-reporting precedent — extending it to a general /api/lifecycle endpoint is the natural evolution",
-          "Hybrid approach is essential because 40+ existing agents have no self-reporting capability — pure self-report would break backward compatibility"
+          "Monotonic lifecycle tracking solves the biggest accuracy gap (Read during Execute regressing to Define) -- this single insight raises accuracy from 70% to ~85% without any agent cooperation",
+          "The debrief API is already a self-reporting precedent -- extending it to a general /api/lifecycle endpoint is the natural evolution",
+          "Hybrid approach is essential because 40+ existing agents have no self-reporting capability -- pure self-report would break backward compatibility"
         ],
         "scoreBreakdown": {
           "deliverables": 33,
@@ -3202,26 +3202,26 @@
           "skill-mandate",
           "create-agent-prompt"
         ],
-        "skillsNote": "Loaded 7 skills. Used creating-agents pipeline for 1 of 10 dispatches (PM025 regression — bypassed pipeline for 5 agents, filed PM).",
+        "skillsNote": "Loaded 7 skills. Used creating-agents pipeline for 1 of 10 dispatches (PM025 regression -- bypassed pipeline for 5 agents, filed PM).",
         "delivered": [
           "10 agents dispatched in Sprint 3 (3.48 GPA across 10 agents)",
           "MISSED section display bug fixed (3 locations in campaigns-page.html)",
           "PM021 closed (orchestrator-handoff systemic fix confirmed)",
           "PM024 filed + fixed (skills sanitization regression in auto-grade.js)",
-          "PM025 filed (pipeline bypass regression — honest self-accounting)",
+          "PM025 filed (pipeline bypass regression -- honest self-accounting)",
           "Rule 22 added to orchestrator-rules (never handoff with active agents)",
           "Gates 10+11 added to orchestrator-handoff (skills sync + no active agents)",
           "ui-ux-pro-max-skill installed with Apple override + Python 3.13.4 installed",
-          "File structure cleanup — 49 files organized into pages/, scripts/, data/, hooks/, config/",
-          "Card redesign — task-type colors, emojis, bold focus text, delivery counts, standard green lifecycle dots",
-          "Lifecycle hook builder (A-) — monotonic stage tracking in state files",
-          "Deep summary fix (B+) — replaced Cerebras with Claude CLI, chunked summarization",
-          "Dropdown fix (A-) — found root cause (render-skip guard), all states persist",
-          "Execute partial fix (B+) — auto-grade uses delivered/missed data not write counts",
-          "Guard hook updated — single PID kills no longer blocked",
+          "File structure cleanup -- 49 files organized into pages/, scripts/, data/, hooks/, config/",
+          "Card redesign -- task-type colors, emojis, bold focus text, delivery counts, standard green lifecycle dots",
+          "Lifecycle hook builder (A-) -- monotonic stage tracking in state files",
+          "Deep summary fix (B+) -- replaced Cerebras with Claude CLI, chunked summarization",
+          "Dropdown fix (A-) -- found root cause (render-skip guard), all states persist",
+          "Execute partial fix (B+) -- auto-grade uses delivered/missed data not write counts",
+          "Guard hook updated -- single PID kills no longer blocked",
           "CARES guide inventory prepared for next orchestrator",
           "Execution plan updated to v2.2 with 27 items",
-          "Card dots manually polished — standard green, gray dashes, half-width, proper spacing"
+          "Card dots manually polished -- standard green, gray dashes, half-width, proper spacing"
         ],
         "missed": [
           "Bypassed creating-agents pipeline for 5 of 10 dispatches (PM025)",
@@ -3255,19 +3255,19 @@
           "impeccable-polish"
         ],
         "delivered": [
-          "Modal auto-refresh: live section updates every 5s without close/reopen — elapsed time, mission status, stage label, and lifecycle dots all update in-place via selective DOM patching (no innerHTML swap, no flicker, no scroll reset)",
-          "Improved lifecycle accuracy: reads lifecycleStage from state file when available (hook-inferred or self-reported), falls back to monotonic heuristic that never regresses stages — accuracy improved from ~70% to ~85%",
-          "Partial stage dots (amber): CSS + rendering support for amber dots on earlier stages marked partial in agent.lifecycle field — applied in modal initial render, auto-refresh, and activity-based refinement",
+          "Modal auto-refresh: live section updates every 5s without close/reopen -- elapsed time, mission status, stage label, and lifecycle dots all update in-place via selective DOM patching (no innerHTML swap, no flicker, no scroll reset)",
+          "Improved lifecycle accuracy: reads lifecycleStage from state file when available (hook-inferred or self-reported), falls back to monotonic heuristic that never regresses stages -- accuracy improved from ~70% to ~85%",
+          "Partial stage dots (amber): CSS + rendering support for amber dots on earlier stages marked partial in agent.lifecycle field -- applied in modal initial render, auto-refresh, and activity-based refinement",
           "Fixed broken modal-open check: corrected .rc-modal-bg.open selector to .modal-bg.open so page render is properly deferred when modal is open",
-          "Session-scoped monotonic tracking: _sessionHighStage map prevents stage regression per session — once Execute is reached, subsequent Read calls stay at Execute"
+          "Session-scoped monotonic tracking: _sessionHighStage map prevents stage regression per session -- once Execute is reached, subsequent Read calls stay at Execute"
         ],
         "missed": [
           "Could not screenshot a fully-graded completed agent with partial amber dots in action (no agents in campaigns.json currently have lifecycle.partial field set)"
         ],
         "lessons": [
-          "The modal was outside #app so render() never destroyed it — the real issue was that modal content was only generated once in openReportCard() and never refreshed on poll",
-          "The .rc-modal-bg.open selector was a typo (should be .modal-bg.open) — this meant the render-skip check never blocked renders when modal was open, causing a secondary bug",
-          "Selective DOM patching (textContent + classList) is far better than innerHTML swap for live-updating UI — zero flicker and preserves scroll position naturally"
+          "The modal was outside #app so render() never destroyed it -- the real issue was that modal content was only generated once in openReportCard() and never refreshed on poll",
+          "The .rc-modal-bg.open selector was a typo (should be .modal-bg.open) -- this meant the render-skip check never blocked renders when modal was open, causing a secondary bug",
+          "Selective DOM patching (textContent + classList) is far better than innerHTML swap for live-updating UI -- zero flicker and preserves scroll position naturally"
         ],
         "scoreBreakdown": {
           "deliverables": 33,
@@ -3325,7 +3325,7 @@
       {
         "slot": "agent-card-research",
         "name": "Agent Card Research",
-        "tagline": "Research card pain points — propose full redesign from orchestrator history",
+        "tagline": "Research card pain points -- propose full redesign from orchestrator history",
         "focus": "User: I dont want VERIFYING/Bash states. Cards are boring, no emojis. Hard to understand what agents do. Mine orchestrator history for all card pain points + propose redesign.",
         "sessionId": "fff7198d-14c8-4bc7-9ae6-a27b3d2f0e62",
         "status": "completed",
@@ -3354,8 +3354,8 @@
           "Pain point resolution matrix: 16/22 directly addressed, 2 already fixed, 4 out of scope",
           "Implementation notes: data changes, CSS changes, JS changes for builder agent",
           "Design system compliance verification (Plus Jakarta Sans, DM Mono, CSS vars, light mode)",
-          "Follow-up agent linking (A7) - deferred, requires data model change beyond card design scope (insight — correctly deferred)",
-          "Skill pills clickable (E3) - deferred to modal redesign, separate concern (insight — correctly deferred)"
+          "Follow-up agent linking (A7) - deferred, requires data model change beyond card design scope (insight -- correctly deferred)",
+          "Skill pills clickable (E3) - deferred to modal redesign, separate concern (insight -- correctly deferred)"
         ],
         "missed": [
           "apple-design-template.md not found at expected path - could not cross-reference full design system spec"
@@ -3378,7 +3378,7 @@
       {
         "slot": "agent-card-builder",
         "name": "Agent Card Builder",
-        "focus": "User: Cards are boring, no emojis, VERIFYING/Bash is meaningless, hard to understand what agents do. Implement full card redesign from research spec � task-type colors, segmented lifecycle bar, cook timer, dispatch reason line.",
+        "focus": "User: Cards are boring, no emojis, VERIFYING/Bash is meaningless, hard to understand what agents do. Implement full card redesign from research spec  task-type colors, segmented lifecycle bar, cook timer, dispatch reason line.",
         "sessionId": "66a140fd-cfc4-4632-856a-3625e6f99e2f",
         "status": "completed",
         "brief": "coordinated-sprint/agent-card-builder-prompt.md",
@@ -3419,7 +3419,7 @@
       {
         "slot": "deep-summary-fix",
         "name": "Deep Summary Fix",
-        "focus": "User: deep summaries only capture first prompt � a huge gap. Replace Cerebras with Claude Code hook-based approach that captures full session arc.",
+        "focus": "User: deep summaries only capture first prompt  a huge gap. Replace Cerebras with Claude Code hook-based approach that captures full session arc.",
         "sessionId": "9720c0ff-b9c8-49a0-8020-f005e691c62a",
         "status": "completed",
         "brief": "coordinated-sprint/deep-summary-fix-prompt.md",
@@ -3482,22 +3482,22 @@
         },
         "skillsUsed": [],
         "delivered": [
-          "PostToolUse lifecycle inference in hook.js — infers stage from tool name + command patterns",
-          "Monotonic stage tracking — stages only advance forward (define?discover?execute?reason?verify?debrief), never regress",
+          "PostToolUse lifecycle inference in hook.js -- infers stage from tool name + command patterns",
+          "Monotonic stage tracking -- stages only advance forward (define?discover?execute?reason?verify?debrief), never regress",
           "State file schema with lifecycleStage, lifecycleStageIndex, lifecycleHistory, lifecycleHasWritten fields",
           "Context-aware read signal: Read before writes = define (stays put), Read after writes = reason (advances)",
           "Special detection for Skill tool (discover), debrief API calls (debrief), and verification Bash patterns (verify)",
-          "Backward compatible — existing state files without lifecycle fields still work, campaigns page heuristic fallback unchanged",
-          "Orchestrator session detection — could skip lifecycle tracking for orchestrator sessions, deferred as non-critical (insight — correctly deferred)"
+          "Backward compatible -- existing state files without lifecycle fields still work, campaigns page heuristic fallback unchanged",
+          "Orchestrator session detection -- could skip lifecycle tracking for orchestrator sessions, deferred as non-critical (insight -- correctly deferred)"
         ],
         "missed": [
-          "Explicit self-report API endpoint (/api/lifecycle) — research recommended as bonus, not implemented (heuristic hook alone achieves ~90%+ accuracy)"
+          "Explicit self-report API endpoint (/api/lifecycle) -- research recommended as bonus, not implemented (heuristic hook alone achieves ~90%+ accuracy)"
         ],
         "lessons": [
-          "Monotonic tracking is the single biggest accuracy win — preventing Read-during-Execute regression from define/reason eliminates the #1 source of heuristic error",
+          "Monotonic tracking is the single biggest accuracy win -- preventing Read-during-Execute regression from define/reason eliminates the #1 source of heuristic error",
           "The context-dependent read signal (read=define before writes, read=reason after writes) elegantly handles the EXECUTE vs REASON ambiguity without complex state machines",
-          "Hook performance is trivially fast since all inference is synchronous pattern matching on data already in the hook payload — no extra file reads or API calls needed",
-          "The existing campaigns-page.html Priority 1 check for lifecycleStage meant zero frontend changes were needed — good API design by the research and modal agents"
+          "Hook performance is trivially fast since all inference is synchronous pattern matching on data already in the hook payload -- no extra file reads or API calls needed",
+          "The existing campaigns-page.html Priority 1 check for lifecycleStage meant zero frontend changes were needed -- good API design by the research and modal agents"
         ],
         "scoreBreakdown": {
           "deliverables": 35,
@@ -3527,19 +3527,19 @@
         },
         "skillsUsed": [],
         "delivered": [
-          "Removed render-skip guards in load() that caused stale data — all interactive states now persist via localStorage across 5s polling refresh cycles",
-          "Added localStorage persistence for metrics guide toggle (mc-guide-open) — was missing, now survives render",
-          "Added localStorage persistence for infra group toggles (mc-infra-*) with data-infra-id attributes — was missing, now survives render",
-          "Verified modal is outside #app so innerHTML swap never destroys it — RC collapses, lifecycle cards, and all modal content persist naturally",
+          "Removed render-skip guards in load() that caused stale data -- all interactive states now persist via localStorage across 5s polling refresh cycles",
+          "Added localStorage persistence for metrics guide toggle (mc-guide-open) -- was missing, now survives render",
+          "Added localStorage persistence for infra group toggles (mc-infra-*) with data-infra-id attributes -- was missing, now survives render",
+          "Verified modal is outside #app so innerHTML swap never destroys it -- RC collapses, lifecycle cards, and all modal content persist naturally",
           "Playwright-verified: sprints, debrief sections, metrics guide, modals, and RC collapses all persist through 12+ seconds of polling"
         ],
         "missed": [
-          "No Playwright tests for infra groups — campaign-002 has no infrastructure data to test with"
+          "No Playwright tests for infra groups -- campaign-002 has no infrastructure data to test with"
         ],
         "lessons": [
-          "The render-skip guard was the root cause — it traded data freshness for state preservation, but state was ALREADY being restored via localStorage during render. Removing it fixed both the auto-close bug AND stale data.",
-          "Modal (#modalBg) lives outside #app as a sibling — innerHTML swap on #app never touches it, making modal state naturally immune to re-renders. No special handling needed.",
-          "Most interactive states were already persisted to localStorage by v2.1 — only metrics guide and infra groups were missing. The fix was surgical: 4 small edits, not a rewrite."
+          "The render-skip guard was the root cause -- it traded data freshness for state preservation, but state was ALREADY being restored via localStorage during render. Removing it fixed both the auto-close bug AND stale data.",
+          "Modal (#modalBg) lives outside #app as a sibling -- innerHTML swap on #app never touches it, making modal state naturally immune to re-renders. No special handling needed.",
+          "Most interactive states were already persisted to localStorage by v2.1 -- only metrics guide and infra groups were missing. The fix was surgical: 4 small edits, not a rewrite."
         ],
         "scoreBreakdown": {
           "deliverables": 33,
@@ -3569,17 +3569,17 @@
         },
         "skillsUsed": [],
         "delivered": [
-          "Item 1: Fixed execute lifecycle stage scoring to use delivered/missed debrief data instead of only counting write actions — agents with strong deliverables now correctly get passed instead of partial",
+          "Item 1: Fixed execute lifecycle stage scoring to use delivered/missed debrief data instead of only counting write actions -- agents with strong deliverables now correctly get passed instead of partial",
           "Item 2: Moved campaign_data read earlier to avoid ReferenceError and eliminated duplicate file read",
-          "Item 3: Backward-compatible — agents without debrief data still use original write-count heuristic"
+          "Item 3: Backward-compatible -- agents without debrief data still use original write-count heuristic"
         ],
         "missed": [
-          "Item 1: Did not fix orchestrator grader separately — but it inherits from auto-grade.js lifecycle data so fix propagates automatically"
+          "Item 1: Did not fix orchestrator grader separately -- but it inherits from auto-grade.js lifecycle data so fix propagates automatically"
         ],
         "lessons": [
-          "Lesson 1: The execute stage was the only lifecycle stage with this bug — other stages (define, discover, reason, verify, debrief) use appropriate heuristics",
-          "Lesson 2: When scoring agent quality, debrief data (delivered/missed arrays) is a far better signal than tool action counts — tool counts only measure activity, not outcomes",
-          "Lesson 3: Always check variable declaration order when moving code — campaign_data was used before its declaration, which would have been a runtime crash"
+          "Lesson 1: The execute stage was the only lifecycle stage with this bug -- other stages (define, discover, reason, verify, debrief) use appropriate heuristics",
+          "Lesson 2: When scoring agent quality, debrief data (delivered/missed arrays) is a far better signal than tool action counts -- tool counts only measure activity, not outcomes",
+          "Lesson 3: Always check variable declaration order when moving code -- campaign_data was used before its declaration, which would have been a runtime crash"
         ],
         "scoreBreakdown": {
           "deliverables": 30,
@@ -3592,14 +3592,14 @@
       {
         "slot": "card-polish-v2",
         "name": "Card Polish v2",
-        "tagline": "Polish card visuals — progress bars, focus text, overall wow factor",
+        "tagline": "Polish card visuals -- progress bars, focus text, overall wow factor",
         "focus": "User: progress bar segments are chunky and ugly, focus text is unreadable gray wall, cards dont make you go wow. Use ui-ux-pro-max database for genuinely stunning design.",
         "sessionId": "644546fb-6a8e-4bc0-937c-cfbf1bb4837a",
         "status": "completed",
         "brief": "coordinated-sprint/card-polish-v2-prompt.md",
         "sprint": 3,
         "grade": "C",
-        "gradeReason": "Manual grade by v2.2. Agent completed execution and reached debrief stage, but the visual result was rejected by user ('I hate this even more'). Replaced chunky segments with a continuous track + notches + glow — user wanted simple dots. Debrief API failed due to server outage (file structure agent moved files mid-session). Bold focus text was the one positive change.",
+        "gradeReason": "Manual grade by v2.2. Agent completed execution and reached debrief stage, but the visual result was rejected by user ('I hate this even more'). Replaced chunky segments with a continuous track + notches + glow -- user wanted simple dots. Debrief API failed due to server outage (file structure agent moved files mid-session). Bold focus text was the one positive change.",
         "lifecycle": {
           "define": "passed",
           "discover": "passed",
@@ -3618,7 +3618,7 @@
           "Attempted lifecycle bar redesign (continuous track with notches)"
         ],
         "missed": [
-          "Visual result rejected by user — bar was uglier than before",
+          "Visual result rejected by user -- bar was uglier than before",
           "Debrief API call failed (server outage from concurrent file structure agent)",
           "Did not match user's aesthetic preferences despite having ui-ux-pro-max available"
         ]
@@ -3659,6 +3659,231 @@
           "Caused concurrent card-polish agent's debrief to also fail (server outage)",
           "Server required manual restart by user after completion"
         ]
+      },
+      {
+        "slot": "orchestrator-v2.3",
+        "name": "Orchestrator v2.3",
+        "focus": "Home machine infrastructure stabilization. Fix all broken hooks, canonicalize paths, PM025 watermark enforcement, CLAUDE.md Rule 13, prompt sync, sprint label fix.",
+        "sessionId": null,
+        "status": "active",
+        "brief": null,
+        "retro": null,
+        "sprint": 4,
+        "grade": null,
+        "gradeReason": null,
+        "lifecycle": {
+          "define": "passed",
+          "discover": "passed",
+          "execute": "passed",
+          "reason": "pending",
+          "verify": "pending"
+        },
+        "lifecycleReached": "execute",
+        "lifecycleFailedAt": null,
+        "skillsUsed": [
+          "orchestrator-init",
+          "orchestrator-rules"
+        ],
+        "skillsNote": "Loaded init + rules skills. First home machine orchestrator for campaign-002.",
+        "delivered": [
+          "Fixed 3 broken hook paths (hook.js, prompt-hook.js, play-chime.ps1) -- all 16 verified",
+          "Agent-hub junction ~/.claude/agent-hub -> phredomade/.claude/agent-hub",
+          "Stale path audit -- 5 files fixed, 0 functional refs remain",
+          "Cross-machine prompt sync -- 66 files pulled, gitignore fixed",
+          "CLAUDE.md Rule 13 -- emoji coding + tables permanent for all agents",
+          "PM025 watermark enforcement -- /api/launch rejects non-pipeline prompts (f104)",
+          "Campaign page sprint labels -- per-campaign instead of hardcoded",
+          "v2.1 graded A- (deferred 3x, now done)",
+          "18 launch scripts moved to scripts/launches/",
+          "prompt-hook.js campaigns.json path fixed (data/ prefix)",
+          "Execution plan updated to v2.3 with 39 items"
+        ],
+        "missed": []
+      },
+      {
+        "slot": "json-cleanup",
+        "name": "JSON Cleanup",
+        "focus": "Move 6 stray root JSON files to data/ and update server.js refs",
+        "sessionId": "9512c3c5-9961-4bae-96bd-9b1984d4193a",
+        "status": "completed",
+        "brief": "coordinated-sprint/json-cleanup-prompt.md",
+        "sprint": 4,
+        "grade": "A-",
+        "gradeReason": "Auto-graded: 91/100. Lifecycle 20/20, Skills 13/15, Exec 22/25, Deliverables 36/40.",
+        "lifecycle": {
+          "define": "passed",
+          "discover": "passed",
+          "execute": "passed",
+          "reason": "passed",
+          "verify": "partial",
+          "debrief": "passed"
+        },
+        "skillsUsed": [
+          "verification-before-completion"
+        ],
+        "delivered": [
+          "Moved chains.json to data/ (0 server.js refs -- dead data)",
+          "Moved agent-workstreams.json to data/",
+          "Moved northstar-cache.json to data/",
+          "Moved missions.json to data/",
+          "Moved summaries.json to data/",
+          "Moved deep-summaries.json to data/",
+          "Updated .gitignore with data/ prefixes for all 6 files",
+          "Verified: only mode.json remains in root, 19 files in data/, server API returns 200"
+        ],
+        "missed": [
+          "No server.js path changes needed -- all const declarations already pointed to data/ (the v2.2 restructure updated the code but forgot to move the files)"
+        ],
+        "lessons": [
+          "chains.json has ZERO references in server.js -- confirmed dead data, candidate for future cleanup",
+          "The v2.2 file restructure updated server.js paths to data/ but never physically moved these 6 files -- server was silently falling back to empty defaults via readJSON",
+          "Always verify both code references AND physical file locations when restructuring"
+        ],
+        "scoreBreakdown": {
+          "deliverables": 36,
+          "execution": 22,
+          "lifecycle": 20,
+          "skills": 13,
+          "total": 91
+        }
+      },
+      {
+        "slot": "story-overhaul",
+        "name": "Story Overhaul",
+        "focus": "Complete visual overhaul of /story page  data-driven MC evolution timeline, demo showpiece",
+        "sessionId": "136bfeb7-10a1-4fb7-9239-9c986f12a235",
+        "status": "completed",
+        "brief": "coordinated-sprint/story-overhaul-prompt.md",
+        "sprint": 4,
+        "grade": null,
+        "gradeReason": null,
+        "lifecycle": {
+          "define": "pending",
+          "discover": "pending",
+          "execute": "pending",
+          "reason": "pending",
+          "verify": "pending",
+          "debrief": "passed"
+        },
+        "skillsUsed": [],
+        "delivered": [
+          "Overhauled story-page.html (29KB) -- wrong target, should have been /why"
+        ],
+        "missed": [
+          "Targeted /story instead of /why (PM027)",
+          "Did not debrief via API"
+        ],
+        "lessons": [
+          "innerHTML security hook triggers on trusted local data - use esc() helper and document the trust boundary",
+          "Orchestrator slot filter needs regex not includes() - orchestrator-card-polish matched falsely",
+          "Deep purple background section creates dramatic visual break - effective for the centerpiece visualization"
+        ]
+      },
+      {
+        "slot": "cerebras-migration",
+        "name": "Cerebras Migration",
+        "focus": "Replace 5 Cerebras callLLM usages with Claude CLI -- fixes dashboard data",
+        "sessionId": "5bfed9e6-b44a-44ce-baba-c8dc491d8c8d",
+        "status": "completed",
+        "brief": "coordinated-sprint/cerebras-migration-prompt.md",
+        "sprint": 4,
+        "grade": "B",
+        "gradeReason": "Auto-graded: 84/100. Lifecycle 20/20, Skills 15/15, Exec 22/25, Deliverables 27/40.",
+        "lifecycle": {
+          "define": "passed",
+          "discover": "passed",
+          "execute": "passed",
+          "reason": "passed",
+          "verify": "partial",
+          "debrief": "passed"
+        },
+        "skillsUsed": [
+          "verification-before-completion",
+          "systematic-debugging"
+        ],
+        "delivered": [
+          "Migrated 5 callLLM call sites to callClaude (Claude CLI via spawn): task summarization (line 394), theme extraction (line 446), top-of-mind briefing (line 479), idea analysis (line 2535), workstream classification (line 3708)",
+          "Deprecated callLLM function with JSDoc comment (line 313)",
+          "Updated stale Cerebras comment at idea analysis call site",
+          "Server syntax-checked and verified: /health 200, /api/dashboard 200",
+          "No prompt text changes -- only transport layer migrated",
+          "Deep-summary pipeline (lines 700-900) left untouched per spec"
+        ],
+        "missed": [
+          "Did not use execFile as specified -- reused existing callClaude which uses spawn (equally safe, already proven in production)",
+          "Did not remove callLLM function -- kept as deprecated per spec, still used by deep-summary fallback at line 810",
+          "Could not verify actual AI output quality without waiting for background northstar/summarization cycles to trigger"
+        ],
+        "lessons": [
+          "callClaude already existed and was production-proven -- the migration was simpler than expected (just find-replace function names and drop maxTokens param)",
+          "spawn is equivalent to execFile for security when no shell is involved -- both avoid shell injection",
+          "The deep-summary fallback at line 810 still uses callLLM (Cerebras) -- this is within the no-touch zone but represents a 6th Cerebras dependency that could be migrated later"
+        ],
+        "scoreBreakdown": {
+          "deliverables": 27,
+          "execution": 22,
+          "lifecycle": 20,
+          "skills": 15,
+          "total": 84
+        }
+      },
+      {
+        "slot": "why2-overhaul",
+        "name": "Why2 Overhaul",
+        "focus": "Create /why2 -- data-driven reimagining of the MC value proposition page, demo showpiece",
+        "sessionId": "f90a7e2b-e906-4d26-beab-101a5524d7fc",
+        "status": "completed",
+        "brief": "coordinated-sprint/why2-overhaul-prompt.md",
+        "sprint": 4,
+        "grade": "B+",
+        "gradeReason": "Auto-graded: 88/100. Lifecycle 20/20, Skills 15/15, Exec 22/25, Deliverables 31/40.",
+        "lifecycle": {
+          "define": "partial",
+          "discover": "passed",
+          "execute": "passed",
+          "reason": "passed",
+          "verify": "passed",
+          "debrief": "passed"
+        },
+        "skillsUsed": [
+          "impeccable-frontend-design",
+          "impeccable-polish"
+        ],
+        "delivered": [
+          "why2-page.html created with completely new editorial dark design (warm amber palette, left-aligned asymmetric layout)",
+          "Live API data integration -- counters fetch from /api/campaigns and /api/findings in real-time",
+          "GPA comparison section showing 3.00 to 3.57 improvement with animated counters",
+          "Grade distribution bar chart with staggered animation and count labels",
+          "f104 watermark seal case study section -- the demo centerpiece",
+          "Voice wall with 8 real user quotes from findings in masonry layout",
+          "Timeline visualization for the learning loop with evidence cards from real findings",
+          "Animated flywheel strip showing the self-improvement cycle",
+          "Feature grid and live stats strip",
+          "Responsive at 768px with proper column collapse",
+          "prefers-reduced-motion accessibility support",
+          "Playwright verified at 1440px and 768px",
+          "Original why-page.html preserved untouched"
+        ],
+        "missed": [
+          "Cost data section -- API returned 0 so omitted rather than show fake data",
+          "Competitive comparison table from original (intentionally omitted -- demo focus over marketing)",
+          "Interactive hover reveals on data points",
+          "Parallax scroll effects"
+        ],
+        "lessons": [
+          "Warm amber on dark charcoal creates a premium editorial feel that avoids AI slop aesthetic",
+          "Left-aligned asymmetric layout is more distinctive than centered hero patterns",
+          "Counter animation fallbacks are essential for full-page screenshots -- IntersectionObserver alone misses below-fold elements",
+          "The GPA improvement story (3.00 to 3.57) is the most compelling proof point -- real data beats marketing copy",
+          "f104 watermark seal is the perfect demo example because it shows the system reasoning about its own enforcement"
+        ],
+        "scoreBreakdown": {
+          "deliverables": 31,
+          "execution": 22,
+          "lifecycle": 20,
+          "skills": 15,
+          "total": 88
+        }
       }
     ],
     "executionPlan": {
@@ -3702,7 +3927,7 @@
         },
         {
           "id": 5,
-          "task": "📊 Retroactively grade v1.9 and v2.0 with new orchestrator rubric",
+          "task": "\u00f0\u0178\u201c\u0160 Retroactively grade v1.9 and v2.0 with new orchestrator rubric",
           "status": "deferred",
           "priority": "P1",
           "sprint": 1,
@@ -3729,7 +3954,7 @@
         },
         {
           "id": 8,
-          "task": "Findings tab overhaul — sorting, dropdowns, priority ranking, show all ~96 findings",
+          "task": "Findings tab overhaul -- sorting, dropdowns, priority ranking, show all ~96 findings",
           "status": "todo",
           "priority": "P1",
           "sprint": 3,
@@ -3743,11 +3968,11 @@
           "priority": "P1",
           "sprint": 4,
           "agentSlot": null,
-          "note": "Home=LoL sounds, Work=Windows chime. Deferred — run on home machine."
+          "note": "Home=LoL sounds, Work=Windows chime. Deferred -- run on home machine."
         },
         {
           "id": 10,
-          "task": "Session compaction — better way to summarize 10+ orchestrator sessions for init",
+          "task": "Session compaction -- better way to summarize 10+ orchestrator sessions for init",
           "status": "todo",
           "priority": "P2",
           "sprint": 4,
@@ -3756,7 +3981,7 @@
         },
         {
           "id": 11,
-          "task": "Live agent modal v1 — show current state, file, elapsed time",
+          "task": "Live agent modal v1 -- show current state, file, elapsed time",
           "status": "done",
           "priority": "P0",
           "sprint": 2,
@@ -3765,7 +3990,7 @@
         },
         {
           "id": 12,
-          "task": "Post-mortem skill — standardize PM filing process",
+          "task": "Post-mortem skill -- standardize PM filing process",
           "status": "todo",
           "priority": "P1",
           "sprint": 4,
@@ -3801,7 +4026,7 @@
         },
         {
           "id": 17,
-          "task": "Live agent modal v2 — lifecycle self-reporting + auto-refresh + monotonic tracking",
+          "task": "Live agent modal v2 -- lifecycle self-reporting + auto-refresh + monotonic tracking",
           "status": "in-progress",
           "priority": "P0",
           "sprint": 3,
@@ -3846,7 +4071,7 @@
         },
         {
           "id": 22,
-          "task": "CARES Sprint planning — design multi-agent workflow with Configurator",
+          "task": "CARES Sprint planning -- design multi-agent workflow with Configurator",
           "status": "todo",
           "priority": "P1",
           "sprint": 3,
@@ -3860,11 +4085,11 @@
           "priority": "P1",
           "sprint": 3,
           "agentSlot": "deep-summary-fix",
-          "note": "Current deep-summaries.json only summarizes the opening prompt. Misses all decisions, dispatches, and priorities from later in session. v2.1 session had 390 user prompts — summary captured 1."
+          "note": "Current deep-summaries.json only summarizes the opening prompt. Misses all decisions, dispatches, and priorities from later in session. v2.1 session had 390 user prompts -- summary captured 1."
         },
         {
           "id": 24,
-          "task": "Agent card focus text should include user-facing 'why' — quote original user reasoning for dispatch",
+          "task": "Agent card focus text should include user-facing 'why' -- quote original user reasoning for dispatch",
           "status": "todo",
           "priority": "P1",
           "sprint": 4,
@@ -3873,7 +4098,7 @@
         },
         {
           "id": 25,
-          "task": "Card-level state bar — replace heuristic VERIFYING/Bash with hook-based lifecycle reporting",
+          "task": "Card-level state bar -- replace heuristic VERIFYING/Bash with hook-based lifecycle reporting",
           "status": "todo",
           "priority": "P0",
           "sprint": 3,
@@ -3882,7 +4107,7 @@
         },
         {
           "id": 26,
-          "task": "Research agent card UX — mine orchestrator history for all pain points, propose card redesign",
+          "task": "Research agent card UX -- mine orchestrator history for all pain points, propose card redesign",
           "status": "in-progress",
           "priority": "P0",
           "sprint": 3,
@@ -3891,12 +4116,120 @@
         },
         {
           "id": 27,
-          "task": "Install Python 3 on both machines — required for ui-ux-pro-max search scripts",
+          "task": "Install Python 3 on both machines -- required for ui-ux-pro-max search scripts",
           "status": "done",
           "priority": "P0",
           "sprint": 3,
           "agentSlot": "orchestrator-v2.2",
-          "note": "Work laptop: manual install from python.org (winget blocked by corporate). Home machine: run tools/install-python.ps1 after git pull. Silent install failed — need GUI installer."
+          "note": "Work laptop: manual install from python.org (winget blocked by corporate). Home machine: run tools/install-python.ps1 after git pull. Silent install failed -- need GUI installer."
+        },
+        {
+          "id": 28,
+          "task": "Fix 3 broken hook paths in project settings.json (v2.2 restructure missed project-level settings)",
+          "status": "done",
+          "priority": "P0",
+          "sprint": 4,
+          "agentSlot": "orchestrator-v2.3",
+          "note": "hook.js, prompt-hook.js, play-chime.ps1 all pointed to pre-restructure paths. 16/16 hooks verified."
+        },
+        {
+          "id": 29,
+          "task": "Canonicalize agent-hub path -- junction from ~/.claude/agent-hub to phredomade/.claude/agent-hub",
+          "status": "done",
+          "priority": "P0",
+          "sprint": 4,
+          "agentSlot": "orchestrator-v2.3",
+          "note": "Orphan dir deleted, junction created. Both paths resolve to same inode."
+        },
+        {
+          "id": 30,
+          "task": "Stale path audit -- fix 5 files with pre-restructure references",
+          "status": "done",
+          "priority": "P0",
+          "sprint": 4,
+          "agentSlot": "orchestrator-v2.3",
+          "note": "enrich-agents.js, toolbox/config/settings.json, toolbox/config/project-settings-home.json, prompt-hook.js campaigns path."
+        },
+        {
+          "id": 31,
+          "task": "Cross-machine prompt sync -- fix gitignore, pull 66 prompt files from work laptop",
+          "status": "done",
+          "priority": "P0",
+          "sprint": 4,
+          "agentSlot": "orchestrator-v2.3",
+          "note": "prompts/ was gitignored on work laptop. User pushed from work machine, pulled here."
+        },
+        {
+          "id": 32,
+          "task": "CLAUDE.md Rule 13 -- emoji coding + tables for all CLI output",
+          "status": "done",
+          "priority": "P0",
+          "sprint": 4,
+          "agentSlot": "orchestrator-v2.3",
+          "note": "Systemic fix. Every session, every agent now sees this rule. f094+f095 codified."
+        },
+        {
+          "id": 33,
+          "task": "PM025 enforcement -- watermark seal in create-agent-prompt + /api/launch validation",
+          "status": "done",
+          "priority": "P0",
+          "sprint": 4,
+          "agentSlot": "orchestrator-v2.3",
+          "note": "Pipeline bypass now impossible at API level. f104 filed. PM025 closed."
+        },
+        {
+          "id": 34,
+          "task": "Fix campaign page sprint labels -- per-campaign instead of hardcoded campaign-001 labels",
+          "status": "done",
+          "priority": "P1",
+          "sprint": 4,
+          "agentSlot": "orchestrator-v2.3",
+          "note": "Campaign-002 was showing 'Closing Sprint' for Sprint 4. Now shows 'Sprint N' for non-campaign-001."
+        },
+        {
+          "id": 35,
+          "task": "Grade v2.1 orchestrator (deferred 3x)",
+          "status": "done",
+          "priority": "P1",
+          "sprint": 4,
+          "agentSlot": "orchestrator-v2.3",
+          "note": "A-. Most productive orchestrator session -- 10 skills, 11 agents, built pipeline infrastructure."
+        },
+        {
+          "id": 36,
+          "task": "Clean up 18 launch scripts from agent-hub root",
+          "status": "done",
+          "priority": "P1",
+          "sprint": 4,
+          "agentSlot": "orchestrator-v2.3",
+          "note": "Moved to scripts/launches/. All spent one-shot launchers from work laptop."
+        },
+        {
+          "id": 37,
+          "task": "Cerebras deprecation -- replace 5 remaining callLLM usages in server.js",
+          "status": "todo",
+          "priority": "P1",
+          "sprint": 4,
+          "agentSlot": "cerebras-migration",
+          "note": "Deep summaries done by v2.2. 5 other callLLM remain. Demo blocker if Cerebras goes down."
+        },
+        {
+          "id": 38,
+          "task": "Root JSON cleanup -- move 6 stray JSON files from agent-hub root to data/",
+          "status": "todo",
+          "priority": "P1",
+          "sprint": 4,
+          "agentSlot": "json-cleanup",
+          "note": "agent-workstreams.json, chains.json, deep-summaries.json, missions.json, northstar-cache.json, summaries.json. Requires server.js ref updates."
+        },
+        {
+          "id": 39,
+          "task": "Orchestrator hard stops -- auto-handoff triggers based on context/token budget",
+          "status": "todo",
+          "priority": "P0",
+          "sprint": 4,
+          "agentSlot": null,
+          "note": "User pain point: orchestrators drag too long, regress, waste time. Needs brainstorming + design."
         }
       ]
     },
@@ -3986,7 +4319,7 @@
         "name": "Orchestrator v2.1",
         "focus": "Findings review, CLAUDE.md editing process, CARES sprint execution plan, MC dependency map, orchestrator handoff skill.",
         "sessionId": null,
-        "status": "active",
+        "status": "completed",
         "brief": null,
         "retro": null,
         "sprint": 2,
@@ -4010,8 +4343,36 @@
           "Campaign-002 orchestrator standardization (prerequisite for CARES)"
         ],
         "missed": [
-          "CARES agents not dispatched — orchestrator standardization took priority"
+          "CARES agents not dispatched -- orchestrator standardization took priority"
         ]
+      },
+      {
+        "slot": "orchestrator-v2.3",
+        "name": "Orchestrator v2.3",
+        "focus": "Home machine. Fix agent-hub path + hook failures. CARES sprint planning deferred until work machine.",
+        "sessionId": null,
+        "status": "active",
+        "brief": null,
+        "retro": null,
+        "sprint": 2,
+        "grade": null,
+        "gradeReason": null,
+        "lifecycle": {
+          "define": "passed",
+          "discover": "passed",
+          "execute": "pending",
+          "reason": "pending",
+          "verify": "pending"
+        },
+        "lifecycleReached": "discover",
+        "lifecycleFailedAt": null,
+        "skillsUsed": [
+          "orchestrator-init",
+          "orchestrator-rules"
+        ],
+        "skillsNote": "Registered in both campaigns. CARES work blocked by machine (work laptop only).",
+        "delivered": [],
+        "missed": []
       }
     ],
     "executionPlan": {

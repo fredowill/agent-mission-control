@@ -1,0 +1,24 @@
+{"prompt":"can you inviestgate very Delicately, why is my Adobe Lightroom Classic not opening? Maybe you can check the task manager why it's not opening. It's kind of stuck even though I ended the task and restarted it.Be very delicate.","ts":1772605493247,"type":"user"}
+{"prompt":"still failing and not woring even after dfoing that. any guesses?","ts":1772605786609,"type":"user"}
+{"prompt":"are you sure that wont fuck up? its 10:31","ts":1772605878802,"type":"user"}
+{"prompt":"yea go ahead nad end task and delete lock. be very careful","ts":1772605896070,"type":"user"}
+{"prompt":"its just showing this and staying stuck. i wonder if i should just restart my pc or something. not sure","ts":1772606024835,"type":"user"}
+{"prompt":"did you already try doing this. investigate and give me findings","ts":1772606059880,"type":"user"}
+{"prompt":"fair enough","ts":1772606188824,"type":"user"}
+{"prompt":"hey wahts up","ts":1772607115797,"type":"user"}
+{"prompt":"no it didnt. fresh boot tho so reinvestigate for me","ts":1772681367589,"type":"user"}
+{"prompt":"beacuse i ended the task","ts":1772681399198,"type":"user"}
+{"prompt":"ive never had any isue like this in 3 years of using. doubt its due to dropbox. probably lightrooms fault ","ts":1772681432951,"type":"user"}
+{"prompt":"sorry what did you clean up?","ts":1772681458811,"type":"user"}
+{"prompt":"something to note. even if i open a different catalog manually it still shows that visual bug that sticks the opening tag line of a different default catalog","ts":1772681501070,"type":"user"}
+{"prompt":"is it best to just uninstall and reinstall lightroom?","ts":1772681553551,"type":"user"}
+{"prompt":"cant be ARM since this issue has been happening for over 24hrs","ts":1772681591948,"type":"user"}
+{"prompt":"any oither guesses before i do this?","ts":1772681611180,"type":"user"}
+{"prompt":"i mean reinstalling doesnt do anything to my data but go ahead and read it","ts":1772681636769,"type":"user"}
+{"prompt":"wait why did you rename it","ts":1772681664883,"type":"user"}
+{"prompt":"ok","ts":1772681688379,"type":"user"}
+{"prompt":"look online for when 15.2 shipped","ts":1772681776045,"type":"user"}
+{"prompt":"disect this and tell me whats up with thishttps://helpx.adobe.com/lightroom-classic/help/setting-preferences-lightroom.html might delete it not sure. also search thru reddit and stuff","ts":1772682754802,"type":"user"}
+{"prompt":"WHEN i reverted to an old version it worked ","ts":1772683015891,"type":"user"}
+{"prompt":"no when i went to 14.5 or something","ts":1772683041571,"type":"user"}
+{"prompt":" can u chbeck in metadata (onyl read no write) waht version my catalog is","ts":1772683244868,"type":"user"}

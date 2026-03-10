@@ -1,0 +1,6 @@
+{"prompt":"http://localhost:3099/ Please tell me where this project sits. I have a lot of local hosts running, and I kinda wanna segment these projects properly so they don't overlap and that I don't forget where shit's at.","ts":1772608755943,"type":"user"}
+{"prompt":"Go ahead also should I reorganize the structure of the repo to be better? These products are they in different repos? Are these products in different repos? Right in this repo?","ts":1772609180856,"type":"user"}
+{"prompt":"what is /promo do?","ts":1772609282974,"type":"user"}
+{"prompt":"yea just clean up and i guess keep git ignored and easily rereferencable later on","ts":1772609320516,"type":"user"}
+{"prompt":"whats that for","ts":1772609391221,"type":"user"}
+{"prompt":"not sure what ur asking but i think its fine","ts":1772609730731,"type":"user"}

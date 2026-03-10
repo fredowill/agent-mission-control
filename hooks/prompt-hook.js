@@ -190,7 +190,7 @@ process.stdin.on('end', () => {
       // ── Campaign auto-linking ──
       // If first prompt mentions a known campaign agent name, auto-link this session
       try {
-        const campaignsFile = path.join(__dirname, 'campaigns.json');
+        const campaignsFile = path.join(__dirname, '..', 'data', 'campaigns.json');
         const isFirstPrompt = !fs.existsSync(file) || fs.readFileSync(file, 'utf8').trim().split('\n').length <= 1;
         if (isFirstPrompt && prompt.length > 50) {
           const campaigns = JSON.parse(fs.readFileSync(campaignsFile, 'utf8'));

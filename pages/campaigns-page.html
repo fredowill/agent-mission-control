@@ -3209,12 +3209,16 @@ function render() {
   // Agents grouped by sprint (excluding orchestrators — they're in the Orchestrator tab)
   // Data-driven sprint phases — derive from agents, not hardcoded list
   // This prevents the "invisible agents" bug (Rule 14, v1.3 regression)
-  const sprintPhaseLabels = {
+  // Sprint labels are campaign-specific. Campaign-001 has hardcoded historical labels.
+  // All other campaigns use generic "Sprint N" labels (or future: execution plan labels).
+  // BY DESIGN: labels are per-campaign, not global. See v2.3 bug fix. (f094)
+  const campaign001Labels = {
     1: 'Initial Push', 2: 'Polish & Analysis', 3: 'Deep Dives', 4: 'Closing Sprint',
     5: 'Campaign Close', 6: 'Overhaul Sprint', 7: 'Workflow & Systems',
     8: 'Auto-Dispatch Integration', 9: 'v1.5 Integration', 10: 'Cleanup & Enforcement',
     11: 'Close-Out', 12: 'Campaign Navigation'
   };
+  const sprintPhaseLabels = c.id === 'campaign-001' ? campaign001Labels : {};
   // Derive sprint IDs from ALL agents (including orchestrators) so numbering is continuous.
   // Sprints with only orchestrators show as a compact row linking to the Orchestrator tab.
   const allSprintIds = [...new Set(agents.map(a => a.sprint || 1))].sort((a, b) => a - b);

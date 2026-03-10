@@ -52,6 +52,21 @@ Pass it all inputs from Step 1 PLUS the mandated skills from Step 2. The create-
 - Validate against quality gates
 - Save to `coordinated-sprint/<agent-name>-prompt.md`
 
+## Step 3.5: Stamp the Pipeline Watermark (MANDATORY)
+
+After `create-agent-prompt` writes the prompt file, YOU (creating-agents) must add the watermark as the FIRST line:
+
+```
+<!-- PIPELINE: create-agent-prompt | mandated: skill1,skill2 | task-type: tasktype -->
+```
+
+**Only this skill adds the watermark.** `create-agent-prompt` does NOT add it — by design. This means:
+- Calling `create-agent-prompt` directly = no watermark = `/api/launch` rejects it
+- Only the full pipeline (creating-agents → skill-mandate → create-agent-prompt → watermark) produces launchable prompts
+- This is the PM025 enforcement mechanism (f104)
+
+Read the prompt file, prepend the watermark line with the correct mandated skills and task type from Steps 1-2, and write it back.
+
 ## Step 4: Confirm Before Dispatch
 
 Present the completed prompt summary to the orchestrator:

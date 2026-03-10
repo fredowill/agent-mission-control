@@ -35,7 +35,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node /c/Users/ephra/phredomade/.claude/agent-hub/hook.js"
+            "command": "node /c/Users/ephra/phredomade/.claude/agent-hub/hooks/hook.js"
           }
         ]
       }
@@ -46,7 +46,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node /c/Users/ephra/phredomade/.claude/agent-hub/prompt-hook.js"
+            "command": "node /c/Users/ephra/phredomade/.claude/agent-hub/hooks/prompt-hook.js"
           }
         ]
       }
@@ -68,7 +68,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node /c/Users/ephra/phredomade/.claude/agent-hub/hook.js"
+            "command": "node /c/Users/ephra/phredomade/.claude/agent-hub/hooks/hook.js"
           },
           {
             "type": "command",
