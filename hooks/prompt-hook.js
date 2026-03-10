@@ -11,9 +11,9 @@
 const fs   = require('fs');
 const path = require('path');
 
-const PROMPTS_DIR = path.join(__dirname, 'prompts');
-const STATES_DIR  = path.join(__dirname, 'states');
-const LOGS_DIR    = path.join(__dirname, 'logs');
+const PROMPTS_DIR = path.join(__dirname, '..', 'prompts');
+const STATES_DIR  = path.join(__dirname, '..', 'states');
+const LOGS_DIR    = path.join(__dirname, '..', 'logs');
 
 // ── Skill/command detection ──
 // When a /skill is invoked, Claude Code sends the entire expanded markdown as

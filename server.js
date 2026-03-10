@@ -15,11 +15,11 @@ const STATES_DIR  = path.join(__dirname, 'states');
 const LOGS_DIR    = path.join(__dirname, 'logs');
 const PROMPTS_DIR = path.join(__dirname, 'prompts');
 const RETROS_DIR  = path.join(__dirname, 'retrospectives');
-const MISSIONS_F  = path.join(__dirname, 'missions.json');
-const SUMMARIES_F  = path.join(__dirname, 'summaries.json');
-const NORTHSTAR_F  = path.join(__dirname, 'northstar-cache.json');
-const DEEP_SUMM_F  = path.join(__dirname, 'deep-summaries.json');
-const ENV_FILE    = path.join(__dirname, '.env');
+const MISSIONS_F  = path.join(__dirname, 'data', 'missions.json');
+const SUMMARIES_F  = path.join(__dirname, 'data', 'summaries.json');
+const NORTHSTAR_F  = path.join(__dirname, 'data', 'northstar-cache.json');
+const DEEP_SUMM_F  = path.join(__dirname, 'data', 'deep-summaries.json');
+const ENV_FILE    = path.join(__dirname, 'config', '.env');
 // Check project-level first (../agents relative to agent-hub), then global (~/.claude/agents)
 const _projAgents  = path.join(__dirname, '..', 'agents');
 const _globalAgents = path.join(process.env.HOME || process.env.USERPROFILE || '', '.claude', 'agents');
@@ -44,32 +44,32 @@ const TOOLBOX_SKILLS_DIR  = path.join(__dirname, 'toolbox', 'skills');
 // PM009 documents the incident where the wrong launch directory wiped all cost analytics.
 const _cwdSlug = process.cwd().replace(/\\/g, '/').replace(/^([A-Za-z]):\//, (_, d) => d.toUpperCase() + '--').replace(/\//g, '-');
 const TRANSCRIPTS_DIR = path.join(process.env.HOME || process.env.USERPROFILE || '', '.claude', 'projects', _cwdSlug);
-const LOGIC_HTML_F = path.join(__dirname, 'logic-page.html');
-const FINDINGS_HTML_F = path.join(__dirname, 'findings-page.html');
-const TOOLS_HTML_F = path.join(__dirname, 'tools-page.html');
-const RADAR_HTML_F = path.join(__dirname, 'radar-page.html');
-const SOURCES_F    = path.join(__dirname, 'sources.json');
-const ICON_HTML_F = path.join(__dirname, 'icon-page.html');
-const DASHBOARD_HTML_F = path.join(__dirname, 'dashboard-page.html');
-const DISPATCH_HTML_F = path.join(__dirname, 'dispatch-page.html');
-const WORKFLOW_HTML_F = path.join(__dirname, 'workflow-page.html');
-const POSTMORTEM_HTML_F = path.join(__dirname, 'postmortem-page.html');
-const COST_HTML_F = path.join(__dirname, 'cost-page.html');
-const WORKSTREAMS_F   = path.join(__dirname, 'workstreams.json');
-const AGENT_WS_F      = path.join(__dirname, 'agent-workstreams.json');
-const DISPATCH_F      = path.join(__dirname, 'dispatch.json');
-const DISPATCH_HOME_F = path.join(__dirname, 'dispatch-home.json');
-const DISPATCH_WORK_F = path.join(__dirname, 'dispatch-work.json');
-const AREAS_F         = path.join(__dirname, 'areas.json');
-const MODE_F          = path.join(__dirname, 'mode.json');
-const FINDINGS_F      = path.join(__dirname, 'findings.json');
-const TOOLBOX_CTX_F   = path.join(__dirname, 'toolbox-context.json');
-const CAMPAIGNS_HTML_F = path.join(__dirname, 'campaigns-page.html');
-const CAMPAIGNS_F     = path.join(__dirname, 'campaigns.json');
-const HEALTH_HTML_F   = path.join(__dirname, 'health-page.html');
-const CAPTURE_HTML_F  = path.join(__dirname, 'capture-page.html');
-const PRESIDENT_HTML_F = path.join(__dirname, 'president-page.html');
-const CAPTURES_F      = path.join(__dirname, 'captures.json');
+const LOGIC_HTML_F = path.join(__dirname, 'pages', 'logic-page.html');
+const FINDINGS_HTML_F = path.join(__dirname, 'pages', 'findings-page.html');
+const TOOLS_HTML_F = path.join(__dirname, 'pages', 'tools-page.html');
+const RADAR_HTML_F = path.join(__dirname, 'pages', 'radar-page.html');
+const SOURCES_F    = path.join(__dirname, 'data', 'sources.json');
+const ICON_HTML_F = path.join(__dirname, 'pages', 'icon-page.html');
+const DASHBOARD_HTML_F = path.join(__dirname, 'pages', 'dashboard-page.html');
+const DISPATCH_HTML_F = path.join(__dirname, 'pages', 'dispatch-page.html');
+const WORKFLOW_HTML_F = path.join(__dirname, 'pages', 'workflow-page.html');
+const POSTMORTEM_HTML_F = path.join(__dirname, 'pages', 'postmortem-page.html');
+const COST_HTML_F = path.join(__dirname, 'pages', 'cost-page.html');
+const WORKSTREAMS_F   = path.join(__dirname, 'data', 'workstreams.json');
+const AGENT_WS_F      = path.join(__dirname, 'data', 'agent-workstreams.json');
+const DISPATCH_F      = path.join(__dirname, 'data', 'dispatch.json');
+const DISPATCH_HOME_F = path.join(__dirname, 'data', 'dispatch-home.json');
+const DISPATCH_WORK_F = path.join(__dirname, 'data', 'dispatch-work.json');
+const AREAS_F         = path.join(__dirname, 'data', 'areas.json');
+const MODE_F          = path.join(__dirname, 'data', 'mode.json');
+const FINDINGS_F      = path.join(__dirname, 'data', 'findings.json');
+const TOOLBOX_CTX_F   = path.join(__dirname, 'data', 'toolbox-context.json');
+const CAMPAIGNS_HTML_F = path.join(__dirname, 'pages', 'campaigns-page.html');
+const CAMPAIGNS_F     = path.join(__dirname, 'data', 'campaigns.json');
+const HEALTH_HTML_F   = path.join(__dirname, 'pages', 'health-page.html');
+const CAPTURE_HTML_F  = path.join(__dirname, 'pages', 'capture-page.html');
+const PRESIDENT_HTML_F = path.join(__dirname, 'pages', 'president-page.html');
+const CAPTURES_F      = path.join(__dirname, 'data', 'captures.json');
 const STALE_MS    = 21_600_000; // 6 hours
 
 // ── Favicon SVG (data URI) ──────────────────────────────────────────────────
@@ -511,15 +511,164 @@ ${missionList}`,
 // ── Deep Session Summary (detail page) ───────────────────────────────────────
 // Generates an in-depth narrative summary with citations back to specific prompts.
 // Called on-demand when user opens a session detail page. Cached in deep-summaries.json.
+// Uses Claude CLI (claude -p) for summarization — handles full session context unlike Cerebras.
 
 let deepSummariesCache = readJSON(DEEP_SUMM_F, {});
 const deepSummarizing  = new Set();
 
+// Max prompts per chunk for chunked summarization (Claude Haiku 200K context)
+const DEEP_CHUNK_SIZE = 80;
+
+/**
+ * Read user prompts directly from the raw Claude JSONL transcript.
+ * Scans all project dirs under ~/.claude/projects/ for the session file.
+ * This supplements readPrompts() which may miss prompts when:
+ * - The hook was installed mid-session
+ * - TRANSCRIPTS_DIR points to the wrong slug (server CWD mismatch)
+ * - Auto-compact caused prompt loss
+ */
+function readRawJSONLPrompts(sid) {
+  const projectsDir = path.join(process.env.HOME || process.env.USERPROFILE || '', '.claude', 'projects');
+  if (!fs.existsSync(projectsDir)) return [];
+
+  // Search all project dirs for this session's JSONL
+  const dirs = fs.readdirSync(projectsDir).filter(d => {
+    try { return fs.statSync(path.join(projectsDir, d)).isDirectory(); } catch { return false; }
+  });
+
+  for (const dir of dirs) {
+    const jsonlPath = path.join(projectsDir, dir, `${sid}.jsonl`);
+    if (!fs.existsSync(jsonlPath)) continue;
+
+    const prompts = [];
+    try {
+      const lines = fs.readFileSync(jsonlPath, 'utf8').trim().split('\n').filter(Boolean);
+      for (const line of lines) {
+        try {
+          const d = JSON.parse(line);
+          if (d.type !== 'user') continue;
+
+          let text = '';
+          const msg = d.message;
+          if (typeof msg === 'string') {
+            text = msg;
+          } else if (msg && typeof msg.content === 'string') {
+            text = msg.content;
+          } else if (msg && Array.isArray(msg.content)) {
+            for (const p of msg.content) {
+              if (p.type === 'text') text += p.text;
+            }
+          }
+
+          // Skip system text, skill expansions, and tiny fragments
+          if (!text || text.length <= 5) continue;
+          if (typeof isSystemText === 'function' && isSystemText(text)) continue;
+          if (typeof isSkillExpansion === 'function' && isSkillExpansion(text)) continue;
+
+          const ts = typeof d.timestamp === 'number' ? d.timestamp
+            : typeof d.timestamp === 'string' ? new Date(d.timestamp).getTime()
+            : 0;
+          if (ts > 0) prompts.push({ prompt: text, ts });
+        } catch {}
+      }
+    } catch {}
+
+    if (prompts.length) return prompts.sort((a, b) => a.ts - b.ts);
+  }
+  return [];
+}
+// Max chars per prompt text in deep summaries (Claude handles more than Cerebras)
+const DEEP_PROMPT_CHAR_LIMIT = 1500;
+
+/**
+ * Invoke Claude CLI in print mode for summarization.
+ * Spawns: claude -p --model haiku --no-session-persistence --effort low
+ * Returns the raw text output. Timeout: 120s.
+ */
+function callClaude(prompt) {
+  return new Promise((resolve) => {
+    const child = spawn('claude', [
+      '-p',
+      '--model', 'haiku',
+      '--no-session-persistence',
+      '--effort', 'low',
+      '--disallowed-tools', 'Bash,Edit,Write,Read,Glob,Grep,Agent',
+    ], {
+      stdio: ['pipe', 'pipe', 'pipe'],
+      timeout: 120_000,
+      // Unset CLAUDECODE to allow spawning claude CLI from within a Claude session
+      // (server.js runs independently, but env may leak from parent process)
+      env: Object.fromEntries(Object.entries(process.env).filter(([k]) => k !== 'CLAUDECODE')),
+    });
+
+    let stdout = '';
+    let stderr = '';
+    child.stdout.on('data', c => stdout += c);
+    child.stderr.on('data', c => stderr += c);
+
+    child.on('close', (code) => {
+      if (code !== 0 && stderr) {
+        console.log('[callClaude] exit', code, stderr.slice(0, 200));
+      }
+      resolve(stdout.trim());
+    });
+
+    child.on('error', (err) => {
+      console.log('[callClaude] spawn error:', err.message);
+      resolve('');
+    });
+
+    // Write prompt to stdin and close
+    child.stdin.write(prompt);
+    child.stdin.end();
+  });
+}
+
+/** Build the deep summary system prompt (reused for single-shot and merge). */
+const DEEP_SUMMARY_SYSTEM_PROMPT = `You are an expert PM summarizing a developer's coding session. Given the timestamped prompts from a Claude Code session, write a clear narrative summary.
+
+FORMAT YOUR RESPONSE AS JSON with this exact structure:
+{
+  "overview": "2-3 sentence high-level summary of what this session accomplished",
+  "sections": [
+    {
+      "title": "Short section title (e.g. 'Initial Setup', 'Bug Investigation')",
+      "body": "2-4 sentences describing this phase of work",
+      "promptRefs": [0, 2]
+    }
+  ],
+  "keyDecisions": ["Decision 1 that was made", "Decision 2"],
+  "outcome": "1 sentence: where things ended up"
+}
+
+Rules:
+- promptRefs are the prompt indices (from [Prompt #N]) that informed each section
+- Group related prompts into logical phases of work (3-8 sections for long sessions)
+- Skip trivial prompts (greetings, "yes", "ok", API keys) — don't cite them
+- Focus on the user's INTENT and DECISIONS, not technical details
+- Be specific: "Switched from Anthropic API to Gemini free tier" not "Changed API provider"
+- IMPORTANT: Cover ALL phases of the session — early, middle, AND late events
+- Output ONLY valid JSON, no markdown fences, no explanation`;
+
+/** Parse LLM JSON output, stripping markdown fences if present. */
+function parseDeepSummaryJSON(raw) {
+  const jsonStr = raw.replace(/```json?\s*/g, '').replace(/```/g, '').trim();
+  return JSON.parse(jsonStr);
+}
+
 async function generateDeepSummary(sid) {
   if (deepSummarizing.has(sid)) return deepSummariesCache[sid] || null;
 
-  const prompts = readPrompts(sid);
+  // Use the larger source: hook-captured prompts vs raw JSONL transcript
+  // This ensures we capture the FULL session arc even when hooks missed prompts
+  const hookPrompts = readPrompts(sid);
+  const rawPrompts = readRawJSONLPrompts(sid);
+  const prompts = rawPrompts.length > hookPrompts.length ? rawPrompts : hookPrompts;
   if (!prompts.length) return null;
+
+  if (rawPrompts.length > hookPrompts.length) {
+    console.log('[deep-summary] using raw JSONL (' + rawPrompts.length + ' prompts) over hooks (' + hookPrompts.length + ') for', sid.slice(-6));
+  }
 
   // Check cache freshness
   const hash = getPromptsHash(sid);
@@ -538,58 +687,144 @@ async function generateDeepSummary(sid) {
     const meaningful = promptEntries.filter(e => e.text.length > 10 && !TRIVIAL.has(e.text.toLowerCase()));
     if (!meaningful.length) { console.log('[deep-summary] no meaningful prompts for', sid.slice(-6)); return null; }
 
-    const promptList = meaningful
-      .map(e => `[Prompt #${e.index} at ${e.time}]: ${e.text.slice(0, 600)}`)
-      .join('\n\n');
+    let parsed;
 
-    console.log('[deep-summary] calling Cerebras for', sid.slice(-6), 'with', meaningful.length, 'prompts');
-    const result = await callLLM(
-      `You are an expert PM summarizing a developer's coding session. Given the timestamped prompts from a Claude Code session, write a clear narrative summary.
+    if (meaningful.length <= DEEP_CHUNK_SIZE) {
+      // ── Single-shot: fits in one Claude call ──
+      const promptList = meaningful
+        .map(e => `[Prompt #${e.index} at ${e.time}]: ${e.text.slice(0, DEEP_PROMPT_CHAR_LIMIT)}`)
+        .join('\n\n');
 
-FORMAT YOUR RESPONSE AS JSON with this exact structure:
-{
-  "overview": "2-3 sentence high-level summary of what this session accomplished",
-  "sections": [
-    {
-      "title": "Short section title (e.g. 'Initial Setup', 'Bug Investigation')",
-      "body": "2-4 sentences describing this phase of work",
-      "promptRefs": [0, 2]
-    }
-  ],
-  "keyDecisions": ["Decision 1 that was made", "Decision 2"],
-  "outcome": "1 sentence: where things ended up"
-}
+      console.log('[deep-summary] calling Claude (single) for', sid.slice(-6), 'with', meaningful.length, 'prompts');
+      const result = await callClaude(`${DEEP_SUMMARY_SYSTEM_PROMPT}\n\nSession prompts:\n${promptList}`);
 
-Rules:
-- promptRefs are the prompt indices (from [Prompt #N]) that informed each section
-- Group related prompts into logical phases of work (3-5 sections max)
-- Skip trivial prompts (greetings, "yes", "ok", API keys) — don't cite them
-- Focus on the user's INTENT and DECISIONS, not technical details
-- Be specific: "Switched from Anthropic API to Gemini free tier" not "Changed API provider"
-- Output ONLY valid JSON, no markdown fences, no explanation
-
-Session prompts:
-${promptList}`,
-      4096
-    );
-
-    console.log('[deep-summary] result length:', result.length, 'preview:', result.slice(0, 100));
-    try {
-      const jsonStr = result.replace(/```json?\s*/g, '').replace(/```/g, '').trim();
-      const parsed = JSON.parse(jsonStr);
-      if (parsed.overview && parsed.sections) {
-        const summary = { ...parsed, hash, ts: Date.now() };
-        deepSummariesCache[sid] = summary;
-        writeJSON(DEEP_SUMM_F, deepSummariesCache);
-        return summary;
+      if (!result) {
+        console.log('[deep-summary] Claude returned empty for', sid.slice(-6), '— falling back to Cerebras');
+        return await _deepSummaryFallback(sid, meaningful, hash, cached);
       }
-    } catch {}
+
+      console.log('[deep-summary] result length:', result.length, 'preview:', result.slice(0, 100));
+      parsed = parseDeepSummaryJSON(result);
+
+    } else {
+      // ── Chunked: split prompts, summarize each chunk, then merge ──
+      const chunks = [];
+      for (let i = 0; i < meaningful.length; i += DEEP_CHUNK_SIZE) {
+        chunks.push(meaningful.slice(i, i + DEEP_CHUNK_SIZE));
+      }
+
+      console.log('[deep-summary] calling Claude (chunked) for', sid.slice(-6),
+        '—', meaningful.length, 'prompts in', chunks.length, 'chunks');
+
+      // Summarize each chunk (sequentially to avoid spawning too many processes)
+      const chunkSummaries = [];
+      for (let ci = 0; ci < chunks.length; ci++) {
+        const chunk = chunks[ci];
+        const promptList = chunk
+          .map(e => `[Prompt #${e.index} at ${e.time}]: ${e.text.slice(0, DEEP_PROMPT_CHAR_LIMIT)}`)
+          .join('\n\n');
+
+        const chunkPrompt = `You are summarizing CHUNK ${ci + 1} of ${chunks.length} from a coding session.
+Summarize the key events, decisions, and topics in this chunk. Include the prompt indices for citation.
+Output a JSON object: { "summary": "...", "events": ["event 1", ...], "promptRefs": [0, 5, ...] }
+Output ONLY valid JSON, no markdown fences.
+
+Prompts in this chunk:
+${promptList}`;
+
+        const chunkResult = await callClaude(chunkPrompt);
+        if (chunkResult) {
+          try {
+            const chunkParsed = parseDeepSummaryJSON(chunkResult);
+            chunkSummaries.push({ chunkIndex: ci + 1, ...chunkParsed });
+          } catch {
+            // If JSON parse fails, store raw text
+            chunkSummaries.push({ chunkIndex: ci + 1, summary: chunkResult.slice(0, 2000), events: [], promptRefs: [] });
+          }
+        }
+      }
+
+      if (!chunkSummaries.length) {
+        console.log('[deep-summary] all chunks failed for', sid.slice(-6), '— falling back to Cerebras');
+        return await _deepSummaryFallback(sid, meaningful, hash, cached);
+      }
+
+      // Merge chunk summaries into final deep summary
+      const chunkText = chunkSummaries.map(cs =>
+        `CHUNK ${cs.chunkIndex}: ${cs.summary}\nEvents: ${(cs.events || []).join('; ')}\nPrompt refs: ${(cs.promptRefs || []).join(', ')}`
+      ).join('\n\n');
+
+      const mergePrompt = `${DEEP_SUMMARY_SYSTEM_PROMPT}
+
+You are merging ${chunks.length} chunk summaries into a SINGLE comprehensive session summary.
+The session had ${meaningful.length} meaningful prompts total. Cover ALL phases — early, middle, AND late.
+Use 5-8 sections to capture the full arc. promptRefs should use ABSOLUTE prompt indices from the original session.
+
+Chunk summaries:
+${chunkText}`;
+
+      console.log('[deep-summary] merging', chunkSummaries.length, 'chunk summaries for', sid.slice(-6));
+      const mergeResult = await callClaude(mergePrompt);
+
+      if (!mergeResult) {
+        // Fallback: construct a basic summary from chunk data
+        parsed = {
+          overview: chunkSummaries.map(cs => cs.summary).join(' '),
+          sections: chunkSummaries.map(cs => ({
+            title: `Phase ${cs.chunkIndex}`,
+            body: cs.summary || 'Chunk summary unavailable',
+            promptRefs: cs.promptRefs || [],
+          })),
+          keyDecisions: chunkSummaries.flatMap(cs => cs.events || []).slice(0, 10),
+          outcome: chunkSummaries[chunkSummaries.length - 1]?.summary || 'Session ended',
+        };
+      } else {
+        parsed = parseDeepSummaryJSON(mergeResult);
+      }
+    }
+
+    if (parsed && parsed.overview && parsed.sections) {
+      const summary = { ...parsed, hash, ts: Date.now() };
+      deepSummariesCache[sid] = summary;
+      writeJSON(DEEP_SUMM_F, deepSummariesCache);
+      return summary;
+    }
     return cached || null;
-  } catch {
+  } catch (err) {
+    console.log('[deep-summary] error for', sid.slice(-6), ':', err.message);
     return cached || null;
   } finally {
     deepSummarizing.delete(sid);
   }
+}
+
+/** Fallback: use Cerebras (callLLM) for deep summary if Claude CLI is unavailable. */
+async function _deepSummaryFallback(sid, meaningful, hash, cached) {
+  if (!AI_READY) return cached || null;
+
+  // Truncate more aggressively for Cerebras's smaller context
+  const promptList = meaningful
+    .map(e => `[Prompt #${e.index} at ${e.time}]: ${e.text.slice(0, 600)}`)
+    .join('\n\n');
+
+  console.log('[deep-summary] Cerebras fallback for', sid.slice(-6), 'with', meaningful.length, 'prompts');
+  const result = await callLLM(
+    `${DEEP_SUMMARY_SYSTEM_PROMPT}\n\nSession prompts:\n${promptList}`,
+    4096
+  );
+
+  if (!result) return cached || null;
+
+  try {
+    const parsed = parseDeepSummaryJSON(result);
+    if (parsed.overview && parsed.sections) {
+      const summary = { ...parsed, hash, ts: Date.now() };
+      deepSummariesCache[sid] = summary;
+      writeJSON(DEEP_SUMM_F, deepSummariesCache);
+      return summary;
+    }
+  } catch {}
+  return cached || null;
 }
 
 // ── Background Summarization Loop ────────────────────────────────────────────
@@ -1835,7 +2070,7 @@ const COST_CACHE_TTL = 300_000; // 5 minutes — scanning is expensive
 
 // Per-session cost cache — persists to disk so we only re-parse changed transcript files.
 // Structure: { "session-id": { mtime: <epoch-ms>, calls, tokens, models, daily, session } }
-const COST_SESSION_CACHE_F = path.join(__dirname, 'cost-session-cache.json');
+const COST_SESSION_CACHE_F = path.join(__dirname, 'data', 'cost-session-cache.json');
 
 function loadSessionCostCache() {
   return readJSON(COST_SESSION_CACHE_F, {});
@@ -2710,7 +2945,7 @@ Be direct and opinionated. Use <strong> tags for key phrases.`, 256
 
         // Convert Windows path to Unix path for Git Bash
         const toUnix = p => p.replace(/\\/g, '/').replace(/^([A-Z]):/i, (_, d) => '/' + d.toLowerCase());
-        const unixDispatch = toUnix(path.join(__dirname, 'dispatch.sh'));
+        const unixDispatch = toUnix(path.join(__dirname, 'scripts', 'dispatch.sh'));
         const unixPromptPath = toUnix(promptPath);
 
         // Write a small launcher script to avoid wt.exe quoting hell on Windows.
@@ -3199,7 +3434,7 @@ Be direct and opinionated. Use <strong> tags for key phrases.`, 256
   function _currentMode() { return readJSON(MODE_F, { mode: 'home' }).mode; }
 
   function _allDispatchItems() {
-    const mcFile = path.join(__dirname, 'mc-backlog.json');
+    const mcFile = path.join(__dirname, 'data', 'mc-backlog.json');
     const mcData = readJSON(mcFile, { tasks: [] });
     const shared = (mcData.tasks || []).map(i => ({ ...i, _source: 'mc' }));
     const home = readJSON(DISPATCH_HOME_F, []).map(i => ({ ...i, _source: 'home' }));
@@ -3212,7 +3447,7 @@ Be direct and opinionated. Use <strong> tags for key phrases.`, 256
   }
 
   function _findItemFile(id) {
-    if (id.startsWith('mc-')) return { type: 'mc', file: path.join(__dirname, 'mc-backlog.json') };
+    if (id.startsWith('mc-')) return { type: 'mc', file: path.join(__dirname, 'data', 'mc-backlog.json') };
     // Check home first, then work, then legacy
     const home = readJSON(DISPATCH_HOME_F, []);
     if (home.some(i => i.id === id)) return { type: 'array', file: DISPATCH_HOME_F };
@@ -3254,7 +3489,7 @@ Be direct and opinionated. Use <strong> tags for key phrases.`, 256
         const now = new Date().toISOString();
         const item = { id, title, description: description || '', status: status || 'todo', priority: priority || 'p2', workstream: workstream || '', tags: tags || [], linkedSession: linkedSession || null, context: context !== undefined ? context : null, created: now, updated: now };
         if (_source === 'mc') {
-          const mcFile = path.join(__dirname, 'mc-backlog.json');
+          const mcFile = path.join(__dirname, 'data', 'mc-backlog.json');
           const mcData = readJSON(mcFile, { tasks: [] });
           mcData.tasks.push(item);
           writeJSON(mcFile, mcData);
@@ -3335,7 +3570,7 @@ Be direct and opinionated. Use <strong> tags for key phrases.`, 256
           { type: 'array', file: DISPATCH_WORK_F },
           { type: 'array', file: DISPATCH_F },
         ];
-        const mcFile = path.join(__dirname, 'mc-backlog.json');
+        const mcFile = path.join(__dirname, 'data', 'mc-backlog.json');
         const mcData = readJSON(mcFile, { tasks: [] });
         let mcChanged = false;
         orderedIds.forEach((id, idx) => {
@@ -3702,8 +3937,8 @@ Respond with ONLY a JSON object: {"workstream": "the-id", "confidence": 0.0-1.0,
 
         // ── Hook Health ─────────────────────────────────────────────────
         const hookFiles = [
-          { name: 'hook.js', fpath: path.join(__dirname, 'hook.js') },
-          { name: 'prompt-hook.js', fpath: path.join(__dirname, 'prompt-hook.js') },
+          { name: 'hook.js', fpath: path.join(__dirname, 'hooks', 'hook.js') },
+          { name: 'prompt-hook.js', fpath: path.join(__dirname, 'hooks', 'prompt-hook.js') },
         ];
         const hookResults = hookFiles.map(h => {
           try {
@@ -3917,13 +4152,13 @@ Respond with ONLY a JSON object: {"workstream": "the-id", "confidence": 0.0-1.0,
   // Hidden /why page — MC value proposition (not in nav)
   if (url === '/why') {
     res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
-    return res.end(readPage(path.join(__dirname, 'why-page.html'), 'Why page'));
+    return res.end(readPage(path.join(__dirname, 'pages', 'why-page.html'), 'Why page'));
   }
 
   // Hidden /demo-guide page — internal demo preparation (not in nav)
   if (url === '/demo-guide') {
     res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
-    return res.end(readPage(path.join(__dirname, 'demo-guide.html'), 'Demo Guide'));
+    return res.end(readPage(path.join(__dirname, 'pages', 'demo-guide.html'), 'Demo Guide'));
   }
 
   if (url === '/campaigns') {
@@ -3934,7 +4169,7 @@ Respond with ONLY a JSON object: {"workstream": "the-id", "confidence": 0.0-1.0,
   // Sprint prompts — one-click copy page for coordinated agent prompts
   if (url === '/prompts' || url === '/sprint-prompts') {
     res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
-    return res.end(readPage(path.join(__dirname, 'prompts-page.html'), 'Sprint Prompts'));
+    return res.end(readPage(path.join(__dirname, 'pages', 'prompts-page.html'), 'Sprint Prompts'));
   }
 
   if (url === '/dispatch') {
@@ -3967,19 +4202,19 @@ Respond with ONLY a JSON object: {"workstream": "the-id", "confidence": 0.0-1.0,
   // Morning Brief page
   if (url === '/morning-brief') {
     res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
-    return res.end(readPage(path.join(__dirname, 'morning-brief-page.html'), 'Morning Brief'));
+    return res.end(readPage(path.join(__dirname, 'pages', 'morning-brief-page.html'), 'Morning Brief'));
   }
 
   // Getting Started guide for friends
   if (url === '/starter') {
     res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
-    return res.end(readPage(path.join(__dirname, 'starter-guide.html'), 'Starter Guide'));
+    return res.end(readPage(path.join(__dirname, 'pages', 'starter-guide.html'), 'Starter Guide'));
   }
 
   // Hidden video findings page (no nav link)
   if (url === '/video-findings') {
     res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
-    return res.end(readPage(path.join(__dirname, 'video-findings-page.html'), 'Video Findings'));
+    return res.end(readPage(path.join(__dirname, 'pages', 'video-findings-page.html'), 'Video Findings'));
   }
 
   // Capture page — mobile-first idea intake
@@ -3996,12 +4231,12 @@ Respond with ONLY a JSON object: {"workstream": "the-id", "confidence": 0.0-1.0,
 
   if (url === '/story') {
     res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
-    return res.end(readPage(path.join(__dirname, 'story-page.html'), 'Story page'));
+    return res.end(readPage(path.join(__dirname, 'pages', 'story-page.html'), 'Story page'));
   }
 
   if (url === '/close-out') {
     res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
-    return res.end(readPage(path.join(__dirname, 'close-out-page.html'), 'Close-Out page'));
+    return res.end(readPage(path.join(__dirname, 'pages', 'close-out-page.html'), 'Close-Out page'));
   }
 
   res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });

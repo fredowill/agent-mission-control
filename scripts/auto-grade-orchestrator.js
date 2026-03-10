@@ -13,11 +13,11 @@
 const fs   = require('fs');
 const path = require('path');
 
-const STATES_DIR    = path.join(__dirname, 'states');
-const LOGS_DIR      = path.join(__dirname, 'logs');
-const CAMPAIGNS_F   = path.join(__dirname, 'campaigns.json');
+const STATES_DIR    = path.join(__dirname, '..', 'states');
+const LOGS_DIR      = path.join(__dirname, '..', 'logs');
+const CAMPAIGNS_F   = path.join(__dirname, '..', 'data', 'campaigns.json');
 const SKILLS_DIR    = path.join(process.env.HOME || process.env.USERPROFILE || '', '.claude', 'skills');
-const PROMPTS_DIR   = path.join(__dirname, 'prompts');
+const PROMPTS_DIR   = path.join(__dirname, '..', 'prompts');
 
 // ── Known valid skill names (cached on first use) ──
 let VALID_SKILLS = null;

@@ -1,0 +1,850 @@
+{
+  "4ea6372d-91e8-4772-a210-b697e02fb8ea": {
+    "mtime": 1773082778321.7495,
+    "calls": 31,
+    "tokens": {
+      "input": 45,
+      "output": 7870,
+      "cacheWrite": 41334,
+      "cacheRead": 1180811
+    },
+    "models": {
+      "claude-opus-4-6": {
+        "calls": 31,
+        "input": 45,
+        "output": 7870,
+        "cacheWrite": 41334,
+        "cacheRead": 1180811
+      }
+    },
+    "daily": {
+      "2026-03-09": {
+        "claude-opus-4-6": {
+          "input": 45,
+          "output": 7870,
+          "cacheWrite": 41334,
+          "cacheRead": 1180811
+        }
+      }
+    },
+    "session": {
+      "id": "4ea6372d-91e8-4772-a210-b697e02fb8ea",
+      "model": "claude-opus-4-6",
+      "cost": 3.579958125,
+      "input": 45,
+      "output": 7870,
+      "cacheWrite": 41334,
+      "cacheRead": 1180811,
+      "date": "2026-03-09",
+      "topic": "Setting up Orchestrator v2.0 and launching Cacheta 2.0"
+    }
+  },
+  "4177e499-ed79-42a6-b558-7d2ea0a6737f": {
+    "mtime": 1772663530521.9475,
+    "calls": 4,
+    "tokens": {
+      "input": 11,
+      "output": 546,
+      "cacheWrite": 34177,
+      "cacheRead": 115539
+    },
+    "models": {
+      "claude-opus-4-6": {
+        "calls": 4,
+        "input": 11,
+        "output": 546,
+        "cacheWrite": 34177,
+        "cacheRead": 115539
+      }
+    },
+    "daily": {
+      "2026-03-04": {
+        "claude-opus-4-6": {
+          "input": 11,
+          "output": 546,
+          "cacheWrite": 34177,
+          "cacheRead": 115539
+        }
+      }
+    },
+    "session": {
+      "id": "4177e499-ed79-42a6-b558-7d2ea0a6737f",
+      "model": "claude-opus-4-6",
+      "cost": 0.898569375,
+      "input": 11,
+      "output": 546,
+      "cacheWrite": 34177,
+      "cacheRead": 115539,
+      "date": "2026-03-04",
+      "topic": "Identifying best command-line search tool"
+    }
+  },
+  "0b52765a-be90-4a07-a659-55cbc372666a": {
+    "mtime": 1772744694783.6003,
+    "calls": 38,
+    "tokens": {
+      "input": 44,
+      "output": 18398,
+      "cacheWrite": 155270,
+      "cacheRead": 2722215
+    },
+    "models": {
+      "claude-opus-4-6": {
+        "calls": 38,
+        "input": 44,
+        "output": 18398,
+        "cacheWrite": 155270,
+        "cacheRead": 2722215
+      }
+    },
+    "daily": {
+      "2026-03-05": {
+        "claude-opus-4-6": {
+          "input": 44,
+          "output": 18398,
+          "cacheWrite": 155270,
+          "cacheRead": 2722215
+        }
+      }
+    },
+    "session": {
+      "id": "0b52765a-be90-4a07-a659-55cbc372666a",
+      "model": "claude-opus-4-6",
+      "cost": 9.395975625,
+      "input": 44,
+      "output": 18398,
+      "cacheWrite": 155270,
+      "cacheRead": 2722215,
+      "date": "2026-03-05",
+      "topic": "Improving video dissection workflow for CARES guide"
+    }
+  },
+  "35e8fc77-3da1-491f-9ff2-5cb16495ca16": {
+    "mtime": 1772665137650.828,
+    "calls": 110,
+    "tokens": {
+      "input": 148,
+      "output": 30858,
+      "cacheWrite": 491009,
+      "cacheRead": 9596037
+    },
+    "models": {
+      "claude-opus-4-6": {
+        "calls": 110,
+        "input": 148,
+        "output": 30858,
+        "cacheWrite": 491009,
+        "cacheRead": 9596037
+      }
+    },
+    "daily": {
+      "2026-03-04": {
+        "claude-opus-4-6": {
+          "input": 148,
+          "output": 30858,
+          "cacheWrite": 491009,
+          "cacheRead": 9596037
+        }
+      }
+    },
+    "session": {
+      "id": "35e8fc77-3da1-491f-9ff2-5cb16495ca16",
+      "model": "claude-opus-4-6",
+      "cost": 29.515558125,
+      "input": 148,
+      "output": 30858,
+      "cacheWrite": 491009,
+      "cacheRead": 9596037,
+      "date": "2026-03-04",
+      "topic": "Optimizing UI scaling and performance verification"
+    }
+  },
+  "4017c505-759b-4489-819f-aaa600199076": {
+    "mtime": 1772837780082.4004,
+    "calls": 217,
+    "tokens": {
+      "input": 801,
+      "output": 59188,
+      "cacheWrite": 205769,
+      "cacheRead": 19763048
+    },
+    "models": {
+      "claude-opus-4-6": {
+        "calls": 217,
+        "input": 801,
+        "output": 59188,
+        "cacheWrite": 205769,
+        "cacheRead": 19763048
+      }
+    },
+    "daily": {
+      "2026-03-06": {
+        "claude-opus-4-6": {
+          "input": 801,
+          "output": 59188,
+          "cacheWrite": 205769,
+          "cacheRead": 19763048
+        }
+      }
+    },
+    "session": {
+      "id": "4017c505-759b-4489-819f-aaa600199076",
+      "model": "claude-opus-4-6",
+      "cost": 45.36499875,
+      "input": 801,
+      "output": 59188,
+      "cacheWrite": 205769,
+      "cacheRead": 19763048,
+      "date": "2026-03-06",
+      "topic": "Synchronizing Mission Control repo and fixing toggle issues"
+    }
+  },
+  "1c83e3b1-f7a2-4d01-975e-63be3d116e99": {
+    "mtime": 1772660200939.3606,
+    "calls": 150,
+    "tokens": {
+      "input": 265,
+      "output": 53853,
+      "cacheWrite": 701965,
+      "cacheRead": 16421069
+    },
+    "models": {
+      "claude-opus-4-6": {
+        "calls": 150,
+        "input": 265,
+        "output": 53853,
+        "cacheWrite": 701965,
+        "cacheRead": 16421069
+      }
+    },
+    "daily": {
+      "2026-03-04": {
+        "claude-opus-4-6": {
+          "input": 265,
+          "output": 53853,
+          "cacheWrite": 701965,
+          "cacheRead": 16421069
+        }
+      }
+    },
+    "session": {
+      "id": "1c83e3b1-f7a2-4d01-975e-63be3d116e99",
+      "model": "claude-opus-4-6",
+      "cost": 47.994298125,
+      "input": 265,
+      "output": 53853,
+      "cacheWrite": 701965,
+      "cacheRead": 16421069,
+      "date": "2026-03-04",
+      "topic": "Setting up Git tracking and syncing toolbox"
+    }
+  },
+  "40062b6b-465a-4ca0-becf-0203ce3c4fb5": {
+    "mtime": 1772487031339.6504,
+    "calls": 71,
+    "tokens": {
+      "input": 1043,
+      "output": 51149,
+      "cacheWrite": 336437,
+      "cacheRead": 6159244
+    },
+    "models": {
+      "claude-opus-4-6": {
+        "calls": 71,
+        "input": 1043,
+        "output": 51149,
+        "cacheWrite": 336437,
+        "cacheRead": 6159244
+      }
+    },
+    "daily": {
+      "2026-03-02": {
+        "claude-opus-4-6": {
+          "input": 1043,
+          "output": 51149,
+          "cacheWrite": 336437,
+          "cacheRead": 6159244
+        }
+      }
+    },
+    "session": {
+      "id": "40062b6b-465a-4ca0-becf-0203ce3c4fb5",
+      "model": "claude-opus-4-6",
+      "cost": 21.70859625,
+      "input": 1043,
+      "output": 51149,
+      "cacheWrite": 336437,
+      "cacheRead": 6159244,
+      "date": "2026-03-02",
+      "topic": ""
+    }
+  },
+  "69957843-fadd-4703-b4b1-ebc3051d9e62": {
+    "mtime": 1772144501577.1953,
+    "calls": 17,
+    "tokens": {
+      "input": 162,
+      "output": 4621,
+      "cacheWrite": 112769,
+      "cacheRead": 721727
+    },
+    "models": {
+      "claude-sonnet-4-5-20250929": {
+        "calls": 17,
+        "input": 162,
+        "output": 4621,
+        "cacheWrite": 112769,
+        "cacheRead": 721727
+      }
+    },
+    "daily": {
+      "2026-02-26": {
+        "claude-sonnet-4-5-20250929": {
+          "input": 162,
+          "output": 4621,
+          "cacheWrite": 112769,
+          "cacheRead": 721727
+        }
+      }
+    },
+    "session": {
+      "id": "69957843-fadd-4703-b4b1-ebc3051d9e62",
+      "model": "claude-sonnet-4-5-20250929",
+      "cost": 3.8166618750000003,
+      "input": 162,
+      "output": 4621,
+      "cacheWrite": 112769,
+      "cacheRead": 721727,
+      "date": "2026-02-26",
+      "topic": ""
+    }
+  },
+  "ad4af0b5-f3ad-4b38-9970-76db5dd44e4b": {
+    "mtime": 1773082541344.6,
+    "calls": 17,
+    "tokens": {
+      "input": 37,
+      "output": 3606,
+      "cacheWrite": 56065,
+      "cacheRead": 630518
+    },
+    "models": {
+      "claude-opus-4-6": {
+        "calls": 17,
+        "input": 37,
+        "output": 3606,
+        "cacheWrite": 56065,
+        "cacheRead": 630518
+      }
+    },
+    "daily": {
+      "2026-03-09": {
+        "claude-opus-4-6": {
+          "input": 37,
+          "output": 3606,
+          "cacheWrite": 56065,
+          "cacheRead": 630518
+        }
+      }
+    },
+    "session": {
+      "id": "ad4af0b5-f3ad-4b38-9970-76db5dd44e4b",
+      "model": "claude-opus-4-6",
+      "cost": 2.504445,
+      "input": 37,
+      "output": 3606,
+      "cacheWrite": 56065,
+      "cacheRead": 630518,
+      "date": "2026-03-09",
+      "topic": "Setting up orchestrator agent for Mission Control"
+    }
+  },
+  "4f39ccca-f6d7-4094-b98d-4d3c998ee11e": {
+    "mtime": 1772668938581.8472,
+    "calls": 24,
+    "tokens": {
+      "input": 34,
+      "output": 5643,
+      "cacheWrite": 86222,
+      "cacheRead": 1083097
+    },
+    "models": {
+      "claude-opus-4-6": {
+        "calls": 24,
+        "input": 34,
+        "output": 5643,
+        "cacheWrite": 86222,
+        "cacheRead": 1083097
+      }
+    },
+    "daily": {
+      "2026-03-04": {
+        "claude-opus-4-6": {
+          "input": 30,
+          "output": 5328,
+          "cacheWrite": 61411,
+          "cacheRead": 996992
+        }
+      },
+      "2026-03-05": {
+        "claude-opus-4-6": {
+          "input": 4,
+          "output": 315,
+          "cacheWrite": 24811,
+          "cacheRead": 86105
+        }
+      }
+    },
+    "session": {
+      "id": "4f39ccca-f6d7-4094-b98d-4d3c998ee11e",
+      "model": "claude-opus-4-6",
+      "cost": 4.071204375000001,
+      "input": 34,
+      "output": 5643,
+      "cacheWrite": 86222,
+      "cacheRead": 1083097,
+      "date": "2026-03-05",
+      "topic": "Adding work items and redesigning Mission Control UI"
+    }
+  },
+  "a24d46ff-81e1-427d-8420-69cd69ea5247": {
+    "mtime": 1772515025026.4712,
+    "calls": 11,
+    "tokens": {
+      "input": 836,
+      "output": 10738,
+      "cacheWrite": 107991,
+      "cacheRead": 600714
+    },
+    "models": {
+      "claude-opus-4-6": {
+        "calls": 11,
+        "input": 836,
+        "output": 10738,
+        "cacheWrite": 107991,
+        "cacheRead": 600714
+      }
+    },
+    "daily": {
+      "2026-03-03": {
+        "claude-opus-4-6": {
+          "input": 836,
+          "output": 10738,
+          "cacheWrite": 107991,
+          "cacheRead": 600714
+        }
+      }
+    },
+    "session": {
+      "id": "a24d46ff-81e1-427d-8420-69cd69ea5247",
+      "model": "claude-opus-4-6",
+      "cost": 3.9690600000000003,
+      "input": 836,
+      "output": 10738,
+      "cacheWrite": 107991,
+      "cacheRead": 600714,
+      "date": "2026-03-03",
+      "topic": ""
+    }
+  },
+  "b7d9c5e6-a2f1-48c5-a35e-6992c4a3d705": {
+    "mtime": 1772662484891.1743,
+    "calls": 71,
+    "tokens": {
+      "input": 79,
+      "output": 23578,
+      "cacheWrite": 202517,
+      "cacheRead": 5260410
+    },
+    "models": {
+      "claude-opus-4-6": {
+        "calls": 71,
+        "input": 79,
+        "output": 23578,
+        "cacheWrite": 202517,
+        "cacheRead": 5260410
+      }
+    },
+    "daily": {
+      "2026-03-04": {
+        "claude-opus-4-6": {
+          "input": 79,
+          "output": 23578,
+          "cacheWrite": 202517,
+          "cacheRead": 5260410
+        }
+      }
+    },
+    "session": {
+      "id": "b7d9c5e6-a2f1-48c5-a35e-6992c4a3d705",
+      "model": "claude-opus-4-6",
+      "cost": 15.429997499999999,
+      "input": 79,
+      "output": 23578,
+      "cacheWrite": 202517,
+      "cacheRead": 5260410,
+      "date": "2026-03-04",
+      "topic": "Setting up Git tracking and toolbox sync"
+    }
+  },
+  "8a1137d3-c502-4e17-85c1-52a4f9c29bc1": {
+    "mtime": 1772650716942.4739,
+    "calls": 1,
+    "tokens": {
+      "input": 3,
+      "output": 561,
+      "cacheWrite": 40863,
+      "cacheRead": 0
+    },
+    "models": {
+      "claude-opus-4-6": {
+        "calls": 1,
+        "input": 3,
+        "output": 561,
+        "cacheWrite": 40863,
+        "cacheRead": 0
+      }
+    },
+    "daily": {
+      "2026-03-04": {
+        "claude-opus-4-6": {
+          "input": 3,
+          "output": 561,
+          "cacheWrite": 40863,
+          "cacheRead": 0
+        }
+      }
+    },
+    "session": {
+      "id": "8a1137d3-c502-4e17-85c1-52a4f9c29bc1",
+      "model": "claude-opus-4-6",
+      "cost": 0.8083012500000001,
+      "input": 3,
+      "output": 561,
+      "cacheWrite": 40863,
+      "cacheRead": 0,
+      "date": "2026-03-04",
+      "topic": ""
+    }
+  },
+  "584b53c8-e809-4935-b4da-e5554d8b69b2": {
+    "mtime": 1772743620718.141,
+    "calls": 44,
+    "tokens": {
+      "input": 834,
+      "output": 27006,
+      "cacheWrite": 561065,
+      "cacheRead": 3972618
+    },
+    "models": {
+      "claude-opus-4-6": {
+        "calls": 44,
+        "input": 834,
+        "output": 27006,
+        "cacheWrite": 561065,
+        "cacheRead": 3972618
+      }
+    },
+    "daily": {
+      "2026-03-04": {
+        "claude-opus-4-6": {
+          "input": 40,
+          "output": 20598,
+          "cacheWrite": 293537,
+          "cacheRead": 2631367
+        }
+      },
+      "2026-03-05": {
+        "claude-opus-4-6": {
+          "input": 794,
+          "output": 6408,
+          "cacheWrite": 267528,
+          "cacheRead": 1341251
+        }
+      }
+    },
+    "session": {
+      "id": "584b53c8-e809-4935-b4da-e5554d8b69b2",
+      "model": "claude-opus-4-6",
+      "cost": 20.006587500000002,
+      "input": 834,
+      "output": 27006,
+      "cacheWrite": 561065,
+      "cacheRead": 3972618,
+      "date": "2026-03-05",
+      "topic": "Improving video dissection workflow for CARES guide"
+    }
+  },
+  "96647c5c-3f5a-4db7-833f-91300fe15d9b": {
+    "mtime": 1772663394843.1755,
+    "calls": 172,
+    "tokens": {
+      "input": 7663,
+      "output": 67796,
+      "cacheWrite": 3497821,
+      "cacheRead": 28840753
+    },
+    "models": {
+      "claude-opus-4-6": {
+        "calls": 172,
+        "input": 7663,
+        "output": 67796,
+        "cacheWrite": 3497821,
+        "cacheRead": 28840753
+      }
+    },
+    "daily": {
+      "2026-03-03": {
+        "claude-opus-4-6": {
+          "input": 26,
+          "output": 3222,
+          "cacheWrite": 91935,
+          "cacheRead": 561424
+        }
+      },
+      "2026-03-04": {
+        "claude-opus-4-6": {
+          "input": 7637,
+          "output": 64574,
+          "cacheWrite": 3405886,
+          "cacheRead": 28279329
+        }
+      }
+    },
+    "session": {
+      "id": "96647c5c-3f5a-4db7-833f-91300fe15d9b",
+      "model": "claude-opus-4-6",
+      "cost": 124.860200625,
+      "input": 7663,
+      "output": 67796,
+      "cacheWrite": 3497821,
+      "cacheRead": 28840753,
+      "date": "2026-03-04",
+      "topic": "Updating Cares Guide with Video Insights"
+    }
+  },
+  "f9921243-8180-47e2-97a6-2b8dd31f3771": {
+    "mtime": 1770687093936.6047,
+    "calls": 14,
+    "tokens": {
+      "input": 239,
+      "output": 3917,
+      "cacheWrite": 54006,
+      "cacheRead": 550201
+    },
+    "models": {
+      "claude-sonnet-4-5-20250929": {
+        "calls": 14,
+        "input": 239,
+        "output": 3917,
+        "cacheWrite": 54006,
+        "cacheRead": 550201
+      }
+    },
+    "daily": {
+      "2026-02-10": {
+        "claude-sonnet-4-5-20250929": {
+          "input": 239,
+          "output": 3917,
+          "cacheWrite": 54006,
+          "cacheRead": 550201
+        }
+      }
+    },
+    "session": {
+      "id": "f9921243-8180-47e2-97a6-2b8dd31f3771",
+      "model": "claude-sonnet-4-5-20250929",
+      "cost": 2.341599375,
+      "input": 239,
+      "output": 3917,
+      "cacheWrite": 54006,
+      "cacheRead": 550201,
+      "date": "2026-02-10",
+      "topic": ""
+    }
+  },
+  "e87540ac-c46e-4f34-bf52-77a5b797a2bc": {
+    "mtime": 1772749795190.2336,
+    "calls": 113,
+    "tokens": {
+      "input": 147,
+      "output": 30897,
+      "cacheWrite": 270013,
+      "cacheRead": 8218661
+    },
+    "models": {
+      "claude-opus-4-6": {
+        "calls": 113,
+        "input": 147,
+        "output": 30897,
+        "cacheWrite": 270013,
+        "cacheRead": 8218661
+      }
+    },
+    "daily": {
+      "2026-03-04": {
+        "claude-opus-4-6": {
+          "input": 106,
+          "output": 24802,
+          "cacheWrite": 55636,
+          "cacheRead": 5934689
+        }
+      },
+      "2026-03-05": {
+        "claude-opus-4-6": {
+          "input": 41,
+          "output": 6095,
+          "cacheWrite": 214377,
+          "cacheRead": 2283972
+        }
+      }
+    },
+    "session": {
+      "id": "e87540ac-c46e-4f34-bf52-77a5b797a2bc",
+      "model": "claude-opus-4-6",
+      "cost": 22.792213125,
+      "input": 147,
+      "output": 30897,
+      "cacheWrite": 270013,
+      "cacheRead": 8218661,
+      "date": "2026-03-05",
+      "topic": "Setting up Git tracking and toolbox sync"
+    }
+  },
+  "e7080669-0266-46b6-b4d7-7a786967e6fe": {
+    "mtime": 1772584861392.5698,
+    "calls": 105,
+    "tokens": {
+      "input": 2932,
+      "output": 67663,
+      "cacheWrite": 646003,
+      "cacheRead": 12364409
+    },
+    "models": {
+      "claude-opus-4-6": {
+        "calls": 105,
+        "input": 2932,
+        "output": 67663,
+        "cacheWrite": 646003,
+        "cacheRead": 12364409
+      }
+    },
+    "daily": {
+      "2026-03-02": {
+        "claude-opus-4-6": {
+          "input": 875,
+          "output": 62173,
+          "cacheWrite": 403877,
+          "cacheRead": 11432609
+        }
+      },
+      "2026-03-03": {
+        "claude-opus-4-6": {
+          "input": 2052,
+          "output": 4891,
+          "cacheWrite": 137531,
+          "cacheRead": 708227
+        }
+      },
+      "2026-03-04": {
+        "claude-opus-4-6": {
+          "input": 5,
+          "output": 599,
+          "cacheWrite": 104595,
+          "cacheRead": 223573
+        }
+      }
+    },
+    "session": {
+      "id": "e7080669-0266-46b6-b4d7-7a786967e6fe",
+      "model": "claude-opus-4-6",
+      "cost": 40.414528125000004,
+      "input": 2932,
+      "output": 67663,
+      "cacheWrite": 646003,
+      "cacheRead": 12364409,
+      "date": "2026-03-04",
+      "topic": ""
+    }
+  },
+  "e21ee8ba-e18f-40fd-9f47-9f319d707f68": {
+    "mtime": 1772503772148.3296,
+    "calls": 151,
+    "tokens": {
+      "input": 176,
+      "output": 70601,
+      "cacheWrite": 800077,
+      "cacheRead": 24830491
+    },
+    "models": {
+      "claude-opus-4-6": {
+        "calls": 151,
+        "input": 176,
+        "output": 70601,
+        "cacheWrite": 800077,
+        "cacheRead": 24830491
+      }
+    },
+    "daily": {
+      "2026-03-03": {
+        "claude-opus-4-6": {
+          "input": 176,
+          "output": 70601,
+          "cacheWrite": 800077,
+          "cacheRead": 24830491
+        }
+      }
+    },
+    "session": {
+      "id": "e21ee8ba-e18f-40fd-9f47-9f319d707f68",
+      "model": "claude-opus-4-6",
+      "cost": 66.856329375,
+      "input": 176,
+      "output": 70601,
+      "cacheWrite": 800077,
+      "cacheRead": 24830491,
+      "date": "2026-03-03",
+      "topic": ""
+    }
+  },
+  "cdfbfd62-be43-4426-bb8b-69fc3804c8c8": {
+    "mtime": 1773084633516.44,
+    "calls": 68,
+    "tokens": {
+      "input": 186,
+      "output": 22017,
+      "cacheWrite": 151765,
+      "cacheRead": 4447138
+    },
+    "models": {
+      "claude-opus-4-6": {
+        "calls": 68,
+        "input": 186,
+        "output": 22017,
+        "cacheWrite": 151765,
+        "cacheRead": 4447138
+      }
+    },
+    "daily": {
+      "2026-03-09": {
+        "claude-opus-4-6": {
+          "input": 186,
+          "output": 22017,
+          "cacheWrite": 151765,
+          "cacheRead": 4447138
+        }
+      }
+    },
+    "session": {
+      "id": "cdfbfd62-be43-4426-bb8b-69fc3804c8c8",
+      "model": "claude-opus-4-6",
+      "cost": 12.8380425,
+      "input": 186,
+      "output": 22017,
+      "cacheWrite": 151765,
+      "cacheRead": 4447138,
+      "date": "2026-03-09",
+      "topic": "Enhancing orchestrator UI with emoji cues and sound alerts"
+    }
+  }
+}

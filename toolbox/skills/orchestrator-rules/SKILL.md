@@ -26,7 +26,7 @@ These 15 rules apply to every orchestrator session, every phase. Violations are 
 17. **Use your own agents.** (PM016) 13 agents exist in `.claude/agents/` — agent-expert, configurator, critic, guard, perf, qa, scientist, scout, etc. Before dispatching work, check if an existing agent can do it. Before building a new system, use configurator to audit gaps. Before writing agent prompts, use agent-expert to review quality. Unused tools are wasted infrastructure.
 18. **Deep Research pattern for ALL research.** (PM018) Three phases: (1) Outline what you know + what you need, (2) One focused search per question with short targeted queries, (3) Synthesize and discard irrelevant. Never kitchen-sink queries. Never use internal MC jargon in web searches — "dispatched agents" is ours, not universal. Based on [Weizhena/Deep-Research-skills](https://github.com/Weizhena/Deep-Research-skills).
 19. **Never propose destructive fallbacks without checking.** (PM017) Before suggesting `git checkout`, `git reset`, or any revert as a "safe fallback": run `git status` and `git log` to verify a clean committed baseline exists. If uncommitted work is present, the ONLY safe path is review-first. The "try and revert" pattern is a lie when there's nothing to revert to.
-20. **All dispatch goes through create-agent-prompt skill.** (PM022, f097) Never say "write a PRD." The create-agent-prompt skill IS the dispatch pipeline — it enforces lifecycle stages, skill mandates, verification, and debrief. A raw PRD produces PM014-style failures (vague prompts, F-grade agents). Load the skill, follow its structure, output the prompt file.
+20. **All dispatch goes through `creating-agents` skill.** (PM022, f097, f102) Never say "write a PRD." The `creating-agents` skill IS the dispatch pipeline — it chains `skill-mandate` (auto-discovers mandated skills) then `create-agent-prompt` (writes the prompt). Never call create-agent-prompt directly — it bypasses skill discovery. Always start with `creating-agents`.
 
 ## Pre-Dispatch Regression Checklist
 
@@ -35,7 +35,7 @@ Before EVERY dispatch, validate these. Each is a lesson from a past PM that regr
 | # | Check | PM source | What to verify |
 |---|-------|-----------|---------------|
 | 1 | No Agent tool | PM011, PM022 | Am I writing a prompt file, NOT using Agent tool? |
-| 2 | Using create-agent-prompt skill | PM014, PM022 | Did I load the skill and follow its structure? |
+| 2 | Using `creating-agents` pipeline | PM014, PM022, f102 | Did I load `creating-agents` which chains `skill-mandate` → `create-agent-prompt`? |
 | 3 | Prompt has all 6 lifecycle stages | PM014 | Define, Discover, Execute, Reason, Verify, Debrief? |
 | 4 | Stage 2 mandates specific skills | f064 | At least one skill listed by name? |
 | 5 | Stage 5 has concrete verification | PM002 | Playwright screenshot, curl command, or test run — not "check it works"? |
@@ -75,3 +75,20 @@ What /api/launch does automatically:
 - Plays notification sound
 
 v2.0 wrote prompt files correctly then told the user to open terminals manually. The user checked /campaigns and found nothing. This is the WORST regression possible — it defeats the purpose of the orchestrator. Never again.
+
+## Rule 22: Never handoff with active agents (PM025 — non-negotiable)
+
+The orchestrator MUST wait for all dispatched agents to complete before starting the handoff process. Active agents mean:
+- Their output hasn't been reviewed
+- Their grade isn't final
+- They may have file conflicts with each other
+- The handoff doc can't accurately list delivered/missed
+- The next orchestrator has no idea what state things are in
+
+**Check:** Before loading orchestrator-handoff, run:
+```bash
+curl -s http://localhost:3033/api/campaigns | node -e "..."
+```
+Verify zero active agents in the current sprint. If any are running, WAIT. Monitor them. Review when they complete. Only then start handoff.
+
+v2.2 suggested handoff with 4 agents still running. The user caught it. This is now a hard rule.

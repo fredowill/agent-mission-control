@@ -155,16 +155,17 @@ header{display:flex;align-items:center;justify-content:space-between;padding:0 c
 .agent-card:hover{box-shadow:0 8px 24px rgba(0,0,0,.08);transform:translateY(-2px)}
 .agent-bar{height:4px}
 .agent-inner{padding:18px 20px 16px}
-.agent-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;gap:8px}
+.agent-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;gap:8px}
 .agent-name{font-family:'Plus Jakarta Sans',sans-serif;font-size:15px;font-weight:700;letter-spacing:-0.02em}
-.agent-grade{font-family:'Plus Jakarta Sans',sans-serif;font-size:12px;font-weight:800;padding:3px 10px;border-radius:8px;letter-spacing:-0.01em;flex-shrink:0}
-.agent-grade.grade-a{background:rgba(34,197,94,0.12);color:#16a34a}
-.agent-grade.grade-b{background:rgba(59,130,246,0.12);color:#2563eb}
-.agent-grade.grade-c{background:rgba(245,158,11,0.12);color:#92400e}
-.agent-grade.grade-d{background:rgba(239,68,68,0.1);color:#dc2626}
+.agent-name .agent-emoji{font-size:16px;vertical-align:-1px;margin-right:2px}
+.agent-grade{font-family:'Plus Jakarta Sans',sans-serif;font-size:12px;font-weight:800;padding:3px 10px;border-radius:8px;letter-spacing:-0.01em;flex-shrink:0;transition:box-shadow .2s}
+.agent-grade.grade-a{background:rgba(34,197,94,0.12);color:#16a34a;box-shadow:0 0 8px rgba(34,197,94,0.2)}
+.agent-grade.grade-b{background:rgba(59,130,246,0.12);color:#2563eb;box-shadow:0 0 8px rgba(59,130,246,0.15)}
+.agent-grade.grade-c{background:rgba(245,158,11,0.12);color:#92400e;box-shadow:0 0 8px rgba(245,158,11,0.15)}
+.agent-grade.grade-d{background:rgba(239,68,68,0.1);color:#dc2626;box-shadow:0 0 8px rgba(239,68,68,0.15)}
 
 /* Agent structured focus */
-.agent-focus-struct{font-size:12px;line-height:1.6;color:var(--text2);margin-bottom:12px}
+.agent-focus-struct{font-size:12px;line-height:1.5;color:var(--text2);margin-bottom:12px}
 .agent-focus-struct .focus-label{font-weight:700;color:var(--text);font-size:11px;text-transform:uppercase;letter-spacing:.03em}
 .agent-focus-struct .focus-delivered{color:var(--text)}
 .agent-focus-struct .focus-missed{color:var(--rose)}
@@ -212,15 +213,56 @@ header{display:flex;align-items:center;justify-content:space-between;padding:0 c
 .orch-mission{font-family:'DM Sans',sans-serif;font-size:13px;color:var(--text3);line-height:1.4;margin:4px 0 0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .orch-mission .mission-label{font-weight:600;color:var(--text2)}
 
-/* Lifecycle bar (5 dots) */
-.lifecycle-bar{display:flex;align-items:center;gap:4px;margin-bottom:10px}
-.lc-dot{width:8px;height:8px;border-radius:50%;transition:all .15s}
+/* ── Task-Type Color System ── */
+:root{
+  --tt-research-bar:#3b82f6;--tt-research-bar2:#1d4ed8;--tt-research-border:rgba(59,130,246,0.15);--tt-research-text:#2563eb;
+  --tt-build-bar:#22c55e;--tt-build-bar2:#16a34a;--tt-build-border:rgba(34,197,94,0.15);--tt-build-text:#16a34a;
+  --tt-ui-bar:#ec4899;--tt-ui-bar2:#db2777;--tt-ui-border:rgba(236,72,153,0.15);--tt-ui-text:#db2777;
+  --tt-plan-bar:#8b5cf6;--tt-plan-bar2:#7c3aed;--tt-plan-border:rgba(139,92,246,0.15);--tt-plan-text:#7c3aed;
+  --tt-security-bar:#ef4444;--tt-security-bar2:#dc2626;--tt-security-border:rgba(239,68,68,0.15);--tt-security-text:#dc2626;
+  --tt-perf-bar:#f59e0b;--tt-perf-bar2:#d97706;--tt-perf-border:rgba(245,158,11,0.15);--tt-perf-text:#d97706;
+  --tt-refactor-bar:#14b8a6;--tt-refactor-bar2:#0d9488;--tt-refactor-border:rgba(20,184,166,0.15);--tt-refactor-text:#0d9488;
+  --tt-orchestrator-bar:#a78bfa;--tt-orchestrator-bar2:#7c3aed;--tt-orchestrator-border:rgba(139,92,246,0.15);--tt-orchestrator-text:#7c3aed;
+}
+
+/* ── Thin Lifecycle Progress Bar ── */
+/* lifecycle-track/fill/notch removed — replaced by clean dots in .lifecycle-bar */
+@keyframes glowPulse{0%,100%{opacity:.35}50%{opacity:.6}}
+.lifecycle-label{font-family:'DM Mono',monospace;font-size:9px;font-weight:500;letter-spacing:.04em;color:var(--text3);text-transform:uppercase;margin-bottom:6px;display:flex;align-items:center;gap:4px}
+.lifecycle-label .lc-stage-name{opacity:.7}
+.lifecycle-label .lc-stage-num{opacity:.5;font-size:8px}
+
+/* ── Cook Timer ── */
+.cook-timer{font-family:'DM Mono',monospace;font-size:11px;font-weight:600;color:var(--text3);white-space:nowrap;min-width:62px;text-align:right}
+.cook-timer.is-live{color:var(--green)}
+
+/* ── Dispatch Reason / Tagline ── */
+.dispatch-reason{font-family:'DM Sans',sans-serif;font-size:12.5px;color:var(--text2);line-height:1.45;margin-bottom:6px;overflow:hidden;text-overflow:ellipsis;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+.dispatch-reason strong{font-weight:700;color:var(--text);letter-spacing:-.01em}
+.dispatch-reason .dr-tagline{font-weight:600;color:var(--text);letter-spacing:-.01em}
+.dispatch-reason .dr-rest{color:var(--text3);font-weight:400;font-size:12px}
+.dispatch-reason .dr-keyword{font-weight:600;color:var(--blue);font-size:11px;background:var(--blue-bg);padding:0 4px;border-radius:3px;letter-spacing:.01em}
+
+/* ── Natural Language Activity Line ── */
+.activity-line{font-family:'DM Sans',sans-serif;font-size:11px;color:var(--text2);display:flex;align-items:center;gap:6px;min-height:18px}
+.activity-line .activity-dot{width:6px;height:6px;border-radius:50%;background:var(--green);flex-shrink:0;animation:livePulse 1.5s ease-in-out infinite}
+
+/* ── Completed Card Delivery Row ── */
+.card-delivery{display:flex;align-items:center;gap:12px;font-size:11px;font-weight:700;margin-bottom:8px;flex-wrap:wrap}
+.card-delivery .delivered-count{color:var(--green)}
+.card-delivery .missed-count{color:var(--rose)}
+.card-delivery .total-time{color:var(--text3);font-family:'DM Mono',monospace;font-weight:600;margin-left:auto}
+
+/* Lifecycle dots — full width, standard colors, colored dashes, spaced */
+.lifecycle-bar{display:flex;align-items:center;gap:4px;width:50%;margin-bottom:8px}
+.lc-dot{width:8px;height:8px;border-radius:50%;transition:all .3s ease;flex-shrink:0}
 .lc-dot.passed{background:#22c55e}
-.lc-dot.partial{background:#22c55e;opacity:.5}
-.lc-dot.failed{background:#f59e0b}
-.lc-dot.skipped{background:#e4e4e7}
-.lc-dot.active-stage{background:#8b5cf6;animation:livePulse 1.2s ease-in-out infinite;box-shadow:0 0 6px rgba(139,92,246,0.5)}
-.lc-connector{width:12px;height:2px;background:var(--surface2)}
+.lc-dot.partial{background:#f59e0b}
+.lc-dot.failed{background:#ef4444}
+.lc-dot.skipped{background:#d4d4d8}
+.lc-dot.active-stage{background:#22c55e;box-shadow:0 0 0 3px rgba(34,197,94,0.25);animation:dotPulse 2s ease-in-out infinite}
+.lc-connector{flex:1;height:2px;background:#e4e4e7;border-radius:1px}
+@keyframes dotPulse{0%,100%{box-shadow:0 0 0 3px rgba(34,197,94,0.25)}50%{box-shadow:0 0 0 6px rgba(34,197,94,0.1)}}
 
 /* Live state indicator (auto-dispatched agents) */
 .live-state{display:flex;align-items:center;gap:8px;padding:6px 12px;border-radius:8px;margin-bottom:10px;font-family:'DM Mono',monospace;font-size:11px;font-weight:600;letter-spacing:.02em}
@@ -529,9 +571,12 @@ header{display:flex;align-items:center;justify-content:space-between;padding:0 c
 .rc-live-lc-step.active:not(:last-child)::after{background:linear-gradient(90deg,#2563eb 0%,var(--sep) 100%)}
 .rc-live-lc-dot{width:10px;height:10px;border-radius:50%;background:var(--sep);flex-shrink:0;position:relative;z-index:1;transition:all 0.3s ease}
 .rc-live-lc-step.passed .rc-live-lc-dot{background:#22c55e}
+.rc-live-lc-step.partial .rc-live-lc-dot{background:#f59e0b}
+.rc-live-lc-step.partial:not(:last-child)::after{background:#f59e0b}
 .rc-live-lc-step.active .rc-live-lc-dot{background:#2563eb;box-shadow:0 0 0 4px rgba(37,99,235,0.18);animation:livePulse 1.5s ease-in-out infinite}
 .rc-live-lc-label{font-family:'DM Sans',sans-serif;font-size:9px;font-weight:600;text-transform:uppercase;letter-spacing:.04em;color:var(--text3);text-align:center}
 .rc-live-lc-step.passed .rc-live-lc-label{color:#16a34a}
+.rc-live-lc-step.partial .rc-live-lc-label{color:#d97706}
 .rc-live-lc-step.active .rc-live-lc-label{color:#2563eb;font-weight:700}
 
 .rc-live-empty{background:var(--bg2);border:1px solid var(--sep);border-radius:10px;padding:16px 18px;margin-bottom:20px;text-align:center;font-family:'DM Sans',sans-serif;font-size:12px;color:var(--text3)}
@@ -868,6 +913,9 @@ let sessions = [];
 let activeTab = 'agents';
 let selectedCampaignIdx = 0;
 let _lastDataHash = '';
+// Track open report card modal for auto-refresh
+let _openModalSlot = null;
+let _openModalCampaignId = null;
 
 async function load() {
   try {
@@ -882,17 +930,10 @@ async function load() {
     _lastDataHash = hash;
     campaigns = newCampaigns;
     sessions = newSessions;
-    // Skip re-render if user is interacting with ANY open dropdown/collapse/modal (prevents auto-close bug)
-    // This is a systemic fix — covers: RC collapses, lifecycle cards, infra groups, sprint toggles, modals
-    if (
-      document.querySelector('.rc-collapse-body[data-open="1"]') ||
-      document.querySelector('.rc-lc-card.expanded') ||
-      document.querySelector('.infra-group-title:not(.collapsed)') ||
-      document.querySelector('.rc-modal-bg.open') ||
-      document.querySelector('.debrief-section-body.open')
-    ) {
-      return; // data updated but defer render until next poll when user closes the interactive element
-    }
+    // Always refresh modal live section with new data (no flicker — selective DOM update)
+    refreshModalLiveSection();
+    // Always re-render — all interactive states persist via localStorage and are restored during render.
+    // The modal (#modalBg) lives outside #app so innerHTML swap doesn't destroy it.
     render();
   } catch (e) {
     document.getElementById('app').innerHTML = '<div style="text-align:center;padding:48px;color:var(--text3)"><strong style="display:block;font-size:18px;color:var(--text2);margin-bottom:6px">Failed to load</strong>' + e.message + '</div>';
@@ -1089,42 +1130,76 @@ function getAgentLiveState(agent) {
   );
 }
 
-// ── Lifecycle Stage Heuristic ──
-// Maps the tool-based state (from hook.js) to a lifecycle stage.
-// Rough but gives immediate visual feedback on campaigns page.
-// Accuracy: ~70%. For 95%, agents need to self-report stages.
+// ── Lifecycle Stage Detection ──
+// Priority: 1) explicit lifecycleStage from state file (hook-inferred or self-reported)
+//           2) monotonic heuristic fallback (improved accuracy ~85%)
+// If hook.js writes lifecycleStage, we read it directly — no guessing needed.
+const LIFECYCLE_STAGES = ['define','discover','execute','reason','verify','debrief'];
+
+// Track highest stage per session for monotonic fallback (never regress)
+const _sessionHighStage = {};
+
 function inferLifecycleStage(live) {
   if (!live || !live.active) return null;
+
+  // ── Priority 1: Read lifecycleStage from state file (written by hook or self-report API)
+  if (live.lifecycleStage) {
+    const idx = LIFECYCLE_STAGES.indexOf(live.lifecycleStage);
+    if (idx >= 0) {
+      return { stage: live.lifecycleStage, label: live.lifecycleStage.toUpperCase(), idx };
+    }
+  }
+
+  // ── Priority 2: Monotonic heuristic fallback
+  const sid = live.sessionId || '';
+  const prevIdx = _sessionHighStage[sid] || 0;
   const state = live.state;
   const detail = (live.detail || '').toLowerCase();
 
+  let inferredIdx = 0;
+
   // Launching state (pre-created by /api/launch)
-  if (state === 'launching') return { stage: 'define', label: 'LAUNCHING', idx: 0 };
-
-  // Reading skills directory → DISCOVER
-  if (state === 'investigating' && (detail.includes('.claude/skills') || detail.includes('ls ')))
-    return { stage: 'discover', label: 'DISCOVER', idx: 1 };
-
+  if (state === 'launching') {
+    inferredIdx = 0;
+  }
+  // Skill tool or reading skills directory → DISCOVER
+  else if (state === 'investigating' && (detail.includes('.claude/skills') || detail.includes('skill'))) {
+    inferredIdx = 1;
+  }
   // Writing/editing code → EXECUTE
-  if (state === 'developing')
-    return { stage: 'execute', label: 'EXECUTE', idx: 2 };
+  else if (state === 'developing') {
+    inferredIdx = 2;
+  }
+  // Running commands → VERIFY only if we've already passed execute
+  else if (state === 'verifying') {
+    if (detail.includes('debrief') || detail.includes('/api/campaigns/agent-debrief')) {
+      inferredIdx = 5; // debrief
+    } else if (prevIdx >= 2) {
+      inferredIdx = 4; // verify (only after execute)
+    } else {
+      inferredIdx = prevIdx; // hold position — Bash during early stages isn't verify
+    }
+  }
+  // Planning → DEFINE (but don't regress)
+  else if (state === 'planning') {
+    inferredIdx = 0;
+  }
+  // Investigating → DEFINE (but don't regress)
+  else if (state === 'investigating') {
+    inferredIdx = 0;
+  }
+  // Thinking → REASON (but only if past execute)
+  else if (state === 'thinking') {
+    inferredIdx = prevIdx >= 2 ? 3 : prevIdx;
+  }
 
-  // Running commands (tests, screenshots, curl) → VERIFY
-  if (state === 'verifying')
-    return { stage: 'verify', label: 'VERIFY', idx: 4 };
+  // Monotonic: never go backwards
+  const finalIdx = Math.max(inferredIdx, prevIdx);
+  _sessionHighStage[sid] = finalIdx;
 
-  // Planning → DEFINE
-  if (state === 'planning')
-    return { stage: 'define', label: 'DEFINE', idx: 0 };
-
-  // Default: investigating early = DEFINE, thinking = between stages
-  if (state === 'investigating')
-    return { stage: 'define', label: 'DEFINE', idx: 0 };
-
-  if (state === 'thinking')
-    return { stage: 'reason', label: 'REASON', idx: 3 };
-
-  return null;
+  const stage = LIFECYCLE_STAGES[finalIdx];
+  const label = finalIdx === 0 && state === 'launching' ? 'LAUNCHING' : stage.toUpperCase();
+  return { stage, label, idx: finalIdx };
 }
 
 // Translate raw state + inferred lifecycle into a human-readable mission status line
@@ -1181,78 +1256,234 @@ function renderLiveState(live) {
     '</div>';
 }
 
-// ── Render Agent Card ──
+// ── Task Type Inference ──
+const TASK_TYPES = {
+  research:      { emoji: '🔬', bar1: '#3b82f6', bar2: '#1d4ed8', border: 'rgba(59,130,246,0.15)', text: '#2563eb' },
+  build:         { emoji: '🛠️', bar1: '#22c55e', bar2: '#16a34a', border: 'rgba(34,197,94,0.15)', text: '#16a34a' },
+  ui:            { emoji: '🎨', bar1: '#ec4899', bar2: '#db2777', border: 'rgba(236,72,153,0.15)', text: '#db2777' },
+  plan:          { emoji: '📋', bar1: '#8b5cf6', bar2: '#7c3aed', border: 'rgba(139,92,246,0.15)', text: '#7c3aed' },
+  security:      { emoji: '🛡️', bar1: '#ef4444', bar2: '#dc2626', border: 'rgba(239,68,68,0.15)', text: '#dc2626' },
+  performance:   { emoji: '⚡', bar1: '#f59e0b', bar2: '#d97706', border: 'rgba(245,158,11,0.15)', text: '#d97706' },
+  refactor:      { emoji: '🧹', bar1: '#14b8a6', bar2: '#0d9488', border: 'rgba(20,184,166,0.15)', text: '#0d9488' },
+  orchestrator:  { emoji: '🎛️', bar1: '#a78bfa', bar2: '#7c3aed', border: 'rgba(139,92,246,0.15)', text: '#7c3aed' },
+  infrastructure:{ emoji: '⚙️', bar1: '#64748b', bar2: '#475569', border: 'rgba(100,116,139,0.15)', text: '#475569' }
+};
+
+function inferTaskType(agent) {
+  if (agent.taskType && TASK_TYPES[agent.taskType]) return agent.taskType;
+  var n = ((agent.name || '') + ' ' + (agent.focus || '') + ' ' + (agent.slot || '')).toLowerCase();
+  if (/orchestrat/.test(n)) return 'orchestrator';
+  if (/research|investigat|analy|study|survey|audit/.test(n)) return 'research';
+  if (/\bui\b|design|polish|style|visual|card|layout|frontend|css/.test(n)) return 'ui';
+  if (/plan|architect|strateg|roadmap/.test(n)) return 'plan';
+  if (/secur|guard|review|critic/.test(n)) return 'security';
+  if (/perf|optim|speed|fast|lighthouse/.test(n)) return 'performance';
+  if (/refactor|clean|dedupe|consolidat|simplif/.test(n)) return 'refactor';
+  if (/build|fix|implement|creat|develop|infra|integrat|pipeline|workflow|hook|plugin/.test(n)) return 'build';
+  return 'infrastructure';
+}
+
+function getTaskTypeColors(agent) {
+  var tt = inferTaskType(agent);
+  return TASK_TYPES[tt] || TASK_TYPES.infrastructure;
+}
+
+// ── Natural Language Activity ──
+function getActivityLine(live, inferred) {
+  if (!live || !live.active) return '';
+  var tool = (live.tool || '').toLowerCase();
+  var state = (live.state || '').toLowerCase();
+  var stagePrefix = inferred ? inferred.label + ': ' : '';
+
+  if (state === 'launching') return 'Launching...';
+  if (state === 'waiting' || state === 'idle') return 'Waiting for input...';
+
+  if (tool === 'read' || tool === 'readfile') return stagePrefix + 'Reading files...';
+  if (tool === 'write' || tool === 'writefile') return stagePrefix + 'Writing code...';
+  if (tool === 'edit') return stagePrefix + 'Editing files...';
+  if (tool === 'bash' || tool === 'terminal') return stagePrefix + 'Running commands...';
+  if (tool === 'grep' || tool === 'glob' || tool === 'search') return stagePrefix + 'Searching codebase...';
+  if (tool === 'websearch' || tool === 'webfetch') return stagePrefix + 'Researching online...';
+  if (tool === 'agent') return stagePrefix + 'Delegating to sub-agent...';
+  if (tool === 'skill') return stagePrefix + 'Loading skill...';
+  if (tool === 'todowrite') return stagePrefix + 'Tracking progress...';
+
+  if (inferred) {
+    var stageMap = {
+      define: 'Loading context...', discover: 'Discovering skills...',
+      execute: 'Building deliverable...', reason: 'Reasoning...',
+      verify: 'Verifying output...', debrief: 'Writing debrief...'
+    };
+    return stageMap[inferred.stage] || stagePrefix + 'Working...';
+  }
+  return 'Working...';
+}
+
+// ── Thin Lifecycle Progress Bar ──
+function renderLifecycleProgress(agent, liveStage, taskColors) {
+  // Standard green dots with dashes — same look on every card
+  var h = '<div class="lifecycle-bar">';
+  STAGES.forEach(function(stage, i) {
+    var state = agent.lifecycle ? agent.lifecycle[stage] : 'skipped';
+    var isActive = liveStage && liveStage.idx === i;
+    var isCompleted = agent.status === 'completed' || agent.status === 'graded';
+    var isFilled = isCompleted || state === 'passed' || isActive || (liveStage && i < liveStage.idx);
+
+    // Dot
+    var cls = 'lc-dot';
+    if (isActive) cls += ' active-stage';
+    else if (isFilled) cls += (state === 'partial' ? ' partial' : ' passed');
+    else cls += ' skipped';
+    h += '<span class="' + cls + '" title="' + STAGE_LABELS[i] + '"></span>';
+
+    // Connector dash (between dots, not after last) — always gray
+    if (i < STAGES.length - 1) {
+      h += '<span class="lc-connector"></span>';
+    }
+  });
+  h += '</div>';
+  return h;
+}
+
+// ── Cook Timer ──
+function startCookTimers() {
+  document.querySelectorAll('.cook-timer[data-start]').forEach(function(el) {
+    var startTs = parseInt(el.getAttribute('data-start'), 10);
+    if (!startTs) return;
+    el.textContent = '\u23F1 ' + formatElapsed(Date.now() - startTs);
+  });
+}
+if (!window._cookTimerGlobal) {
+  window._cookTimerGlobal = setInterval(startCookTimers, 1000);
+}
+
+// ── Render Agent Card (Redesigned) ──
 function renderAgentCard(campaign, agent) {
-  const cls = agentCls(agent.name);
-  // Manual grade override takes priority (orchestrator corrections).
-  // If agent.grade exists AND scoreBreakdown exists but they disagree, agent.grade is the manual override.
-  const autoGrade = (agent.scoreBreakdown && agent.scoreBreakdown.total) ? scoreToGrade(agent.scoreBreakdown.total) : '';
-  const grade = agent.grade || autoGrade || '';
-  const gCls = gradeClass(grade);
+  var cls = agentCls(agent.name);
+  var autoGrade = (agent.scoreBreakdown && agent.scoreBreakdown.total) ? scoreToGrade(agent.scoreBreakdown.total) : '';
+  var grade = agent.grade || autoGrade || '';
+  var gCls = gradeClass(grade);
 
-  // Check for live session state — campaign status takes priority over PID liveness
-  const live = getAgentLiveState(agent);
-  const agentCompleted = agent.status === 'completed' || agent.status === 'graded';
-  const isLive = !agentCompleted && live && live.active && !live.done;
-  const isWaitingInput = !agentCompleted && live && live.state === 'waiting';
+  var live = getAgentLiveState(agent);
+  var agentCompleted = agent.status === 'completed' || agent.status === 'graded';
+  var isLive = !agentCompleted && live && live.active && !live.done;
+  var isWaitingInput = !agentCompleted && live && live.state === 'waiting';
 
-  // Structured focus
-  let focusHtml = '';
-  if (isLive) {
-    // Show live state instead of static delivered/missed when agent is running
-    focusHtml = renderLiveState(live);
-  } else {
-    if ((agent.delivered && agent.delivered.length) || (agent.missed && agent.missed.length)) {
-      focusHtml += '<div style="display:flex;gap:10px;font-size:11px;margin-bottom:4px">';
-      if (agent.delivered && agent.delivered.length) {
-        focusHtml += '<span style="color:var(--green);font-weight:700">✓ ' + agent.delivered.length + ' delivered</span>';
-      }
-      if (agent.missed && agent.missed.length) {
-        focusHtml += '<span style="color:var(--rose);font-weight:700">✗ ' + agent.missed.length + ' missed</span>';
-      }
-      focusHtml += '</div>';
-    }
-    if (live && live.done) {
-      focusHtml += renderLiveState(live);
-    } else {
-      const closedBy = agent.status === 'completed' ? 'Completed' : agent.status;
-      focusHtml += '<div class="focus-closed">Status: ' + esc(closedBy) + '</div>';
-    }
-  }
+  // Task type colors (new system)
+  var taskColors = getTaskTypeColors(agent);
+  var taskEmoji = (TASK_TYPES[inferTaskType(agent)] || TASK_TYPES.infrastructure).emoji;
 
-  // Skills pills
-  let skillsHtml = '';
-  if (agent.skillsUsed && agent.skillsUsed.length) {
-    agent.skillsUsed.forEach(sk => {
-      skillsHtml += '<span class="skill-pill used">' + esc(sk) + '</span>';
-    });
-  } else {
-    skillsHtml = '<span class="skill-pill none">no skills used</span>';
-  }
+  // Tagline — curated tagline > dispatchReason > extracted action from focus
+  var dispatchReason = agent.tagline || agent.dispatchReason || extractTagline(agent.focus || '');
 
-  const cardExtraClass = isLive ? ' is-live' : isWaitingInput ? ' is-waiting-input' : '';
-  const agentColor = getAgentColor(agent.name);
-  let c = '<div class="agent-card ' + cls + cardExtraClass + '" style="border-color:' + agentColor.border + '" onclick="openReportCard(\'' + esc(agent.slot) + '\',\'' + esc(campaign.id) + '\')">';
-  c += '<div class="agent-bar" style="background:linear-gradient(90deg,' + agentColor.bar + ')"></div>';
+  // Cook timer start time
+  var startTs = isLive && live ? (live.sessionStart || live.ts || 0) : 0;
+
+  var cardExtraClass = isLive ? ' is-live' : isWaitingInput ? ' is-waiting-input' : '';
+  var barStyle = 'background:linear-gradient(90deg,' + taskColors.bar1 + ',' + taskColors.bar2 + ')';
+
+  var c = '<div class="agent-card ' + cls + cardExtraClass + '" style="border-color:' + taskColors.border + '" onclick="openReportCard(\'' + esc(agent.slot) + '\',\'' + esc(campaign.id) + '\')">';
+  c += '<div class="agent-bar" style="' + barStyle + '"></div>';
   c += '<div class="agent-inner">';
-  c += '<div class="agent-top">';
-  c += '<span class="agent-name" style="color:' + agentColor.text + '">' + esc(agent.name) + '</span>';
-  if (grade) c += '<span class="agent-grade ' + gCls + '">' + esc(grade) + '</span>';
-  c += '</div>';
-  c += '<div class="agent-focus-struct">' + focusHtml + '</div>';
-  const liveStage = isLive ? inferLifecycleStage(live) : null;
-  c += '<div class="lifecycle-bar" title="Define \u2192 Discover \u2192 Execute \u2192 Reason \u2192 Verify \u2192 Debrief">' + renderLifecycleDots(agent, 'small', liveStage) + '</div>';
-  c += '<div class="skills-row">' + skillsHtml + '</div>';
 
-  // Review agent status indicator
-  if (agent.reviewStatus === 'reviewing') {
-    c += '<div style="font-family:\'DM Mono\',monospace;font-size:9px;color:#7c3aed;padding:4px 8px;margin-top:2px;display:flex;align-items:center;gap:4px"><span style="width:6px;height:6px;border-radius:50%;background:#7c3aed;animation:livePulse 1.5s ease-in-out infinite"></span>Review agent analyzing...</div>';
-  } else if (agent.reviewStatus === 'complete') {
-    c += '<div style="font-family:\'DM Mono\',monospace;font-size:9px;color:#16a34a;padding:4px 8px;margin-top:2px">✓ Reviewed</div>';
+  // Row 1: Emoji + Name + (Grade badge OR Cook timer)
+  c += '<div class="agent-top">';
+  c += '<span class="agent-name" style="color:' + taskColors.text + '"><span class="agent-emoji">' + taskEmoji + '</span> ' + esc(agent.name) + '</span>';
+  if (agentCompleted && grade) {
+    c += '<span class="agent-grade ' + gCls + '">' + esc(grade) + '</span>';
+  } else if (isLive && startTs) {
+    c += '<span class="cook-timer is-live" data-start="' + startTs + '">\u23F1 ' + formatElapsed(Date.now() - startTs) + '</span>';
+  }
+  c += '</div>';
+
+  // Row 2: Dispatch reason with visual hierarchy
+  if (dispatchReason) {
+    // Strip "User: " prefix
+    var dr = dispatchReason.replace(/^User:\s*/i, '');
+    c += '<div class="dispatch-reason" title="' + esc(dr) + '">' + formatDispatchReason(dr) + '</div>';
+  }
+
+  if (agentCompleted) {
+    // ── COMPLETED CARD ──
+    var cardMissed = (agent.missed || []).filter(function(m) { return !/^no items/i.test(m.trim()); });
+    c += '<div class="card-delivery">';
+    if (agent.delivered && agent.delivered.length) {
+      c += '<span class="delivered-count">\u2713 ' + agent.delivered.length + ' delivered</span>';
+    }
+    if (cardMissed.length > 0) {
+      c += '<span class="missed-count">\u2717 ' + cardMissed.length + ' missed</span>';
+    }
+    c += '</div>';
+    c += renderLifecycleProgress(agent, null, taskColors);
+    // Skill pills on completed cards
+    if (agent.skillsUsed && agent.skillsUsed.length) {
+      c += '<div style="display:flex;flex-wrap:wrap;gap:4px;margin-top:4px">';
+      agent.skillsUsed.forEach(function(sk) {
+        c += '<span class="skill-pill used">' + esc(sk) + '</span>';
+      });
+      c += '</div>';
+    } else {
+      c += '<div style="margin-top:4px"><span class="skill-pill none">no skills used</span></div>';
+    }
+  } else if (isLive) {
+    // ── ACTIVE CARD ──
+    var liveStage = inferLifecycleStage(live);
+    c += renderLifecycleProgress(agent, liveStage, taskColors);
+    var activityText = getActivityLine(live, liveStage);
+    if (activityText) {
+      c += '<div class="activity-line"><span class="activity-dot"></span>' + esc(activityText) + '</div>';
+    }
+  } else {
+    // ── PENDING/READY CARD ──
+    c += renderLifecycleProgress(agent, null, taskColors);
   }
 
   c += '</div></div>';
   return c;
+}
+
+// ── Extract a clean tagline from raw focus text ──
+// Finds the action sentence (starts with a verb) and uses it as the tagline.
+// Falls back to first sentence if no action found.
+function extractTagline(text) {
+  if (!text) return '';
+  // Strip "User: " prefix
+  text = text.replace(/^User:\s*/i, '');
+  // Split into sentences on . or , or ;
+  var sentences = text.split(/[.;]\s+/);
+  // Action verbs that signal the "what we're doing" sentence
+  var actionVerbs = /^(fix|build|create|implement|redesign|polish|optimize|refactor|deploy|migrate|update|verify|audit|review|add|remove|break|overhaul|profile|safely|make|auto|prove|analyze|wake|coordinate|use|integrate|consolidate|extract|test|ship|rewrite|replace|move|split|merge|enable|install|configure|clean|close|write|generate|convert|expose|embed|render|connect|sync|push|launch|dispatch|serve|hook|pipe|wire|inject|emit|trigger|handle|normalize|validate|sanitize)/i;
+  // Find first action sentence
+  for (var i = 0; i < sentences.length; i++) {
+    var s = sentences[i].trim();
+    if (actionVerbs.test(s)) return s.length > 90 ? s.slice(0, 87) + '...' : s;
+  }
+  // No action sentence — use first sentence, trimmed
+  var first = sentences[0].trim();
+  return first.length > 90 ? first.slice(0, 87) + '...' : first;
+}
+
+// ── Format tagline with visual hierarchy ──
+function formatDispatchReason(text) {
+  if (!text) return '';
+  var safe = esc(text);
+  // Try splitting on " — " or " – " (em/en dash with spaces)
+  var dashMatch = safe.match(/^(.+?)\s[—–]\s(.+)$/);
+  if (dashMatch) {
+    return '<strong>' + dashMatch[1].trim() + '</strong> <span class="dr-rest">— ' + highlightKeywords(dashMatch[2]) + '</span>';
+  }
+  // Try splitting on ": " (colon with space) — but only if colon is early
+  var colonIdx = safe.indexOf(': ');
+  if (colonIdx > 0 && colonIdx < 35) {
+    return '<strong>' + safe.slice(0, colonIdx) + '</strong> <span class="dr-rest">' + highlightKeywords(safe.slice(colonIdx + 2)) + '</span>';
+  }
+  // No delimiter — the whole thing is the tagline, bold it all
+  return '<strong class="dr-tagline">' + highlightKeywords(safe) + '</strong>';
+}
+
+function highlightKeywords(text) {
+  text = text.replace(/\b(Playwright|Supabase|React|Node|API|CSS|HTML|TypeScript|JavaScript|Vite|MCP|WCAG|TDD|E2E|SQL|PostgreSQL|Vercel|GSAP|Three\.js)\b/gi, '<span class="dr-keyword">$1</span>');
+  return text;
 }
 
 // Bold-lead: bold the key part before a delimiter, lighter rest
@@ -1483,11 +1714,20 @@ function openReportCard(slot, campaignId) {
     h += '</div>';
     h += '<div class="rc-live-stage">' + esc(stageLabel) + '</div>';
 
-    // Lifecycle progress dots
+    // Lifecycle progress dots — support partial (amber) from agent.lifecycle field
     h += '<div class="rc-live-lifecycle" id="rc-live-lifecycle">';
     var lcLabels = ['Define','Discover','Execute','Reason','Verify','Debrief'];
+    var lcStageKeys = ['define','discover','execute','reason','verify','debrief'];
+    var agentLc = agent.lifecycle || {};
     lcLabels.forEach(function(label, i) {
-      var stepCls = i < activeIdx ? 'passed' : i === activeIdx ? 'active' : '';
+      var stepCls = '';
+      var lcState = agentLc[lcStageKeys[i]];
+      if (i < activeIdx) {
+        // Passed stages: check if agent.lifecycle marks it as partial
+        stepCls = lcState === 'partial' ? 'partial' : 'passed';
+      } else if (i === activeIdx) {
+        stepCls = 'active';
+      }
       h += '<div class="rc-live-lc-step ' + stepCls + '">';
       h += '<div class="rc-live-lc-dot"></div>';
       h += '<div class="rc-live-lc-label">' + label + '</div>';
@@ -1578,7 +1818,7 @@ function openReportCard(slot, campaignId) {
 
   // ── Summary (open by default) — big picture: top delivered + all missed ──
   const delivered = agent.delivered || [];
-  const missed = agent.missed || [];
+  const missed = (agent.missed || []).filter(m => !/^no items/i.test(m.trim()));
   const summaryItems = [];
   delivered.slice(0, 3).forEach(d => summaryItems.push({ type: 'delivered', text: d }));
   missed.slice(0, 2).forEach(m => summaryItems.push({ type: 'missed', text: m }));
@@ -1681,6 +1921,8 @@ function openReportCard(slot, campaignId) {
   const bg = document.getElementById('modalBg');
   bg.innerHTML = h;
   bg.classList.add('open');
+  _openModalSlot = slot;
+  _openModalCampaignId = campaignId;
 
   // Load PRD requirements asynchronously
   if (agent.brief) {
@@ -1749,12 +1991,16 @@ function openReportCard(slot, campaignId) {
           else if (hasWrites) highestIdx = 2;
           else if (hasSkills) highestIdx = 1;
           else highestIdx = 0;
-          // Update dots
+          // Update dots (with partial/amber support)
           var steps = lcEl.querySelectorAll('.rc-live-lc-step');
+          var agentLcR = agent.lifecycle || {};
+          var lcKeysR = ['define','discover','execute','reason','verify','debrief'];
           steps.forEach(function(step, i) {
-            step.classList.remove('passed', 'active');
-            if (i < highestIdx) step.classList.add('passed');
-            else if (i === highestIdx) step.classList.add('active');
+            step.classList.remove('passed', 'active', 'partial');
+            if (i < highestIdx) {
+              var lcSt = agentLcR[lcKeysR[i]];
+              step.classList.add(lcSt === 'partial' ? 'partial' : 'passed');
+            } else if (i === highestIdx) step.classList.add('active');
           });
           // Update stage label and mission status to match refined stage
           var stageNames = ['DEFINE','DISCOVER','EXECUTE','REASON','VERIFY','DEBRIEF'];
@@ -1821,6 +2067,162 @@ function toggleRcCollapse(head) {
 
 function closeModal() {
   document.getElementById('modalBg').classList.remove('open');
+  _openModalSlot = null;
+  _openModalCampaignId = null;
+}
+
+// ── Modal Live Section Auto-Refresh ──
+// Called after each poll cycle to update the live status bar without closing/reopening the modal.
+// Only patches the rc-live section DOM — no flicker, no scroll reset, no layout jump.
+function refreshModalLiveSection() {
+  if (!_openModalSlot || !_openModalCampaignId) return;
+  const bg = document.getElementById('modalBg');
+  if (!bg || !bg.classList.contains('open')) return;
+
+  const camp = campaigns.find(function(c) { return c.id === _openModalCampaignId; });
+  if (!camp) return;
+  const agent = camp.agents.find(function(a) { return a.slot === _openModalSlot; });
+  if (!agent) return;
+
+  const live = getAgentLiveState(agent);
+  const agentStatus = (agent.status || '').toLowerCase();
+  const isActive = agentStatus === 'active' || agentStatus === 'in-progress';
+
+  // Find the live bar container in the modal
+  var liveBar = bg.querySelector('.rc-live-bar');
+  var liveEmpty = bg.querySelector('.rc-live-empty');
+
+  if (isActive && live && live.active) {
+    const inferred = inferLifecycleStage(live);
+    const activeIdx = inferred ? inferred.idx : 0;
+    const missionStatus = getMissionStatus(live, inferred);
+    const stageLabel = inferred ? 'Stage ' + (activeIdx + 1) + ': ' + inferred.label : 'ACTIVE';
+    const startTs = live.sessionStart || live.ts || 0;
+    const elapsedMs = startTs ? Date.now() - startTs : 0;
+    const elapsedStr = elapsedMs > 0 ? formatElapsed(elapsedMs) : '';
+
+    if (liveBar) {
+      // Update existing live bar elements in-place (no innerHTML swap)
+      var missionEl = liveBar.querySelector('.rc-live-mission');
+      var stageEl = liveBar.querySelector('.rc-live-stage');
+      var elapsedEl = liveBar.querySelector('.rc-live-elapsed');
+      if (missionEl) missionEl.textContent = missionStatus;
+      if (stageEl) stageEl.textContent = stageLabel;
+      if (elapsedEl) elapsedEl.textContent = elapsedStr;
+
+      // Update lifecycle dots
+      var lcEl = liveBar.querySelector('.rc-live-lifecycle');
+      if (lcEl) {
+        var agentLc = agent.lifecycle || {};
+        var lcStageKeys = ['define','discover','execute','reason','verify','debrief'];
+        var steps = lcEl.querySelectorAll('.rc-live-lc-step');
+        steps.forEach(function(step, i) {
+          step.classList.remove('passed', 'active', 'partial');
+          if (i < activeIdx) {
+            var lcState = agentLc[lcStageKeys[i]];
+            step.classList.add(lcState === 'partial' ? 'partial' : 'passed');
+          } else if (i === activeIdx) {
+            step.classList.add('active');
+          }
+        });
+      }
+    } else if (liveEmpty) {
+      // Agent became active since modal was opened — replace empty with live bar
+      var liveContainer = liveEmpty.parentElement;
+      if (liveContainer) {
+        var newHtml = '<div class="rc-live"><div class="rc-live-bar">';
+        newHtml += '<div class="rc-live-top">';
+        newHtml += '<span class="rc-live-dot"></span>';
+        newHtml += '<span class="rc-live-mission">' + esc(missionStatus) + '</span>';
+        if (elapsedStr) newHtml += '<span class="rc-live-elapsed">' + esc(elapsedStr) + '</span>';
+        newHtml += '</div>';
+        newHtml += '<div class="rc-live-stage">' + esc(stageLabel) + '</div>';
+        newHtml += '<div class="rc-live-lifecycle">';
+        var lcLabels = ['Define','Discover','Execute','Reason','Verify','Debrief'];
+        var lcStageKeys = ['define','discover','execute','reason','verify','debrief'];
+        var agentLc = agent.lifecycle || {};
+        lcLabels.forEach(function(label, i) {
+          var stepCls = '';
+          if (i < activeIdx) {
+            var lcState = agentLc[lcStageKeys[i]];
+            stepCls = lcState === 'partial' ? 'partial' : 'passed';
+          } else if (i === activeIdx) {
+            stepCls = 'active';
+          }
+          newHtml += '<div class="rc-live-lc-step ' + stepCls + '">';
+          newHtml += '<div class="rc-live-lc-dot"></div>';
+          newHtml += '<div class="rc-live-lc-label">' + label + '</div>';
+          newHtml += '</div>';
+        });
+        newHtml += '</div></div></div>';
+        liveEmpty.outerHTML = newHtml;
+      }
+    }
+
+    // Also fetch activity data for refined stage inference (same logic as openReportCard)
+    if (agent.sessionId) {
+      var lcEl2 = bg.querySelector('.rc-live-lifecycle');
+      if (lcEl2) {
+        fetch('/api/session/' + encodeURIComponent(agent.sessionId))
+          .then(function(r) { return r.ok ? r.json() : null; })
+          .then(function(data) {
+            if (!data) return;
+            var activity = data.activity || [];
+            var highestIdx = 0;
+            var hasWrites = false, hasSkills = false, hasBash = false, hasDebrief = false;
+            activity.forEach(function(e) {
+              var tool = (e.tool || '').toLowerCase();
+              var detail = (e.detail || '').toLowerCase();
+              if (tool === 'write' || tool === 'edit') hasWrites = true;
+              if (detail.includes('.claude/skills') || detail.includes('skill')) hasSkills = true;
+              if (tool === 'bash') hasBash = true;
+              if (detail.includes('debrief') || detail.includes('/api/campaigns/agent-debrief')) hasDebrief = true;
+            });
+            if (hasDebrief) highestIdx = 5;
+            else if (hasBash && hasWrites) highestIdx = 4;
+            else if (hasWrites && activity.length > 15) highestIdx = 3;
+            else if (hasWrites) highestIdx = 2;
+            else if (hasSkills) highestIdx = 1;
+            // Only apply if higher than current (monotonic)
+            var currentSteps = lcEl2.querySelectorAll('.rc-live-lc-step');
+            var agentLc2 = agent.lifecycle || {};
+            var lcStageKeys2 = ['define','discover','execute','reason','verify','debrief'];
+            currentSteps.forEach(function(step, i) {
+              step.classList.remove('passed', 'active', 'partial');
+              if (i < highestIdx) {
+                var lcState = agentLc2[lcStageKeys2[i]];
+                step.classList.add(lcState === 'partial' ? 'partial' : 'passed');
+              } else if (i === highestIdx) {
+                step.classList.add('active');
+              }
+            });
+            // Update labels
+            var stageNames = ['DEFINE','DISCOVER','EXECUTE','REASON','VERIFY','DEBRIEF'];
+            var missionTexts = [
+              '\uD83D\uDCD6 Reading context and understanding requirements',
+              '\uD83D\uDD0D Discovering available skills and tools',
+              '\uD83D\uDEE0\uFE0F Building the deliverable',
+              '\uD83E\uDDE0 Reasoning about next steps',
+              '\u2705 Running verification and testing output',
+              '\uD83D\uDCDD Writing debrief and reporting results'
+            ];
+            var barEl = lcEl2.closest('.rc-live-bar');
+            if (barEl) {
+              var sLbl = barEl.querySelector('.rc-live-stage');
+              var mLbl = barEl.querySelector('.rc-live-mission');
+              if (sLbl) sLbl.textContent = 'Stage ' + (highestIdx + 1) + ': ' + stageNames[highestIdx];
+              if (mLbl) mLbl.textContent = missionTexts[highestIdx];
+            }
+          })
+          .catch(function() {});
+      }
+    }
+  }
+  // If agent completed while modal was open, update the live section to show done
+  else if (!isActive && liveBar) {
+    var parent = liveBar.closest('.rc-live');
+    if (parent) parent.outerHTML = '<div class="rc-live-empty">\u2705 Agent completed</div>';
+  }
 }
 
 // ── Infrastructure Attribution ──
@@ -1924,6 +2326,8 @@ function toggleInfraGroup(el) {
   el.classList.toggle('collapsed');
   var body = el.nextElementSibling;
   if (body) body.style.display = el.classList.contains('collapsed') ? 'none' : 'block';
+  var infraId = el.getAttribute('data-infra-id');
+  if (infraId) localStorage.setItem('mc-infra-' + infraId, el.classList.contains('collapsed') ? '0' : '1');
 }
 
 function toggleSprint(header) {
@@ -2000,6 +2404,7 @@ function toggleGuide() {
   const chev = document.getElementById('guide-chevron');
   if (body) body.classList.toggle('open');
   if (chev) chev.classList.toggle('open');
+  if (body) localStorage.setItem('mc-guide-open', body.classList.contains('open') ? '1' : '0');
 }
 
 // ── Tab switching ──
@@ -2271,7 +2676,7 @@ function render() {
       });
     }
     if (a.missed && a.missed.length) {
-      a.missed.forEach(item => {
+      a.missed.filter(m => !/^no items/i.test(m.trim())).forEach(item => {
         autoLosses.push({ agent: a.name, text: item, sprint: a.sprint, auto: true });
       });
     }
@@ -2589,13 +2994,15 @@ function render() {
 
     infraGroups.forEach(function(grp) {
       if (grp.items.length === 0) return;
+      var infraId = grp.label.replace(/[^a-zA-Z0-9]/g, '-').toLowerCase();
+      var infraOpen = localStorage.getItem('mc-infra-' + infraId) === '1';
       h += '<div class="infra-group">';
-      h += '<div class="infra-group-title collapsed" onclick="toggleInfraGroup(this)">';
-      h += '<span class="infra-chevron">\u25BE</span>';
+      h += '<div class="infra-group-title' + (infraOpen ? '' : ' collapsed') + '" data-infra-id="' + infraId + '" onclick="toggleInfraGroup(this)">';
+      h += '<span class="infra-chevron">' + (infraOpen ? '\u25B4' : '\u25BE') + '</span>';
       h += ' ' + grp.icon + ' ' + esc(grp.label);
       h += '<span style="margin-left:auto;font-family:\'DM Mono\',monospace;font-size:10px">' + grp.items.length + '</span>';
       h += '</div>';
-      h += '<div style="display:none">';
+      h += '<div style="display:' + (infraOpen ? 'block' : 'none') + '">';
 
       if (grp.type === 'skill') {
         // ── Skills: compact chip grid grouped by staleness ──
@@ -2743,14 +3150,15 @@ function render() {
   });
   h += '</div></div>';
 
-  // Campaign Metrics Guide (collapsible)
+  // Campaign Metrics Guide (collapsible — state persisted to localStorage)
+  var guideOpen = localStorage.getItem('mc-guide-open') === '1';
   h += '<div class="metrics-guide">';
   h += '<div class="metrics-guide-header" onclick="toggleGuide()">';
   h += '<h4>Campaign Metrics Guide</h4>';
   h += '<span class="guide-badge">How agents are graded</span>';
-  h += '<span class="metrics-guide-chevron" id="guide-chevron"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M3 4.5L6 7.5L9 4.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></span>';
+  h += '<span class="metrics-guide-chevron' + (guideOpen ? ' open' : '') + '" id="guide-chevron"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M3 4.5L6 7.5L9 4.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></span>';
   h += '</div>';
-  h += '<div class="metrics-guide-body" id="guide-body">';
+  h += '<div class="metrics-guide-body' + (guideOpen ? ' open' : '') + '" id="guide-body">';
   h += '<div class="metrics-guide-inner">';
 
   // LEFT: Lifecycle Stage Colors

@@ -150,9 +150,46 @@ Specifically, search the handoff doc for:
 
 ---
 
+### Gate 10: Skills Synced to Toolbox (HARD BLOCK)
+
+**Check:** Compare `~/.claude/skills/` against `projects/agent-mission-control/toolbox/skills/`. For each skill directory that exists in the installed location, check if it also exists in the toolbox with matching content.
+
+```bash
+# List installed skills not in toolbox
+diff <(ls ~/.claude/skills/ | sort) <(ls projects/agent-mission-control/toolbox/skills/ | sort) | grep "^<"
+```
+
+**Pass:** No installed skills are missing from the toolbox, or only non-MC skills (e.g., django-*, springboot-*) are absent.
+
+**Fail:** List every skill that exists in `~/.claude/skills/` but NOT in `toolbox/skills/`. Tell the orchestrator:
+> "These skills are installed locally but not synced to the toolbox. The other machine won't have them after git pull. Run: `cp -r ~/.claude/skills/<name> projects/agent-mission-control/toolbox/skills/<name>` for each."
+
+Focus on orchestrator-* skills, agent-grading, creating-agents, skill-mandate, and any skill created or modified this session. Third-party skills (django, springboot, etc.) don't need syncing.
+
+**Why:** v2.1 created 3 skills (creating-agents, skill-mandate, orchestrator-handoff) that almost didn't get pushed. Without toolbox sync, the home machine has no access to new skills.
+
+---
+
+### Gate 11: No Active Agents (HARD BLOCK)
+
+**Check:** Query the campaigns API for the current campaign. Check if any agents have `"status": "active"`.
+
+```bash
+curl -s http://localhost:3033/api/campaigns | node -e "let d='';process.stdin.on('data',c=>d+=c);process.stdin.on('end',()=>{const c=JSON.parse(d).find(c=>c.status==='active'&&c.workstream!=='cares');const active=c?c.agents.filter(a=>a.status==='active'&&!a.slot.startsWith('orchestrator')):[];console.log(active.length?active.map(a=>a.slot).join(', '):'none')})"
+```
+
+**Pass:** No active agents (excluding the orchestrator itself).
+
+**Fail:** List every active agent. Tell the orchestrator:
+> "These agents are still running: [list]. Wait for them to complete, review their output, then restart handoff. Handing off with active agents means the next orchestrator has no idea what they delivered."
+
+**Why:** v2.2 suggested handoff with 4 agents running. The user caught it. Handoff with active agents means unreviewed output, incomplete grades, and potential file conflicts for the next orchestrator. (PM025)
+
+---
+
 ## Gate Summary Report
 
-After running all 9 gates, print a summary table:
+After running all 11 gates, print a summary table:
 
 ```
 ## Handoff Quality Gate Report

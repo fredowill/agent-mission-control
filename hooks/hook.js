@@ -11,11 +11,11 @@ const fs   = require('fs');
 const path = require('path');
 const { execSync } = require('child_process');
 
-const FIND_PID_SCRIPT = path.join(__dirname, 'find-claude-pid.ps1');
+const FIND_PID_SCRIPT = path.join(__dirname, '..', 'find-claude-pid.ps1');
 
-const STATES_DIR = path.join(__dirname, 'states');
-const LOGS_DIR   = path.join(__dirname, 'logs');
-const DEBUG_LOG  = path.join(__dirname, 'debug-events.ndjson');
+const STATES_DIR = path.join(__dirname, '..', 'states');
+const LOGS_DIR   = path.join(__dirname, '..', 'logs');
+const DEBUG_LOG  = path.join(__dirname, '..', 'debug-events.ndjson');
 const DEBUG_MAX_LINES = 5000;
 
 const TOOL_MAP = {
@@ -41,6 +41,75 @@ const TOOL_MAP = {
 // Stop hook = turn ended, waiting for user input (NOT session closed)
 const IDLE_WAITING_STATE = { state: 'idle', emoji: '⏸️', label: 'IDLE' };
 const IDLE_STATE = { state: 'thinking', emoji: '💭', label: 'THINKING' };
+
+// ── Lifecycle Stage Tracking ──
+// Monotonic: stages only advance forward, never regress.
+// Order: define(0) → discover(1) → execute(2) → reason(3) → verify(4) → debrief(5)
+const LIFECYCLE_STAGES = ['define', 'discover', 'execute', 'reason', 'verify', 'debrief'];
+
+// Read-only tools that characterize DEFINE stage
+const READ_TOOLS = new Set(['Read', 'Grep', 'Glob', 'WebFetch', 'WebSearch']);
+// Write tools that characterize EXECUTE stage
+const WRITE_TOOLS = new Set(['Write', 'Edit', 'NotebookEdit']);
+// Verification patterns in Bash commands
+const VERIFY_PATTERNS = [/playwright/i, /screenshot/i, /node -c\b/, /\bcurl\b/, /npm test/i, /npx jest/i, /pytest/i, /go test/i];
+
+function inferLifecycleSignal(toolName, toolInput) {
+  if (!toolName) return null;
+  const cmd = String(toolInput.command || '');
+
+  // Debrief: agent calling the debrief API
+  if (toolName === 'Bash' && cmd.includes('api/campaigns/agent-debrief')) return 'debrief';
+
+  // Discover: Skill tool usage or listing skills dir
+  if (toolName === 'Skill') return 'discover';
+  if (toolName === 'Bash' && /ls\s+.*\.claude\/skills/i.test(cmd)) return 'discover';
+
+  // Verify: Bash commands that match test/screenshot/curl patterns
+  if (toolName === 'Bash' && VERIFY_PATTERNS.some(p => p.test(cmd))) return 'verify';
+
+  // Execute: writing code
+  if (WRITE_TOOLS.has(toolName)) return 'execute';
+
+  // Agent tool: sub-agent dispatch is an execute-level action
+  if (toolName === 'Agent') return 'execute';
+
+  // Read-only tools: could be define OR reason (context matters — handled by caller)
+  if (READ_TOOLS.has(toolName)) return 'read';
+
+  // Bash without verify patterns: likely execute (running build, install, etc.)
+  if (toolName === 'Bash') return 'execute';
+
+  // Planning tools
+  if (toolName === 'Task' || toolName === 'EnterPlanMode' || toolName === 'TodoWrite') return 'define';
+
+  return null;
+}
+
+function advanceLifecycleStage(prevStageIndex, hasWritten, signal) {
+  if (signal === null) return prevStageIndex;
+
+  // Direct stage signals — advance if higher than current
+  const directMap = { discover: 1, execute: 2, verify: 4, debrief: 5 };
+  if (directMap[signal] !== undefined) {
+    return Math.max(prevStageIndex, directMap[signal]);
+  }
+
+  // 'read' signal: context-dependent
+  // - Before any writes (stage <= define): stay at define
+  // - After writes (stage >= execute): advance to reason (3) if not already higher
+  if (signal === 'read') {
+    if (hasWritten && prevStageIndex >= 2 && prevStageIndex < 4) {
+      return Math.max(prevStageIndex, 3); // reason
+    }
+    return prevStageIndex; // stay put
+  }
+
+  // 'define' signal: only if we haven't progressed past it
+  if (signal === 'define') return prevStageIndex;
+
+  return prevStageIndex;
+}
 
 // ── PID Resolution ──
 // Walk process tree from ppid to find ancestor claude.exe PID.
@@ -111,6 +180,9 @@ process.stdin.on('end', () => {
     let displayName = null;
     let parentSessionId = null;  // Set by /api/launch for auto-dispatched agents
     let dispatchMeta = null;     // { agentName, campaignId, slot, mode, dispatchedAt }
+    let lifecycleStageIndex = 0; // monotonic — only goes up
+    let lifecycleHistory = [];   // [{stage, ts}] — one entry per stage transition
+    let lifecycleHasWritten = false; // track if agent has done any Write/Edit
     try {
       const prev = JSON.parse(fs.readFileSync(stateFile, 'utf8'));
       claudePid = prev.claudePid || null;
@@ -118,6 +190,9 @@ process.stdin.on('end', () => {
       displayName = prev.displayName || null;
       parentSessionId = prev.parentSessionId || null;
       dispatchMeta = prev.dispatchMeta || null;
+      lifecycleStageIndex = prev.lifecycleStageIndex || 0;
+      lifecycleHistory = Array.isArray(prev.lifecycleHistory) ? prev.lifecycleHistory : [];
+      lifecycleHasWritten = prev.lifecycleHasWritten || false;
     } catch (_) { /* first fire — no state file yet */ }
 
     // If stored PID exists, check if it's still alive.
@@ -149,8 +224,8 @@ process.stdin.on('end', () => {
       try {
         const prev = JSON.parse(fs.readFileSync(stateFile, 'utf8'));
         if (prev.state === 'waiting') {
-          // Keep waiting state, just update timestamp + PID
-          const stateData = { ...prev, ts: now, claudePid: claudePid || prev.claudePid };
+          // Keep waiting state, just update timestamp + PID + lifecycle
+          const stateData = { ...prev, ts: now, claudePid: claudePid || prev.claudePid, lifecycleStage: prev.lifecycleStage, lifecycleStageIndex: prev.lifecycleStageIndex, lifecycleHistory: prev.lifecycleHistory, lifecycleHasWritten: prev.lifecycleHasWritten };
           fs.writeFileSync(stateFile, JSON.stringify(stateData));
           // Skip logging — no real state change
           process.exit(0);
@@ -158,7 +233,23 @@ process.stdin.on('end', () => {
         }
       } catch (_) { /* no previous state — proceed normally */ }
     }
-    const stateData = { sessionId: sid, tool: tool || null, detail, statusLine, ts: now, claudePid, resumeCount, displayName, parentSessionId, dispatchMeta, ...info };
+    // ── Lifecycle stage inference (monotonic) ──
+    if (tool) {
+      if (WRITE_TOOLS.has(tool)) lifecycleHasWritten = true;
+      const signal = inferLifecycleSignal(tool, data.tool_input || {});
+      const newIndex = advanceLifecycleStage(lifecycleStageIndex, lifecycleHasWritten, signal);
+      if (newIndex > lifecycleStageIndex) {
+        lifecycleStageIndex = newIndex;
+        lifecycleHistory = [...lifecycleHistory, { stage: LIFECYCLE_STAGES[newIndex], ts: now }];
+      }
+      // Seed initial define entry if history is empty
+      if (lifecycleHistory.length === 0) {
+        lifecycleHistory = [{ stage: 'define', ts: now }];
+      }
+    }
+    const lifecycleStage = LIFECYCLE_STAGES[lifecycleStageIndex];
+
+    const stateData = { sessionId: sid, tool: tool || null, detail, statusLine, ts: now, claudePid, resumeCount, displayName, parentSessionId, dispatchMeta, lifecycleStage, lifecycleStageIndex, lifecycleHistory, lifecycleHasWritten, ...info };
     fs.writeFileSync(stateFile, JSON.stringify(stateData));
 
     // ── Append to activity log (only on state transitions) ──

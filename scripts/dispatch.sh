@@ -30,9 +30,10 @@ if [ ! -f "$PROMPT_FILE" ]; then
   exit 1
 fi
 
-# Derive project root from script location: agent-hub is inside .claude/agent-hub/
+# Derive project root from script location: scripts/ is inside agent-mission-control/
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-PROJECT_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
+MC_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
+PROJECT_ROOT="$(cd "$MC_ROOT/../.." && pwd)"
 cd "$PROJECT_ROOT"
 
 # Clear the CLAUDECODE env var — prevents "nested session" error.
@@ -87,12 +88,12 @@ echo "  ━━━━━━━━━━━━━━━━━━━━━━━━
 if [ $EXIT_CODE -eq 0 ]; then
   echo "  ✅ Agent completed successfully"
   # PM007: Notification sound — LoL Enemy Missing ping. Volume reduced ~25% from original.
-  PING_WAV="$SCRIPT_DIR/notify-ping.wav"
+  PING_WAV="$MC_ROOT/assets/notify-ping.wav"
   powershell -c "Add-Type -AssemblyName PresentationCore; \$p=New-Object System.Windows.Media.MediaPlayer; \$p.Open([Uri]::new('$PING_WAV')); \$p.Volume=0.25; \$p.Play(); Start-Sleep -Milliseconds 1500" 2>/dev/null
 else
   echo "  ⚠️  Agent exited with code $EXIT_CODE"
   # Error: double ping so user knows something went wrong
-  PING_WAV="$SCRIPT_DIR/notify-ping.wav"
+  PING_WAV="$MC_ROOT/assets/notify-ping.wav"
   powershell -c "Add-Type -AssemblyName PresentationCore; \$p=New-Object System.Windows.Media.MediaPlayer; \$p.Open([Uri]::new('$PING_WAV')); \$p.Volume=0.25; \$p.Play(); Start-Sleep -Milliseconds 1500; \$p.Position=[TimeSpan]::Zero; \$p.Play(); Start-Sleep -Milliseconds 1500" 2>/dev/null
 fi
 echo "  🔑 Session: $SESSION_ID"

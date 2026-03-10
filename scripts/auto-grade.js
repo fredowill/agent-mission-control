@@ -11,9 +11,9 @@
 const fs   = require('fs');
 const path = require('path');
 
-const STATES_DIR    = path.join(__dirname, 'states');
-const LOGS_DIR      = path.join(__dirname, 'logs');
-const CAMPAIGNS_F   = path.join(__dirname, 'campaigns.json');
+const STATES_DIR    = path.join(__dirname, '..', 'states');
+const LOGS_DIR      = path.join(__dirname, '..', 'logs');
+const CAMPAIGNS_F   = path.join(__dirname, '..', 'data', 'campaigns.json');
 
 const sessionId = process.argv[2];
 if (!sessionId) {
@@ -94,14 +94,17 @@ for (const pd of projectDirs) {
 }
 
 // Also check for screenshot files in screenshots/ dir
-// Screenshots dir is in the project root (2 levels up from .claude/agent-hub/)
-const screenshotsDir = path.join(__dirname, '..', '..', 'screenshots');
+// Screenshots dir is in the project root (3 levels up from scripts/ inside agent-mission-control)
+const screenshotsDir = path.join(__dirname, '..', '..', '..', 'screenshots');
 if (fs.existsSync(screenshotsDir)) {
   const agentScreenshots = fs.readdirSync(screenshotsDir)
     .filter(f => f.toLowerCase().includes(meta.slot.replace(/-/g, '')) ||
                  f.toLowerCase().includes(meta.slot.split('-')[0]));
   if (agentScreenshots.length > 0) transcriptHasScreenshots = true;
 }
+
+// ── Read campaigns.json early (needed by both lifecycle inference and deliverables scoring) ──
+const campaign_data = JSON.parse(fs.readFileSync(CAMPAIGNS_F, 'utf8'));
 
 // ── Infer lifecycle stages from activity log ──
 const lifecycle = { define: 'skipped', discover: 'skipped', execute: 'skipped', reason: 'skipped', verify: 'skipped', debrief: 'skipped' };
@@ -147,10 +150,36 @@ if (transcriptSkills.length > 0 || skillReads.length > 0) {
   lifecycle.discover = anySkillRef ? 'partial' : 'skipped';
 }
 
-// EXECUTE: Did the agent write/edit files?
-if (hasWrites) {
-  const writeCount = toolSequence.filter(t => t.state === 'developing').length;
-  lifecycle.execute = writeCount >= 2 ? 'passed' : 'partial';
+// EXECUTE: Score based on deliverables data (debrief) first, fall back to tool heuristic.
+// Bug fix: previously only counted write actions, ignoring delivered/missed arrays.
+// An agent with 1 write but 13 delivered items was getting "partial" — now uses debrief data.
+{
+  // Check if agent already has deliverables data in campaigns.json
+  const campaign_exec = campaign_data.find(c => c.id === meta.campaignId);
+  const agent_exec = campaign_exec ? campaign_exec.agents.find(a => a.slot === meta.slot) : null;
+  const delivered = (agent_exec && agent_exec.delivered) || [];
+  const missed = (agent_exec && agent_exec.missed) || [];
+  // Filter out placeholder missed items (e.g. "no missed items", "n/a", out-of-scope deferrals)
+  const realMissed = missed.filter(m =>
+    !/no miss|none|nothing|n\/a/i.test(m) &&
+    !/out of scope|deferred|future work|not in scope|beyond scope|correctly left/i.test(m)
+  );
+
+  if (delivered.length > 0 || realMissed.length > 0) {
+    // Debrief data available — score based on delivered vs missed ratio
+    if (delivered.length > 0 && delivered.length >= realMissed.length) {
+      lifecycle.execute = 'passed';   // More delivered than missed = solid execution
+    } else if (delivered.length > 0) {
+      lifecycle.execute = 'partial';  // Delivered some but missed >= delivered
+    } else {
+      lifecycle.execute = 'failed';   // Nothing delivered, only missed items
+    }
+  } else if (hasWrites) {
+    // No debrief data — fall back to tool activity heuristic
+    const writeCount = toolSequence.filter(t => t.state === 'developing').length;
+    lifecycle.execute = writeCount >= 2 ? 'passed' : 'partial';
+  }
+  // If no writes AND no debrief data, stays 'skipped' (genuinely uncertain)
 }
 
 // REASON: Did the agent read files AFTER writing? (reviewing own output)
@@ -248,8 +277,7 @@ execScore = Math.max(5, execScore);
 // Orchestrator/user overrides with actual assessment via manual grade.
 let delScore;
 
-// Check if agent already has deliverables data in campaigns.json
-const campaign_data = JSON.parse(fs.readFileSync(CAMPAIGNS_F, 'utf8'));
+// Check if agent already has deliverables data in campaigns.json (campaign_data read earlier)
 const campaign_check = campaign_data.find(c => c.id === meta.campaignId);
 const agent_check = campaign_check ? campaign_check.agents.find(a => a.slot === meta.slot) : null;
 const hasDeliverables = agent_check && agent_check.delivered && agent_check.delivered.length > 0;
@@ -321,17 +349,20 @@ try {
   // Update agent with auto-grade results
   agent.lifecycle = lifecycle;
   // Sanitize skills: strip shell fragments (**, 2>, |, grep) and validate against known skill names
-  const knownSkillsDir = path.join(__dirname, '..', '..', '.claude', 'skills');
+  const knownSkillsDir = path.join(__dirname, '..', '..', '..', '.claude', 'skills');
   const knownSkills = fs.existsSync(knownSkillsDir) ? fs.readdirSync(knownSkillsDir) : [];
   const sanitizedSkills = skillsUsed
     .map(s => s.trim())
-    .filter(s => s.length > 1 && !/[|>*]/.test(s) && !/^\s*grep\b/.test(s))
-    .filter(s => knownSkills.includes(s) || s.includes('-'));
+    .filter(s => s.length > 1 && s.length < 60)
+    .filter(s => !/[|>*&;$(){}\\]/.test(s))
+    .filter(s => !/\b(grep|cp|rm|mv|ls|cat|echo|cd|mkdir|chmod|curl|node|bash)\b/.test(s))
+    .filter(s => !/\s{2,}/.test(s))
+    .filter(s => knownSkills.includes(s));
   agent.skillsUsed = sanitizedSkills.length ? sanitizedSkills : agent.skillsUsed || [];
 
   // Parse mandated skills from agent's prompt file (systemic fix for f101)
   // Only skills listed in Stage 2 "Mandated skills:" should appear as "missed"
-  const promptFile = agent.brief ? path.join(__dirname, '..', agent.brief) : null;
+  const promptFile = agent.brief ? path.join(__dirname, '..', '..', agent.brief) : null;
   if (promptFile && fs.existsSync(promptFile)) {
     try {
       const promptContent = fs.readFileSync(promptFile, 'utf8');

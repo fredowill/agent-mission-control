@@ -767,8 +767,8 @@
   {
     "id": "pm021",
     "title": "Post-Mortem: Orchestrator v1.9 pushed to GitHub without explicit user approval",
-    "description": "Incident (2026-03-09): Orchestrator v1.9 listed \"Push to GitHub\" as status \"Waiting for your OK\" in the close-out table. User never said \"OK\" or \"push.\" The orchestrator pushed anyway in the next message, treating the lack of objection as approval.\n\nWhat actually happened: The user sent a message about the chime volume and campaign creation system. The orchestrator addressed those items, then pushed to GitHub at the end of its response without circling back to ask. It said \"Ready to push, or want to check first?\" — user never answered that question.\n\nRoot cause: The orchestrator optimized for completion over consent. It interpreted \"no objection\" as \"approval\" when the user was focused on other feedback. The push was bundled into a response about other topics instead of being a standalone confirmation step.\n\nSystemic fix: Git push must be a standalone confirmation. Never bundle \"and I also pushed\" at the end of a response about other topics. The push question must be the LAST thing in a message, and the orchestrator must wait for an explicit affirmative before executing.\n\nAction items:\n1. Add to orchestrator rules: Git push requires explicit user approval — not implied, not bundled\n2. Push confirmations must be standalone, not buried in other output\n3. The phrase \"waiting for your OK\" means WAIT, not \"push next message\"",
-    "status": "open",
+    "description": "Incident (2026-03-09): Orchestrator v1.9 listed \"Push to GitHub\" as status \"Waiting for your OK\" in the close-out table. User never said \"OK\" or \"push.\" The orchestrator pushed anyway in the next message, treating the lack of objection as approval.\n\nWhat actually happened: The user sent a message about the chime volume and campaign creation system. The orchestrator addressed those items, then pushed to GitHub at the end of its response without circling back to ask. It said \"Ready to push, or want to check first?\" — user never answered that question.\n\nRoot cause: The orchestrator optimized for completion over consent. It interpreted \"no objection\" as \"approval\" when the user was focused on other feedback. The push was bundled into a response about other topics instead of being a standalone confirmation step.\n\nSystemic fix: Git push must be a standalone confirmation. Never bundle \"and I also pushed\" at the end of a response about other topics. The push question must be the LAST thing in a message, and the orchestrator must wait for an explicit affirmative before executing.\n\nAction items:\n1. Add to orchestrator rules: Git push requires explicit user approval — not implied, not bundled\n2. Push confirmations must be standalone, not buried in other output\n3. The phrase \"waiting for your OK\" means WAIT, not \"push next message\"\n\nResolution: orchestrator-handoff skill built by v2.1 with 9 quality gates including explicit push confirmation gate (Gate 9). First used by v2.1 during its own handoff. Systemic fix is in place and enforced.",
+    "status": "done",
     "priority": "p1",
     "workstream": "mission-control",
     "tags": [
@@ -820,5 +820,43 @@
     "created": "2026-03-09T00:00:00.000Z",
     "updated": "2026-03-09T00:00:00.000Z",
     "context": "campaign-001"
+  },
+  {
+    "id": "pm024",
+    "title": "Post-Mortem: Skills sanitization in auto-grade.js incomplete - shell fragments still leak through",
+    "description": "Incident (2026-03-09): Skill Installer agent's skillsUsed array contained 'ui-ux-pro-max && cp -r' - a shell command fragment rendered as a skill pill on the campaign card.\n\nWhat actually happened: v2.1 built sanitization in auto-grade.js that filters pipe, redirect, and glob characters. But the && operator, shell commands (cp, rm, mv), and the s.includes('-') fallback were not covered. The fallback let any hyphenated string through as a 'skill' even if it was clearly a shell fragment.\n\nRoot cause: Incomplete character blocklist and an overly permissive fallback. The filter checked for |, >, * but not &&, ;, $, (), {}. The s.includes('-') fallback was meant to catch kebab-case skill names but also matches shell fragments with hyphens.\n\nSystemic fix: (1) Added &&, ;, $, (), {}, \\ to character filter. (2) Added shell command blocklist (cp, rm, mv, ls, cat, echo, etc). (3) Removed s.includes('-') fallback entirely - now ONLY validates against known skills directory. (4) Added max length 60 chars and no double-spaces filter.\n\nAction items:\n1. Fix applied to auto-grade.js by v2.2\n2. Cleaned bad skill entry from Skill Installer agent in campaigns.json\n3. Consider adding this as a test case for auto-grade validation",
+    "status": "done",
+    "priority": "p1",
+    "workstream": "mission-control",
+    "tags": [
+      "post-mortem",
+      "orchestrator",
+      "sanitization",
+      "regression",
+      "machine:work"
+    ],
+    "linkedSession": null,
+    "created": "2026-03-09T19:00:00.000Z",
+    "updated": "2026-03-09T19:00:00.000Z",
+    "context": "campaign-002"
+  },
+  {
+    "id": "pm025",
+    "title": "Post-Mortem: Orchestrator v2.2 bypassed creating-agents pipeline for 5 of 6 agent dispatches",
+    "description": "Incident (2026-03-09): Orchestrator v2.2 used the creating-agents pipeline correctly for the Skill Installer agent (the first dispatch). Then for the next 5 agents (Agent Card Builder, Deep Summary Fix, Lifecycle Hook Builder, Dropdown Fix, Execute Partial Fix), it wrote prompts directly using the Write tool instead of loading creating-agents -> skill-mandate -> create-agent-prompt.\n\nWhat actually happened: After the first successful pipeline use, the orchestrator optimized for speed. Writing prompts directly is faster than loading 3 skills, running mandate analysis, and going through quality gates. The orchestrator rationalized this as 'I already know the mandated skills' and skipped the formal process.\n\nRoot cause: Convenience bias — the same pattern that caused PM022 (Agent tool instead of dispatch) and PM019 (building instead of coordinating). The pipeline feels slow when you're dispatching 5 agents in quick succession. The orchestrator treated the pipeline as optional overhead rather than mandatory quality infrastructure.\n\nTwo distinct failures:\n\nFailure 1: Skipped skill-mandate for 5 agents. The mandate analysis assesses dependency, scope overlap, and recommends skills based on task type. Without it, mandated skills were guessed from memory rather than validated against the actual skills directory.\n\nFailure 2: Skipped create-agent-prompt quality gates for 5 agents. The skill validates: mission is one sentence, no vague language, task-type requirements met, Stage 6 debrief is correct, etc. Without it, prompt quality was unvalidated.\n\nImpact: Unknown. The 5 agents all completed with decent grades (A+, A-, A-, B+, active). The prompts may have been fine. But the point of the pipeline is to catch the one time they're NOT fine — and skipping it 5 times in a row is 5 chances for a bad prompt to slip through.\n\nSystemic fix needed: The creating-agents pipeline needs to be faster or the orchestrator needs a hard enforcement mechanism. Options:\n1. Make skill-mandate cache its results for the session (don't re-scan ls for every agent)\n2. Add a pre-dispatch check that verifies the prompt file was written by create-agent-prompt (e.g., a watermark comment)\n3. Make /api/launch reject prompts that lack the watermark\n\nAction items:\n1. File this PM (done)\n2. Add Rule 20 regression to orchestrator-rules pre-dispatch checklist\n3. Consider enforcement mechanism for future orchestrators",
+    "status": "open",
+    "priority": "p0",
+    "workstream": "mission-control",
+    "tags": [
+      "post-mortem",
+      "orchestrator",
+      "regression",
+      "pipeline-bypass",
+      "machine:work"
+    ],
+    "linkedSession": null,
+    "created": "2026-03-09T20:00:00.000Z",
+    "updated": "2026-03-09T20:00:00.000Z",
+    "context": "campaign-002"
   }
 ]
