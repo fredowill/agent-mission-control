@@ -320,7 +320,31 @@ try {
 
   // Update agent with auto-grade results
   agent.lifecycle = lifecycle;
-  agent.skillsUsed = skillsUsed.length ? skillsUsed : agent.skillsUsed || [];
+  // Sanitize skills: strip shell fragments (**, 2>, |, grep) and validate against known skill names
+  const knownSkillsDir = path.join(__dirname, '..', '..', '.claude', 'skills');
+  const knownSkills = fs.existsSync(knownSkillsDir) ? fs.readdirSync(knownSkillsDir) : [];
+  const sanitizedSkills = skillsUsed
+    .map(s => s.trim())
+    .filter(s => s.length > 1 && !/[|>*]/.test(s) && !/^\s*grep\b/.test(s))
+    .filter(s => knownSkills.includes(s) || s.includes('-'));
+  agent.skillsUsed = sanitizedSkills.length ? sanitizedSkills : agent.skillsUsed || [];
+
+  // Parse mandated skills from agent's prompt file (systemic fix for f101)
+  // Only skills listed in Stage 2 "Mandated skills:" should appear as "missed"
+  const promptFile = agent.brief ? path.join(__dirname, '..', agent.brief) : null;
+  if (promptFile && fs.existsSync(promptFile)) {
+    try {
+      const promptContent = fs.readFileSync(promptFile, 'utf8');
+      const mandatedMatch = promptContent.match(/[Mm]andated\s+skills?[^:]*:\s*[`]?([^\n`]+)/);
+      if (mandatedMatch) {
+        const mandated = mandatedMatch[1]
+          .split(/[,+]|\band\b/)
+          .map(s => s.replace(/[`()]/g, '').trim())
+          .filter(s => s.length > 1 && knownSkills.includes(s));
+        agent.mandatedSkills = mandated;
+      }
+    } catch (e) { /* prompt file read error — not critical */ }
+  }
   agent.status = 'completed';
 
   // Always update grade + breakdown. Re-runs should produce better scores

@@ -1113,5 +1113,41 @@
     "meta": "Session: orchestrator-v2.0, Campaign: campaign-001 Sprint 12",
     "id": "f100",
     "created": "2026-03-09T00:00:00.000Z"
+  },
+  {
+    "tier": "tier1",
+    "tag": "principle",
+    "title": "Grade the prompt, not just the agent — orchestrator owns prompt quality",
+    "quote": "It did what it was supposed to, but you should be graded bad because you didn't give a good enough prompt.",
+    "body": "Live Agent Modal agent delivered exactly what the prompt specified (tool-level activity timeline, tool counts). The user wanted lifecycle-stage awareness and mission-level summary. The agent executed an A+ delivery of a C-quality prompt. The orchestrator (v2.1) wrote a prompt focused on low-level tool state instead of the high-level lifecycle view the user requested. Grading must distinguish: agent execution quality vs orchestrator prompt quality. An agent that perfectly executes a bad prompt is still an A — the orchestrator takes the hit.",
+    "lesson": "When grading agents, separate prompt quality (orchestrator responsibility) from execution quality (agent responsibility). Add a prompt-quality factor to orchestrator grading rubric. Before dispatching, re-read the user's EXACT words about what they want — don't paraphrase into technical requirements that miss the intent.",
+    "meta": "Session: orchestrator-v2.1, Campaign: campaign-002",
+    "id": "f101",
+    "created": "2026-03-10T00:07:19.022Z",
+    "context": "campaign-002"
+  },
+  {
+    "tier": "tier1",
+    "tag": "principle",
+    "title": "Auto-mandate skills in dispatch pipeline — skill discovery as a substep of create-agent-prompt",
+    "quote": "This is exactly the type of logic we should add to the dispatch. Every part of create-agent uses create-agent-prompt and also has another skill that decides and looks up the best skill to mandate.",
+    "body": "The mandatedSkills field (added to campaigns.json by parsing prompt files) proved that knowing which skills an agent SHOULD use is critical for accurate grading and quality enforcement. The gap: the orchestrator manually picks mandated skills when writing prompts. This should be automated — create-agent-prompt should include a skill discovery substep that scans .claude/skills/, matches task type and scope to available skills, and auto-populates Stage 2 mandated skills. This closes the loop: dispatch pipeline mandates skills, agent uses them, auto-grader checks them, campaigns page shows them.",
+    "lesson": "Skill mandate should be a SYSTEMIC part of the dispatch pipeline, not an orchestrator judgment call. Add a skill discovery step to create-agent-prompt that reads ls .claude/skills/, matches against task type (research, UI, infrastructure, review, refactor), and auto-populates mandated skills in Stage 2.",
+    "meta": "Session: orchestrator-v2.1, Campaign: campaign-002",
+    "id": "f102",
+    "created": "2026-03-10T00:30:05.686Z",
+    "context": "campaign-002"
+  },
+  {
+    "tier": "tier1",
+    "tag": "principle",
+    "title": "Design changes require dependency assessment — swap old components for new ones",
+    "quote": "Whenever we are having design changes, we need to assess the dependencies and swap them out to swap in the new components.",
+    "body": "When introducing the creating-agents pipeline (skill-mandate + create-agent-prompt chain), the old hardcoded skill suggestions in create-agent-prompt became dead code that contradicts the new architecture. Every design change must include a dependency audit: what references the old pattern, what needs updating, and what needs removing. Leaving old patterns alongside new ones creates confusion and regression risk.",
+    "lesson": "Before shipping any architectural change: (1) list all files that reference the old pattern, (2) update or remove each one, (3) verify no fallback path bypasses the new design. Add this to the orchestrator handoff checklist.",
+    "meta": "Session: orchestrator-v2.1, Campaign: campaign-002",
+    "id": "f103",
+    "created": "2026-03-10T00:36:47.655Z",
+    "context": "campaign-002"
   }
 ]

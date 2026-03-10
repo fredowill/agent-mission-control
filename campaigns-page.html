@@ -170,6 +170,48 @@ header{display:flex;align-items:center;justify-content:space-between;padding:0 c
 .agent-focus-struct .focus-missed{color:var(--rose)}
 .agent-focus-struct .focus-closed{color:var(--text3);font-style:italic;font-size:11px}
 
+/* ── Orchestrator Lifecycle Progress Bar ── */
+.orch-lifecycle{display:flex;align-items:flex-start;gap:0;padding:14px 0 6px;justify-content:space-between;width:100%}
+.orch-lc-stage{display:flex;flex-direction:column;align-items:center;gap:4px;flex:1;min-width:0}
+.orch-lc-dot{width:14px;height:14px;border-radius:50%;transition:all .2s}
+.orch-lc-passed{background:#22c55e;box-shadow:0 0 0 3px rgba(34,197,94,0.15)}
+.orch-lc-partial{background:#f59e0b;box-shadow:0 0 0 3px rgba(245,158,11,0.15)}
+.orch-lc-failed{background:#ef4444;box-shadow:0 0 0 3px rgba(239,68,68,0.15)}
+.orch-lc-pending{background:#e0e0e0}
+.orch-lc-active{background:#3b82f6;box-shadow:0 0 0 3px rgba(59,130,246,0.2);animation:livePulse 1.2s ease-in-out infinite}
+.orch-lc-label{font-family:'DM Sans',sans-serif;font-size:10px;font-weight:600;letter-spacing:0.02em;white-space:nowrap}
+.orch-lc-state{font-family:'DM Mono',monospace;font-size:8px;font-weight:500;letter-spacing:0.04em;opacity:0.8}
+.orch-lc-conn{flex:0 0 12px;height:2px;background:#e0e0e0;margin-top:6px;border-radius:1px;transition:background .2s}
+.orch-lc-conn.done{background:#22c55e}
+
+/* Orchestrator Stats Row */
+.orch-stats{display:flex;gap:16px;padding:8px 0 0;flex-wrap:wrap}
+.orch-stat{display:flex;align-items:center;gap:5px;font-family:'DM Mono',monospace;font-size:11px;color:var(--text2)}
+.orch-stat-icon{font-size:13px}
+.orch-stat-val{font-weight:600;color:var(--text)}
+
+/* Orchestrator Past Cards */
+.orch-past-list{display:flex;flex-direction:column;gap:8px}
+.orch-past-card{display:flex;align-items:center;gap:12px;padding:12px;border-radius:12px;background:var(--surface);border:1px solid var(--sep);cursor:pointer;transition:all .2s ease}
+.orch-past-card:hover{background:var(--surface2);border-color:rgba(139,92,246,0.25);transform:translateY(-1px);box-shadow:0 2px 8px rgba(0,0,0,0.04)}
+.orch-past-card .past-icon{width:32px;height:32px;border-radius:8px;background:rgba(139,92,246,0.08);display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0}
+.orch-past-card .past-info{flex:1;min-width:0}
+.orch-past-card .past-header{display:flex;align-items:center;gap:8px;margin-bottom:2px}
+.orch-past-card .past-name{font-family:'Plus Jakarta Sans',sans-serif;font-size:13px;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.orch-past-card .past-sprint{font-family:'DM Mono',monospace;font-size:10px;color:var(--text3);white-space:nowrap}
+.orch-past-card .past-grade{font-family:'DM Mono',monospace;font-size:10px;font-weight:600;padding:1px 6px;border-radius:4px;flex-shrink:0}
+.orch-past-card .past-grade.grade-a{color:#16a34a;background:rgba(34,197,94,0.1)}
+.orch-past-card .past-grade.grade-b{color:#2563eb;background:rgba(37,99,235,0.1)}
+.orch-past-card .past-grade.grade-c{color:#d97706;background:rgba(217,119,6,0.1)}
+.orch-past-card .past-grade.grade-d{color:#dc2626;background:rgba(220,38,38,0.1)}
+.orch-past-card .past-focus{font-family:'DM Sans',sans-serif;font-size:12px;color:var(--text3);line-height:1.4;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.orch-past-showmore{display:flex;align-items:center;justify-content:center;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:500;color:var(--text3);cursor:pointer;padding:8px 12px;border-radius:10px;border:1px dashed var(--sep);transition:all .2s ease;background:transparent}
+.orch-past-showmore:hover{color:var(--text2);border-color:rgba(139,92,246,0.3);background:rgba(139,92,246,0.03)}
+
+/* Orchestrator Mission Line */
+.orch-mission{font-family:'DM Sans',sans-serif;font-size:13px;color:var(--text3);line-height:1.4;margin:4px 0 0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.orch-mission .mission-label{font-weight:600;color:var(--text2)}
+
 /* Lifecycle bar (5 dots) */
 .lifecycle-bar{display:flex;align-items:center;gap:4px;margin-bottom:10px}
 .lc-dot{width:8px;height:8px;border-radius:50%;transition:all .15s}
@@ -467,6 +509,32 @@ header{display:flex;align-items:center;justify-content:space-between;padding:0 c
 .rc-btn.primary:hover{background:#7c3aed}
 .rc-btn.secondary{background:var(--bg);color:var(--purple);border:1.5px solid var(--purple)}
 .rc-btn.secondary:hover{background:var(--purple-bg)}
+
+/* ── Live Mission Status (lifecycle-aware, no tool details) ── */
+.rc-live{margin-bottom:20px}
+.rc-live-bar{background:rgba(34,197,94,0.05);border:1px solid rgba(34,197,94,0.18);border-radius:12px;padding:16px 20px;position:relative;overflow:hidden}
+.rc-live-bar::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,#22c55e,#16a34a,#22c55e);background-size:200% 100%;animation:liveShimmer 2s linear infinite}
+@keyframes liveShimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
+.rc-live-top{display:flex;align-items:center;gap:10px;margin-bottom:2px}
+.rc-live-dot{width:8px;height:8px;border-radius:50%;background:#22c55e;flex-shrink:0;animation:livePulse 1.5s ease-in-out infinite}
+.rc-live-mission{font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;color:var(--text);line-height:1.4}
+.rc-live-elapsed{font-family:'DM Mono',monospace;font-size:10px;color:var(--text3);margin-left:auto;flex-shrink:0}
+.rc-live-stage{font-family:'Plus Jakarta Sans',sans-serif;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#16a34a;margin-top:8px}
+
+/* Lifecycle progress dots */
+.rc-live-lifecycle{display:flex;align-items:flex-start;gap:0;margin-top:14px;padding-top:14px;border-top:1px solid rgba(34,197,94,0.12)}
+.rc-live-lc-step{flex:1;display:flex;flex-direction:column;align-items:center;gap:6px;position:relative}
+.rc-live-lc-step:not(:last-child)::after{content:'';position:absolute;top:5px;left:calc(50% + 8px);right:calc(-50% + 8px);height:2px;background:var(--sep)}
+.rc-live-lc-step.passed:not(:last-child)::after{background:#22c55e}
+.rc-live-lc-step.active:not(:last-child)::after{background:linear-gradient(90deg,#2563eb 0%,var(--sep) 100%)}
+.rc-live-lc-dot{width:10px;height:10px;border-radius:50%;background:var(--sep);flex-shrink:0;position:relative;z-index:1;transition:all 0.3s ease}
+.rc-live-lc-step.passed .rc-live-lc-dot{background:#22c55e}
+.rc-live-lc-step.active .rc-live-lc-dot{background:#2563eb;box-shadow:0 0 0 4px rgba(37,99,235,0.18);animation:livePulse 1.5s ease-in-out infinite}
+.rc-live-lc-label{font-family:'DM Sans',sans-serif;font-size:9px;font-weight:600;text-transform:uppercase;letter-spacing:.04em;color:var(--text3);text-align:center}
+.rc-live-lc-step.passed .rc-live-lc-label{color:#16a34a}
+.rc-live-lc-step.active .rc-live-lc-label{color:#2563eb;font-weight:700}
+
+.rc-live-empty{background:var(--bg2);border:1px solid var(--sep);border-radius:10px;padding:16px 18px;margin-bottom:20px;text-align:center;font-family:'DM Sans',sans-serif;font-size:12px;color:var(--text3)}
 
 /* RC Responsive */
 @media(max-width:700px){
@@ -814,6 +882,17 @@ async function load() {
     _lastDataHash = hash;
     campaigns = newCampaigns;
     sessions = newSessions;
+    // Skip re-render if user is interacting with ANY open dropdown/collapse/modal (prevents auto-close bug)
+    // This is a systemic fix — covers: RC collapses, lifecycle cards, infra groups, sprint toggles, modals
+    if (
+      document.querySelector('.rc-collapse-body[data-open="1"]') ||
+      document.querySelector('.rc-lc-card.expanded') ||
+      document.querySelector('.infra-group-title:not(.collapsed)') ||
+      document.querySelector('.rc-modal-bg.open') ||
+      document.querySelector('.debrief-section-body.open')
+    ) {
+      return; // data updated but defer render until next poll when user closes the interactive element
+    }
     render();
   } catch (e) {
     document.getElementById('app').innerHTML = '<div style="text-align:center;padding:48px;color:var(--text3)"><strong style="display:block;font-size:18px;color:var(--text2);margin-bottom:6px">Failed to load</strong>' + e.message + '</div>';
@@ -886,7 +965,7 @@ function smartFormat(text) {
 
 // Grade helpers
 function gradeToGPA(grade) {
-  const map = {'A+':4.3,'A':4.0,'A-':3.7,'B+':3.3,'B':3.0,'B-':2.7,'C+':2.3,'C':2.0,'C-':1.7,'D+':1.3,'D':1.0,'D-':0.7,'F':0};
+  const map = {'A+':4.0,'A':4.0,'A-':3.7,'B+':3.3,'B':3.0,'B-':2.7,'C+':2.3,'C':2.0,'C-':1.7,'D+':1.3,'D':1.0,'D-':0.7,'F':0};
   return grade in map ? map[grade] : 0;
 }
 
@@ -919,6 +998,62 @@ function gpaColor(gpa) {
 // Lifecycle rendering
 const STAGES = ['define','discover','execute','reason','verify','debrief'];
 const STAGE_LABELS = ['Define','Discover','Execute','Reason','Verify','Debrief'];
+
+// Orchestrator-specific lifecycle (same data keys, different display labels)
+const ORCH_STAGE_LABELS = ['Orient','Plan','Dispatch','Monitor','Synthesize','Handoff'];
+
+function renderOrchestratorLifecycle(agent, liveStage) {
+  let h = '<div class="orch-lifecycle">';
+  STAGES.forEach((stage, i) => {
+    const state = agent.lifecycle ? (agent.lifecycle[stage] || 'pending') : 'pending';
+    const isActive = liveStage && liveStage.idx === i;
+    let dotCls, labelColor;
+    if (isActive) {
+      dotCls = 'orch-lc-active'; labelColor = '#3b82f6';
+    } else if (state === 'passed') {
+      dotCls = 'orch-lc-passed'; labelColor = '#16a34a';
+    } else if (state === 'partial') {
+      dotCls = 'orch-lc-partial'; labelColor = '#92400e';
+    } else if (state === 'failed') {
+      dotCls = 'orch-lc-failed'; labelColor = '#dc2626';
+    } else {
+      dotCls = 'orch-lc-pending'; labelColor = 'var(--text3)';
+    }
+    const stateText = isActive ? 'IN PROG' : state === 'passed' ? 'PASSED' : state === 'partial' ? 'PARTIAL' : state === 'failed' ? 'FAILED' : '';
+    h += '<div class="orch-lc-stage">';
+    h += '<div class="orch-lc-dot ' + dotCls + '"></div>';
+    h += '<div class="orch-lc-label" style="color:' + labelColor + '">' + ORCH_STAGE_LABELS[i] + '</div>';
+    if (stateText) h += '<div class="orch-lc-state" style="color:' + labelColor + '">' + stateText + '</div>';
+    h += '</div>';
+    if (i < STAGES.length - 1) {
+      const connDone = (state === 'passed' || state === 'partial');
+      h += '<div class="orch-lc-conn' + (connDone ? ' done' : '') + '"></div>';
+    }
+  });
+  h += '</div>';
+  return h;
+}
+
+function formatElapsed(ms) {
+  const s = Math.floor(ms / 1000);
+  if (s < 60) return s + 's';
+  const m = Math.floor(s / 60);
+  const sec = s % 60;
+  if (m < 60) return m + 'm ' + (sec > 0 ? sec + 's' : '');
+  const hr = Math.floor(m / 60);
+  const min = m % 60;
+  return hr + 'h ' + (min > 0 ? min + 'm' : '');
+}
+
+function formatRelativeTime(ts) {
+  const diff = Math.floor((Date.now() - ts) / 1000);
+  if (diff < 5) return 'just now';
+  if (diff < 60) return diff + 's ago';
+  const m = Math.floor(diff / 60);
+  if (m < 60) return m + 'm ago';
+  const hr = Math.floor(m / 60);
+  return hr + 'h ago';
+}
 
 function renderLifecycleDots(agent, size, liveStage) {
   const dotSize = size === 'large' ? 14 : 8;
@@ -992,6 +1127,25 @@ function inferLifecycleStage(live) {
   return null;
 }
 
+// Translate raw state + inferred lifecycle into a human-readable mission status line
+function getMissionStatus(live, inferred) {
+  if (!live) return 'Waiting for activity...';
+  const state = live.state || '';
+  const stage = inferred ? inferred.stage : '';
+
+  if (state === 'launching') return '🚀 Launching agent session';
+  if (stage === 'define' && state === 'planning') return '📋 Planning approach and reading requirements';
+  if (stage === 'define') return '📖 Reading context and understanding requirements';
+  if (stage === 'discover') return '🔍 Discovering available skills and tools';
+  if (stage === 'execute' || state === 'developing') return '🛠️ Building the deliverable';
+  if (stage === 'verify' || state === 'verifying') return '✅ Running verification and testing output';
+  if (stage === 'reason' || state === 'thinking') return '🧠 Reasoning about next steps';
+  if (stage === 'debrief') return '📝 Writing debrief and reporting results';
+  if (state === 'waiting' || state === 'idle') return '⏳ Waiting for input';
+  if (state === 'done' || live.done) return '✅ Completed';
+  return '⚡ Working...';
+}
+
 function renderLiveState(live) {
   if (!live) return '';
   const isActive = live.active && !live.done;
@@ -1036,10 +1190,11 @@ function renderAgentCard(campaign, agent) {
   const grade = agent.grade || autoGrade || '';
   const gCls = gradeClass(grade);
 
-  // Check for live session state
+  // Check for live session state — campaign status takes priority over PID liveness
   const live = getAgentLiveState(agent);
-  const isLive = live && live.active && !live.done;
-  const isWaitingInput = live && live.state === 'waiting';
+  const agentCompleted = agent.status === 'completed' || agent.status === 'graded';
+  const isLive = !agentCompleted && live && live.active && !live.done;
+  const isWaitingInput = !agentCompleted && live && live.state === 'waiting';
 
   // Structured focus
   let focusHtml = '';
@@ -1252,19 +1407,23 @@ function getLifecycleDetail(agent, stage) {
 }
 
 function getSuggestedSkills(agent) {
-  const focus = (agent.focus || '').toLowerCase();
+  // Systemic fix (f101): only suggest skills that were MANDATED in the agent's prompt.
+  // The old approach used keyword matching on focus text, which flagged irrelevant skills.
+  // Now: parse the prompt file's Stage 2 for "Mandated skills:" line.
+  // If no prompt data available, return empty — never guess.
   const used = (agent.skillsUsed || []).map(s => s.toLowerCase());
   const suggestions = [];
-  if (/page|redesign|polish|ui|dashboard|modal|report|overhaul|visual/i.test(focus)) {
-    if (!used.includes('frontend-design')) suggestions.push('frontend-design');
-    if (!used.includes('impeccable-polish')) suggestions.push('impeccable-polish');
+
+  // Check if the agent has mandated skills stored (set by auto-grade or prompt parsing)
+  if (agent.mandatedSkills && Array.isArray(agent.mandatedSkills)) {
+    agent.mandatedSkills.forEach(sk => {
+      if (!used.includes(sk.toLowerCase())) suggestions.push(sk);
+    });
+    return suggestions;
   }
-  if (/overhaul|redesign|design|brainstorm/i.test(focus)) {
-    if (!used.includes('brainstorming')) suggestions.push('brainstorming');
-  }
-  if (/fix|bug|broken/i.test(focus)) {
-    if (!used.includes('systematic-debugging')) suggestions.push('systematic-debugging');
-  }
+
+  // Fallback: try to extract from brief/prompt file content if loaded
+  // For agents without mandatedSkills field, show nothing rather than guess wrong
   return suggestions;
 }
 
@@ -1298,6 +1457,51 @@ function openReportCard(slot, campaignId) {
   h += '<div class="rc-grade-subtitle">Sprint ' + (agent.sprint || '?') + ' &middot; ' + esc(grade) + (grade !== 'N/A' ? ' &middot; Score: ' + score.total + '/100' : '') + '</div>';
   if (agent.gradeReason) h += '<div class="rc-grade-reason">' + esc(agent.gradeReason) + '</div>';
   h += '</div></div>';
+
+  // ── Live State Section (for active agents with a live session) ──
+  const live = getAgentLiveState(agent);
+  const agentStatus = (agent.status || '').toLowerCase();
+  const isActive = agentStatus === 'active' || agentStatus === 'in-progress';
+
+  if (isActive && live && live.active) {
+    // Lifecycle-aware mission status (no tool details)
+    const inferred = inferLifecycleStage(live);
+    const activeIdx = inferred ? inferred.idx : 0;
+    const missionStatus = getMissionStatus(live, inferred);
+    const stageLabel = inferred ? 'Stage ' + (activeIdx + 1) + ': ' + inferred.label : 'ACTIVE';
+    // Elapsed time from session start
+    const startTs = live.sessionStart || live.ts || 0;
+    const elapsedMs = startTs ? Date.now() - startTs : 0;
+    const elapsedStr = elapsedMs > 0 ? formatElapsed(elapsedMs) : '';
+
+    h += '<div class="rc-live">';
+    h += '<div class="rc-live-bar">';
+    h += '<div class="rc-live-top">';
+    h += '<span class="rc-live-dot"></span>';
+    h += '<span class="rc-live-mission">' + esc(missionStatus) + '</span>';
+    if (elapsedStr) h += '<span class="rc-live-elapsed">' + esc(elapsedStr) + '</span>';
+    h += '</div>';
+    h += '<div class="rc-live-stage">' + esc(stageLabel) + '</div>';
+
+    // Lifecycle progress dots
+    h += '<div class="rc-live-lifecycle" id="rc-live-lifecycle">';
+    var lcLabels = ['Define','Discover','Execute','Reason','Verify','Debrief'];
+    lcLabels.forEach(function(label, i) {
+      var stepCls = i < activeIdx ? 'passed' : i === activeIdx ? 'active' : '';
+      h += '<div class="rc-live-lc-step ' + stepCls + '">';
+      h += '<div class="rc-live-lc-dot"></div>';
+      h += '<div class="rc-live-lc-label">' + label + '</div>';
+      h += '</div>';
+    });
+    h += '</div>';
+
+    h += '</div>';
+    h += '</div>';
+  } else if (isActive && !live) {
+    h += '<div class="rc-live-empty">Agent started, waiting for first activity...</div>';
+  } else if (agentStatus === 'ready') {
+    h += '<div class="rc-live-empty">Not yet started</div>';
+  }
 
   // Requirements — what this agent was set out to do (from PRD)
   if (agent.brief || agent.focus) {
@@ -1514,6 +1718,65 @@ function openReportCard(slot, campaignId) {
         .catch(function() { if (reqEl) reqEl.innerHTML = '<span style="color:var(--text3);font-size:11px">Could not load PRD</span>'; });
     }
   }
+
+  // Update lifecycle progress dots from activity data (for more accurate stage inference)
+  if (isActive && live && live.active && agent.sessionId) {
+    const lcEl = document.getElementById('rc-live-lifecycle');
+    if (lcEl) {
+      fetch('/api/session/' + encodeURIComponent(agent.sessionId))
+        .then(function(r) { return r.ok ? r.json() : null; })
+        .then(function(data) {
+          if (!data || !lcEl) return;
+          var activity = data.activity || [];
+          // Walk activity to find highest stage reached
+          var highestIdx = 0;
+          var hasWrites = false;
+          var hasSkills = false;
+          var hasBash = false;
+          var hasDebrief = false;
+          activity.forEach(function(e) {
+            var tool = (e.tool || '').toLowerCase();
+            var detail = (e.detail || '').toLowerCase();
+            if (tool === 'write' || tool === 'edit') hasWrites = true;
+            if (detail.includes('.claude/skills') || detail.includes('skill')) hasSkills = true;
+            if (tool === 'bash') hasBash = true;
+            if (detail.includes('debrief') || detail.includes('/api/campaigns/agent-debrief')) hasDebrief = true;
+          });
+          // Determine highest stage from activity patterns
+          if (hasDebrief) highestIdx = 5;
+          else if (hasBash && hasWrites) highestIdx = 4;
+          else if (hasWrites && activity.length > 15) highestIdx = 3;
+          else if (hasWrites) highestIdx = 2;
+          else if (hasSkills) highestIdx = 1;
+          else highestIdx = 0;
+          // Update dots
+          var steps = lcEl.querySelectorAll('.rc-live-lc-step');
+          steps.forEach(function(step, i) {
+            step.classList.remove('passed', 'active');
+            if (i < highestIdx) step.classList.add('passed');
+            else if (i === highestIdx) step.classList.add('active');
+          });
+          // Update stage label and mission status to match refined stage
+          var stageNames = ['DEFINE','DISCOVER','EXECUTE','REASON','VERIFY','DEBRIEF'];
+          var missionTexts = [
+            '\uD83D\uDCD6 Reading context and understanding requirements',
+            '\uD83D\uDD0D Discovering available skills and tools',
+            '\uD83D\uDEE0\uFE0F Building the deliverable',
+            '\uD83E\uDDE0 Reasoning about next steps',
+            '\u2705 Running verification and testing output',
+            '\uD83D\uDCDD Writing debrief and reporting results'
+          ];
+          var stageEl = lcEl.closest('.rc-live-bar');
+          if (stageEl) {
+            var stageLbl = stageEl.querySelector('.rc-live-stage');
+            var missionLbl = stageEl.querySelector('.rc-live-mission');
+            if (stageLbl) stageLbl.textContent = 'Stage ' + (highestIdx + 1) + ': ' + stageNames[highestIdx];
+            if (missionLbl) missionLbl.textContent = missionTexts[highestIdx];
+          }
+        })
+        .catch(function() { /* lifecycle dots stay at initial inference */ });
+    }
+  }
 }
 
 function toggleLcDetail(card) {
@@ -1542,14 +1805,17 @@ function toggleRcCollapse(head) {
   const chev = head.querySelector('.rc-collapse-chev');
   if (!body) return;
   const isOpen = body.dataset.open === '1';
+  const collapseId = body.id || head.closest('.rc-collapse').id || '';
   if (isOpen) {
     gsap.to(body, { height: 0, duration: 0.3, ease: 'power2.inOut' });
     if (chev) gsap.to(chev, { rotation: 0, duration: 0.25, ease: 'power2.inOut' });
     body.dataset.open = '0';
+    if (collapseId) localStorage.setItem('mc-rc-' + collapseId, '0');
   } else {
     gsap.to(body, { height: 'auto', duration: 0.35, ease: 'power2.out' });
     if (chev) gsap.to(chev, { rotation: 180, duration: 0.25, ease: 'power2.inOut' });
     body.dataset.open = '1';
+    if (collapseId) localStorage.setItem('mc-rc-' + collapseId, '1');
   }
 }
 
@@ -2135,8 +2401,8 @@ function render() {
   // ── TABS ──
   h += '<div class="tabs-bar">';
   // Separate orchestrator agents from regular agents
-  const orchAgents = agents.filter(a => (a.name || '').toLowerCase().includes('orchestr'));
-  const nonOrchAgents = agents.filter(a => !(a.name || '').toLowerCase().includes('orchestr'));
+  const orchAgents = agents.filter(a => (a.slot || '').startsWith('orchestrator-v'));
+  const nonOrchAgents = agents.filter(a => !(a.slot || '').startsWith('orchestrator-v'));
 
   ['orchestrator','agents','debrief','timeline','retro','closeout'].forEach(tab => {
     const labels = {orchestrator:'Orchestrator',agents:'Agents',debrief:'Debrief',timeline:'Timeline',retro:'Retro',closeout:'Close-Out'};
@@ -2161,38 +2427,52 @@ function render() {
   const currentOrch = sortedOrch[0];
   const pastOrch = sortedOrch.slice(1);
 
-  // Current orchestrator hero card
+  // Current orchestrator hero card — live, data-rich
   if (currentOrch) {
     const orchLive = getAgentLiveState(currentOrch);
-    const orchIsLive = orchLive && orchLive.active;
-    h += '<div style="background:linear-gradient(135deg,rgba(139,92,246,0.08),rgba(99,102,241,0.04));border:1.5px solid rgba(139,92,246,0.2);border-radius:16px;padding:28px 32px;margin-bottom:24px">';
-    h += '<div style="display:flex;align-items:center;gap:16px;margin-bottom:16px">';
+    const orchIsLive = (orchLive && orchLive.active) || currentOrch.status === 'active';
+    const orchLiveStage = (orchLive && orchLive.active) ? inferLifecycleStage(orchLive) : null;
+
+    h += '<div style="background:linear-gradient(135deg,rgba(139,92,246,0.08),rgba(99,102,241,0.04));border:1.5px solid rgba(139,92,246,0.2);border-radius:16px;padding:20px;margin-bottom:12px">';
+
+    // ── Header Row: icon + name + sprint + grade ──
+    h += '<div style="display:flex;align-items:center;gap:12px;margin-bottom:2px">';
     h += '<div style="width:48px;height:48px;border-radius:12px;background:linear-gradient(135deg,#8b5cf6,#6366f1);display:flex;align-items:center;justify-content:center;color:#fff;font-family:\'Plus Jakarta Sans\',sans-serif;font-size:20px;font-weight:800">' + (orchIsLive ? '⚡' : '🟣') + '</div>';
-    h += '<div>';
+    h += '<div style="flex:1">';
     h += '<div style="font-family:\'Plus Jakarta Sans\',sans-serif;font-size:20px;font-weight:800;color:#7c3aed;letter-spacing:-0.02em">' + esc(currentOrch.name) + '</div>';
-    h += '<div style="font-size:12px;color:var(--text3)">Sprint ' + (currentOrch.sprint || '?') + ' · ' + (orchIsLive ? '<span style="color:#16a34a;font-weight:600">ACTIVE NOW</span>' : esc(currentOrch.status || 'unknown')) + '</div>';
+    h += '<div style="font-size:12px;color:var(--text3)">Sprint ' + (currentOrch.sprint || '?') + ' · ' + (orchIsLive ? '<span style="color:#16a34a;font-weight:600">LIVE</span>' : esc(currentOrch.status || 'unknown')) + '</div>';
     h += '</div>';
     if (currentOrch.grade) h += '<span class="agent-grade ' + gradeClass(currentOrch.grade) + '" style="margin-left:auto;font-size:16px;padding:6px 14px">' + esc(currentOrch.grade) + '</span>';
     h += '</div>';
 
-    // Live state if active
-    if (orchIsLive) {
-      h += renderLiveState(orchLive);
+    // ── Mission line (first sentence of focus, replaces raw text dump) ──
+    if (currentOrch.focus) {
+      const missionLine = currentOrch.focus.split(/[.!]\s/)[0];
+      h += '<div class="orch-mission">🎯 <span class="mission-label">Focus:</span> ' + esc(missionLine) + '</div>';
     }
 
-    // Dispatched agents — non-orchestrator agents from the current orchestrator's sprint (from campaign data)
+    // ── Live state banner if active ──
+    if (orchIsLive) {
+      h += '<div style="margin-top:8px">' + renderLiveState(orchLive) + '</div>';
+    }
+
+    // ── 6-Stage Orchestrator Lifecycle Progress Bar ──
+    h += renderOrchestratorLifecycle(currentOrch, orchLiveStage);
+
+    // ── Dispatched Agents ──
     const orchSprint = currentOrch.sprint;
     const sprintAgents = agents.filter(a => a.sprint === orchSprint && !a.slot.startsWith('orchestrator'));
     if (sprintAgents.length > 0) {
-      h += '<div style="margin-top:16px;padding-top:16px;border-top:1px solid rgba(139,92,246,0.12)">';
-      h += '<div style="font-family:\'Plus Jakarta Sans\',sans-serif;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.04em;color:var(--text3);margin-bottom:10px">Dispatched Agents <span style="font-weight:500;opacity:0.7">(' + sprintAgents.length + ')</span></div>';
+      h += '<div style="margin-top:10px;padding-top:10px;border-top:1px solid rgba(139,92,246,0.1)">';
+      h += '<div style="font-family:\'Plus Jakarta Sans\',sans-serif;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;color:var(--text3);margin-bottom:6px">Dispatched <span style="font-weight:500;opacity:0.7">(' + sprintAgents.length + ')</span></div>';
       sprintAgents.forEach(da => {
         const liveState = getAgentLiveState(da);
-        const isActive = liveState && liveState.active;
+        const daCompleted = da.status === 'completed' || da.status === 'graded';
+        const isActive = !daCompleted && liveState && liveState.active;
         const gradeColor = da.grade ? gradeClass(da.grade) : '';
         const dotColor = isActive ? '#22c55e' : da.status === 'completed' ? (da.grade ? gradeToColor(da.grade) : '#a1a1aa') : da.status === 'ready' ? '#a78bfa' : '#f59e0b';
         const stateLabel = isActive ? (liveState.label || 'ACTIVE') : da.status === 'completed' ? (da.grade || 'Done') : da.status === 'ready' ? 'Ready' : esc(da.status || '?');
-        h += '<div style="display:flex;align-items:center;gap:10px;padding:6px 0;font-size:13px">';
+        h += '<div style="display:flex;align-items:center;gap:10px;padding:5px 0;font-size:13px">';
         h += '<span style="width:8px;height:8px;border-radius:50%;background:' + dotColor + ';flex-shrink:0' + (isActive ? ';animation:livePulse 1.5s ease-in-out infinite' : '') + '"></span>';
         h += '<span style="font-weight:600;color:var(--text)">' + esc(da.name) + '</span>';
         if (da.grade) {
@@ -2202,18 +2482,70 @@ function render() {
         h += '</div>';
       });
       h += '</div>';
-    } else if (!orchSprint) {
-      // No sprint set — show nothing
-    } else {
-      h += '<div style="margin-top:16px;padding-top:16px;border-top:1px solid rgba(139,92,246,0.12)">';
-      h += '<div style="font-size:12px;color:var(--text3);font-style:italic">No agents dispatched in Sprint ' + orchSprint + ' yet</div>';
+    } else if (orchSprint) {
+      // Check if orchestrator has delivered items — close-out sprint vs waiting
+      const isCloseOut = currentOrch.delivered && currentOrch.delivered.length > 0;
+      h += '<div style="margin-top:12px;padding-top:14px;border-top:1px solid rgba(139,92,246,0.1)">';
+      h += '<div style="font-size:12px;color:var(--text3);font-style:italic">' + (isCloseOut ? 'Close-out sprint — no agents dispatched' : 'No agents dispatched in Sprint ' + orchSprint + ' yet') + '</div>';
       h += '</div>';
     }
 
-    // Focus
-    if (currentOrch.focus) {
-      h += '<div style="margin-top:12px;font-size:12px;color:var(--text2);line-height:1.6">' + esc(currentOrch.focus) + '</div>';
+    // ── Stats Row ──
+    const deliveredCount = currentOrch.delivered ? currentOrch.delivered.length : 0;
+    const skillsCount = currentOrch.skillsUsed ? currentOrch.skillsUsed.length : 0;
+    const epItems = c.executionPlan && c.executionPlan.items ? c.executionPlan.items : [];
+    const epDone = epItems.filter(i => i.status === 'done').length;
+    const epTotal = epItems.length;
+
+    if (deliveredCount || skillsCount || epTotal) {
+      h += '<div class="orch-stats" style="margin-top:8px;padding-top:8px;border-top:1px solid rgba(139,92,246,0.1)">';
+      if (deliveredCount) h += '<div class="orch-stat"><span class="orch-stat-icon">✓</span> <span class="orch-stat-val">' + deliveredCount + '</span> delivered</div>';
+      h += '<div class="orch-stat"><span class="orch-stat-icon">🚀</span> <span class="orch-stat-val">' + sprintAgents.length + '</span> agents</div>';
+      if (epTotal) h += '<div class="orch-stat"><span class="orch-stat-icon">📋</span> <span class="orch-stat-val">' + epDone + '/' + epTotal + '</span> plan items</div>';
+      if (skillsCount) h += '<div class="orch-stat"><span class="orch-stat-icon">⚙️</span> <span class="orch-stat-val">' + skillsCount + '</span> skills</div>';
+      h += '</div>';
     }
+
+    // ── Previous Orchestrators (mini-cards, show 3, expand for more) ──
+    if (pastOrch.length) {
+      const showCount = Math.min(3, pastOrch.length);
+      const visiblePast = pastOrch.slice(0, showCount);
+      const hiddenCount = pastOrch.length - showCount;
+      h += '<div style="margin-top:12px;padding-top:12px;border-top:1px solid rgba(139,92,246,0.1)">';
+      h += '<div style="font-family:\'Plus Jakarta Sans\',sans-serif;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;color:var(--text3);margin-bottom:8px">Previous Orchestrators</div>';
+      h += '<div class="orch-past-list">';
+
+      function renderPastCard(po) {
+        const poGrade = po.grade || '?';
+        const poGCls = po.grade ? gradeClass(po.grade) : '';
+        const poVer = (po.name.match(/v?(\d+\.?\d*)/i) || ['','?'])[1];
+        const focusText = po.focus ? po.focus.split(/[.!]\s/)[0].substring(0, 60) : '';
+        let card = '<div class="orch-past-card" onclick="openReportCard(\'' + esc(po.slot) + '\', \'' + esc(c.id) + '\')">';
+        card += '<div class="past-icon">🟣</div>';
+        card += '<div class="past-info">';
+        card += '<div class="past-header">';
+        card += '<span class="past-name">' + esc(po.name) + '</span>';
+        if (po.grade) card += '<span class="past-grade ' + poGCls + '">' + esc(poGrade) + '</span>';
+        card += '<span class="past-sprint">Sprint ' + (po.sprint || '?') + '</span>';
+        card += '</div>';
+        if (focusText) card += '<div class="past-focus">' + esc(focusText) + '</div>';
+        card += '</div>';
+        card += '</div>';
+        return card;
+      }
+
+      visiblePast.forEach(po => { h += renderPastCard(po); });
+
+      if (hiddenCount > 0) {
+        var pastExpanded = localStorage.getItem('mc-past-orch-' + c.id) === '1';
+        h += '<div class="orch-past-showmore" ' + (pastExpanded ? 'style="display:none"' : '') + ' onclick="this.style.display=\'none\';document.getElementById(\'orch-past-expanded-' + c.id + '\').style.display=\'flex\';localStorage.setItem(\'mc-past-orch-' + c.id + '\',\'1\')">Show ' + hiddenCount + ' more orchestrator' + (hiddenCount > 1 ? 's' : '') + '</div>';
+        h += '<div id="orch-past-expanded-' + c.id + '" class="orch-past-list" style="display:' + (pastExpanded ? 'flex' : 'none') + '">';
+        pastOrch.slice(showCount).forEach(po => { h += renderPastCard(po); });
+        h += '</div>';
+      }
+      h += '</div></div>';
+    }
+
     h += '</div>';
   }
 
@@ -2373,8 +2705,8 @@ function render() {
     h += '</div>';
   }
 
-  // Past orchestrators
-  if (pastOrch.length) {
+  // Past orchestrators — full cards (only shown if no currentOrch hero card rendered them inline)
+  if (pastOrch.length && !currentOrch) {
     h += '<div style="margin-top:8px">';
     h += '<div style="font-family:\'Plus Jakarta Sans\',sans-serif;font-size:13px;font-weight:700;color:var(--text3);margin-bottom:12px">Previous Orchestrators</div>';
     h += '<div class="agents-grid">';

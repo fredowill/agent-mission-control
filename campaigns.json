@@ -1011,7 +1011,11 @@
           "skills": 7,
           "total": 80
         },
-        "reviewStatus": "complete"
+        "reviewStatus": "complete",
+        "mandatedSkills": [
+          "systematic-debugging",
+          "verification-before-completion"
+        ]
       },
       {
         "slot": "debrief-liveness",
@@ -1116,6 +1120,10 @@
         "lessons": [
           "Idle state: agent started but produced nothing",
           "Auto-dispatch: verify agent actually begins work"
+        ],
+        "mandatedSkills": [
+          "impeccable-optimize",
+          "systematic-debugging"
         ]
       },
       {
@@ -1159,6 +1167,10 @@
         "lessons": [
           "Dispatch: agent went idle without executing",
           "Monitoring: idle state needs earlier detection"
+        ],
+        "mandatedSkills": [
+          "impeccable-optimize",
+          "systematic-debugging"
         ]
       },
       {
@@ -1228,7 +1240,10 @@
         },
         "skillsUsed": [],
         "delivered": [],
-        "missed": []
+        "missed": [],
+        "mandatedSkills": [
+          "frontend-design"
+        ]
       },
       {
         "slot": "orchestrator-skill-split",
@@ -1268,6 +1283,10 @@
           "Lesson: split skills appear in slash commands",
           "Lesson: hub pattern scales for future phases",
           "Lesson: agents skip debrief when unmonitored"
+        ],
+        "mandatedSkills": [
+          "skill-builder",
+          "skill-creator"
         ]
       },
       {
@@ -1320,7 +1339,10 @@
           "skills": 13,
           "total": 86
         },
-        "reviewStatus": "complete"
+        "reviewStatus": "complete",
+        "mandatedSkills": [
+          "frontend-design"
+        ]
       },
       {
         "slot": "orchestrator-v1.8",
@@ -1380,7 +1402,7 @@
         "name": "Orchestrator v1.9",
         "focus": "Campaign-001 close-out. Multi-campaign system (selector, lifecycle states, create API). First campaign close-out in MC history. Emoji-coded tables (f094). PM020 systemic fix.",
         "sessionId": null,
-        "status": "active",
+        "status": "completed",
         "brief": null,
         "retro": "coordinated-sprint/orchestrator-v1.9-handoff.md",
         "sprint": 11,
@@ -1468,7 +1490,10 @@
           "skills": 13,
           "total": 85
         },
-        "reviewStatus": "complete"
+        "reviewStatus": "complete",
+        "mandatedSkills": [
+          "frontend-design"
+        ]
       },
       {
         "slot": "memory-cleanup-v2",
@@ -1512,7 +1537,10 @@
           "skills": 13,
           "total": 95
         },
-        "reviewStatus": "complete"
+        "reviewStatus": "complete",
+        "mandatedSkills": [
+          "writing-plans"
+        ]
       },
       {
         "slot": "lifecycle-enforcer-v2",
@@ -1555,7 +1583,10 @@
           "skills": 13,
           "total": 95
         },
-        "reviewStatus": "complete"
+        "reviewStatus": "complete",
+        "mandatedSkills": [
+          "agent-development"
+        ]
       },
       {
         "slot": "campaign-card-polish",
@@ -1597,7 +1628,10 @@
           "skills": 15,
           "total": 72
         },
-        "reviewStatus": "complete"
+        "reviewStatus": "complete",
+        "mandatedSkills": [
+          "impeccable-polish"
+        ]
       },
       {
         "slot": "campaign-nav-review",
@@ -1684,7 +1718,10 @@
           "skills": 13,
           "total": 91
         },
-        "reviewStatus": "complete"
+        "reviewStatus": "complete",
+        "mandatedSkills": [
+          "verification-before-completion"
+        ]
       }
     ],
     "executionPlan": {
@@ -2569,7 +2606,7 @@
     "id": "campaign-002",
     "name": "MC Maturity Sprint",
     "workstream": "mission-control",
-    "status": "draft",
+    "status": "active",
     "created": "2026-03-09",
     "description": "Second campaign. Goal: mature MC from proven-concept to daily-driver. Multi-campaign navigation, Cerebras-to-hooks migration, work laptop parity, showcase readiness. First campaign to span both home and work machines.",
     "objectives": [
@@ -2588,9 +2625,54 @@
         "focus": "First work laptop orchestrator. Campaign nav landing page, dispatch pipeline fixes (wt.exe, paths, debrief quality), Sprint 12 with 3 agents, 2 PMs filed+closed, 5 findings.",
         "sessionId": null,
         "status": "completed",
-        "retro": "coordinated-sprint/orchestrator-v2.0-handoff.md",
-        "brief": null,
         "retro": null,
+        "brief": null,
+        "sprint": 1,
+        "grade": "B",
+        "gradeReason": "First work laptop orchestrator. Built campaign nav, fixed dispatch pipeline (wt.exe, paths, debrief quality), dispatched 3 Sprint 12 agents. Regressed on Rule 5 (Agent tool) and Rule 21 (/api/launch). Filed + closed PM022-023.",
+        "lifecycle": {
+          "define": "passed",
+          "discover": "passed",
+          "execute": "passed",
+          "reason": "partial",
+          "verify": "partial"
+        },
+        "lifecycleReached": "discover",
+        "lifecycleFailedAt": null,
+        "skillsUsed": [
+          "orchestrator-init",
+          "orchestrator-rules",
+          "brainstorming",
+          "create-agent-prompt"
+        ],
+        "skillsNote": "Loaded orchestrator-init skill for Phase 1+2 initialization.",
+        "delivered": [
+          "Campaign-003 CARES Sprint created",
+          "Campaign navigation landing page",
+          "Machine auto-detection (machine-config.json)",
+          "Session chime (play-chime.ps1)",
+          "wt.exe full path fix",
+          "dispatch.sh path fix",
+          "XSS fix on workstream/status values",
+          "Debrief quality fix (populated arrays)",
+          "Rules 20-21 added",
+          "Pre-dispatch regression checklist"
+        ],
+        "missed": [
+          "Used Agent tool for implementation (PM022 regression)",
+          "Told user to open terminals manually instead of /api/launch (PM023)",
+          "Forgot git commit before handoff",
+          "Added CLAUDE.md rules hastily — user reverted them"
+        ]
+      },
+      {
+        "slot": "orchestrator-v2.1",
+        "name": "Orchestrator v2.1",
+        "focus": "Orchestrator standardization sprint. Grading system, handoff skill, live card, lifecycle research, skill standardization.",
+        "sessionId": null,
+        "status": "active",
+        "brief": null,
+        "retro": "coordinated-sprint/orchestrator-v2.1-handoff.md",
         "sprint": 1,
         "grade": null,
         "gradeReason": null,
@@ -2604,16 +2686,642 @@
         "lifecycleReached": "discover",
         "lifecycleFailedAt": null,
         "skillsUsed": [
-          "orchestrator-init"
+          "orchestrator-init",
+          "orchestrator-rules",
+          "orchestrator-plan",
+          "orchestrator-grade",
+          "orchestrator-handoff",
+          "brainstorming",
+          "create-agent-prompt",
+          "creating-agents",
+          "skill-mandate",
+          "skill-builder"
         ],
-        "skillsNote": "Loaded orchestrator-init skill for Phase 1+2 initialization.",
-        "delivered": [],
-        "missed": []
+        "skillsNote": "10 skills used. First orchestrator to use creating-agents pipeline. First to use orchestrator-handoff skill.",
+        "delivered": [
+          "creating-agents pipeline (skill-mandate + create-agent-prompt chain)",
+          "skill-mandate skill — auto-discovers mandated skills by task type",
+          "orchestrator-handoff skill — 9 quality gates + push confirmation",
+          "auto-grade-orchestrator.js — 4-factor orchestrator grading rubric",
+          "6-stage orchestrator lifecycle (Orient/Plan/Dispatch/Monitor/Synthesize/Handoff)",
+          "Live orchestrator card with lifecycle bar, dispatched agents, stats",
+          "Live agent modal with lifecycle inference + mission status",
+          "mandatedSkills system — prompt-parsed, not keyword-guessed",
+          "Skills sanitization in auto-grade.js",
+          "Slot-based orchestrator filter (replaced name band-aid)",
+          "Dropdown persistence (localStorage for all interactive elements)",
+          "Liveness fix (campaign status overrides PID)",
+          "Findings f101-f103, PM006 closed",
+          "Sprint 1: 6 agents dispatched, all completed (3.74 GPA)",
+          "Sprint 2: 5+ agents dispatched, pipeline standardized"
+        ],
+        "missed": [
+          "Lifecycle self-reporting research still running at handoff",
+          "Live Modal Overhaul v2 not dispatched (depends on research)",
+          "ui-ux-pro-max-skill not installed",
+          "Research skill (Weizhena) not fully installed",
+          "Auto-review pipeline not built",
+          "CARES sprint not started"
+        ]
+      },
+      {
+        "slot": "lifecycle-research",
+        "name": "Lifecycle Research",
+        "focus": "Deep Research: orchestrator lifecycle stages, grading criteria, external evidence. Blocks grading script + live card.",
+        "sessionId": "8a3ace9e-65a0-4ee4-a7e9-ecc116737939",
+        "status": "completed",
+        "brief": "coordinated-sprint/orchestrator-lifecycle-research-prompt.md",
+        "sprint": 1,
+        "grade": "A+",
+        "gradeReason": "Auto-graded: 97/100. Lifecycle 20/20, Skills 15/15, Exec 22/25, Deliverables 40/40.",
+        "lifecycle": {
+          "define": "passed",
+          "discover": "passed",
+          "execute": "partial",
+          "reason": "passed",
+          "verify": "partial",
+          "debrief": "passed"
+        },
+        "skillsUsed": [
+          "brainstorming"
+        ],
+        "delivered": [
+          "Orchestrator lifecycle — 6-stage lifecycle (Orient, Plan, Dispatch, Monitor, Synthesize, Handoff) with research-backed rationale",
+          "Grading criteria — passed/partial/failed definitions for all 6 stages plus 4-factor orchestrator-specific grading weights",
+          "Mapping table — all 9 orchestrator phases mapped to 6 lifecycle stages with sub-agent comparison table",
+          "9 external sources — Anthropic, Amazon, Microsoft Azure, arXiv (x2), QuantumBlack McKinsey, AI4HUMAN, Temporal/Airflow, Confident AI",
+          "Visual design notes — 6-dot progress bar with color coding, grouped sub-stages for expanded view, campaign page integration plan"
+        ],
+        "missed": [],
+        "lessons": [
+          "Orchestrator evaluation requires fundamentally different metrics than builder agents — coordination quality, planning quality, and knowledge continuity replace deliverables, execution quality, and skills",
+          "The OODA loop (Orient-Observe-Decide-Act) is a better mental model for coordinators than the builder lifecycle (Define-Build-Verify)",
+          "6 stages is the sweet spot — matches sub-agent visual footprint while allowing orchestrator-specific labels that signal different grading expectations"
+        ],
+        "scoreBreakdown": {
+          "deliverables": 40,
+          "execution": 22,
+          "lifecycle": 20,
+          "skills": 15,
+          "total": 97
+        },
+        "mandatedSkills": [
+          "brainstorming"
+        ]
+      },
+      {
+        "slot": "handoff-skill-builder",
+        "name": "Handoff Skill Builder",
+        "focus": "Build /orchestrator-handoff skill with 9 quality gates. Closes PM021.",
+        "sessionId": "69ab70c4-de6d-44d8-9b55-3b91917e2f50",
+        "status": "completed",
+        "brief": "coordinated-sprint/orchestrator-handoff-skill-prompt.md",
+        "sprint": 1,
+        "grade": "A+",
+        "gradeReason": "Auto-graded: 97/100. Lifecycle 20/20, Skills 15/15, Exec 22/25, Deliverables 40/40.",
+        "lifecycle": {
+          "define": "passed",
+          "discover": "passed",
+          "execute": "partial",
+          "reason": "passed",
+          "verify": "partial",
+          "debrief": "passed"
+        },
+        "skillsUsed": [
+          "skill-builder",
+          "orchestrator-init",
+          "orchestrator-handoff"
+        ],
+        "delivered": [
+          "orchestrator-handoff SKILL.md with 9 quality gates (6 hard blocks, 3 warnings)",
+          "Standardized handoff doc template with 8 sections matching v1.9 gold standard",
+          "PM021 push confirmation gate with explicit y/n flow and dispatch.json auto-closure",
+          "Gate classification system: hard-block vs warning with clear rationale per gate",
+          "Cross-platform compatibility (Windows Git Bash + macOS)",
+          "Skill interaction map: replaces orchestrator-sprint Phase 9, requires orchestrator-rules, feeds orchestrator-init"
+        ],
+        "missed": [],
+        "lessons": [
+          "Skill design benefits from reading multiple handoff docs to find the actual failure patterns — v2.0 handoff revealed 4 specific gaps (git commit, open PMs, PM021, prompt review) that became gates",
+          "306 lines is well under the 500-line target — progressive disclosure works when gate definitions are self-contained with Check/Pass/Fail sections",
+          "The skill-builder convention says use gerund names, but matching the existing orchestrator-* naming convention is more important for discoverability in this ecosystem"
+        ],
+        "scoreBreakdown": {
+          "deliverables": 40,
+          "execution": 22,
+          "lifecycle": 20,
+          "skills": 15,
+          "total": 97
+        },
+        "mandatedSkills": [
+          "skill-builder"
+        ]
+      },
+      {
+        "slot": "grading-script-builder",
+        "name": "Grading Script Builder",
+        "focus": "Build auto-grade-orchestrator.js with 4-factor rubric + fix 4 known grading bugs (reasoning, skills sanitization, relevance, calibration).",
+        "sessionId": "a16e0ba0-4a5c-430a-94a2-7512202d4f83",
+        "status": "completed",
+        "brief": "coordinated-sprint/auto-grade-orchestrator-prompt.md",
+        "sprint": 1,
+        "grade": "B",
+        "gradeReason": "Auto-graded: 84/100. Lifecycle 16/20, Skills 13/15, Exec 22/25, Deliverables 33/40.",
+        "lifecycle": {
+          "define": "partial",
+          "discover": "passed",
+          "execute": "passed",
+          "reason": "skipped",
+          "verify": "partial",
+          "debrief": "passed"
+        },
+        "skillsUsed": [
+          "coding-standards"
+        ],
+        "delivered": [
+          "auto-grade-orchestrator.js with 4-factor orchestrator rubric (Coordination 35%, Planning 25%, Lifecycle 20%, Continuity 20%)",
+          "6-stage orchestrator lifecycle (Orient/Plan/Dispatch/Monitor/Synthesize/Handoff) with stage-by-stage specific reasoning",
+          "Bug Fix #1: Stage reasoning references specific data (skills loaded, agents dispatched, findings count) instead of generic text",
+          "Bug Fix #2: Skills sanitization — strips shell output (pipes, redirects, globs) and validates against actual skills directory",
+          "Bug Fix #3: Relevant skills only — only mandated orchestrator skills flagged as missed, not irrelevant ones like frontend-design",
+          "Bug Fix #4: Score calibration — partials cap at 92 max, 2+ partials cap at 85, failed stages cap further. No more 97 with partial stages",
+          "Test mode (--test flag) validates all 14 orchestrators produce valid JSON with reasonable scores",
+          "Session mode compatible with existing dispatch pipeline (same interface as auto-grade.js)",
+          "Edge case handling: close-out sprints with 0 agents evaluate campaign management quality instead"
+        ],
+        "missed": [
+          "Did not add routing check to auto-grade.js (recommended but not implemented to respect do-not-modify constraint)",
+          "Transcript parsing for orchestrator sessions not deeply tested (reused auto-grade.js logic)"
+        ],
+        "lessons": [
+          "Orchestrator grading requires fundamentally different inputs than sub-agent grading — coordination quality depends on fleet outcomes, not individual output",
+          "Score calibration caps are essential — without them, lifecycle factor alone cannot prevent grade inflation when other factors score high",
+          "The 6-stage orchestrator lifecycle (Orient/Plan/Dispatch/Monitor/Synthesize/Handoff) maps cleanly to the existing 6-dot visual format"
+        ],
+        "scoreBreakdown": {
+          "deliverables": 33,
+          "execution": 22,
+          "lifecycle": 16,
+          "skills": 13,
+          "total": 84
+        },
+        "mandatedSkills": [
+          "coding-standards"
+        ]
+      },
+      {
+        "slot": "live-card-designer",
+        "name": "Live Card Designer",
+        "focus": "Redesign orchestrator tab: lightning icon, 6-stage lifecycle bar (Orient/Plan/Dispatch/Monitor/Synthesize/Handoff), dispatched agents, stats, auto-replacement.",
+        "sessionId": "9ca8a174-b1f8-486c-a8fe-174dff744345",
+        "status": "completed",
+        "brief": "coordinated-sprint/live-orchestrator-card-prompt.md",
+        "sprint": 1,
+        "grade": "A+",
+        "gradeReason": "Auto-graded: 97/100. Lifecycle 20/20, Skills 15/15, Exec 22/25, Deliverables 40/40.",
+        "lifecycle": {
+          "define": "passed",
+          "discover": "passed",
+          "execute": "passed",
+          "reason": "passed",
+          "verify": "passed",
+          "debrief": "passed"
+        },
+        "skillsUsed": [
+          "frontend-design"
+        ],
+        "delivered": [
+          "Item 1: Live orchestrator hero card with purple gradient icon, lightning emoji for active, mission line replacing raw focus dump",
+          "Item 2: 6-stage lifecycle progress bar with orchestrator-specific labels (Orient/Plan/Dispatch/Monitor/Synthesize/Handoff) and color-coded dots",
+          "Item 3: Dispatched agents section with live status dots, grade badges, and state labels",
+          "Item 4: Stats row showing delivered count, agent count, execution plan progress, and skills used",
+          "Item 5: Previous orchestrators collapsed row with version chips, grade badges, and +N more expander",
+          "Item 6: Auto-replacement working via existing version-sort logic",
+          "Item 7: Close-out sprint detection with accurate messaging",
+          "Item 1: Tooltip on hover for lifecycle stages showing grading criteria summary (deferred) (insight — correctly deferred)"
+        ],
+        "missed": [],
+        "lessons": [
+          "Lesson 1: Match existing inline-style-heavy pattern for consistency",
+          "Lesson 2: Orchestrator lifecycle uses sub-agent data keys with visual label mapping only",
+          "Lesson 3: Always verify function signatures before wiring onclick handlers"
+        ],
+        "scoreBreakdown": {
+          "deliverables": 40,
+          "execution": 22,
+          "lifecycle": 20,
+          "skills": 15,
+          "total": 97
+        },
+        "mandatedSkills": [
+          "frontend-design",
+          "impeccable-polish"
+        ]
+      },
+      {
+        "slot": "orchestrator-card-polish",
+        "name": "Orchestrator Card Polish",
+        "focus": "Fix lightning emoji, redesign previous orchestrators as mini-cards, fix alignment + white space.",
+        "sessionId": "7ccfc397-890a-418c-a7d2-28b555bb955b",
+        "status": "completed",
+        "brief": "coordinated-sprint/orchestrator-card-polish-prompt.md",
+        "sprint": 1,
+        "grade": "A+",
+        "gradeReason": "Auto-graded: 97/100. Lifecycle 20/20, Skills 15/15, Exec 22/25, Deliverables 40/40.",
+        "lifecycle": {
+          "define": "passed",
+          "discover": "passed",
+          "execute": "partial",
+          "reason": "passed",
+          "verify": "passed",
+          "debrief": "passed"
+        },
+        "skillsUsed": [
+          "impeccable-polish"
+        ],
+        "delivered": [
+          "Lightning emoji fix: active orchestrator now shows ? using status===active fallback (not just PID liveness)",
+          "Previous orchestrators redesigned as full mini-cards with icon, name, grade badge, sprint, and focus text",
+          "Alignment fix: vertical flex column layout with consistent 8px gaps and 12px card padding",
+          "White space cleanup: tightened hero card padding (28px?24px), margins (24px?16px), stats row (12px?8px)",
+          "Show all expander: 3 most recent shown, dashed-border Show N more button for the rest",
+          "Clicking previous orchestrator cards opens report card modal (preserved existing onclick)"
+        ],
+        "missed": [],
+        "lessons": [
+          "PID-based liveness detection fails for the orchestrator itself (it IS the current session) — status field is a reliable fallback",
+          "Mini-cards with focus text provide much better information scent than version+grade chips",
+          "The Apple Design template spacing scale (8/12/16/24) keeps things consistent without arbitrary values"
+        ],
+        "scoreBreakdown": {
+          "deliverables": 40,
+          "execution": 22,
+          "lifecycle": 20,
+          "skills": 15,
+          "total": 97
+        },
+        "mandatedSkills": [
+          "impeccable-polish"
+        ]
+      },
+      {
+        "slot": "live-agent-modal",
+        "name": "Live Agent Modal",
+        "focus": "Add live state bar, activity timeline, and tool count breakdown to agent report card modal for active agents.",
+        "sessionId": "422fa763-43c4-48db-9f40-a36c3f10455d",
+        "status": "completed",
+        "brief": "coordinated-sprint/live-agent-modal-prompt.md",
+        "sprint": 2,
+        "grade": "A+",
+        "gradeReason": "Auto-graded: 97/100. Lifecycle 20/20, Skills 15/15, Exec 22/25, Deliverables 40/40.",
+        "lifecycle": {
+          "define": "passed",
+          "discover": "passed",
+          "execute": "passed",
+          "reason": "passed",
+          "verify": "passed",
+          "debrief": "passed"
+        },
+        "skillsUsed": [
+          "frontend-design"
+        ],
+        "delivered": [
+          "Live state bar with green pulsing dot, emoji, state label (DEVELOPING/INVESTIGATING/etc), current tool, status detail, and elapsed time",
+          "Activity timeline showing last 8 state transitions from /api/session endpoint with emoji, tool name, file detail, and relative timestamps",
+          "Tool count breakdown line showing counts per tool type (Read/Write/Edit/Bash/Grep/Glob/etc) from activity logs",
+          "Conditional rendering: active+live shows live section, active+no-session shows waiting message, ready shows not-started, completed shows normal graded view"
+        ],
+        "missed": [],
+        "lessons": [
+          "The existing getAgentLiveState() function already cross-references campaign agents to live sessions — no need to build new matching logic",
+          "The /api/session/:id endpoint already returns activity logs — reusing it avoids needing new server endpoints",
+          "Active campaign agents may not have sessionId linked (like orchestrator-v2.1) — the live section gracefully shows waiting message in that case"
+        ],
+        "scoreBreakdown": {
+          "deliverables": 40,
+          "execution": 22,
+          "lifecycle": 20,
+          "skills": 15,
+          "total": 97
+        },
+        "mandatedSkills": [
+          "frontend-design"
+        ]
+      },
+      {
+        "slot": "orchestrator-card-polish-v2",
+        "name": "Orch Card Polish v2",
+        "focus": "Fix lifecycle bar width, style mission text, tighten spacing on orchestrator hero card.",
+        "sessionId": "4dcb256b-70d3-4435-9485-e4041103baba",
+        "status": "completed",
+        "brief": "coordinated-sprint/orchestrator-card-polish-v2-prompt.md",
+        "sprint": 2,
+        "grade": "A+",
+        "gradeReason": "Auto-graded: 97/100. Lifecycle 20/20, Skills 15/15, Exec 22/25, Deliverables 40/40.",
+        "lifecycle": {
+          "define": "passed",
+          "discover": "passed",
+          "execute": "partial",
+          "reason": "passed",
+          "verify": "passed",
+          "debrief": "passed"
+        },
+        "skillsUsed": [
+          "impeccable-polish"
+        ],
+        "delivered": [
+          "Full-width lifecycle bar with space-between layout — no dead space on sides",
+          "Styled mission text with emoji prefix, bold Focus: label, color-coded, ellipsis overflow",
+          "Tightened hero card spacing — padding 24->20px, gaps 16->12px, margins reduced throughout"
+        ],
+        "missed": [],
+        "lessons": [
+          "Lifecycle bar just needed flex:1 on stages + space-between on container — simple CSS fix",
+          "Connector widths should be fixed (flex:0 0 12px) while stages flex to fill remaining space",
+          "Polish passes work best with small, targeted changes — 6 edits total covered all 3 issues"
+        ],
+        "scoreBreakdown": {
+          "deliverables": 40,
+          "execution": 22,
+          "lifecycle": 20,
+          "skills": 15,
+          "total": 97
+        }
+      },
+      {
+        "slot": "ui-ux-skill-research",
+        "name": "UI/UX Skill Research",
+        "focus": "Evaluate nextlevelbuilder/ui-ux-pro-max-skill for installation. Compare with existing design skills.",
+        "sessionId": "bc3428a2-4c1a-4a55-976d-9c6efaaea2b8",
+        "status": "completed",
+        "brief": "coordinated-sprint/ui-ux-skill-research-prompt.md",
+        "sprint": 2,
+        "grade": "C",
+        "gradeReason": "Auto-graded: 75/100. Lifecycle 18/20, Skills 5/15, Exec 22/25, Deliverables 30/40.",
+        "lifecycle": {
+          "define": "passed",
+          "discover": "partial",
+          "execute": "partial",
+          "reason": "passed",
+          "verify": "partial",
+          "debrief": "passed"
+        },
+        "skillsUsed": [],
+        "delivered": [
+          "Evaluation document with feature comparison table (7 capabilities across 5 skills)",
+          "Installation steps for Claude Code (3 methods: CLI, Marketplace, Manual)",
+          "Recommendation: Install with customization — complements existing stack, add CLAUDE.md override for Apple aesthetic projects"
+        ],
+        "missed": [
+          "npm package security audit (recommended but not performed per research-only constraint)"
+        ],
+        "lessons": [
+          "UI/UX Pro Max fills a different layer (database) than our existing skills (behavioral prompts) — they are complementary not competing",
+          "Python 3.x dependency is the main friction point for installation",
+          "Aesthetic tension between 67 styles and our Apple-only aesthetic requires project-level scoping rules"
+        ],
+        "scoreBreakdown": {
+          "deliverables": 30,
+          "execution": 22,
+          "lifecycle": 18,
+          "skills": 5,
+          "total": 75
+        }
+      },
+      {
+        "slot": "live-modal-overhaul",
+        "name": "Live Modal Overhaul",
+        "focus": "Replace tool-level activity with lifecycle stage inference and mission-level status in agent modal.",
+        "sessionId": "c92a5099-3672-4d52-a8b7-5bef47523075",
+        "status": "completed",
+        "brief": "coordinated-sprint/live-modal-overhaul-prompt.md",
+        "sprint": 2,
+        "grade": "A-",
+        "gradeReason": "Auto-graded: 90/100. Lifecycle 20/20, Skills 15/15, Exec 22/25, Deliverables 33/40.",
+        "lifecycle": {
+          "define": "passed",
+          "discover": "passed",
+          "execute": "passed",
+          "reason": "passed",
+          "verify": "passed",
+          "debrief": "passed"
+        },
+        "skillsUsed": [
+          "frontend-design"
+        ],
+        "delivered": [
+          "Item 1: lifecycle stage inference from activity patterns — walks activity log to detect Define/Discover/Execute/Reason/Verify/Debrief stages",
+          "Item 2: mission status line replacing tool activity — human-readable sentences like Building the deliverable instead of tool names",
+          "Item 3: live lifecycle progress bar in modal — 6-dot progress with green passed, blue pulsing active, gray pending",
+          "Item 4: removed tool counts and activity timeline — no tool names or counts anywhere in active modal",
+          "Item 5: async stage refinement — activity fetch updates both dots AND stage label/mission text for accuracy"
+        ],
+        "missed": [
+          "Item 1: polling auto-refresh of the modal content every 5s (existing 5s polling refreshes sessions but modal must be re-opened to see updates — same as before)"
+        ],
+        "lessons": [
+          "Lesson 1: Two-layer inference (instant snapshot + async activity walk) gives much better accuracy than snapshot alone",
+          "Lesson 2: The existing inferLifecycleStage function was already in the codebase — enhancing it rather than replacing kept backward compatibility with card-level rendering"
+        ],
+        "scoreBreakdown": {
+          "deliverables": 33,
+          "execution": 22,
+          "lifecycle": 20,
+          "skills": 15,
+          "total": 90
+        }
+      },
+      {
+        "slot": "lifecycle-self-reporting-research",
+        "name": "Lifecycle Self-Reporting Research",
+        "focus": "Research lifecycle self-reporting via hooks. Replace heuristic inference (70%) with accurate tracking (95%). Informs modal v2.",
+        "sessionId": "325a2177-da9e-4680-be74-f5bdc6e32c49",
+        "status": "completed",
+        "brief": "coordinated-sprint/lifecycle-self-reporting-research-prompt.md",
+        "sprint": 2,
+        "grade": "A-",
+        "gradeReason": "Auto-graded: 90/100. Lifecycle 20/20, Skills 15/15, Exec 22/25, Deliverables 33/40.",
+        "lifecycle": {
+          "define": "passed",
+          "discover": "passed",
+          "execute": "partial",
+          "reason": "passed",
+          "verify": "partial",
+          "debrief": "passed"
+        },
+        "skillsUsed": [],
+        "delivered": [
+          "Research doc with 3 options assessed (A: enhanced heuristic, B: explicit self-report, C: hybrid) — recommended Option C",
+          "State file schema changes: 3 new fields (lifecycleStage, lifecycleHistory, lifecycleOverride) with backward compatibility",
+          "Modal auto-refresh solution: selective DOM update with anti-flicker techniques (compare-before-swap, scroll preservation, morphdom option)",
+          "6-step implementation plan with code examples and 5-hour effort estimate",
+          "6 online sources cited including disler multi-agent observability repo and AgentOps framework"
+        ],
+        "missed": [
+          "No items missed — all 7 required sections delivered"
+        ],
+        "lessons": [
+          "Monotonic lifecycle tracking solves the biggest accuracy gap (Read during Execute regressing to Define) — this single insight raises accuracy from 70% to ~85% without any agent cooperation",
+          "The debrief API is already a self-reporting precedent — extending it to a general /api/lifecycle endpoint is the natural evolution",
+          "Hybrid approach is essential because 40+ existing agents have no self-reporting capability — pure self-report would break backward compatibility"
+        ],
+        "scoreBreakdown": {
+          "deliverables": 33,
+          "execution": 22,
+          "lifecycle": 20,
+          "skills": 15,
+          "total": 90
+        }
       }
     ],
     "executionPlan": {
-      "version": "v1.9-draft",
-      "items": []
+      "version": "v2.1",
+      "items": [
+        {
+          "id": 1,
+          "task": "Research orchestrator lifecycle stages (Deep Research)",
+          "status": "in-progress",
+          "priority": "P0",
+          "sprint": 1,
+          "agentSlot": "lifecycle-research",
+          "note": "Blocks #3 and #4. Uses Deep Research 3-phase pattern."
+        },
+        {
+          "id": 2,
+          "task": "Build /orchestrator-handoff skill with 9 quality gates",
+          "status": "in-progress",
+          "priority": "P0",
+          "sprint": 1,
+          "agentSlot": "handoff-skill-builder",
+          "note": "Closes PM021. Parallel with #1."
+        },
+        {
+          "id": 3,
+          "task": "Build auto-grade-orchestrator.js (orchestrator-specific grading)",
+          "status": "done",
+          "priority": "P0",
+          "sprint": 1,
+          "agentSlot": null,
+          "note": "Depends on #1 (lifecycle stages inform rubric)."
+        },
+        {
+          "id": 4,
+          "task": "Redesign live orchestrator card on campaigns page",
+          "status": "done",
+          "priority": "P0",
+          "sprint": 1,
+          "agentSlot": null,
+          "note": "Depends on #1 (lifecycle stages determine viz). Lightning emoji, lifecycle bar, dispatched agents, stats."
+        },
+        {
+          "id": 5,
+          "task": "Retroactively grade v1.9 and v2.0 with new orchestrator rubric",
+          "status": "todo",
+          "priority": "P1",
+          "sprint": 1,
+          "agentSlot": "orchestrator-v2.1",
+          "note": "Small task. Depends on #3."
+        },
+        {
+          "id": 6,
+          "task": "Fix self-registration pipeline (auto-replace previous orchestrator)",
+          "status": "todo",
+          "priority": "P1",
+          "sprint": 1,
+          "agentSlot": null,
+          "note": "May be bundled with #4."
+        },
+        {
+          "id": 7,
+          "task": "Document emoji standard + research methodology",
+          "status": "done",
+          "priority": "P1",
+          "sprint": 1,
+          "agentSlot": "orchestrator-v2.1",
+          "note": "memory/emoji-standard.md + memory/research-methodology.md"
+        },
+        {
+          "id": 8,
+          "task": "Findings tab overhaul — sorting, dropdowns, priority ranking, show all ~96 findings",
+          "status": "todo",
+          "priority": "P1",
+          "sprint": 2,
+          "agentSlot": null,
+          "note": "Currently shows 67/96. No filtering or ranking. After orchestrator standardization."
+        },
+        {
+          "id": 9,
+          "task": "Machine-aware sound config (cross-device sync safe)",
+          "status": "todo",
+          "priority": "P1",
+          "sprint": 2,
+          "agentSlot": null,
+          "note": "Home=LoL sounds, Work=Windows chime. Git sync must not overwrite. Tied to machine-config.json."
+        },
+        {
+          "id": 10,
+          "task": "Session compaction — better way to summarize 10+ orchestrator sessions for init",
+          "status": "todo",
+          "priority": "P2",
+          "sprint": 2,
+          "agentSlot": null,
+          "note": "Backlog. Reduces init token cost."
+        },
+        {
+          "id": 11,
+          "task": "Live agent modal for active agents — show current state, file, elapsed time from /api/agents state data",
+          "status": "todo",
+          "priority": "P0",
+          "sprint": 2,
+          "agentSlot": null,
+          "note": "Pull from states/{sid}.json. Works for ALL agents. Complements orchestrator card (#4)."
+        },
+        {
+          "id": 12,
+          "task": "Post-mortem skill — standardize PM filing process like handoff skill standardizes handoffs",
+          "status": "todo",
+          "priority": "P1",
+          "sprint": 2,
+          "agentSlot": null,
+          "note": "User requested. Quality gates for PM creation."
+        },
+        {
+          "id": 13,
+          "task": "Default campaign selector to most recently active campaign",
+          "status": "todo",
+          "priority": "P1",
+          "sprint": 2,
+          "agentSlot": null,
+          "note": "Currently defaults to campaign-001. Should show most recent active."
+        },
+        {
+          "id": 14,
+          "task": "Investigate /cost command being down",
+          "status": "todo",
+          "priority": "P2",
+          "sprint": 2,
+          "agentSlot": null,
+          "note": "Claude Code CLI issue. Fix before demo campaign."
+        },
+        {
+          "id": 15,
+          "task": "Smarter skill activation hook — context-aware suggestions instead of static 6 categories",
+          "status": "todo",
+          "priority": "P2",
+          "sprint": 2,
+          "agentSlot": null,
+          "note": "Current hook is hardcoded. Works but suggests same 3 skills repeatedly."
+        },
+        {
+          "id": 17,
+          "task": "Overhaul live agent modal — replace tool-level activity with lifecycle stage awareness and mission-level summary",
+          "status": "todo",
+          "priority": "P0",
+          "sprint": 2,
+          "agentSlot": null,
+          "note": "Current modal shows Read/Write/Grep tool logs. User wants: which lifecycle stage, mission progress, current state. Tool counts are irrelevant."
+        }
+      ]
     },
     "carryFromCampaign001": [
       {
@@ -2677,8 +3385,8 @@
         "brief": null,
         "retro": null,
         "sprint": 1,
-        "grade": null,
-        "gradeReason": null,
+        "grade": "B",
+        "gradeReason": "Created campaign-003, initialized CARES Sprint. Main work in campaign-001 Sprint 12.",
         "lifecycle": {
           "define": "passed",
           "discover": "passed",
@@ -2695,10 +3403,42 @@
         "skillsNote": "Loaded init + rules skills. First work laptop orchestrator.",
         "delivered": [],
         "missed": []
+      },
+      {
+        "slot": "orchestrator-v2.1",
+        "name": "Orchestrator v2.1",
+        "focus": "Findings review, CLAUDE.md editing process, CARES sprint execution plan, MC dependency map, orchestrator handoff skill.",
+        "sessionId": null,
+        "status": "active",
+        "brief": null,
+        "retro": null,
+        "sprint": 2,
+        "grade": null,
+        "gradeReason": null,
+        "lifecycle": {
+          "define": "passed",
+          "discover": "passed",
+          "execute": "pending",
+          "reason": "pending",
+          "verify": "pending"
+        },
+        "lifecycleReached": "discover",
+        "lifecycleFailedAt": null,
+        "skillsUsed": [
+          "orchestrator-init",
+          "orchestrator-rules"
+        ],
+        "skillsNote": "Loaded init + rules skills. Read v2.0 session prompts (PM020 compliance).",
+        "delivered": [
+          "Campaign-002 orchestrator standardization (prerequisite for CARES)"
+        ],
+        "missed": [
+          "CARES agents not dispatched — orchestrator standardization took priority"
+        ]
       }
     ],
     "executionPlan": {
-      "version": "v2.0-draft",
+      "version": "v2.1-draft",
       "items": []
     }
   }
