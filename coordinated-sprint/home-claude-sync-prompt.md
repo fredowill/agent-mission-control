@@ -16,9 +16,25 @@
 2. Setting up NTFS junctions so `~/.claude/skills/` etc. point to MC's `toolbox/`
 3. Preserving ALL of home's hooks, skills, and formatting — home is authoritative
 
+## 😤 Why we're doing this (user pain points)
+
+The user has been dealing with these regressions for WEEKS:
+
+1. **Every orchestrator transition between home ↔ work loses skills, hooks, and rules.** v2.7 built a SessionStart hook, skill-index, skill-activation rewrite, topic-context rules — NONE of it made it to the work machine. Every session starts degraded.
+2. **Home has better formatting and presentation** — emoji-coded tables, forced skill evaluation, stale-knowledge web search reminders. Work sessions feel dumber because they're missing these hooks.
+3. **File structure on home is messy** — MC is buried inside phredomade's `.claude/` directory. The user can't even find MC easily. Everything is tangled together.
+4. **Moving files breaks syncing** — the old "toolbox copy" approach never actually synced to `~/.claude/`. It was a manual process nobody ran.
+5. **The user is afraid this migration will break what's working** — home's hooks and formatting are GOOD. They must survive this migration intact.
+
 ## ⚠️ CRITICAL: HOME WINS
 
 Home has the better hooks, better formatting, better emoji standards. When merging home content into the toolbox, **always keep home's version** over work's. The work machine explicitly defers to home on conflicts.
+
+**What's good about home that MUST be preserved:**
+- `skill-activation-hook.sh` — v2.7 forced-eval rewrite with "name 3 skills you considered" requirement + stale-knowledge web search reminder
+- `session-context.js` — v2.7 original SessionStart hook that injects session catalog + skill index
+- Emoji formatting standards — semantic emojis, bold-lead text, emoji-coded tables
+- Any skills that only exist on home (especially `deep-research`)
 
 ---
 
@@ -143,25 +159,34 @@ Adjust `claudeDir` if `~/.claude/` is not at `C:/Users/ephra/.claude/` — check
 
 ---
 
-## Phase 6: Create junctions
+## Phase 6: Review and fix setup.sh BEFORE running it
 
-The setup script creates NTFS junctions: `~/.claude/skills/` → `toolbox/skills/`, etc.
+**Do NOT blindly run setup.sh.** It was written on the work machine and may have wrong assumptions for home. Read it first and fix anything that won't work here.
 
+```bash
+cat ~/projects/agent-mission-control/toolbox/setup.sh
+```
+
+**Check these specifically:**
+1. Does the hostname detection work? Run `hostname` and verify it matches an entry in `machine-config.json`
+2. Does `cygpath` exist on this machine? If not, the path conversion will fail — fix the script
+3. Are the PowerShell junction commands correct for this machine's paths?
+4. Does `node` resolve the machine-config.json path correctly from bash?
+
+**Test the dry run:**
 ```bash
 cd ~/projects/agent-mission-control
 bash toolbox/setup.sh --dry-run
 ```
 
-**Review the dry run carefully.** It should show:
-- Each dir being backed up + junctioned
-- settings.json being generated
+**If the dry run fails or shows wrong paths:** Edit `setup.sh` to fix the issues. The script uses `machine-config.json` for paths — if those are wrong, fix `machine-config.json` first (Phase 5), then re-run dry-run.
 
-If it looks right:
+**Only when dry run shows correct paths for every junction**, run it for real:
 ```bash
 bash toolbox/setup.sh
 ```
 
-If setup.sh fails (permissions, path issues), create junctions manually via PowerShell:
+If setup.sh still fails (permissions, NTFS issues), create junctions manually via PowerShell:
 ```powershell
 # For each dir: skills, agents, commands, hooks, rules, scripts
 Remove-Item -Path "C:\Users\ephra\.claude\skills" -Recurse -Force
@@ -171,13 +196,14 @@ New-Item -ItemType Junction -Path "C:\Users\ephra\.claude\skills" -Target "C:\Us
 
 ---
 
-## Phase 7: Verify EVERYTHING
+## Phase 7: Verify EVERYTHING (most important phase)
 
+### 7a: Junctions work
 ```bash
 # Skills visible through junction
 ls ~/.claude/skills/ | head -5
 
-# Specific skill has content
+# Specific skill has content (not empty)
 cat ~/.claude/skills/skill-index.md | head -3
 
 # Hooks visible
@@ -186,18 +212,43 @@ ls ~/.claude/hooks/
 # Rules visible
 ls ~/.claude/rules/
 
-# MC server works from new location
+# Write test: edit in toolbox, read from .claude
+echo "junction-test" > ~/projects/agent-mission-control/toolbox/rules/test.txt
+cat ~/.claude/rules/test.txt  # Should show "junction-test"
+rm ~/projects/agent-mission-control/toolbox/rules/test.txt
+```
+
+### 7b: settings.json hook paths are correct
+This is critical — hooks reference absolute paths. After moving MC, ALL hook paths must point to the new locations.
+
+```bash
+cat ~/.claude/settings.json | grep -i "command"
+```
+
+**Check every path.** They should reference:
+- `~/.claude/scripts/` or `~/.claude/hooks/` for claude-dir hooks (these go through junctions → toolbox)
+- `~/projects/agent-mission-control/hooks/` for MC-specific hooks (hook.js, prompt-hook.js)
+- `~/projects/agent-mission-control/scripts/` for MC scripts (play-chime.ps1)
+
+**If any path still references the OLD location** (`phredomade/.claude/agent-hub/`), the settings.json generation failed. Fix `machine-config.json` and re-run `bash toolbox/setup.sh` to regenerate.
+
+### 7c: MC server works from new location
+```bash
 cd ~/projects/agent-mission-control
 node server.js &
 sleep 2
 curl -s http://localhost:3033/api/campaigns | head -c 200
 kill %1
-
-# Open a NEW Claude Code session and test:
-# - /plan command works
-# - Skill-activation hook fires on prompt submit
-# - Emoji formatting is correct
 ```
+
+### 7d: Live test in a NEW Claude Code session
+Open a fresh session and verify:
+- Skill-activation hook fires on your first prompt (you'll see "SKILL ACTIVATION CHECK" in the response)
+- Emoji formatting is correct (tables, bold-leads, semantic emojis)
+- Try `/plan` or another slash command — it should load
+- The session should feel the same as before the migration
+
+**If anything is wrong, DO NOT PROCEED.** Fix it first, or restore from backup.
 
 ---
 
