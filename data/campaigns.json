@@ -4102,7 +4102,7 @@
         "name": "Orchestrator v2.6",
         "focus": "Baseline agent quality + infrastructure. Universal lifecycle, skill-activation fix, dispatch fixes, 3 agents, aichat-search, Rust toolchain.",
         "sessionId": null,
-        "status": "active",
+        "status": "completed",
         "retro": "coordinated-sprint/orchestrator-v2.6-handoff.md",
         "brief": null,
         "sprint": 6,
@@ -4320,6 +4320,51 @@
           "skills": 15,
           "total": 87
         }
+      },
+      {
+        "slot": "orchestrator-v2.7",
+        "name": "Orchestrator v2.7",
+        "focus": "Context injection + skill reasoning systems. SessionStart hook, skill index, LLM-based skill selection, chime fix, cross-machine topic context.",
+        "sessionId": null,
+        "status": "completed",
+        "retro": "coordinated-sprint/orchestrator-v2.7-handoff.md",
+        "brief": null,
+        "sprint": 7,
+        "grade": null,
+        "gradeReason": null,
+        "lifecycle": {
+          "define": "passed",
+          "discover": "passed",
+          "execute": "passed",
+          "reason": "passed",
+          "verify": "passed"
+        },
+        "lifecycleReached": "debrief",
+        "lifecycleFailedAt": null,
+        "skillsUsed": [
+          "orchestrator-init",
+          "orchestrator-rules",
+          "deep-research",
+          "orchestrator-handoff"
+        ],
+        "skillsNote": "4 skills. Deep-research at init (Rule 23). Built directly instead of dispatching (Rule 12 — small infrastructure changes).",
+        "delivered": [
+          "SessionStart hook (session-context.js) — injects 20 recent sessions + skill index on every new session. 9/9 smoke tests, 354ms, ~2K tokens.",
+          "Skill Index (skill-index.md) — categorized one-liners for all 62 skills. Replaces keyword matching with LLM reasoning.",
+          "Skill-activation hook rewrite — forced eval pattern (84% activation per Scott Spence research) replacing keyword matching (skill-rules.json). eval-harness activated for first time ever.",
+          "00-topic-context.md — cross-machine knowledge file in .claude/rules/. Key topics, decisions, preferences, setup requirements.",
+          "00-agent-lifecycle.md RECALL step update — references Session Catalog, not just aichat search.",
+          "Chime regression fix — reverted play-chime.ps1 to hardcoded chimes.wav MediaPlayer approach. [console]::beep() doesn't work in hook subprocesses.",
+          "PM031 closed — systemic fix confirmed, no regression.",
+          "6 inferred findings from v2.6+v2.7 sessions (user testing patterns, systems thinking, infrastructure self-announcement, agent self-audit, better-defaults preference, audio feedback importance).",
+          "Deep research: context injection (4 searches, 5 hypotheses, claude-mem/context-memory/engram evaluated), skill selection (4 searches, Scott Spence forced-eval, Paddo controllability)."
+        ],
+        "missed": [
+          "Toolbox page refresh — deprioritized per user feedback (context injection was real P0)",
+          "Sound design interactive redo — only chime regression fixed, full redo still pending",
+          "PM032 still open — sound design headless dispatch",
+          "skill-mandate SKILL.md not updated to use skill index yet (still has hardcoded task-type map)"
+        ]
       }
     ],
     "executionPlan": {
