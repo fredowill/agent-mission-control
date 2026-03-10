@@ -1,0 +1,31 @@
+{"prompt":"wait do i still not have a cerbras key?","ts":1772652788868,"type":"user"}
+{"prompt":"wait why should i commit server.js. break it down more simply","ts":1772652878265,"type":"user"}
+{"prompt":"wil it have negative affect if I pull at home? or breka anything?","ts":1772652945206,"type":"user"}
+{"prompt":"pretty sure its a public repo on accident. how hard will it be to pull at home. do ihave to accept request>? aso how will i commit under like what username ","ts":1772653016750,"type":"user"}
+{"prompt":"well im at work so i probably cant do that rn. also fredowill email is fredowilliams@proton.me also help with cebraas being wierd evne tho i checked junk too","ts":1772653171441,"type":"user"}
+{"prompt":"where s other?","ts":1772653229942,"type":"user"}
+{"prompt":"csk-6xhvmp6jyk4453995kvkc5nme55jx8d92rh9ndypevhp5xtw","ts":1772653319503,"type":"user"}
+{"prompt":"after you are sure about everything and no doubts. open localhost yourself and lets do some testing","ts":1772653347963,"type":"user"}
+{"prompt":"also ideally i would want all my claude CLi's to have bypass all permissions so i want to add some safegaurds before we do that then ill start doing mission control testing also why is toolbox empty it should have all agents and skills. unless thats locally stored. if so update ours accordingly","ts":1772653466581,"type":"user"}
+{"prompt":"well is it still the case such that we owuldnt have those agents and commands on my home computer avalaible since its a local thign or do i have access to all those agents and comands here?","ts":1772653638507,"type":"user"}
+{"prompt":"whats ECC?","ts":1772654503910,"type":"user"}
+{"prompt":"oh nah its better to just start tracking github. in fact some of what we have here from ECC i might delet since its  aot of clutter. in fact after you start tracking agents. could you make it so it will avoid conflict if home and wokr comptuer have different toolbox. also orginize my toolbox page since theyare all nnot orginized ","ts":1772654578178,"type":"user"}
+{"prompt":"can you also orginize /commands a little more by color not just prple but dont just make it exactly like the agents section there should be distrinciton","ts":1772654754898,"type":"user"}
+{"prompt":"all cmmand groups are still purple. i also have another idea maybe agents and commands can share catagory spaces but are presented differenly. so dev and bild section has both agents and commands i thinkj this makes sens.e jus thave to be smart about how we present them so its intuitive and clear distiction between agents and commands in the same section. use playright to visualize and validate and test","ts":1772654987713,"type":"user"}
+{"prompt":"Also something else that I wanted to do is have tasks in the dispatch that are Mission Control labeled be Get Committed. That way if there are issues that I have, anything that's Mission Control related is shared, right? Obviously I have my own personal work that I do here versus at home but Mission Control should share a lot of things. There should be a shared pool of tasks if they're labeled as Mission Control because I might work on something here or there that relates to it. It's also another feature I'll work on.","ts":1772655431306,"type":"user"}
+{"prompt":"something else i want to note is i really want bypass all permissions since just adding settings still doesnt work So I want to add a certain guardrail so that it's successful for us. Another thing that I want to do is make sure, when we do this first commit for dispatch, we're not overriding whatever's in there, right? I already have certain tasks related to mission control on my home computer versus here so that's something we need to be aware of to fix.","ts":1772655520879,"type":"user"}
+{"prompt":"but i dont want it to be gitignored. is this the only way to ignore what i work on today then go home ? im confused on my dispatch asks that i put earlier","ts":1772655686752,"type":"user"}
+{"prompt":"yea thats fine, but i want to hone in on this MC design after since i hav some changes and tasks i want to create now ","ts":1772655814482,"type":"user"}
+{"prompt":"should i sign into git with my enterprise account or fredowill","ts":1772655882692,"type":"user"}
+{"prompt":"ok reprompt me ","ts":1772655894324,"type":"user"}
+{"prompt":"lets do it","ts":1772656085184,"type":"user"}
+{"prompt":"well for starters just bettering the behavior for when a cli is asking for input from user. sometimes it doesnt detect it properly. but thats just something we can wor on once we have proper control of git flow from home pc and my pc to not overwrite and track MC properly ","ts":1772656162103,"type":"user"}
+{"prompt":"will it overwrite what i hae at home or they will be combined?","ts":1772656267780,"type":"user"}
+{"prompt":"ok so where are my tasks stored locally on my home pc. do you know?","ts":1772656301722,"type":"user"}
+{"prompt":"also nothing is showing in dispatch right now. also i dont want to have to remember that. make it apparent in git pull or before i d git pull at home that it already knows that","ts":1772656353233,"type":"user"}
+{"prompt":"when i come here and pull tommorw itll be good too right?","ts":1772656494288,"type":"user"}
+{"prompt":"so after a session just mak sure to push","ts":1772656513676,"type":"user"}
+{"prompt":"you didnt veryify","ts":1772656537828,"type":"user"}
+{"prompt":"im still getting prompted like this ","ts":1772659679848,"type":"user"}
+{"prompt":"https://github.com/rafaelcalleja/claude-market-place/blob/5d7082a5ba0b45c66d69ca9b3c421151052002f1/plugins/personal-ai-infrastructure/skills/agent-observability/SETUP.md readingthis. is there any value in what is here and addng new features to missio control","ts":1772659821340,"type":"user"}
+{"prompt":"ok steal what you think would behelpful and test it and maybe try and implement  Fix 'needs input' detection for CLI prompts make sure you are delicate and ask me if u need clarification","ts":1772659980912,"type":"user"}
