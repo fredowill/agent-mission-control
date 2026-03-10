@@ -1,0 +1,662 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Mission Control</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+
+:root{
+  --bg: #111110;
+  --bg2: #161615;
+  --card: #1c1c1a;
+  --border: #2a2a28;
+  --border2: #3a3a37;
+  --text: #ededec;
+  --text2: #a8a8a3;
+  --text3: #63635e;
+  --accent: #8b7cf6;
+  --accent2: #60a5fa;
+  --green: #4ade80;
+  --rose: #fb7185;
+  --amber: #fbbf24;
+}
+
+html{scroll-behavior:smooth}
+
+body{
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Inter', -apple-system, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  min-height: 100vh;
+  overflow-x: hidden;
+  font-size: 16px;
+  line-height: 1.6;
+}
+
+.mono{ font-family: 'JetBrains Mono', monospace; }
+.wrap{ max-width: 1100px; margin: 0 auto; padding: 0 clamp(20px, 4vw, 64px); }
+
+
+/* ═══ NAV ═══ */
+nav{
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  padding: 10px clamp(20px, 4vw, 64px);
+  display: flex; align-items: center; justify-content: space-between;
+  background: rgba(17,17,16,0.9);
+  backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+}
+.nav-left{ display: flex; align-items: center; gap: 10px; }
+.nav-icon{
+  width: 26px; height: 26px; border-radius: 6px;
+  background: linear-gradient(135deg, #8b7cf6, #60a5fa);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 11px; font-weight: 800; color: #fff;
+}
+.nav-name{ font-size: 14px; font-weight: 700; letter-spacing: -0.02em; }
+.nav-tag{
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px; color: var(--text3); letter-spacing: 0.02em;
+}
+.nav-live{
+  display: flex; align-items: center; gap: 6px;
+  font-size: 12px; color: var(--green); font-weight: 500;
+}
+.nav-live-dot{
+  width: 6px; height: 6px; border-radius: 50%; background: var(--green);
+  box-shadow: 0 0 6px rgba(74,222,128,0.5);
+  animation: blink 2s ease infinite;
+}
+@keyframes blink{ 0%,100%{opacity:.3} 50%{opacity:1} }
+
+
+/* ═══ HERO ═══ */
+.hero{
+  padding: 80px 0 40px;
+  overflow: hidden;
+}
+.hero-top{
+  text-align: center;
+  margin-bottom: 40px;
+}
+.hero h1{
+  font-size: clamp(40px, 6.5vw, 72px);
+  font-weight: 900;
+  letter-spacing: -0.045em;
+  line-height: 1.05;
+  margin-bottom: 16px;
+}
+.hero h1 .dim{ color: var(--text3); }
+
+.hero-sub{
+  font-size: clamp(16px, 1.6vw, 19px);
+  color: var(--text2);
+  max-width: 520px;
+  margin: 0 auto;
+  line-height: 1.7;
+}
+
+/* Product shot */
+.hero-shot{
+  position: relative;
+  margin: 0 -20px;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  box-shadow: 0 20px 80px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.03);
+}
+.hero-shot img{
+  width: 100%;
+  display: block;
+  border-radius: 11px;
+}
+.hero-shot-glow{
+  position: absolute;
+  bottom: -50%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 80%;
+  height: 100%;
+  background: radial-gradient(ellipse, rgba(139,124,246,0.08), transparent 60%);
+  pointer-events: none;
+}
+
+/* Stats bar under screenshot */
+.hero-bar{
+  display: flex;
+  justify-content: center;
+  gap: 32px;
+  margin-top: 28px;
+  flex-wrap: wrap;
+}
+.hero-bar-item{
+  text-align: center;
+}
+.hero-bar-val{
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 24px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: var(--text);
+}
+.hero-bar-label{
+  font-size: 12px;
+  color: var(--text3);
+  margin-top: 2px;
+}
+
+
+/* ═══ SECTIONS ═══ */
+.s{ padding: clamp(56px, 8vh, 90px) 0; }
+.s-label{
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px; font-weight: 500;
+  text-transform: uppercase; letter-spacing: 0.08em;
+  color: var(--accent); margin-bottom: 10px;
+}
+.s h2{
+  font-size: clamp(28px, 4vw, 44px);
+  font-weight: 900;
+  letter-spacing: -0.04em;
+  line-height: 1.1;
+  margin-bottom: 10px;
+}
+.s-desc{
+  font-size: clamp(15px, 1.4vw, 17px);
+  color: var(--text2);
+  max-width: 500px;
+  line-height: 1.7;
+  margin-bottom: 36px;
+}
+
+
+/* ═══ PROBLEMS — visceral ═══ */
+.problems{
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+.prob{
+  padding: 24px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  transition: border-color 0.25s;
+}
+.prob:hover{ border-color: rgba(251,113,133,0.25); }
+.prob-when{
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px; font-weight: 500;
+  color: var(--rose); text-transform: uppercase;
+  letter-spacing: 0.06em; margin-bottom: 10px;
+}
+.prob h3{
+  font-size: 16px; font-weight: 700;
+  letter-spacing: -0.02em; margin-bottom: 6px; line-height: 1.3;
+}
+.prob p{
+  font-size: 13px; color: var(--text2); line-height: 1.6;
+}
+
+
+/* ═══ HOW — with inline quote ═══ */
+.how-grid{
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+.how{
+  padding: 28px 22px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  position: relative;
+  overflow: hidden;
+}
+.how-num{
+  position: absolute; top: -8px; right: 14px;
+  font-size: 72px; font-weight: 900;
+  color: rgba(255,255,255,0.02); line-height: 1;
+}
+.how-emoji{ font-size: 24px; margin-bottom: 14px; }
+.how h3{
+  font-size: 16px; font-weight: 700;
+  letter-spacing: -0.01em; margin-bottom: 8px;
+}
+.how p{
+  font-size: 13px; color: var(--text2); line-height: 1.6;
+}
+
+/* Inline quote — contextual social proof */
+.inline-quote{
+  padding: 20px 24px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--accent);
+  border-radius: 0 14px 14px 0;
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+}
+.inline-quote-text{
+  font-size: 15px;
+  font-weight: 600;
+  font-style: italic;
+  line-height: 1.55;
+  letter-spacing: -0.01em;
+  flex: 1;
+}
+.inline-quote-src{
+  font-size: 11px;
+  color: var(--text3);
+  white-space: nowrap;
+  align-self: center;
+}
+
+
+/* ═══ THE SECRET — loop ═══ */
+.loop-strip{
+  display: flex;
+  gap: 2px;
+  border-radius: 12px;
+  overflow: hidden;
+  margin-bottom: 16px;
+}
+.loop-item{
+  flex: 1;
+  padding: 20px 12px;
+  background: var(--card);
+  text-align: center;
+  transition: background 0.4s, transform 0.3s;
+  min-width: 0;
+}
+.loop-item.lit{
+  background: var(--bg2);
+  border-bottom: 2px solid var(--accent);
+  transform: translateY(-2px);
+}
+.loop-item-emoji{ font-size: 22px; margin-bottom: 6px; }
+.loop-item-title{
+  font-size: 12px; font-weight: 700; letter-spacing: -0.01em;
+}
+.loop-item-sub{
+  font-size: 10px; color: var(--text3); margin-top: 2px;
+}
+
+.real-example{
+  padding: 20px 24px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  font-size: 14px;
+  color: var(--text2);
+  line-height: 1.7;
+}
+.real-example strong{ color: var(--text); }
+
+
+/* ═══ PRODUCT SHOT 2 — campaigns ═══ */
+.product-shot{
+  margin: 0 -20px;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  box-shadow: 0 12px 48px rgba(0,0,0,0.4);
+}
+.product-shot img{
+  width: 100%; display: block; border-radius: 11px;
+}
+
+
+/* ═══ QUOTES — contextual ═══ */
+.quotes{
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+.q{
+  padding: 24px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+}
+.q-text{
+  font-size: 15px; font-weight: 600;
+  line-height: 1.55; letter-spacing: -0.01em;
+  margin-bottom: 10px;
+}
+.q-src{ font-size: 11px; color: var(--text3); }
+
+
+/* ═══ FEATURES — tight ═══ */
+.feats{
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+.ft{
+  padding: 22px 20px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+}
+.ft-emoji{ font-size: 20px; margin-bottom: 10px; }
+.ft h3{ font-size: 14px; font-weight: 700; margin-bottom: 4px; letter-spacing: -0.01em; }
+.ft p{ font-size: 12px; color: var(--text2); line-height: 1.55; }
+
+
+/* ═══ BOTTOM ═══ */
+.bottom{
+  padding: 60px 0 48px;
+  text-align: center;
+  border-top: 1px solid var(--border);
+}
+.bottom h2{
+  font-size: clamp(24px, 3.5vw, 38px);
+  font-weight: 900; letter-spacing: -0.04em;
+  margin-bottom: 10px;
+}
+.bottom p{ font-size: 15px; color: var(--text2); margin-bottom: 28px; }
+.bottom-facts{
+  display: flex; justify-content: center; gap: 24px; flex-wrap: wrap;
+}
+.bottom-facts span{
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px; color: var(--text3);
+}
+.bottom-facts span b{ color: var(--accent); font-weight: 600; }
+
+
+/* ═══ GSAP ═══ */
+.anim{ opacity: 0; transform: translateY(24px); }
+
+/* ═══ RESPONSIVE ═══ */
+@media (max-width: 768px){
+  .problems{ grid-template-columns: 1fr; }
+  .how-grid{ grid-template-columns: 1fr; }
+  .quotes{ grid-template-columns: 1fr; }
+  .feats{ grid-template-columns: 1fr; }
+  .hero-shot{ margin: 0; }
+  .product-shot{ margin: 0; }
+  .inline-quote{ flex-direction: column; gap: 8px; }
+  .loop-strip{ flex-direction: column; }
+  nav .nav-tag{ display: none; }
+}
+
+@media (prefers-reduced-motion: reduce){
+  .anim{ opacity: 1; transform: none; }
+  .nav-live-dot{ animation: none; opacity: 1; }
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-left">
+    <div class="nav-icon">MC</div>
+    <span class="nav-name">Mission Control</span>
+    <span class="nav-tag mono">v2.4</span>
+  </div>
+  <div class="nav-live">
+    <div class="nav-live-dot"></div>
+    1 agent active
+  </div>
+</nav>
+
+<div class="wrap">
+
+<!-- ═══ HERO ═══ -->
+<section class="hero">
+  <div class="hero-top">
+    <h1 class="anim">I got tired of my AI agents<br><span class="dim">making the same mistakes.</span></h1>
+    <p class="hero-sub anim">So I built a dashboard that watches them, remembers everything, and makes sure they never break the same thing twice. This is Mission Control.</p>
+  </div>
+
+  <div class="hero-shot anim">
+    <img src="/pages/mc-campaigns.png" alt="Mission Control campaigns dashboard showing 3 campaigns, 77 agents, sprint progress" loading="eager">
+    <div class="hero-shot-glow"></div>
+  </div>
+
+  <div class="hero-bar anim">
+    <div class="hero-bar-item">
+      <div class="hero-bar-val" data-counter="77">0</div>
+      <div class="hero-bar-label">agents managed</div>
+    </div>
+    <div class="hero-bar-item">
+      <div class="hero-bar-val" data-counter="107">0</div>
+      <div class="hero-bar-label">lessons captured</div>
+    </div>
+    <div class="hero-bar-item">
+      <div class="hero-bar-val" data-counter="118">0</div>
+      <div class="hero-bar-label">sessions tracked</div>
+    </div>
+    <div class="hero-bar-item">
+      <div class="hero-bar-val">0</div>
+      <div class="hero-bar-label">npm dependencies</div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══ THE PROBLEM ═══ -->
+<section class="s">
+  <div class="s-label anim">Sound familiar?</div>
+  <h2 class="anim">You're flying blind.</h2>
+  <p class="s-desc anim">You've got 5 agents running. One needs input. One just broke prod. One finished an hour ago. You have no idea.</p>
+
+  <div class="problems">
+    <div class="prob anim">
+      <div class="prob-when">3:47 pm</div>
+      <h3>An agent's been waiting for you. For 47 minutes.</h3>
+      <p>It's in terminal #3. Or maybe #4. They all look the same. No notification. No indicator. Just a cursor blinking in the void.</p>
+    </div>
+    <div class="prob anim">
+      <div class="prob-when">Yesterday</div>
+      <h3>Two agents edited the same file at the same time.</h3>
+      <p>You found out when the build broke. Neither agent knew the other existed.</p>
+    </div>
+    <div class="prob anim">
+      <div class="prob-when">Last week</div>
+      <h3>You fixed this bug already. The agent just made it again.</h3>
+      <p>New session, zero memory. Everything you learned last week evaporated when the context window compacted.</p>
+    </div>
+    <div class="prob anim">
+      <div class="prob-when">End of month</div>
+      <h3>$847 in API costs. On what?</h3>
+      <p>No breakdown by project. No idea which agent burned through your budget spinning in circles.</p>
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══ HOW IT WORKS ═══ -->
+<section class="s">
+  <div class="s-label anim">Three steps</div>
+  <h2 class="anim">Brief. Watch. Learn.</h2>
+  <p class="s-desc anim">You manage agents like a team. Write a brief, dispatch, watch them work live, and capture every lesson.</p>
+
+  <div class="how-grid">
+    <div class="how anim">
+      <div class="how-num">1</div>
+      <div class="how-emoji">&#x1F4DD;</div>
+      <h3>Write a brief</h3>
+      <p>Describe what you need. MC generates a prompt with quality gates, loads your team's accumulated knowledge, and launches the agent.</p>
+    </div>
+    <div class="how anim">
+      <div class="how-num">2</div>
+      <div class="how-emoji">&#x1F440;</div>
+      <h3>Watch them work</h3>
+      <p>Live dashboard. Every agent: what tool, what file, how long. Browser notifications when one needs you. Favicon pulses green.</p>
+    </div>
+    <div class="how anim">
+      <div class="how-num">3</div>
+      <div class="how-emoji">&#x1F9E0;</div>
+      <h3>System learns</h3>
+      <p>Every correction becomes a permanent rule. Every rule becomes an automated check. Tomorrow's agents start smarter than today's.</p>
+    </div>
+  </div>
+
+  <div class="inline-quote anim">
+    <div class="inline-quote-text">"It's basically a big baby crib — putting all my agents in there and making sure I can watch them."</div>
+    <div class="inline-quote-src">the baby crib thesis</div>
+  </div>
+</section>
+
+
+<!-- ═══ THE SECRET ═══ -->
+<section class="s" style="background:var(--bg2);margin:0 calc(-1 * clamp(20px,4vw,64px));padding-left:clamp(20px,4vw,64px);padding-right:clamp(20px,4vw,64px);border-top:1px solid var(--border);border-bottom:1px solid var(--border);">
+  <div class="s-label anim">The secret</div>
+  <h2 class="anim">Mistakes happen once. Never twice.</h2>
+  <p class="s-desc anim">This is what no other tool does. MC doesn't just watch your agents — it teaches them.</p>
+
+  <div class="loop-strip anim" id="loopStrip">
+    <div class="loop-item" data-l="0"><div class="loop-item-emoji">&#x26A0;&#xFE0F;</div><div class="loop-item-title">Mistake</div><div class="loop-item-sub">agent breaks it</div></div>
+    <div class="loop-item" data-l="1"><div class="loop-item-emoji">&#x1F50D;</div><div class="loop-item-title">Post-mortem</div><div class="loop-item-sub">what went wrong</div></div>
+    <div class="loop-item" data-l="2"><div class="loop-item-emoji">&#x1F4A1;</div><div class="loop-item-title">Lesson</div><div class="loop-item-sub">stored forever</div></div>
+    <div class="loop-item" data-l="3"><div class="loop-item-emoji">&#x1F4DC;</div><div class="loop-item-title">Rule</div><div class="loop-item-sub">agents read it</div></div>
+    <div class="loop-item" data-l="4"><div class="loop-item-emoji">&#x1F6E1;&#xFE0F;</div><div class="loop-item-title">Hook</div><div class="loop-item-sub">auto-blocks it</div></div>
+    <div class="loop-item" data-l="5"><div class="loop-item-emoji">&#x2705;</div><div class="loop-item-title">Prevented</div><div class="loop-item-sub">never again</div></div>
+  </div>
+
+  <div class="real-example anim">
+    <strong>Real story:</strong> An agent kept bypassing the quality pipeline — skipping checks to ship faster. We added a rule. It found workarounds. So the system added a <strong>code-level seal</strong> — the launch API now rejects anything that wasn't created through the approved pipeline. Bypass became physically impossible. <strong>Zero violations since.</strong> The system taught itself to close its own loophole.
+  </div>
+</section>
+
+
+<!-- ═══ CAMPAIGNS SHOT ═══ -->
+<section class="s">
+  <div class="s-label anim">Real product</div>
+  <h2 class="anim">This is what it actually looks like.</h2>
+  <p class="s-desc anim">3 campaigns. 77 agents dispatched. Every one tracked, graded, and feeding lessons back into the system.</p>
+
+  <div class="product-shot anim">
+    <img src="/pages/mc-dashboard.png" alt="Mission Control agent dashboard showing active sessions, workstream filters, and cost tracking" loading="lazy">
+  </div>
+
+  <div class="inline-quote anim" style="margin-top:16px;">
+    <div class="inline-quote-text">"I don't use my IDE anymore. I don't look at files. That's not my job. My job is to create."</div>
+    <div class="inline-quote-src">the interface layer thesis</div>
+  </div>
+</section>
+
+
+<!-- ═══ MORE WORDS ═══ -->
+<section class="s">
+  <div class="s-label anim">Built by using it every day</div>
+  <h2 class="anim">Real words from real sessions.</h2>
+
+  <div class="quotes">
+    <div class="q anim">
+      <div class="q-text">"Every time I make changes I'm exponentially getting better. Exponentially producing more, in a very systematic way."</div>
+      <div class="q-src">on the compounding effect</div>
+    </div>
+    <div class="q anim">
+      <div class="q-text">"MC is air traffic control for your AI agents. Not the planes. Not the destination."</div>
+      <div class="q-src">the one-line pitch</div>
+    </div>
+    <div class="q anim">
+      <div class="q-text">"I saw eight tabs and I was like hold on."</div>
+      <div class="q-src">a friend's first reaction</div>
+    </div>
+    <div class="q anim">
+      <div class="q-text">"The next frontier is recording everything and just having a pipeline."</div>
+      <div class="q-src">on what's next</div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══ FEATURES ═══ -->
+<section class="s">
+  <div class="s-label anim">What's inside</div>
+  <h2 class="anim">Everything. Nothing extra.</h2>
+
+  <div class="feats">
+    <div class="ft anim"><div class="ft-emoji">&#x1F4E1;</div><h3>Live dashboard</h3><p>Every agent, every tool call, every file change. Real-time. Favicon pulses.</p></div>
+    <div class="ft anim"><div class="ft-emoji">&#x1F9E0;</div><h3>Institutional memory</h3><p>107 lessons. Agents read them on startup. Mistakes don't repeat.</p></div>
+    <div class="ft anim"><div class="ft-emoji">&#x1F6E1;&#xFE0F;</div><h3>Conflict detection</h3><p>Hooks fire when two agents touch the same file. You know before the build breaks.</p></div>
+    <div class="ft anim"><div class="ft-emoji">&#x1F3AF;</div><h3>Campaigns</h3><p>Brief agents, track in parallel, grade results. Multi-agent project management.</p></div>
+    <div class="ft anim"><div class="ft-emoji">&#x1F4AC;</div><h3>Prompt archive</h3><p>Every message captured. Survives compaction. Searchable history.</p></div>
+    <div class="ft anim"><div class="ft-emoji">&#x1F4B0;</div><h3>Cost tracking</h3><p>By session, by project, by model. Know exactly where your money goes.</p></div>
+  </div>
+</section>
+
+
+<!-- ═══ BOTTOM ═══ -->
+<section class="bottom">
+  <h2 class="anim">One file. Zero dependencies.<br>Runs on your machine.</h2>
+  <p class="anim">No cloud. No accounts. No data leaves your laptop. Just a Node.js server and a browser tab.</p>
+  <div class="bottom-facts anim">
+    <span><b>0</b> npm dependencies</span>
+    <span><b>1</b> server file</span>
+    <span><b>100%</b> local</span>
+    <span><b>~4000</b> lines of JS</span>
+  </div>
+</section>
+
+</div>
+
+<!-- GSAP -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<script>
+gsap.registerPlugin(ScrollTrigger);
+
+ScrollTrigger.batch('.anim', {
+  onEnter: batch => gsap.to(batch, {
+    opacity: 1, y: 0, duration: 0.55, stagger: 0.08, ease: 'power2.out', overwrite: true
+  }),
+  start: 'top 92%'
+});
+
+/* Counters — hero fires immediately */
+document.querySelectorAll('[data-counter]').forEach(el => {
+  const t = parseFloat(el.dataset.counter);
+  const inHero = el.closest('.hero');
+  if (inHero) {
+    gsap.fromTo(el, { innerText: 0 }, { innerText: t, duration: 2, delay: 0.6, ease: 'power2.out', snap: { innerText: 1 } });
+  } else {
+    gsap.to(el, { innerText: t, duration: 1.4, ease: 'power2.out', snap: { innerText: 1 }, scrollTrigger: { trigger: el, start: 'top 92%', once: true } });
+  }
+});
+
+/* Loop cycling */
+const lc = document.querySelectorAll('.loop-item');
+let li = 0, lt;
+function cycle() { lc.forEach(c => c.classList.remove('lit')); lc[li].classList.add('lit'); li = (li+1) % lc.length; }
+ScrollTrigger.create({
+  trigger: '#loopStrip', start: 'top 80%',
+  onEnter: () => { cycle(); lt = setInterval(cycle, 900); },
+  onLeaveBack: () => { clearInterval(lt); lc.forEach(c => c.classList.remove('lit')); li = 0; }
+});
+
+/* Live API hydration */
+(async () => {
+  try {
+    const [c, f] = await Promise.all([
+      fetch('/api/campaigns').then(r=>r.json()).catch(()=>null),
+      fetch('/api/findings').then(r=>r.json()).catch(()=>null)
+    ]);
+    if (c) {
+      const a = c.reduce((s,x)=>s+(x.agents?.length||0),0);
+      document.querySelectorAll('[data-counter="77"]').forEach(e=>e.dataset.counter=a);
+    }
+    if (f) document.querySelectorAll('[data-counter="107"]').forEach(e=>e.dataset.counter=f.length);
+  } catch(e){}
+})();
+
+if (window.matchMedia('(prefers-reduced-motion:reduce)').matches) {
+  ScrollTrigger.getAll().forEach(t=>t.kill());
+  document.querySelectorAll('.anim').forEach(e=>{e.style.opacity='1';e.style.transform='none';});
+}
+</script>
+</body>
+</html>

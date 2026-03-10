@@ -1513,7 +1513,11 @@
     "status": "closed",
     "priority": "p1",
     "workstream": "mission-control",
-    "tags": ["post-mortem", "skill-quality", "end-to-end-testing"],
+    "tags": [
+      "post-mortem",
+      "skill-quality",
+      "end-to-end-testing"
+    ],
     "context": "campaign-002",
     "created": "2026-03-10T05:00:00.000Z",
     "updated": "2026-03-10T05:00:00.000Z"
@@ -1525,9 +1529,32 @@
     "status": "open",
     "priority": "p0",
     "workstream": "mission-control",
-    "tags": ["post-mortem", "toolbox", "skill-enforcement", "infrastructure"],
+    "tags": [
+      "post-mortem",
+      "toolbox",
+      "skill-enforcement",
+      "infrastructure"
+    ],
     "context": "campaign-002",
     "created": "2026-03-10T06:00:00.000Z",
     "updated": "2026-03-10T06:00:00.000Z"
+  },
+  {
+    "id": "pm030",
+    "title": "Post-Mortem: Orchestrator v2.4 did raw kitchen-sink WebSearch queries instead of using a research skill -- garbage in, garbage out",
+    "description": "## Incident (2026-03-09)\nOrchestrator v2.4 ran 10+ raw WebSearch queries with kitchen-sink keywords like \"best interactive product landing pages 2025 2026 GSAP motion animated workflow no SVG component-based\" instead of using a structured research methodology or skill. User frustration: 9/10.\n\n## What actually happened\nUser asked for deep research on interactive animation approaches for the Why2 page. The orchestrator did raw WebSearch calls with long, unfocused queries cramming 8+ keywords into a single search. Results were junk -- generic listicles, 403 errors from CodePens, and surface-level summaries. The orchestrator also went down an SVG rabbit hole (stroke-dasharray, dashoffset) that the user explicitly did not want, wasting an entire research round.\n\nMeanwhile, Rule 18 (Deep Research pattern) already existed in orchestrator-rules, a scientist agent existed in .claude/agents/, and the user had explicitly said to look for research skills. The orchestrator ignored all of this.\n\n## Failure 1: Kitchen-sink WebSearch queries\n- Queries like \"best interactive product landing pages 2025 2026 GSAP motion animated workflow no SVG component-based\" are useless -- search engines return spam for multi-keyword queries\n- Rule 18 explicitly says: \"One focused search per question with short targeted queries\"\n- The orchestrator violated its own rule 10+ times in a single session\n- **Lesson:** Raw WebSearch is a tool of last resort, not first resort. Structured research skills exist for exactly this purpose.\n- **Systemic fix:** Install a deep-research skill (.claude/skills/deep-research/) and add to skill-rules.json so it triggers on any research request. Add a CLAUDE.md rule or finding: \"Never do raw WebSearch for research -- always use the deep-research skill.\"\n\n## Failure 2: No research skill installed despite Rule 16 and Rule 18\n- Rule 16: \"Research online BEFORE building\"\n- Rule 18: \"Deep Research pattern for ALL research\"\n- Both rules existed but neither was backed by a skill -- just text instructions\n- Text rules without skill enforcement are the same pattern as PM025 (watermark bypass)\n- **Lesson:** Rules without enforcement are suggestions. Research needs a skill, not just a rule.\n- **Systemic fix:** deep-research skill installed (standardhuman/deep-research-skill, 7-phase pipeline with source triangulation). Must be mandated for any research task.\n\n## Failure 3: Ignored available agents and skills\n- scientist agent exists in .claude/agents/\n- iterative-retrieval skill exists in .claude/skills/\n- Neither was consulted or loaded\n- User explicitly said \"use a research skill\" and orchestrator still did raw WebSearch\n- **Lesson:** When the user tells you to use a skill, USE THE SKILL. Do not interpret the request as \"do the same thing but slightly differently.\"\n- **Systemic fix:** Add research keywords to skill-rules.json so any prompt mentioning \"research\", \"investigate\", \"look into\", \"find out\" triggers the deep-research skill recommendation.\n\n## Action items\n1. deep-research skill installed from standardhuman/deep-research-skill (done)\n2. Add research keywords to skill-rules.json (todo)\n3. File finding: raw WebSearch is banned for research tasks (todo)\n4. Update MEMORY.md with the new constraint (todo)",
+    "status": "open",
+    "priority": "p0",
+    "workstream": "mission-control",
+    "tags": [
+      "post-mortem",
+      "orchestrator",
+      "research-gap",
+      "skill-enforcement"
+    ],
+    "linkedSession": null,
+    "context": "campaign-002",
+    "created": "2026-03-10T05:24:07.902701Z",
+    "updated": "2026-03-10T05:24:07.902701Z"
   }
 ]

@@ -7234,81 +7234,81 @@
     }
   },
   "b72a6a38-a778-41bb-b86c-384238b70257": {
-    "mtime": 1773115519403.2898,
-    "calls": 176,
+    "mtime": 1773119261711.288,
+    "calls": 352,
     "tokens": {
-      "input": 549,
-      "output": 65133,
-      "cacheWrite": 553738,
-      "cacheRead": 21345868
+      "input": 2928,
+      "output": 120013,
+      "cacheWrite": 930115,
+      "cacheRead": 69515537
     },
     "models": {
       "claude-opus-4-6": {
-        "calls": 176,
-        "input": 549,
-        "output": 65133,
-        "cacheWrite": 553738,
-        "cacheRead": 21345868
+        "calls": 352,
+        "input": 2928,
+        "output": 120013,
+        "cacheWrite": 930115,
+        "cacheRead": 69515537
       }
     },
     "daily": {
       "2026-03-10": {
         "claude-opus-4-6": {
-          "input": 549,
-          "output": 65133,
-          "cacheWrite": 553738,
-          "cacheRead": 21345868
+          "input": 2928,
+          "output": 120013,
+          "cacheWrite": 930115,
+          "cacheRead": 69515537
         }
       }
     },
     "session": {
       "id": "b72a6a38-a778-41bb-b86c-384238b70257",
       "model": "claude-opus-4-6",
-      "cost": 55.2993,
-      "input": 549,
-      "output": 65133,
-      "cacheWrite": 553738,
-      "cacheRead": 21345868,
+      "cost": 156.826183125,
+      "input": 2928,
+      "output": 120013,
+      "cacheWrite": 930115,
+      "cacheRead": 69515537,
       "date": "2026-03-10",
       "topic": ""
     }
   },
   "136bfeb7-10a1-4fb7-9239-9c986f12a235": {
-    "mtime": 1773115335172.281,
-    "calls": 4,
+    "mtime": 1773116607830.321,
+    "calls": 22,
     "tokens": {
-      "input": 9,
-      "output": 1983,
-      "cacheWrite": 38888,
-      "cacheRead": 111076
+      "input": 31,
+      "output": 75982,
+      "cacheWrite": 155382,
+      "cacheRead": 1768552
     },
     "models": {
       "claude-opus-4-6": {
-        "calls": 4,
-        "input": 9,
-        "output": 1983,
-        "cacheWrite": 38888,
-        "cacheRead": 111076
+        "calls": 22,
+        "input": 31,
+        "output": 75982,
+        "cacheWrite": 155382,
+        "cacheRead": 1768552
       }
     },
     "daily": {
       "2026-03-10": {
         "claude-opus-4-6": {
-          "input": 9,
-          "output": 1983,
-          "cacheWrite": 38888,
-          "cacheRead": 111076
+          "input": 31,
+          "output": 75982,
+          "cacheWrite": 155382,
+          "cacheRead": 1768552
         }
       }
     },
     "session": {
       "id": "136bfeb7-10a1-4fb7-9239-9c986f12a235",
       "model": "claude-opus-4-6",
-      "cost": 1.0862775,
-      "input": 9,
-      "output": 1983,
-      "cacheWrite": 38888,
-      "cacheRead": 111076,
+      "cost": 11.9285625,
+      "input": 31,
+      "output": 75982,
+      "cacheWrite": 155382,
+      "cacheRead": 1768552,
       "date": "2026-03-10",
       "topic": ""
     }
@@ -7394,41 +7394,41 @@
     }
   },
   "5bfed9e6-b44a-44ce-baba-c8dc491d8c8d": {
-    "mtime": 1773115695392.0803,
-    "calls": 23,
+    "mtime": 1773115771333.1658,
+    "calls": 33,
     "tokens": {
-      "input": 29,
-      "output": 9716,
-      "cacheWrite": 36889,
-      "cacheRead": 851608
+      "input": 41,
+      "output": 12360,
+      "cacheWrite": 76691,
+      "cacheRead": 1306587
     },
     "models": {
       "claude-opus-4-6": {
-        "calls": 23,
-        "input": 29,
-        "output": 9716,
-        "cacheWrite": 36889,
-        "cacheRead": 851608
+        "calls": 33,
+        "input": 41,
+        "output": 12360,
+        "cacheWrite": 76691,
+        "cacheRead": 1306587
       }
     },
     "daily": {
       "2026-03-10": {
         "claude-opus-4-6": {
-          "input": 29,
-          "output": 9716,
-          "cacheWrite": 36889,
-          "cacheRead": 851608
+          "input": 41,
+          "output": 12360,
+          "cacheWrite": 76691,
+          "cacheRead": 1306587
         }
       }
     },
     "session": {
       "id": "5bfed9e6-b44a-44ce-baba-c8dc491d8c8d",
       "model": "claude-opus-4-6",
-      "cost": 3.01756875,
-      "input": 29,
-      "output": 9716,
-      "cacheWrite": 36889,
-      "cacheRead": 851608,
+      "cost": 4.815421875,
+      "input": 41,
+      "output": 12360,
+      "cacheWrite": 76691,
+      "cacheRead": 1306587,
       "date": "2026-03-10",
       "topic": ""
     }
@@ -7549,6 +7549,206 @@
       "output": 12214,
       "cacheWrite": 40198,
       "cacheRead": 1358187,
+      "date": "2026-03-10",
+      "topic": ""
+    }
+  },
+  "3c0ee7f9-6733-4156-8dab-e3dfb70975af": {
+    "mtime": 1773116661690.1753,
+    "calls": 5,
+    "tokens": {
+      "input": 7,
+      "output": 2595,
+      "cacheWrite": 29070,
+      "cacheRead": 132109
+    },
+    "models": {
+      "claude-opus-4-6": {
+        "calls": 5,
+        "input": 7,
+        "output": 2595,
+        "cacheWrite": 29070,
+        "cacheRead": 132109
+      }
+    },
+    "daily": {
+      "2026-03-10": {
+        "claude-opus-4-6": {
+          "input": 7,
+          "output": 2595,
+          "cacheWrite": 29070,
+          "cacheRead": 132109
+        }
+      }
+    },
+    "session": {
+      "id": "3c0ee7f9-6733-4156-8dab-e3dfb70975af",
+      "model": "claude-opus-4-6",
+      "cost": 0.9874968749999999,
+      "input": 7,
+      "output": 2595,
+      "cacheWrite": 29070,
+      "cacheRead": 132109,
+      "date": "2026-03-10",
+      "topic": ""
+    }
+  },
+  "b0609a0b-b3cf-4d21-92d0-2cc92e59c43d": {
+    "mtime": 1773115823881.5989,
+    "calls": 5,
+    "tokens": {
+      "input": 7,
+      "output": 2596,
+      "cacheWrite": 29526,
+      "cacheRead": 129217
+    },
+    "models": {
+      "claude-opus-4-6": {
+        "calls": 5,
+        "input": 7,
+        "output": 2596,
+        "cacheWrite": 29526,
+        "cacheRead": 129217
+      }
+    },
+    "daily": {
+      "2026-03-10": {
+        "claude-opus-4-6": {
+          "input": 7,
+          "output": 2596,
+          "cacheWrite": 29526,
+          "cacheRead": 129217
+        }
+      }
+    },
+    "session": {
+      "id": "b0609a0b-b3cf-4d21-92d0-2cc92e59c43d",
+      "model": "claude-opus-4-6",
+      "cost": 0.9906993749999999,
+      "input": 7,
+      "output": 2596,
+      "cacheWrite": 29526,
+      "cacheRead": 129217,
+      "date": "2026-03-10",
+      "topic": ""
+    }
+  },
+  "c0695706-a2da-4775-8971-6b4f23fe42be": {
+    "mtime": 1773123462791.4553,
+    "calls": 129,
+    "tokens": {
+      "input": 8432,
+      "output": 78249,
+      "cacheWrite": 760605,
+      "cacheRead": 21367558
+    },
+    "models": {
+      "claude-opus-4-6": {
+        "calls": 129,
+        "input": 8432,
+        "output": 78249,
+        "cacheWrite": 760605,
+        "cacheRead": 21367558
+      }
+    },
+    "daily": {
+      "2026-03-10": {
+        "claude-opus-4-6": {
+          "input": 8432,
+          "output": 78249,
+          "cacheWrite": 760605,
+          "cacheRead": 21367558
+        }
+      }
+    },
+    "session": {
+      "id": "c0695706-a2da-4775-8971-6b4f23fe42be",
+      "model": "claude-opus-4-6",
+      "cost": 60.32067,
+      "input": 8432,
+      "output": 78249,
+      "cacheWrite": 760605,
+      "cacheRead": 21367558,
+      "date": "2026-03-10",
+      "topic": ""
+    }
+  },
+  "f75fc4dd-ea21-46cf-a032-5e62d9f3d461": {
+    "mtime": 1773117917943.7083,
+    "calls": 5,
+    "tokens": {
+      "input": 7,
+      "output": 2127,
+      "cacheWrite": 25459,
+      "cacheRead": 124557
+    },
+    "models": {
+      "claude-opus-4-6": {
+        "calls": 5,
+        "input": 7,
+        "output": 2127,
+        "cacheWrite": 25459,
+        "cacheRead": 124557
+      }
+    },
+    "daily": {
+      "2026-03-10": {
+        "claude-opus-4-6": {
+          "input": 7,
+          "output": 2127,
+          "cacheWrite": 25459,
+          "cacheRead": 124557
+        }
+      }
+    },
+    "session": {
+      "id": "f75fc4dd-ea21-46cf-a032-5e62d9f3d461",
+      "model": "claude-opus-4-6",
+      "cost": 0.870530625,
+      "input": 7,
+      "output": 2127,
+      "cacheWrite": 25459,
+      "cacheRead": 124557,
+      "date": "2026-03-10",
+      "topic": ""
+    }
+  },
+  "f90a7e2b-e906-4d26-beab-101a5524d7fc": {
+    "mtime": 1773117874713.9077,
+    "calls": 29,
+    "tokens": {
+      "input": 36,
+      "output": 39988,
+      "cacheWrite": 101679,
+      "cacheRead": 2398549
+    },
+    "models": {
+      "claude-opus-4-6": {
+        "calls": 29,
+        "input": 36,
+        "output": 39988,
+        "cacheWrite": 101679,
+        "cacheRead": 2398549
+      }
+    },
+    "daily": {
+      "2026-03-10": {
+        "claude-opus-4-6": {
+          "input": 36,
+          "output": 39988,
+          "cacheWrite": 101679,
+          "cacheRead": 2398549
+        }
+      }
+    },
+    "session": {
+      "id": "f90a7e2b-e906-4d26-beab-101a5524d7fc",
+      "model": "claude-opus-4-6",
+      "cost": 9.403400625,
+      "input": 36,
+      "output": 39988,
+      "cacheWrite": 101679,
+      "cacheRead": 2398549,
       "date": "2026-03-10",
       "topic": ""
     }

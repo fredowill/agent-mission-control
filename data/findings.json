@@ -1172,5 +1172,39 @@
     "meta": "Session: orchestrator-v2.3, Campaign: campaign-002, PM: pm026",
     "context": "campaign-002",
     "id": "f105"
+  },
+  {
+    "title": "No SVGs ever -- component-based animations only",
+    "description": "User hates SVGs. No stroke-dasharray, no SVG line animations, no hand-drawn SVG pipes. All visualizations must be component-based (DOM elements, CSS transforms, JS animation libraries like Motion/GSAP). This is a permanent design constraint.",
+    "priority": "p0",
+    "tags": [
+      "design",
+      "animation",
+      "constraint",
+      "permanent"
+    ],
+    "id": "f106"
+  },
+  {
+    "title": "Raw WebSearch banned for research -- always use deep-research skill",
+    "description": "Never do raw WebSearch queries for research tasks. Kitchen-sink queries (8+ keywords) return junk. Always load the deep-research skill which enforces: (1) classify the question type, (2) scope it, (3) form hypotheses, (4) plan targeted queries, (5) triangulate sources, (6) synthesize. PM030.",
+    "priority": "p0",
+    "tags": [
+      "research",
+      "skill-enforcement",
+      "permanent"
+    ],
+    "id": "f107"
+  },
+  {
+    "title": "Auto-sync skills to toolbox on install -- never warn at handoff",
+    "description": "Every time a skill is installed to .claude/skills/, it must also be copied to agent-hub/toolbox/skills/. The handoff gate should VERIFY this happened, not be the first time anyone notices. Systemic fix: add a PostToolUse hook or make the install process always do both copies. PM029 root cause was this exact gap.",
+    "priority": "p1",
+    "tags": [
+      "toolbox",
+      "skill-sync",
+      "systemic"
+    ],
+    "id": "f108"
   }
 ]

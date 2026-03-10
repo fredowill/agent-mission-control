@@ -4181,6 +4181,26 @@ Respond with ONLY a JSON object: {"workstream": "the-id", "confidence": 0.0-1.0,
     return res.end(readPage(path.join(__dirname, 'pages', 'why2-page.html'), 'Why v2'));
   }
 
+  // /why3 — v3 fresh design, outsider-friendly (v2.4)
+  if (url === '/why3') {
+    res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
+    return res.end(readPage(path.join(__dirname, 'pages', 'why3-page.html'), 'Why v3'));
+  }
+
+  // Serve static images from pages/ directory (screenshots for why3)
+  if (url.startsWith('/pages/') && (url.endsWith('.png') || url.endsWith('.jpg'))) {
+    const imgPath = path.join(__dirname, url);
+    try {
+      const data = fs.readFileSync(imgPath);
+      const ct = url.endsWith('.png') ? 'image/png' : 'image/jpeg';
+      res.writeHead(200, { 'Content-Type': ct, 'Cache-Control': 'public, max-age=3600' });
+      return res.end(data);
+    } catch(e) {
+      res.writeHead(404);
+      return res.end('Not found');
+    }
+  }
+
   // Hidden /demo-guide page — internal demo preparation (not in nav)
   if (url === '/demo-guide') {
     res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });

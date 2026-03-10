@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Why Mission Control</title>
+<title>Mission Control</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=DM+Sans:ital,wght@0,400;0,500;1,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -11,20 +11,21 @@
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
 
 :root{
-  --bg: #0e0e0d;
-  --surface: #181816;
-  --surface2: #222220;
-  --border: #2a2926;
-  --border2: #353330;
-  --text: #ede8de;
-  --text2: #b5ae9e;
-  --text3: #706b60;
-  --accent: #c9a24d;
-  --accent-dim: rgba(201,162,77,0.12);
-  --red: #b8524a;
-  --red-dim: rgba(184,82,74,0.10);
-  --green: #5e9968;
-  --green-dim: rgba(94,153,104,0.10);
+  --bg: #ffffff;
+  --bg2: #fafafa;
+  --surface: #f4f4f5;
+  --surface2: #e8e8eb;
+  --border: #e4e4e7;
+  --text: #09090b;
+  --text2: #3f3f46;
+  --text3: #a1a1aa;
+  --purple: #8b5cf6;
+  --purple-soft: rgba(139,92,246,0.08);
+  --purple-med: rgba(139,92,246,0.15);
+  --blue: #3b82f6;
+  --green: #22c55e;
+  --amber: #f59e0b;
+  --rose: #ef4444;
 }
 
 html{scroll-behavior:smooth}
@@ -40,20 +41,10 @@ body{
   font-size: 16px;
 }
 
-/* Subtle noise texture */
-body::after{
-  content: '';
-  position: fixed;
-  inset: 0;
-  opacity: 0.025;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-  pointer-events: none;
-  z-index: 9999;
-}
+h1,h2,h3{ font-family: 'Plus Jakarta Sans', sans-serif; letter-spacing: -0.04em; line-height: 1.1; }
 
-h1,h2,h3{ font-family: 'Plus Jakarta Sans', sans-serif; letter-spacing: -0.04em; line-height: 1.08; }
+.wrap{ max-width: 1100px; margin: 0 auto; padding: 0 clamp(24px, 5vw, 64px); }
 
-.wrap{ max-width: 1080px; margin: 0 auto; padding: 0 clamp(24px, 5vw, 64px); }
 
 /* ═══════════════════════════════════════
    HERO
@@ -65,102 +56,121 @@ h1,h2,h3{ font-family: 'Plus Jakarta Sans', sans-serif; letter-spacing: -0.04em;
   justify-content: center;
   padding: clamp(100px, 14vh, 180px) 0 clamp(80px, 10vh, 120px);
   position: relative;
+  overflow: hidden;
 }
 
-/* Warm ambient glow — not a gradient on text */
-.hero::before{
-  content: '';
-  position: absolute;
-  top: 15%;
-  left: -10%;
-  width: 60%;
-  height: 60%;
-  background: radial-gradient(ellipse, rgba(201,162,77,0.06), transparent 70%);
-  pointer-events: none;
-}
-
-.hero-tag{
+.hero-badge{
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  margin-bottom: 56px;
+  padding: 6px 14px;
+  background: var(--purple-soft);
+  border: 1px solid var(--purple-med);
+  border-radius: 100px;
+  margin-bottom: 32px;
+  width: fit-content;
 }
-.hero-tag .pulse{
+.hero-badge-dot{
   width: 6px; height: 6px;
   border-radius: 50%;
-  background: var(--accent);
+  background: var(--purple);
   animation: pulse 2.5s ease-in-out infinite;
 }
-@keyframes pulse{ 0%,100%{opacity:.25} 50%{opacity:1} }
-.hero-tag span{
+@keyframes pulse{ 0%,100%{opacity:.3} 50%{opacity:1} }
+.hero-badge span{
   font-family: 'DM Mono', monospace;
-  font-size: 11px;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--purple);
+  letter-spacing: 0.02em;
+}
+
+.hero h1{
+  font-size: clamp(40px, 6vw, 72px);
+  font-weight: 800;
+  color: var(--text);
+  max-width: 800px;
+  margin-bottom: 24px;
+}
+.hero h1 .accent{ color: var(--purple); }
+
+.hero-sub{
+  font-size: clamp(17px, 1.8vw, 21px);
+  color: var(--text2);
+  max-width: 560px;
+  line-height: 1.7;
+  margin-bottom: 48px;
+}
+
+.hero-stats{
+  display: flex;
+  gap: 48px;
+  flex-wrap: wrap;
+}
+.hero-stat{
+  display: flex;
+  flex-direction: column;
+}
+.hero-stat-n{
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 36px;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1;
+  color: var(--text);
+}
+.hero-stat-l{
+  font-family: 'DM Mono', monospace;
+  font-size: 12px;
+  color: var(--text3);
+  margin-top: 6px;
+  letter-spacing: 0.02em;
+}
+
+/* Floating background shapes */
+.hero-shape{
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(80px);
+  pointer-events: none;
+  opacity: 0.4;
+}
+.hero-shape-1{
+  width: 400px; height: 400px;
+  background: var(--purple-soft);
+  top: 10%; right: -5%;
+}
+.hero-shape-2{
+  width: 300px; height: 300px;
+  background: rgba(59,130,246,0.06);
+  bottom: 10%; left: -8%;
+}
+
+.scroll-hint{
+  position: absolute;
+  bottom: 32px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  opacity: 0.4;
+}
+.scroll-hint span{
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
   text-transform: uppercase;
   letter-spacing: 0.14em;
   color: var(--text3);
 }
-
-.hero-grid{
-  display: grid;
-  grid-template-columns: 1fr 260px;
-  gap: 80px;
-  align-items: end;
+.scroll-hint-line{
+  width: 1px;
+  height: 32px;
+  background: linear-gradient(to bottom, var(--text3), transparent);
+  animation: scrollDrift 2s ease-in-out infinite;
 }
-
-.hero h1{
-  font-size: clamp(46px, 6.5vw, 82px);
-  font-weight: 800;
-  color: var(--text);
-  max-width: 740px;
-}
-.hero h1 em{
-  font-style: normal;
-  color: var(--accent);
-  font-family: 'DM Mono', monospace;
-  font-weight: 500;
-  letter-spacing: -0.02em;
-}
-
-.hero-data{
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-  padding-bottom: 8px;
-}
-.hero-row{
-  display: flex;
-  justify-content: space-between;
-  align-items: baseline;
-  padding-bottom: 14px;
-  border-bottom: 1px solid var(--border);
-}
-.hero-row-label{
-  font-family: 'DM Mono', monospace;
-  font-size: 11px;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: var(--text3);
-}
-.hero-row-value{
-  font-family: 'DM Mono', monospace;
-  font-size: 22px;
-  font-weight: 500;
-  color: var(--text);
-}
-
-.scroll-cue{
-  position: absolute;
-  bottom: 36px;
-  left: clamp(24px, 5vw, 64px);
-  font-family: 'DM Mono', monospace;
-  font-size: 10px;
-  text-transform: uppercase;
-  letter-spacing: 0.16em;
-  color: var(--text3);
-  opacity: 0.35;
-  animation: drift 2.5s ease-in-out infinite;
-}
-@keyframes drift{ 0%,100%{transform:translateY(0)} 50%{transform:translateY(5px)} }
+@keyframes scrollDrift{ 0%,100%{transform:scaleY(1);opacity:0.5} 50%{transform:scaleY(0.5);opacity:1} }
 
 
 /* ═══════════════════════════════════════
@@ -168,493 +178,400 @@ h1,h2,h3{ font-family: 'Plus Jakarta Sans', sans-serif; letter-spacing: -0.04em;
    ═══════════════════════════════════════ */
 .sect{
   padding: clamp(80px, 10vh, 140px) 0;
-  border-top: 1px solid var(--border);
 }
 .sect-tag{
   font-family: 'DM Mono', monospace;
-  font-size: 11px;
+  font-size: 12px;
+  font-weight: 500;
   text-transform: uppercase;
-  letter-spacing: 0.14em;
-  color: var(--accent);
-  margin-bottom: 24px;
+  letter-spacing: 0.1em;
+  color: var(--purple);
+  margin-bottom: 16px;
 }
 .sect h2{
-  font-size: clamp(30px, 4.5vw, 52px);
+  font-size: clamp(30px, 4.5vw, 50px);
   font-weight: 800;
-  margin-bottom: 20px;
+  margin-bottom: 16px;
   max-width: 680px;
 }
 .sect-lead{
-  font-size: clamp(16px, 1.6vw, 19px);
+  font-size: clamp(16px, 1.5vw, 18px);
   color: var(--text2);
-  max-width: 580px;
+  max-width: 560px;
   line-height: 1.75;
   margin-bottom: 48px;
 }
 
 
 /* ═══════════════════════════════════════
-   THE PROBLEM — split layout
+   THE PROBLEM — pain cards
    ═══════════════════════════════════════ */
-.split{
+.pain-grid{
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: clamp(40px, 6vw, 80px);
-  align-items: start;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 16px;
 }
-
-.pullquote{
-  padding: 28px 0 28px 24px;
-  border-left: 2px solid var(--accent);
-  margin-bottom: 32px;
-}
-.pullquote p{
-  font-family: 'Plus Jakarta Sans', sans-serif;
-  font-size: clamp(18px, 2.2vw, 23px);
-  font-weight: 600;
-  line-height: 1.55;
-  color: var(--text);
-  letter-spacing: -0.02em;
-}
-.pullquote cite{
-  display: block;
-  font-style: normal;
-  font-family: 'DM Mono', monospace;
-  font-size: 11px;
-  color: var(--text3);
-  margin-top: 14px;
-  letter-spacing: 0.03em;
-}
-
-.pain-list{
-  display: flex;
-  flex-direction: column;
-  gap: 18px;
-  list-style: none;
-}
-.pain-list li{
-  font-size: 15px;
-  color: var(--text2);
-  line-height: 1.7;
-  padding-left: 18px;
-  position: relative;
-}
-.pain-list li::before{
-  content: '';
-  position: absolute;
-  left: 0; top: 10px;
-  width: 5px; height: 5px;
-  border-radius: 50%;
-  background: var(--red);
-}
-.pain-list li strong{ color: var(--text); font-weight: 600; }
-
-
-/* ═══════════════════════════════════════
-   THE LOOP — timeline
-   ═══════════════════════════════════════ */
-.timeline{
-  display: grid;
-  grid-template-columns: 40px 1fr;
-  gap: 0;
-}
-.tl-rail{
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-.tl-dot{
-  width: 10px; height: 10px;
-  border-radius: 50%;
-  border: 2px solid var(--accent);
+.pain-card{
+  padding: 24px;
   background: var(--bg);
-  flex-shrink: 0;
-  z-index: 1;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
 }
-.tl-dot.filled{ background: var(--accent); }
-.tl-line{
-  width: 1px;
-  flex: 1;
-  background: var(--border);
+.pain-card:hover{
+  border-color: var(--rose);
+  box-shadow: 0 4px 24px rgba(239,68,68,0.06);
 }
-.tl-content{
-  padding: 0 0 44px 0;
+.pain-card-icon{
+  width: 36px; height: 36px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  margin-bottom: 14px;
+  background: rgba(239,68,68,0.06);
 }
-.tl-title{
-  font-family: 'Plus Jakarta Sans', sans-serif;
-  font-size: 17px;
+.pain-card h3{
+  font-size: 15px;
   font-weight: 700;
   letter-spacing: -0.02em;
   margin-bottom: 8px;
 }
-.tl-desc{
-  font-size: 15px;
+.pain-card p{
+  font-size: 14px;
+  color: var(--text2);
+  line-height: 1.65;
+}
+
+
+/* ═══════════════════════════════════════
+   THE WORKFLOW — horizontal scroll
+   ═══════════════════════════════════════ */
+.workflow-container{
+  position: relative;
+  overflow: hidden;
+}
+.workflow-track{
+  display: flex;
+  gap: 24px;
+  padding: 24px 0;
+  width: max-content;
+}
+.workflow-step{
+  width: 320px;
+  flex-shrink: 0;
+  padding: 32px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  position: relative;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+.workflow-step:hover{
+  border-color: var(--purple-med);
+  box-shadow: 0 8px 32px rgba(139,92,246,0.08);
+}
+.workflow-step-num{
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 48px;
+  font-weight: 800;
+  color: var(--surface2);
+  line-height: 1;
+  margin-bottom: 16px;
+  letter-spacing: -0.04em;
+}
+.workflow-step-title{
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  margin-bottom: 10px;
+}
+.workflow-step-desc{
+  font-size: 14px;
   color: var(--text2);
   line-height: 1.7;
-  max-width: 540px;
 }
-.tl-desc strong{ color: var(--text); font-weight: 600; }
-
-.tl-evidence{
+.workflow-step-tag{
+  display: inline-block;
   margin-top: 14px;
-  padding: 14px 18px;
-  background: var(--surface);
-  border-left: 2px solid var(--accent);
-  border-radius: 0 6px 6px 0;
-}
-.tl-evidence-id{
+  padding: 4px 10px;
+  border-radius: 6px;
   font-family: 'DM Mono', monospace;
-  font-size: 10px;
-  color: var(--accent);
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  margin-bottom: 4px;
+  font-size: 11px;
+  letter-spacing: 0.02em;
 }
-.tl-evidence-text{
-  font-size: 13px;
+.tag-auto{ background: rgba(34,197,94,0.08); color: var(--green); }
+.tag-you{ background: rgba(139,92,246,0.08); color: var(--purple); }
+.tag-system{ background: rgba(59,130,246,0.08); color: var(--blue); }
+
+/* Connector arrow between steps */
+.workflow-arrow{
+  width: 40px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text3);
+  font-size: 20px;
+  opacity: 0.4;
+}
+
+
+/* ═══════════════════════════════════════
+   THE PROOF — before/after
+   ═══════════════════════════════════════ */
+.proof-split{
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2px;
+  border-radius: 16px;
+  overflow: hidden;
+  margin-bottom: 48px;
+}
+.proof-side{
+  padding: clamp(32px, 4vw, 48px);
+}
+.proof-side.before{
+  background: #fef2f2;
+}
+.proof-side.after{
+  background: var(--purple-soft);
+}
+.proof-side-tag{
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 16px;
+}
+.proof-side.before .proof-side-tag{ color: var(--rose); }
+.proof-side.after .proof-side-tag{ color: var(--purple); }
+.proof-side h3{
+  font-size: clamp(20px, 2.5vw, 28px);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  margin-bottom: 16px;
+}
+.proof-side ul{
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.proof-side ul li{
+  font-size: 14px;
   color: var(--text2);
   line-height: 1.6;
-  font-style: italic;
+  padding-left: 20px;
+  position: relative;
+}
+.proof-side.before ul li::before{
+  content: '\00d7';
+  position: absolute; left: 0; top: 0;
+  color: var(--rose);
+  font-weight: 700;
+  font-size: 16px;
+}
+.proof-side.after ul li::before{
+  content: '\2713';
+  position: absolute; left: 0; top: 0;
+  color: var(--purple);
+  font-weight: 700;
+  font-size: 14px;
 }
 
-.flywheel{
+
+/* ═══════════════════════════════════════
+   THE LOOP — animated cycle
+   ═══════════════════════════════════════ */
+.loop-visual{
   display: flex;
   align-items: center;
   gap: 0;
-  margin-top: 48px;
-  padding: 18px 0;
-  border-top: 1px solid var(--border);
-  border-bottom: 1px solid var(--border);
+  padding: 32px 0;
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
 }
-.fw-node{
-  font-family: 'DM Mono', monospace;
-  font-size: 12px;
-  letter-spacing: 0.03em;
-  color: var(--text3);
-  white-space: nowrap;
-  padding: 6px 14px;
-}
-.fw-node.lit{ color: var(--accent); font-weight: 500; }
-.fw-sep{ color: var(--text3); font-size: 13px; padding: 0 2px; opacity: 0.4; }
-
-
-/* ═══════════════════════════════════════
-   THE PROOF — GPA comparison
-   ═══════════════════════════════════════ */
-.proof-pair{
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 2px;
-  margin-bottom: 40px;
-}
-.proof-block{
-  padding: clamp(32px, 4vw, 48px);
-  background: var(--surface);
-}
-.proof-block:first-child{ border-radius: 10px 0 0 10px; }
-.proof-block:last-child{ border-radius: 0 10px 10px 0; }
-.proof-campaign{
-  font-family: 'DM Mono', monospace;
-  font-size: 11px;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: var(--text3);
-  margin-bottom: 20px;
-}
-.proof-gpa{
-  font-family: 'Plus Jakarta Sans', sans-serif;
-  font-size: clamp(52px, 7vw, 76px);
-  font-weight: 800;
-  letter-spacing: -0.04em;
-  line-height: 1;
-  margin-bottom: 10px;
-}
-.proof-gpa-sub{
-  font-size: 14px;
-  color: var(--text2);
-  margin-bottom: 16px;
-}
-.proof-agents{
-  font-family: 'DM Mono', monospace;
-  font-size: 12px;
-  color: var(--text3);
-}
-
-.proof-delta{
-  text-align: center;
-  padding: 32px 0;
-  margin-bottom: 48px;
-}
-.proof-delta-num{
-  font-family: 'Plus Jakarta Sans', sans-serif;
-  font-size: clamp(28px, 4vw, 44px);
-  font-weight: 800;
-  color: var(--accent);
-  letter-spacing: -0.03em;
-  margin-bottom: 6px;
-}
-.proof-delta-label{
-  font-size: 15px;
-  color: var(--text2);
-}
-
-/* Grade bars */
-.chart-label{
-  font-family: 'DM Mono', monospace;
-  font-size: 11px;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: var(--text3);
-  margin-bottom: 16px;
-}
-.grade-bars{
-  display: flex;
-  align-items: end;
-  gap: 5px;
-  height: 110px;
-  padding-bottom: 1px;
-  border-bottom: 1px solid var(--border);
-}
-.g-col{
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: end;
-  height: 100%;
-}
-.g-fill{
-  width: 100%;
-  border-radius: 3px 3px 0 0;
-  min-height: 0;
-  transition: height 1s cubic-bezier(0.22, 1, 0.36, 1);
-}
-.g-labels{
-  display: flex;
-  gap: 5px;
-  margin-top: 6px;
-}
-.g-labels span{
-  flex: 1;
-  text-align: center;
-  font-family: 'DM Mono', monospace;
-  font-size: 10px;
-  color: var(--text3);
-}
-.g-count{
-  font-family: 'DM Mono', monospace;
-  font-size: 9px;
-  color: var(--text3);
-  margin-bottom: 4px;
-  opacity: 0;
-  transition: opacity 0.6s ease 1.2s;
-}
-.g-count.show{ opacity: 1; }
-
-
-/* ═══════════════════════════════════════
-   CASE STUDY f104
-   ═══════════════════════════════════════ */
-.case{
-  padding: clamp(36px, 4vw, 52px);
-  background: var(--surface);
-  border-radius: 10px;
+.loop-node{
+  padding: 16px 24px;
+  background: var(--bg);
   border: 1px solid var(--border);
-}
-.case-tag{
-  font-family: 'DM Mono', monospace;
-  font-size: 10px;
-  color: var(--accent);
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-  margin-bottom: 20px;
-}
-.case-title{
-  font-family: 'Plus Jakarta Sans', sans-serif;
-  font-size: clamp(20px, 2.8vw, 30px);
-  font-weight: 800;
-  letter-spacing: -0.03em;
-  line-height: 1.2;
-  margin-bottom: 20px;
-  max-width: 580px;
-}
-.case-body{
-  font-size: 15px;
-  color: var(--text2);
-  line-height: 1.8;
-  max-width: 620px;
-  margin-bottom: 32px;
-}
-.case-body strong{ color: var(--text); font-weight: 600; }
-
-.case-vs{
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 2px;
-  margin-bottom: 32px;
-}
-.case-side{
-  padding: 22px 24px;
-  border-radius: 6px;
-}
-.case-side.bad{ background: var(--red-dim); }
-.case-side.good{ background: var(--accent-dim); }
-.case-side-tag{
-  font-family: 'DM Mono', monospace;
-  font-size: 10px;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  margin-bottom: 10px;
-}
-.case-side.bad .case-side-tag{ color: var(--red); }
-.case-side.good .case-side-tag{ color: var(--accent); }
-.case-side p{
-  font-size: 14px;
-  color: var(--text2);
-  line-height: 1.65;
-}
-.case-side p strong{ color: var(--text); font-weight: 600; }
-
-.case-quote{
-  font-family: 'Plus Jakarta Sans', sans-serif;
-  font-size: clamp(17px, 2vw, 21px);
-  font-weight: 600;
-  font-style: italic;
-  color: var(--text);
-  letter-spacing: -0.01em;
-  line-height: 1.5;
-}
-.case-quote cite{
-  display: block;
-  font-style: normal;
-  font-size: 12px;
-  color: var(--text3);
-  font-family: 'DM Mono', monospace;
-  margin-top: 10px;
-  font-weight: 400;
-}
-
-
-/* ═══════════════════════════════════════
-   VOICES
-   ═══════════════════════════════════════ */
-.voices{
-  columns: 2;
-  column-gap: 28px;
-}
-.voice{
-  break-inside: avoid;
-  padding: 0 0 0 18px;
-  border-left: 1px solid var(--border);
-  margin-bottom: 28px;
-  transition: border-color 0.3s ease;
-}
-.voice:hover{ border-color: var(--accent); }
-.voice-text{
-  font-size: 15px;
-  color: var(--text2);
-  line-height: 1.7;
-  font-style: italic;
-  margin-bottom: 6px;
-}
-.voice-src{
-  font-family: 'DM Mono', monospace;
-  font-size: 10px;
-  color: var(--text3);
-  letter-spacing: 0.03em;
-}
-
-
-/* ═══════════════════════════════════════
-   STATS STRIP
-   ═══════════════════════════════════════ */
-.stats{
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 2px;
-}
-.stat{
-  padding: clamp(28px, 4vw, 44px) 24px;
-  background: var(--surface);
+  border-radius: 12px;
   text-align: center;
+  min-width: 140px;
+  flex-shrink: 0;
+  transition: border-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
 }
-.stat:first-child{ border-radius: 10px 0 0 10px; }
-.stat:last-child{ border-radius: 0 10px 10px 0; }
-.stat-n{
-  font-family: 'DM Mono', monospace;
-  font-size: clamp(32px, 4.5vw, 48px);
-  font-weight: 500;
-  color: var(--text);
-  line-height: 1;
+.loop-node.active{
+  border-color: var(--purple);
+  background: var(--purple-soft);
+  box-shadow: 0 4px 24px rgba(139,92,246,0.12);
+  transform: translateY(-4px);
+}
+.loop-node-icon{
+  font-size: 24px;
   margin-bottom: 8px;
 }
-.stat-l{
+.loop-node-title{
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  margin-bottom: 4px;
+}
+.loop-node-desc{
   font-family: 'DM Mono', monospace;
   font-size: 11px;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
+  color: var(--text3);
+}
+.loop-connector{
+  width: 48px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'DM Mono', monospace;
+  font-size: 16px;
+  color: var(--text3);
+  opacity: 0.3;
+}
+
+
+/* ═══════════════════════════════════════
+   VOICE QUOTES
+   ═══════════════════════════════════════ */
+.quotes-grid{
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 16px;
+}
+.quote-card{
+  padding: 24px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  transition: border-color 0.3s ease;
+}
+.quote-card:hover{ border-color: var(--purple-med); }
+.quote-card-text{
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1.6;
+  color: var(--text);
+  margin-bottom: 12px;
+  letter-spacing: -0.01em;
+}
+.quote-card-src{
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
   color: var(--text3);
 }
 
 
 /* ═══════════════════════════════════════
-   WHAT YOU GET
+   FEATURES — bento grid
    ═══════════════════════════════════════ */
-.features{
+.bento{
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
-  gap: 2px;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
 }
-.feat{
-  padding: 28px 24px;
-  background: var(--surface);
-  transition: background 0.25s ease;
+.bento-card{
+  padding: 28px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
 }
-.feat:hover{ background: var(--surface2); }
-.feat:first-child{ border-radius: 10px 0 0 0; }
-.feat:nth-child(3){ border-radius: 0 10px 0 0; }
-.feat:nth-child(4){ border-radius: 0 0 0 10px; }
-.feat:last-child{ border-radius: 0 0 10px 0; }
-.feat-title{
-  font-family: 'Plus Jakarta Sans', sans-serif;
-  font-size: 15px;
+.bento-card:hover{
+  border-color: var(--purple-med);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.04);
+}
+.bento-card.span-2{ grid-column: span 2; }
+.bento-card-icon{
+  width: 40px; height: 40px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  margin-bottom: 16px;
+  background: var(--purple-soft);
+}
+.bento-card h3{
+  font-size: 16px;
   font-weight: 700;
   letter-spacing: -0.02em;
   margin-bottom: 8px;
 }
-.feat-desc{
-  font-size: 13px;
+.bento-card p{
+  font-size: 14px;
   color: var(--text2);
   line-height: 1.65;
 }
-.feat-desc strong{ color: var(--text); font-weight: 500; }
 
 
 /* ═══════════════════════════════════════
-   BOTTOM
+   LIVE STATS STRIP
+   ═══════════════════════════════════════ */
+.stats-strip{
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 2px;
+  background: var(--surface);
+  border-radius: 16px;
+  overflow: hidden;
+}
+.stats-strip .stat{
+  padding: clamp(28px, 4vw, 44px) 24px;
+  background: var(--bg);
+  text-align: center;
+}
+.stats-strip .stat-n{
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: clamp(28px, 4vw, 44px);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  color: var(--text);
+  line-height: 1;
+  margin-bottom: 6px;
+}
+.stats-strip .stat-l{
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text3);
+}
+
+
+/* ═══════════════════════════════════════
+   BOTTOM CTA
    ═══════════════════════════════════════ */
 .bottom{
   padding: clamp(80px, 12vh, 160px) 0 clamp(60px, 8vh, 100px);
-  border-top: 1px solid var(--border);
+  text-align: center;
 }
 .bottom h2{
-  font-size: clamp(32px, 5.5vw, 60px);
+  font-size: clamp(28px, 4.5vw, 52px);
   font-weight: 800;
-  max-width: 660px;
-  margin-bottom: 24px;
+  max-width: 640px;
+  margin: 0 auto 20px;
 }
 .bottom-sub{
-  font-size: clamp(16px, 1.6vw, 19px);
+  font-size: clamp(16px, 1.5vw, 18px);
   color: var(--text2);
-  max-width: 480px;
+  max-width: 440px;
+  margin: 0 auto 40px;
   line-height: 1.75;
-  margin-bottom: 48px;
 }
-.bottom-row{
+.bottom-facts{
   display: flex;
   gap: 32px;
+  justify-content: center;
   flex-wrap: wrap;
 }
 .bottom-fact{
@@ -666,7 +583,7 @@ h1,h2,h3{ font-family: 'Plus Jakarta Sans', sans-serif; letter-spacing: -0.04em;
   font-family: 'DM Mono', monospace;
   font-size: 18px;
   font-weight: 500;
-  color: var(--accent);
+  color: var(--purple);
 }
 .bottom-fact .k{
   font-size: 13px;
@@ -675,53 +592,29 @@ h1,h2,h3{ font-family: 'Plus Jakarta Sans', sans-serif; letter-spacing: -0.04em;
 
 
 /* ═══════════════════════════════════════
-   SCROLL ANIMATIONS
+   ANIMATIONS (initial states for GSAP)
    ═══════════════════════════════════════ */
-.rv{
+.anim{
   opacity: 0;
-  transform: translateY(24px);
-  transition: opacity 0.7s cubic-bezier(0.22, 1, 0.36, 1), transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+  transform: translateY(32px);
 }
-.rv.vis{ opacity: 1; transform: translateY(0); }
-.rv-d1{ transition-delay: 0.1s; }
-.rv-d2{ transition-delay: 0.2s; }
-.rv-d3{ transition-delay: 0.3s; }
-
-@media (prefers-reduced-motion: reduce){
-  .rv{ transition: none; opacity: 1; transform: none; }
-  .g-fill{ transition: none; }
-  .pulse{ animation: none; opacity: 1; }
-  .scroll-cue{ animation: none; }
-}
-
-@media print{ .rv{ opacity: 1 !important; transform: none !important; } }
 
 
 /* ═══════════════════════════════════════
    RESPONSIVE
    ═══════════════════════════════════════ */
 @media (max-width: 768px){
-  .hero-grid{ grid-template-columns: 1fr; gap: 48px; }
-  .hero-data{ flex-direction: row; flex-wrap: wrap; gap: 12px; }
-  .hero-row{ flex: 1; min-width: 130px; }
-  .split{ grid-template-columns: 1fr; }
-  .proof-pair{ grid-template-columns: 1fr; }
-  .proof-block:first-child{ border-radius: 10px 10px 0 0; }
-  .proof-block:last-child{ border-radius: 0 0 10px 10px; }
-  .case-vs{ grid-template-columns: 1fr; }
-  .voices{ columns: 1; }
-  .stats{ grid-template-columns: 1fr 1fr; }
-  .stat:first-child{ border-radius: 10px 0 0 0; }
-  .stat:nth-child(2){ border-radius: 0 10px 0 0; }
-  .stat:nth-child(3){ border-radius: 0 0 0 10px; }
-  .stat:last-child{ border-radius: 0 0 10px 0; }
-  .features{ grid-template-columns: 1fr; }
-  .feat{ border-radius: 0 !important; }
-  .feat:first-child{ border-radius: 10px 10px 0 0 !important; }
-  .feat:last-child{ border-radius: 0 0 10px 10px !important; }
-  .grade-bars{ height: 80px; }
-  .flywheel{ gap: 0; }
-  .timeline{ grid-template-columns: 32px 1fr; }
+  .hero-stats{ gap: 24px; }
+  .proof-split{ grid-template-columns: 1fr; }
+  .bento{ grid-template-columns: 1fr; }
+  .bento-card.span-2{ grid-column: span 1; }
+  .stats-strip{ grid-template-columns: 1fr 1fr; }
+}
+
+@media (prefers-reduced-motion: reduce){
+  .anim{ opacity: 1; transform: none; }
+  .hero-badge-dot{ animation: none; opacity: 1; }
+  .scroll-hint-line{ animation: none; }
 }
 </style>
 </head>
@@ -729,321 +622,272 @@ h1,h2,h3{ font-family: 'Plus Jakarta Sans', sans-serif; letter-spacing: -0.04em;
 
 <div class="wrap">
 
-<!-- ════════════════════════════════════════════════
-     HERO
-     ════════════════════════════════════════════════ -->
+<!-- ═══════ HERO ═══════ -->
 <section class="hero">
-  <div class="hero-tag">
-    <span class="pulse"></span>
-    <span>Mission Control</span>
-  </div>
+  <div class="hero-shape hero-shape-1"></div>
+  <div class="hero-shape hero-shape-2"></div>
 
-  <div class="hero-grid">
-    <div>
-      <h1><em data-counter="76">0</em> agents dispatched.<br>
-      <em data-counter="104">0</em> lessons learned.<br>
-      A system that gets<br>smarter every day.</h1>
-    </div>
-    <div class="hero-data">
-      <div class="hero-row">
-        <span class="hero-row-label">Campaigns</span>
-        <span class="hero-row-value" data-counter="3">0</span>
-      </div>
-      <div class="hero-row">
-        <span class="hero-row-label">Agents</span>
-        <span class="hero-row-value" data-counter="76">0</span>
-      </div>
-      <div class="hero-row">
-        <span class="hero-row-label">GPA</span>
-        <span class="hero-row-value" data-counter="3.20" data-dec="2">0</span>
-      </div>
-      <div class="hero-row">
-        <span class="hero-row-label">Findings</span>
-        <span class="hero-row-value" data-counter="104">0</span>
-      </div>
+  <div class="anim">
+    <div class="hero-badge">
+      <div class="hero-badge-dot"></div>
+      <span>Mission Control</span>
     </div>
   </div>
 
-  <div class="scroll-cue">scroll</div>
+  <h1 class="anim">An interface layer<br>for people who run<br><span class="accent">AI agents.</span></h1>
+
+  <p class="hero-sub anim">You don't look at files. You don't read transcripts. You manage agents like a team -- dispatch them, watch them work, and make sure they never repeat the same mistake.</p>
+
+  <div class="hero-stats">
+    <div class="hero-stat anim">
+      <div class="hero-stat-n" data-counter="3">0</div>
+      <div class="hero-stat-l">Campaigns</div>
+    </div>
+    <div class="hero-stat anim">
+      <div class="hero-stat-n" data-counter="76">0</div>
+      <div class="hero-stat-l">Agents dispatched</div>
+    </div>
+    <div class="hero-stat anim">
+      <div class="hero-stat-n" data-counter="105">0</div>
+      <div class="hero-stat-l">Lessons learned</div>
+    </div>
+    <div class="hero-stat anim">
+      <div class="hero-stat-n">0</div>
+      <div class="hero-stat-l">npm dependencies</div>
+    </div>
+  </div>
+
+  <div class="scroll-hint">
+    <span>scroll</span>
+    <div class="scroll-hint-line"></div>
+  </div>
 </section>
 
 
-<!-- ════════════════════════════════════════════════
-     THE PROBLEM
-     ════════════════════════════════════════════════ -->
+<!-- ═══════ THE PROBLEM ═══════ -->
 <section class="sect">
-  <div class="rv">
-    <div class="sect-tag">The problem</div>
-    <h2>You're running agents blind.</h2>
-  </div>
+  <div class="sect-tag anim">The problem</div>
+  <h2 class="anim">You're running agents blind.</h2>
+  <p class="sect-lead anim">Claude Code is incredible. But the moment you run more than one agent, you lose control. No dashboard. No memory between sessions. No way to know if an agent is stuck, done, or destroying your codebase.</p>
 
-  <div class="split">
-    <div class="rv rv-d1">
-      <div class="pullquote">
-        <p>"I don't use my IDE anymore. I don't want to look at files. There are better ways to present data to me."</p>
-        <cite>-- The moment that started everything</cite>
-      </div>
-      <p class="sect-lead" style="margin-bottom:0">Claude Code is the most powerful coding tool ever built. But the moment you run more than one agent, you lose visibility. No dashboard. No notifications. No memory between sessions.</p>
+  <div class="pain-grid">
+    <div class="pain-card anim">
+      <div class="pain-card-icon">?</div>
+      <h3>Invisible agents</h3>
+      <p>An agent asked you a question 4 minutes ago. It's waiting in terminal #3, which looks identical to the other four.</p>
     </div>
+    <div class="pain-card anim">
+      <div class="pain-card-icon">!</div>
+      <h3>Repeated mistakes</h3>
+      <p>You fixed this exact bug last week. The new agent doesn't know. It's about to break the same thing again.</p>
+    </div>
+    <div class="pain-card anim">
+      <div class="pain-card-icon">&amp;</div>
+      <h3>Silent conflicts</h3>
+      <p>Two agents edited the same file. You'll find out in an hour when something breaks and you have no idea why.</p>
+    </div>
+    <div class="pain-card anim">
+      <div class="pain-card-icon">$</div>
+      <h3>Blind spending</h3>
+      <p>You've spent $200 this week on API calls. On what? For which project? No idea.</p>
+    </div>
+  </div>
+</section>
 
-    <div class="rv rv-d2">
-      <ul class="pain-list">
-        <li><strong>An agent asked you a question 4 minutes ago.</strong> It's been waiting in terminal #3, which looks identical to the other four.</li>
-        <li><strong>You fixed this exact bug last week.</strong> The new agent doesn't know. It's about to break the same thing again.</li>
-        <li><strong>Two agents silently edited the same file.</strong> You'll find out in an hour when something breaks.</li>
-        <li><strong>An agent ran for 2 hours while you were at lunch.</strong> Did it finish? Did it break something? You'd have to read the transcript to find out.</li>
-        <li><strong>You've spent $200 this week on API calls.</strong> On what? For which project? No idea.</li>
+
+<!-- ═══════ THE WORKFLOW — how MC works ═══════ -->
+<section class="sect">
+  <div class="sect-tag anim">How it works</div>
+  <h2 class="anim">You manage agents like a team.</h2>
+  <p class="sect-lead anim">Write a brief. Dispatch agents. Watch them work in real-time. Grade the output. Every lesson gets captured so the next agent is smarter.</p>
+
+  <div class="workflow-container" id="workflowContainer">
+    <div class="workflow-track" id="workflowTrack">
+      <div class="workflow-step anim">
+        <div class="workflow-step-num">01</div>
+        <div class="workflow-step-title">Write a brief</div>
+        <div class="workflow-step-desc">Describe what you need. The system generates a structured prompt with quality gates, required skills, and success criteria.</div>
+        <div class="workflow-step-tag tag-you">You decide</div>
+      </div>
+      <div class="workflow-arrow anim">&rarr;</div>
+      <div class="workflow-step anim">
+        <div class="workflow-step-num">02</div>
+        <div class="workflow-step-title">Dispatch the agent</div>
+        <div class="workflow-step-desc">One API call. The agent launches in a new terminal with its brief, your rules, and every lesson from previous sessions loaded.</div>
+        <div class="workflow-step-tag tag-auto">Automated</div>
+      </div>
+      <div class="workflow-arrow anim">&rarr;</div>
+      <div class="workflow-step anim">
+        <div class="workflow-step-num">03</div>
+        <div class="workflow-step-title">Watch it work</div>
+        <div class="workflow-step-desc">Live dashboard shows every active agent: what tool it's using, what file it's touching, how long it's been running. Browser notifications when one needs input.</div>
+        <div class="workflow-step-tag tag-system">Real-time</div>
+      </div>
+      <div class="workflow-arrow anim">&rarr;</div>
+      <div class="workflow-step anim">
+        <div class="workflow-step-num">04</div>
+        <div class="workflow-step-title">Grade the output</div>
+        <div class="workflow-step-desc">Auto-grading scores what was delivered vs. what was asked. Lessons, wins, and misses are captured permanently.</div>
+        <div class="workflow-step-tag tag-auto">Automated</div>
+      </div>
+      <div class="workflow-arrow anim">&rarr;</div>
+      <div class="workflow-step anim">
+        <div class="workflow-step-num">05</div>
+        <div class="workflow-step-title">System gets smarter</div>
+        <div class="workflow-step-desc">Every correction becomes a permanent rule. Every mistake becomes a hook that prevents it from happening again. The next agent starts smarter than the last.</div>
+        <div class="workflow-step-tag tag-system">Self-evolving</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══════ THE LEARNING LOOP ═══════ -->
+<section class="sect" style="background:var(--bg2);margin:0 calc(-1 * clamp(24px,5vw,64px));padding-left:clamp(24px,5vw,64px);padding-right:clamp(24px,5vw,64px);">
+  <div class="sect-tag anim">The killer feature</div>
+  <h2 class="anim">Your agents make mistakes once.<br>Never twice.</h2>
+  <p class="sect-lead anim">Every correction you make becomes institutional knowledge. This is the flywheel no other tool has.</p>
+
+  <div class="loop-visual" id="loopVisual">
+    <div class="loop-node anim" id="loop-0">
+      <div class="loop-node-icon">&#x26A0;</div>
+      <div class="loop-node-title">Mistake</div>
+      <div class="loop-node-desc">Agent breaks something</div>
+    </div>
+    <div class="loop-connector anim">&rarr;</div>
+    <div class="loop-node anim" id="loop-1">
+      <div class="loop-node-icon">&#x1F4CB;</div>
+      <div class="loop-node-title">Post-mortem</div>
+      <div class="loop-node-desc">What went wrong + why</div>
+    </div>
+    <div class="loop-connector anim">&rarr;</div>
+    <div class="loop-node anim" id="loop-2">
+      <div class="loop-node-icon">&#x1F4A1;</div>
+      <div class="loop-node-title">Finding</div>
+      <div class="loop-node-desc">Permanent lesson stored</div>
+    </div>
+    <div class="loop-connector anim">&rarr;</div>
+    <div class="loop-node anim" id="loop-3">
+      <div class="loop-node-icon">&#x1F4DC;</div>
+      <div class="loop-node-title">Rule</div>
+      <div class="loop-node-desc">Added to agent instructions</div>
+    </div>
+    <div class="loop-connector anim">&rarr;</div>
+    <div class="loop-node anim" id="loop-4">
+      <div class="loop-node-icon">&#x1F6E1;</div>
+      <div class="loop-node-title">Hook</div>
+      <div class="loop-node-desc">Automated prevention</div>
+    </div>
+    <div class="loop-connector anim">&rarr;</div>
+    <div class="loop-node anim" id="loop-5">
+      <div class="loop-node-icon">&#x2705;</div>
+      <div class="loop-node-title">Prevention</div>
+      <div class="loop-node-desc">Never happens again</div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══════ BEFORE / AFTER ═══════ -->
+<section class="sect">
+  <div class="sect-tag anim">Before and after</div>
+  <h2 class="anim">Same developer. Same models.<br>Different system.</h2>
+
+  <div class="proof-split anim">
+    <div class="proof-side before">
+      <div class="proof-side-tag">Without Mission Control</div>
+      <h3>Flying blind</h3>
+      <ul>
+        <li>Agents repeat mistakes you fixed last week</li>
+        <li>No idea which terminal needs attention</li>
+        <li>Two agents silently overwrite each other's work</li>
+        <li>$200/week on API calls -- on what?</li>
+        <li>Every session starts from zero context</li>
+      </ul>
+    </div>
+    <div class="proof-side after">
+      <div class="proof-side-tag">With Mission Control</div>
+      <h3>Total visibility</h3>
+      <ul>
+        <li>Every mistake becomes a permanent lesson</li>
+        <li>Live dashboard shows all agents in real-time</li>
+        <li>File conflict hooks fire before overwrites happen</li>
+        <li>Cost tracking by session, project, and model</li>
+        <li>Agents load your entire knowledge base on startup</li>
       </ul>
     </div>
   </div>
 </section>
 
 
-<!-- ════════════════════════════════════════════════
-     THE LEARNING LOOP
-     ════════════════════════════════════════════════ -->
-<section class="sect">
-  <div class="rv">
-    <div class="sect-tag">The killer feature</div>
-    <h2>Your agents make mistakes.<br>MC makes sure they only make them once.</h2>
-    <p class="sect-lead">Every correction you make becomes institutional knowledge. Every failure becomes a permanent lesson. This is the flywheel that no other tool has.</p>
-  </div>
+<!-- ═══════ REAL WORDS ═══════ -->
+<section class="sect" style="background:var(--bg2);margin:0 calc(-1 * clamp(24px,5vw,64px));padding-left:clamp(24px,5vw,64px);padding-right:clamp(24px,5vw,64px);">
+  <div class="sect-tag anim">Real words</div>
+  <h2 class="anim">Built by using it every day.</h2>
 
-  <div class="timeline rv rv-d1">
-    <!-- 1 -->
-    <div class="tl-rail"><div class="tl-dot filled"></div><div class="tl-line"></div></div>
-    <div class="tl-content">
-      <div class="tl-title">An agent makes a mistake</div>
-      <div class="tl-desc">It overwrites a file, kills a running process, or repeats a bug you already fixed. <strong>The usual.</strong></div>
-      <div class="tl-evidence">
-        <div class="tl-evidence-id">Finding f002</div>
-        <div class="tl-evidence-text">"THIS LOOKS LIKE DOGSHIT. Did you even Playwright test? This should be a must with all Claude chats."</div>
-      </div>
+  <div class="quotes-grid">
+    <div class="quote-card anim">
+      <div class="quote-card-text">"This is basically an interface layer built on top of my IDE. I don't need to look at files -- that's not my job. My job is to create."</div>
+      <div class="quote-card-src">The interface layer thesis</div>
     </div>
-
-    <!-- 2 -->
-    <div class="tl-rail"><div class="tl-dot filled"></div><div class="tl-line"></div></div>
-    <div class="tl-content">
-      <div class="tl-title">Your correction is captured permanently</div>
-      <div class="tl-desc">Your frustration becomes a Finding -- a titled, described lesson. Not buried in a transcript that gets compacted. <strong>Stored in MC's knowledge base forever.</strong></div>
-      <div class="tl-evidence">
-        <div class="tl-evidence-id">Finding f004</div>
-        <div class="tl-evidence-text">"Part of having a good agent workflow is when you don't repeat the same mistakes."</div>
-      </div>
+    <div class="quote-card anim">
+      <div class="quote-card-text">"This is basically a big ass crib -- putting all my agents in this baby crib and making sure I can watch them."</div>
+      <div class="quote-card-src">The baby crib metaphor</div>
     </div>
-
-    <!-- 3 -->
-    <div class="tl-rail"><div class="tl-dot filled"></div><div class="tl-line"></div></div>
-    <div class="tl-content">
-      <div class="tl-title">Every future agent reads it on startup</div>
-      <div class="tl-desc">Fresh agents load your Findings automatically. The mistake that cost you 30 minutes? <strong>It never happens again.</strong> Your team of agents gets smarter every day.</div>
-      <div class="tl-evidence">
-        <div class="tl-evidence-id">Finding f049</div>
-        <div class="tl-evidence-text">"They are not using skills. That's ridiculous. This should be a mandatory thing."</div>
-      </div>
+    <div class="quote-card anim">
+      <div class="quote-card-text">"Every time I make some changes I'm exponentially getting better -- exponentially producing more, in a very systematic way."</div>
+      <div class="quote-card-src">The compounding effect</div>
     </div>
-
-    <!-- 4 -->
-    <div class="tl-rail"><div class="tl-dot"></div></div>
-    <div class="tl-content" style="padding-bottom:0">
-      <div class="tl-title">The system itself evolves</div>
-      <div class="tl-desc">Findings become rules. Rules become hooks. Hooks become API enforcement. <strong>MC is both a product and a self-evolving research project.</strong></div>
-      <div class="tl-evidence">
-        <div class="tl-evidence-id">Finding f036</div>
-        <div class="tl-evidence-text">"Every time I make some changes I'm exponentially getting better -- exponentially producing more, in a very systematic way."</div>
-      </div>
-    </div>
-  </div>
-
-  <div class="flywheel rv rv-d2">
-    <span class="fw-node">Mistake</span>
-    <span class="fw-sep">&rarr;</span>
-    <span class="fw-node">Finding</span>
-    <span class="fw-sep">&rarr;</span>
-    <span class="fw-node">Rule</span>
-    <span class="fw-sep">&rarr;</span>
-    <span class="fw-node">Hook</span>
-    <span class="fw-sep">&rarr;</span>
-    <span class="fw-node lit">Prevention</span>
-    <span class="fw-sep">&rarr;</span>
-    <span class="fw-node">Better agents</span>
-    <span class="fw-sep">&rarr;</span>
-    <span class="fw-node" style="font-style:italic;opacity:.5">repeat</span>
-  </div>
-</section>
-
-
-<!-- ════════════════════════════════════════════════
-     THE PROOF
-     ════════════════════════════════════════════════ -->
-<section class="sect">
-  <div class="rv">
-    <div class="sect-tag">The proof</div>
-    <h2>The agents didn't get smarter.<br>The system did.</h2>
-    <p class="sect-lead">Same models. Same developer. Same codebase. The only variable was Mission Control's accumulated knowledge.</p>
-  </div>
-
-  <div class="proof-pair rv rv-d1">
-    <div class="proof-block">
-      <div class="proof-campaign">Campaign 001 -- Evolution Sprint</div>
-      <div class="proof-gpa" style="color:var(--text2)" data-counter="3.00" data-dec="2">0</div>
-      <div class="proof-gpa-sub">B average -- the system was still learning</div>
-      <div class="proof-agents">43 agents graded -- 0 findings at start</div>
-    </div>
-    <div class="proof-block">
-      <div class="proof-campaign">Campaign 002 -- Maturity Sprint</div>
-      <div class="proof-gpa" style="color:var(--accent)" data-counter="3.57" data-dec="2">0</div>
-      <div class="proof-gpa-sub">B+/A- average -- the system had learned</div>
-      <div class="proof-agents">24 agents graded -- 80+ findings loaded</div>
-    </div>
-  </div>
-
-  <div class="proof-delta rv rv-d2">
-    <div class="proof-delta-num">+19% GPA improvement</div>
-    <div class="proof-delta-label">One campaign to the next. Same developer. Same models. Better system.</div>
-  </div>
-
-  <div class="rv rv-d2">
-    <div class="chart-label">Grade distribution -- all campaigns</div>
-    <div class="grade-bars" id="gradeChart"></div>
-    <div class="g-labels" id="gradeLabels"></div>
-  </div>
-</section>
-
-
-<!-- ════════════════════════════════════════════════
-     CASE STUDY: f104
-     ════════════════════════════════════════════════ -->
-<section class="sect">
-  <div class="rv">
-    <div class="sect-tag">Case study</div>
-    <h2>When rules fail, build walls.</h2>
-  </div>
-
-  <div class="case rv rv-d1">
-    <div class="case-tag">Finding f104 -- The Watermark Seal Pattern</div>
-    <div class="case-title">An orchestrator kept bypassing the quality pipeline. So the system made bypass impossible.</div>
-
-    <div class="case-body">
-      The orchestrator was supposed to use the <strong>create-agent-prompt</strong> skill for every dispatch. But under time pressure, it rationalized shortcuts -- writing prompts by hand, skipping the pipeline. We added rules. It found ways around them.
-      <br><br>
-      So instead of adding another rule, MC added <strong>code-level enforcement</strong>. The approved skill now stamps a hidden watermark comment on every prompt file it generates. The dispatch API reads the file and <strong>rejects anything missing the watermark</strong>. No watermark, no launch. Bypass is physically impossible.
-    </div>
-
-    <div class="case-vs">
-      <div class="case-side bad">
-        <div class="case-side-tag">Before -- behavioral rule</div>
-        <p>"Always use the create-agent-prompt skill."<br><strong>Result:</strong> AI rationalizes around it under pressure. Rule fails 3+ times.</p>
-      </div>
-      <div class="case-side good">
-        <div class="case-side-tag">After -- API enforcement</div>
-        <p>Watermark stamped by skill. Validated by the dispatch API.<br><strong>Result:</strong> Zero bypasses since implementation.</p>
-      </div>
-    </div>
-
-    <div class="case-quote">
-      "Oh wow, that is super smart. I want to show this example in my demo, like the fact that you reasoned about this yourself without me asking."
-      <cite>-- User reaction when the AI proposed this pattern independently</cite>
+    <div class="quote-card anim">
+      <div class="quote-card-text">"MC is air traffic control for your AI agents -- not the planes, not the destination."</div>
+      <div class="quote-card-src">The ATC framing</div>
     </div>
   </div>
 </section>
 
 
-<!-- ════════════════════════════════════════════════
-     THE VOICES
-     ════════════════════════════════════════════════ -->
+<!-- ═══════ WHAT YOU GET ═══════ -->
 <section class="sect">
-  <div class="rv">
-    <div class="sect-tag">The voices</div>
-    <h2>Real words from the sessions that built this.</h2>
-  </div>
+  <div class="sect-tag anim">What you get</div>
+  <h2 class="anim">One URL. Total visibility.</h2>
 
-  <div class="voices rv rv-d1">
-    <div class="voice">
-      <div class="voice-text">"I saw eight tabs and I was like hold on."</div>
-      <div class="voice-src">f038 -- friend's first reaction to MC</div>
+  <div class="bento">
+    <div class="bento-card span-2 anim">
+      <div class="bento-card-icon">&#x1F4E1;</div>
+      <h3>Live agent dashboard</h3>
+      <p>Every active agent: what tool it's using, what file it's touching, how long it's been running. Favicon pulses green. Browser notifications when one needs your input.</p>
     </div>
-    <div class="voice">
-      <div class="voice-text">"My work is gonna be so easy and fun... I can push this, it goes to my work laptop and I just switch -- and now I'm in work mode."</div>
-      <div class="voice-src">f041 -- home/work mode toggle</div>
+    <div class="bento-card anim">
+      <div class="bento-card-icon">&#x1F9E0;</div>
+      <h3>Institutional memory</h3>
+      <p>Findings, post-mortems, and rules that agents read automatically. Your frustration becomes training data.</p>
     </div>
-    <div class="voice">
-      <div class="voice-text">"It's like I'm heading to the grocery store in a Ferrari bro -- I don't need to -- it's down the street."</div>
-      <div class="voice-src">f037 -- on over-engineering</div>
+    <div class="bento-card anim">
+      <div class="bento-card-icon">&#x1F4AC;</div>
+      <h3>Prompt capture</h3>
+      <p>Every message you send is captured and survives compaction. Your prompts are never lost.</p>
     </div>
-    <div class="voice">
-      <div class="voice-text">"The next frontier is being like I'm gonna start recording everything and just have a pipeline."</div>
-      <div class="voice-src">f039 -- on the future</div>
+    <div class="bento-card anim">
+      <div class="bento-card-icon">&#x1F6E1;</div>
+      <h3>File conflict protection</h3>
+      <p>Hooks fire when two agents touch the same file. No silent overwrites. No regression surprises.</p>
     </div>
-    <div class="voice">
-      <div class="voice-text">"You actually loaded the brainstorming skill for the first time. This is so cool."</div>
-      <div class="voice-src">f051 -- when skills started working</div>
-    </div>
-    <div class="voice">
-      <div class="voice-text">"This session helped -- you helped me a lot and I helped myself a whole lot... I learned a lot about how to present this."</div>
-      <div class="voice-src">f043 -- late-night demo prep</div>
-    </div>
-    <div class="voice">
-      <div class="voice-text">"Every time I make some changes I'm exponentially getting better -- exponentially producing more, in a very systematic way."</div>
-      <div class="voice-src">f036 -- the self-improving loop</div>
-    </div>
-    <div class="voice">
-      <div class="voice-text">"I don't use my IDE with Mission Control. This is an interface layer built on top of CLI."</div>
-      <div class="voice-src">f033 -- the concept</div>
+    <div class="bento-card anim">
+      <div class="bento-card-icon">&#x1F3AF;</div>
+      <h3>Coordinated campaigns</h3>
+      <p>Brief multiple agents, track them in parallel, grade their work, capture lessons. Multi-agent project management.</p>
     </div>
   </div>
 </section>
 
 
-<!-- ════════════════════════════════════════════════
-     WHAT YOU GET
-     ════════════════════════════════════════════════ -->
+<!-- ═══════ LIVE NUMBERS ═══════ -->
 <section class="sect">
-  <div class="rv">
-    <div class="sect-tag">What you get</div>
-    <h2>One URL. Total visibility.<br>Agents that learn.</h2>
-  </div>
+  <div class="sect-tag anim">Live data</div>
+  <h2 class="anim">These numbers are real.</h2>
+  <p class="sect-lead anim">Pulled from Mission Control's APIs right now. Not marketing copy -- live data from a system that's actually running.</p>
 
-  <div class="features rv rv-d1">
-    <div class="feat">
-      <div class="feat-title">Live agent status</div>
-      <div class="feat-desc">Every active agent: what tool it's using, what file it's touching. <strong>Live.</strong> Favicon pulses green. Browser notifications when one needs input.</div>
-    </div>
-    <div class="feat">
-      <div class="feat-title">Prompt capture</div>
-      <div class="feat-desc">Hooks capture every message you send. <strong>Survives compaction.</strong> Click any session, read the full conversation. Your prompts are never lost.</div>
-    </div>
-    <div class="feat">
-      <div class="feat-title">Institutional memory</div>
-      <div class="feat-desc">Findings and post-mortems that agents read automatically. Your frustration becomes training data. <strong>Mistakes don't repeat.</strong></div>
-    </div>
-    <div class="feat">
-      <div class="feat-title">Session summaries</div>
-      <div class="feat-desc">AI-generated summaries of every session. Key decisions, files changed, outcome. <strong>No more reading transcripts.</strong></div>
-    </div>
-    <div class="feat">
-      <div class="feat-title">File conflict protection</div>
-      <div class="feat-desc">Hooks fire when two agents touch the same file. PID-based liveness detection. <strong>No silent overwrites.</strong></div>
-    </div>
-    <div class="feat">
-      <div class="feat-title">Coordinated campaigns</div>
-      <div class="feat-desc">Brief multiple agents, track them in parallel, grade their work, capture lessons. <strong>Multi-agent project management.</strong></div>
-    </div>
-  </div>
-</section>
-
-
-<!-- ════════════════════════════════════════════════
-     LIVE NUMBERS
-     ════════════════════════════════════════════════ -->
-<section class="sect">
-  <div class="rv">
-    <div class="sect-tag">Live from the APIs</div>
-    <h2>These numbers are real.</h2>
-    <p class="sect-lead">Pulled from Mission Control's APIs right now. Not marketing copy -- live data from a system that's running.</p>
-  </div>
-
-  <div class="stats rv rv-d1">
+  <div class="stats-strip anim">
     <div class="stat">
       <div class="stat-n" id="s-campaigns" data-counter="3">0</div>
       <div class="stat-l">Campaigns</div>
@@ -1053,26 +897,22 @@ h1,h2,h3{ font-family: 'Plus Jakarta Sans', sans-serif; letter-spacing: -0.04em;
       <div class="stat-l">Agents</div>
     </div>
     <div class="stat">
-      <div class="stat-n" id="s-findings" data-counter="104">0</div>
+      <div class="stat-n" id="s-findings" data-counter="105">0</div>
       <div class="stat-l">Findings</div>
     </div>
     <div class="stat">
-      <div class="stat-n" id="s-gpa" data-counter="3.20" data-dec="2">0</div>
-      <div class="stat-l">GPA</div>
+      <div class="stat-n" id="s-skills" data-counter="62">0</div>
+      <div class="stat-l">Skills</div>
     </div>
   </div>
 </section>
 
 
-<!-- ════════════════════════════════════════════════
-     BOTTOM
-     ════════════════════════════════════════════════ -->
+<!-- ═══════ BOTTOM ═══════ -->
 <section class="bottom">
-  <div class="rv">
-    <h2>Built for people who run multiple agents daily and refuse to fly blind.</h2>
-    <p class="bottom-sub">One server file. Zero dependencies. Everything stays on your machine. No accounts, no cloud, no data leaving your laptop.</p>
-  </div>
-  <div class="bottom-row rv rv-d1">
+  <h2 class="anim">Built for people who refuse to fly blind.</h2>
+  <p class="bottom-sub anim">One server file. Zero dependencies. Everything stays on your machine.</p>
+  <div class="bottom-facts anim">
     <div class="bottom-fact"><span class="v">0</span><span class="k">npm dependencies</span></div>
     <div class="bottom-fact"><span class="v">1</span><span class="k">server file</span></div>
     <div class="bottom-fact"><span class="v">100%</span><span class="k">local</span></div>
@@ -1082,113 +922,105 @@ h1,h2,h3{ font-family: 'Plus Jakarta Sans', sans-serif; letter-spacing: -0.04em;
 </div><!-- /wrap -->
 
 
+<!-- ═══════ GSAP + ScrollTrigger ═══════ -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
 <script>
-/* ── Scroll reveal ── */
-const rvEls = document.querySelectorAll('.rv');
-const rvObs = new IntersectionObserver(entries => {
-  entries.forEach(e => {
-    if (e.isIntersecting) {
-      e.target.classList.add('vis');
-      rvObs.unobserve(e.target);
-    }
-  });
-}, { threshold: 0.06, rootMargin: '0px 0px -30px 0px' });
-rvEls.forEach(el => rvObs.observe(el));
-setTimeout(() => {
-  rvEls.forEach(el => el.classList.add('vis'));
-  /* Fallback: trigger all counters + bars for screenshots */
-  cEls.forEach(el => {
-    if (!el._counted) {
-      el._counted = true;
-      countUp(el, parseFloat(el.dataset.counter), parseInt(el.dataset.dec || '0'));
-    }
-  });
-  document.querySelectorAll('.g-fill').forEach(f => {
-    if (f.style.height === '0' || f.style.height === '0px') {
-      f.style.height = f.dataset.pct + '%';
-    }
-  });
-  document.querySelectorAll('.g-count').forEach(c => c.classList.add('show'));
-}, 2200);
+gsap.registerPlugin(ScrollTrigger);
 
-/* ── Counter animation ── */
-function countUp(el, target, dec) {
-  const dur = 1600;
-  const t0 = performance.now();
-  const tick = now => {
-    const p = Math.min((now - t0) / dur, 1);
-    const ease = 1 - Math.pow(1 - p, 4);
-    el.textContent = dec > 0 ? (ease * target).toFixed(dec) : Math.round(ease * target);
-    if (p < 1) requestAnimationFrame(tick);
-  };
-  requestAnimationFrame(tick);
-}
-
-const cEls = document.querySelectorAll('[data-counter]');
-const cObs = new IntersectionObserver(entries => {
-  entries.forEach(e => {
-    if (e.isIntersecting && !e.target._counted) {
-      e.target._counted = true;
-      countUp(e.target, parseFloat(e.target.dataset.counter), parseInt(e.target.dataset.dec || '0'));
-      cObs.unobserve(e.target);
-    }
-  });
-}, { threshold: 0.25 });
-cEls.forEach(el => cObs.observe(el));
-
-/* ── Grade chart ── */
-const grades = [
-  { l: 'F', n: 1 }, { l: 'D+', n: 2 }, { l: 'C-', n: 1 }, { l: 'C', n: 2 },
-  { l: 'C+', n: 7 }, { l: 'B-', n: 1 }, { l: 'B', n: 14 }, { l: 'B+', n: 13 },
-  { l: 'A-', n: 15 }, { l: 'A', n: 5 }, { l: 'A+', n: 7 }
-];
-const maxG = Math.max(...grades.map(g => g.n));
-const chartEl = document.getElementById('gradeChart');
-const labelsEl = document.getElementById('gradeLabels');
-
-grades.forEach((g, i) => {
-  const col = document.createElement('div');
-  col.className = 'g-col';
-
-  const countLabel = document.createElement('div');
-  countLabel.className = 'g-count';
-  countLabel.textContent = g.n;
-
-  const fill = document.createElement('div');
-  fill.className = 'g-fill';
-  const pct = (g.n / maxG) * 100;
-
-  let clr;
-  if (g.l.startsWith('A')) clr = 'var(--accent)';
-  else if (g.l.startsWith('B')) clr = 'var(--text2)';
-  else if (g.l.startsWith('C')) clr = 'var(--text3)';
-  else clr = 'var(--red)';
-  fill.dataset.pct = pct;
-  fill.style.cssText = `background:${clr};height:0;transition-delay:${i * 0.06}s`;
-
-  col.appendChild(countLabel);
-  col.appendChild(fill);
-  chartEl.appendChild(col);
-
-  const lbl = document.createElement('span');
-  lbl.textContent = g.l;
-  labelsEl.appendChild(lbl);
-
-  const barObs = new IntersectionObserver(entries => {
-    entries.forEach(e => {
-      if (e.isIntersecting) {
-        setTimeout(() => {
-          fill.style.height = pct + '%';
-          countLabel.classList.add('show');
-        }, 150);
-        barObs.unobserve(e.target);
-      }
+/* ── Staggered reveals on scroll ── */
+ScrollTrigger.batch('.anim', {
+  onEnter: (batch) => {
+    gsap.to(batch, {
+      opacity: 1,
+      y: 0,
+      duration: 0.7,
+      stagger: 0.12,
+      ease: 'power3.out',
+      overwrite: true
     });
-  }, { threshold: 0.2 });
-  barObs.observe(chartEl);
+  },
+  start: 'top 88%'
 });
 
-/* ── Live API data ── */
+/* ── Counter animation ── */
+function countUp(el, target) {
+  const isDecimal = String(target).includes('.');
+  const dec = isDecimal ? 2 : 0;
+  gsap.to(el, {
+    duration: 1.8,
+    ease: 'power2.out',
+    innerText: target,
+    snap: { innerText: isDecimal ? 0.01 : 1 },
+    scrollTrigger: {
+      trigger: el,
+      start: 'top 90%',
+      once: true
+    }
+  });
+}
+
+document.querySelectorAll('[data-counter]').forEach(el => {
+  const target = parseFloat(el.dataset.counter);
+  countUp(el, target);
+});
+
+/* ── Horizontal scroll workflow ── */
+const workflowTrack = document.getElementById('workflowTrack');
+const workflowContainer = document.getElementById('workflowContainer');
+
+if (workflowTrack && workflowContainer && window.innerWidth > 768) {
+  const totalScroll = workflowTrack.scrollWidth - workflowContainer.offsetWidth;
+
+  gsap.to(workflowTrack, {
+    x: -totalScroll,
+    ease: 'none',
+    scrollTrigger: {
+      trigger: workflowContainer,
+      start: 'top 20%',
+      end: () => '+=' + totalScroll,
+      scrub: 1,
+      pin: true,
+      anticipatePin: 1,
+      invalidateOnRefresh: true
+    }
+  });
+}
+
+/* ── Learning loop node activation ── */
+const loopNodes = document.querySelectorAll('.loop-node');
+loopNodes.forEach((node, i) => {
+  ScrollTrigger.create({
+    trigger: node,
+    start: 'top 75%',
+    onEnter: () => {
+      /* Remove active from all, add to current */
+      loopNodes.forEach(n => n.classList.remove('active'));
+      node.classList.add('active');
+    }
+  });
+});
+
+/* Cycle through loop nodes automatically after they're all visible */
+let loopInterval;
+ScrollTrigger.create({
+  trigger: '#loopVisual',
+  start: 'top 50%',
+  onEnter: () => {
+    let current = 0;
+    loopInterval = setInterval(() => {
+      loopNodes.forEach(n => n.classList.remove('active'));
+      loopNodes[current].classList.add('active');
+      current = (current + 1) % loopNodes.length;
+    }, 1200);
+  },
+  onLeaveBack: () => {
+    clearInterval(loopInterval);
+    loopNodes.forEach(n => n.classList.remove('active'));
+  }
+});
+
+/* ── Live API data hydration ── */
 async function hydrate() {
   try {
     const [camps, finds] = await Promise.all([
@@ -1197,24 +1029,33 @@ async function hydrate() {
     ]);
 
     if (camps) {
-      const total = camps.reduce((s, c) => s + (c.agents?.length || 0), 0);
-      document.querySelectorAll('[data-counter="76"]').forEach(el => { el.dataset.counter = total; });
+      const totalAgents = camps.reduce((s, c) => s + (c.agents?.length || 0), 0);
       const sA = document.getElementById('s-agents');
-      if (sA) sA.dataset.counter = total;
+      if (sA) { sA.dataset.counter = totalAgents; sA.textContent = '0'; countUp(sA, totalAgents); }
       const sC = document.getElementById('s-campaigns');
-      if (sC) sC.dataset.counter = camps.length;
+      if (sC) { sC.dataset.counter = camps.length; sC.textContent = '0'; countUp(sC, camps.length); }
+      /* Update hero stats too */
+      document.querySelectorAll('[data-counter="76"]').forEach(el => el.dataset.counter = totalAgents);
+      document.querySelectorAll('[data-counter="3"]').forEach(el => el.dataset.counter = camps.length);
     }
 
     if (finds) {
-      document.querySelectorAll('[data-counter="104"]').forEach(el => { el.dataset.counter = finds.length; });
       const sF = document.getElementById('s-findings');
-      if (sF) sF.dataset.counter = finds.length;
+      if (sF) { sF.dataset.counter = finds.length; sF.textContent = '0'; countUp(sF, finds.length); }
+      document.querySelectorAll('[data-counter="105"]').forEach(el => el.dataset.counter = finds.length);
     }
-  } catch (e) {
-    /* graceful fallback to hardcoded data */
-  }
+  } catch (e) { /* graceful fallback */ }
 }
 hydrate();
+
+/* ── Prefers reduced motion ── */
+if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+  ScrollTrigger.getAll().forEach(t => t.kill());
+  document.querySelectorAll('.anim').forEach(el => {
+    el.style.opacity = '1';
+    el.style.transform = 'none';
+  });
+}
 </script>
 
 </body>
