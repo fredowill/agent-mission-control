@@ -4365,6 +4365,34 @@
           "PM032 still open — sound design headless dispatch",
           "skill-mandate SKILL.md not updated to use skill index yet (still has hardcoded task-type map)"
         ]
+      },
+      {
+        "slot": "orchestrator-v2.8",
+        "name": "Orchestrator v2.8",
+        "focus": "Cross-machine sync, P0 gaps from v2.7, work laptop setup, open PM triage.",
+        "sessionId": null,
+        "status": "active",
+        "retro": null,
+        "brief": null,
+        "sprint": 8,
+        "grade": null,
+        "gradeReason": null,
+        "lifecycle": {
+          "define": "passed",
+          "discover": "in-progress",
+          "execute": null,
+          "reason": null,
+          "verify": null
+        },
+        "lifecycleReached": "discover",
+        "lifecycleFailedAt": null,
+        "skillsUsed": [
+          "orchestrator-init",
+          "orchestrator-rules"
+        ],
+        "skillsNote": "Init phase. Work machine.",
+        "delivered": [],
+        "missed": []
       }
     ],
     "executionPlan": {

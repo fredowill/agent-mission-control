@@ -1,0 +1,141 @@
+{
+  "permissions": {
+    "defaultMode": "bypassPermissions",
+    "allow": [
+      "Bash:*",
+      "Read:*",
+      "Write:*",
+      "Edit:*",
+      "Glob:*",
+      "Grep:*",
+      "WebFetch:*",
+      "WebSearch:*",
+      "Agent:*",
+      "NotebookEdit:*",
+      "Skill:*",
+      "TaskCreate:*",
+      "TaskUpdate:*",
+      "TaskList:*",
+      "TaskGet:*",
+      "EnterPlanMode:*",
+      "ExitPlanMode:*",
+      "AskUserQuestion:*",
+      "EnterWorktree:*",
+      "ListMcpResourcesTool:*",
+      "ReadMcpResourceTool:*",
+      "mcp__github:*",
+      "mcp__azure-devops-custom:*"
+    ]
+  },
+  "model": "opus[1m]",
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash {{CLAUDE_DIR}}/scripts/guard-destructive.sh"
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash {{CLAUDE_DIR}}/scripts/check-code-change.sh"
+          },
+          {
+            "type": "command",
+            "command": "node {{CLAUDE_DIR}}/scripts/check-file-conflict.js"
+          },
+          {
+            "type": "command",
+            "command": "node {{CLAUDE_DIR}}/scripts/validate-html-js.js"
+          }
+        ]
+      },
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash {{CLAUDE_DIR}}/scripts/check-server.sh"
+          },
+          {
+            "type": "command",
+            "command": "bash {{CLAUDE_DIR}}/scripts/verify-deploy.sh"
+          }
+        ]
+      },
+      {
+        "matcher": ".*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node {{MC_DIR}}/hooks/hook.js"
+          }
+        ]
+      }
+    ],
+    "UserPromptSubmit": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node {{MC_DIR}}/hooks/prompt-hook.js"
+          },
+          {
+            "type": "command",
+            "command": "bash {{CLAUDE_DIR}}/hooks/skill-activation-hook.sh"
+          }
+        ]
+      }
+    ],
+    "SessionStart": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node {{CLAUDE_DIR}}/hooks/session-context.js"
+          }
+        ]
+      },
+      {
+        "matcher": "compact",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node {{CLAUDE_DIR}}/scripts/session-start-compact.js"
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node {{MC_DIR}}/hooks/hook.js"
+          },
+          {
+            "type": "command",
+            "command": "echo '' && echo '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━' && echo '  VERIFY BEFORE DONE — Did you actually confirm this works?' && echo '  - Run tests or Playwright spot-check' && echo '  - Screenshot + visually evaluate if UI change' && echo '  - If you skipped verification, say so honestly' && echo '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━'"
+          },
+          {
+            "type": "command",
+            "command": "powershell -NoProfile -ExecutionPolicy Bypass -File {{MC_DIR}}/scripts/play-chime.ps1"
+          }
+        ]
+      }
+    ]
+  },
+  "autoUpdatesChannel": "latest",
+  "skipDangerousModePermissionPrompt": true
+}

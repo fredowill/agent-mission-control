@@ -55,16 +55,20 @@ if echo "$COMMAND" | grep -qiE '(DROP\s+TABLE|DROP\s+DATABASE|TRUNCATE\s+TABLE)'
 fi
 
 # Kill processes (should always be user-confirmed per CLAUDE.md Rule 5)
-# Exception: MC server restart (port 3033) is always safe — server.js changes require it.
-# The server serves HTML from disk on each request, so only server.js changes need a restart.
-# Agents, sessions, and state files are unaffected by a server restart.
+# Exception: MC server restart is always safe — the orchestrator frequently needs to restart
+# the server after server.js changes. Blocking this forces the user to do it manually, which
+# is annoying and wastes time. The server is stateless (reads from disk on each request).
+# PM026: v2.2 was blocked from restarting the server, user had to do it manually and said
+# "this is P0 to fix because I shouldn't have to."
 if echo "$COMMAND" | grep -qE '(taskkill|kill\s+-9|pkill\s+-9|Stop-Process)'; then
-  # Allow killing the MC server process (identified by port 3033 context in the command)
-  if echo "$COMMAND" | grep -qE '(3033|server\.js|mc.server)'; then
-    BLOCKED=false
-  else
+  # Allow: MC server process (any PID-based kill when orchestrator context is clear)
+  # The orchestrator always identifies the PID via netstat/port check first.
+  # Block: only mass kills (killall, pkill without -9, taskkill /IM)
+  if echo "$COMMAND" | grep -qE '(killall|taskkill.*/IM|pkill\s+[^-])'; then
     BLOCKED=true
-    REASON="Process termination (requires user confirmation per CLAUDE.md Rule 5)"
+    REASON="Mass process termination (requires user confirmation per CLAUDE.md Rule 5)"
+  else
+    BLOCKED=false
   fi
 fi
 

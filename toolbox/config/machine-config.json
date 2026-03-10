@@ -1,0 +1,17 @@
+{
+  "machines": {
+    "DESKTOP-456PJPP": {
+      "name": "work",
+      "claudeDir": "C:/Users/emeskel/.claude",
+      "mcDir": "C:/Users/emeskel/Claude/projects/agent-mission-control",
+      "pathStyle": "windows"
+    },
+    "ephra": {
+      "name": "home",
+      "claudeDir": "/c/Users/ephra/.claude",
+      "mcDir": "/c/Users/ephra/.claude/agent-mission-control",
+      "pathStyle": "msys"
+    }
+  },
+  "_note": "Home mcDir assumes repo rename from agent-hub → agent-mission-control (P0 from v2.7). Update claudeDir if home still uses phredomade/.claude/ as primary."
+}

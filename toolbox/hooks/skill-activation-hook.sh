@@ -28,9 +28,10 @@ Before responding to this prompt, you MUST:
 
 3. IMPLEMENT: Only after evaluating and activating relevant skills
 
-If no skills are relevant, state "No skills relevant" and proceed.
-If you skip this check, your output quality will be lower and you will be graded poorly.
+If no skills are relevant, you MUST name at least 3 skills you considered and explain in one line each why they don't apply. "No skills relevant" without listing what you checked is a graded failure.
 
 ALSO: Before building anything from scratch, search online first (WebSearch tool).
 Other people have likely solved this problem already. Don't DIY when open-source exists.
+
+ALSO: When ANY topic involves hardware, software versions, known issues, or anything where training data may be stale — WebSearch BEFORE running local diagnostics. Don't rely on training data alone. One search in round 1 beats 3 rounds of guessing.
 EOF
