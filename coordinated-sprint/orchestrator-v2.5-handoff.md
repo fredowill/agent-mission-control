@@ -26,6 +26,9 @@ First orchestrator to use deep research at init (Rule 23). Most infrastructure-f
 
 ## Critical Tasks for v2.6
 
+### P0: Auto-sync hook for toolbox
+When a tool/skill/agent is installed (Write/Edit to `.claude/skills/`, `.claude/agents/`, `.claude/tools/`), a PostToolUse hook should auto-mirror to `toolbox/`. This makes Gates 10/13 pure verification instead of detection. User said: "We have to have a standardized way of when tools come in -- make it a hook and then execute a sync." Design as PostToolUse hook on Write/Edit with path matching. Must be <50ms (just a file copy).
+
 ### P0: MC page refactoring
 The Workflow page, Toolbox page, and Orchestrator tab are all stale relative to what v2.5 built. The Workflow page doesn't know about the hardstop system, checkpoint hooks, Lasso, Dippy, or the new rules directory. This is the highest priority because the pages are how the user sees the system -- if the pages don't reflect reality, the user loses trust.
 
