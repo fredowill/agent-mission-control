@@ -11,9 +11,12 @@
 const fs   = require('fs');
 const path = require('path');
 
-const PROMPTS_DIR = path.join(__dirname, '..', 'prompts');
-const STATES_DIR  = path.join(__dirname, '..', 'states');
-const LOGS_DIR    = path.join(__dirname, '..', 'logs');
+const PROMPTS_DIR       = path.join(__dirname, '..', 'prompts');
+const STATES_DIR        = path.join(__dirname, '..', 'states');
+const LOGS_DIR          = path.join(__dirname, '..', 'logs');
+const DATA_DIR          = path.join(__dirname, '..', 'data');
+const HARDSTOP_FILE     = path.join(DATA_DIR, 'hardstop-state.json');
+const PROMPT_COUNTS_FILE = path.join(DATA_DIR, 'prompt-counts.json');
 
 // ── Skill/command detection ──
 // When a /skill is invoked, Claude Code sends the entire expanded markdown as
@@ -73,6 +76,145 @@ function setTerminalTitle(title) {
     fs.writeSync(fd, seq);
     fs.closeSync(fd);
   } catch {}
+}
+
+// ── Hardstop threshold checking ──
+// Reads context % from StatusLine state + tracks prompt count per session.
+// Returns warning text to inject into the prompt (or empty string).
+// Staleness guard: ignore state data older than 5 minutes.
+const HARDSTOP_STALE_MS = 5 * 60 * 1000;
+
+function checkHardstopThresholds(sid) {
+  const warnings = [];
+
+  // ── Context % thresholds (from StatusLine state file) ──
+  try {
+    const state = JSON.parse(fs.readFileSync(HARDSTOP_FILE, 'utf8'));
+    const age = Date.now() - (state.ts || 0);
+    if (age < HARDSTOP_STALE_MS && typeof state.usedPct === 'number') {
+      const pct = state.usedPct;
+      if (pct >= 85) {
+        warnings.push(
+          'CONTEXT CRITICAL -- MANDATORY HANDOFF: You have used 85%+ of context. ' +
+          'You MUST run /orchestrator-handoff immediately. Do not perform any work ' +
+          'except writing the handoff document. This is a hard stop.'
+        );
+      } else if (pct >= 75) {
+        // f108: Auto-generate handoff skeleton at L2 to reduce context waste.
+        // Only generate once per session (check if draft already exists).
+        const sprintDir = path.join(__dirname, '..', 'coordinated-sprint');
+        const draftFile = path.join(sprintDir, 'handoff-draft-' + sid.slice(0, 12) + '.md');
+        if (!fs.existsSync(draftFile)) {
+          try {
+            const campaignsFile = path.join(DATA_DIR, 'campaigns.json');
+            const dispatchHomeFile = path.join(DATA_DIR, 'dispatch-home.json');
+            const campaigns = JSON.parse(fs.readFileSync(campaignsFile, 'utf8'));
+            const activeCampaign = campaigns.find(c => c.status === 'active') || {};
+            const agents = (activeCampaign.agents || []);
+            const orchAgent = agents.filter(a => (a.slot || '').includes('orchestrator')).pop() || {};
+            const sprintAgents = agents.filter(a => a.sprint === orchAgent.sprint && !(a.slot || '').includes('orchestrator'));
+
+            // Open PMs
+            let openPMs = [];
+            try {
+              const dhItems = JSON.parse(fs.readFileSync(dispatchHomeFile, 'utf8'));
+              openPMs = dhItems.filter(i => i.status === 'open' && (i.tags || []).includes('post-mortem'));
+            } catch {}
+
+            const lines = [
+              '# Orchestrator ' + (orchAgent.name || 'v?.?') + ' Handoff',
+              '',
+              '**Date:** ' + new Date().toISOString().slice(0, 10) + ' | **Campaign:** ' + (activeCampaign.id || '?') + ' (' + (activeCampaign.name || '?') + ')',
+              '',
+              '---',
+              '',
+              '## What this orchestrator did',
+              '',
+              '| Component | What It Does |',
+              '|-----------|-------------|',
+              '| **[FILL IN]** | [describe] |',
+              '',
+              '---',
+              '',
+              '## Sprint ' + (orchAgent.sprint || '?') + ' Agents',
+              '',
+              '| Agent | Grade | Status |',
+              '|-------|-------|--------|',
+            ];
+            for (const a of sprintAgents) {
+              lines.push('| ' + (a.name || a.slot) + ' | ' + (a.grade || 'ungraded') + ' | ' + (a.status || '?') + ' |');
+            }
+            lines.push('', '---', '', '## Delivered', '');
+            for (const d of (orchAgent.delivered || [])) {
+              lines.push('- ' + d);
+            }
+            if (!(orchAgent.delivered || []).length) lines.push('- [FILL IN from this session]');
+            lines.push('', '## Missed', '');
+            for (const m of (orchAgent.missed || [])) {
+              lines.push('- ' + m);
+            }
+            if (!(orchAgent.missed || []).length) lines.push('- [FILL IN]');
+            lines.push('', '---', '', '## Open Post-Mortems', '');
+            if (openPMs.length) {
+              lines.push('| PM | Title | Priority |');
+              lines.push('|----|-------|----------|');
+              for (const pm of openPMs) {
+                lines.push('| ' + pm.id + ' | ' + (pm.title || '').slice(0, 80) + ' | ' + (pm.priority || '?') + ' |');
+              }
+            } else {
+              lines.push('No open PMs.');
+            }
+            lines.push('', '---', '', '## Critical Tasks for Next Orchestrator', '', '- [FILL IN]', '');
+            lines.push('## Context Metrics', '', '- Used: ' + pct + '%', '- Prompt count: ' + (state.promptCount || 0), '');
+
+            if (!fs.existsSync(sprintDir)) fs.mkdirSync(sprintDir, { recursive: true });
+            fs.writeFileSync(draftFile, lines.join('\n'));
+          } catch {} // never crash the hook
+        }
+        const draftMsg = fs.existsSync(draftFile)
+          ? ' A handoff skeleton has been auto-generated at coordinated-sprint/handoff-draft-' + sid.slice(0, 12) + '.md -- review and fill in the gaps.'
+          : '';
+        warnings.push(
+          'HANDOFF RECOMMENDED: You have used 75%+ of context. Run /orchestrator-handoff ' +
+          'to write your handoff doc NOW. Do not dispatch new agents. Focus on documenting ' +
+          'what you have done and what remains.' + draftMsg
+        );
+      } else if (pct >= 60) {
+        warnings.push(
+          'CONTEXT AWARENESS: You have used 60%+ of your context window. ' +
+          'Scope remaining work carefully. Consider what must be done vs what can be deferred.'
+        );
+      }
+    }
+  } catch {} // state file may not exist yet -- graceful degradation
+
+  // ── Prompt count thresholds ──
+  try {
+    if (!fs.existsSync(DATA_DIR)) fs.mkdirSync(DATA_DIR, { recursive: true });
+    let counts = {};
+    try { counts = JSON.parse(fs.readFileSync(PROMPT_COUNTS_FILE, 'utf8')); } catch {}
+    const prev = counts[sid] || 0;
+    const count = prev + 1;
+    counts[sid] = count;
+    fs.writeFileSync(PROMPT_COUNTS_FILE, JSON.stringify(counts));
+
+    // Also update prompt count in hardstop state file if it exists
+    try {
+      const state = JSON.parse(fs.readFileSync(HARDSTOP_FILE, 'utf8'));
+      state.promptCount = count;
+      fs.writeFileSync(HARDSTOP_FILE, JSON.stringify(state));
+    } catch {}
+
+    if (count >= 75) {
+      warnings.push('PROMPT HARD STOP: 75 prompts processed. Write handoff doc NOW.');
+    } else if (count >= 50) {
+      warnings.push('PROMPT WARNING: 50 prompts processed. Begin handoff preparation.');
+    } else if (count >= 30) {
+      warnings.push('PROMPT COUNT: 30 prompts processed. Check your context usage.');
+    }
+  } catch {} // never crash
+
+  return warnings.join('\n');
 }
 
 // ── Dedup guard ──
@@ -226,8 +368,17 @@ process.stdin.on('end', () => {
         fs.appendFileSync(logFile, JSON.stringify({ state: 'thinking', emoji: '💭', tool: 'prompt', detail: logDetail, ts: Date.now() }) + '\n');
       }
     } catch {}
+
+    // ── Hardstop threshold injection ──
+    // Check context % and prompt count, inject warnings into the prompt via stdout
+    try {
+      const warning = checkHardstopThresholds(sid);
+      if (warning) {
+        process.stdout.write('\n' + warning + '\n');
+      }
+    } catch {} // never crash
   } catch (_) {
-    // never crash — agent must not be disrupted
+    // never crash -- agent must not be disrupted
   }
   process.exit(0);
 });

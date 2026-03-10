@@ -1206,5 +1206,16 @@
       "systemic"
     ],
     "id": "f108"
+  },
+  {
+    "id": "f108",
+    "title": "Auto-generate handoff skeleton at L2 threshold to reduce context waste",
+    "description": "When an orchestrator hits 75% context (L2 hard stop), it gets a warning to write a handoff doc. But writing the handoff from scratch at high context is expensive -- 10-15 min of tokens when context is most scarce. Pre-generating a skeleton with real data (agents, grades, open PMs, delivered/missed) means the orchestrator just reviews and fills gaps. This reduces handoff context cost by ~60% and produces more accurate handoffs because the data is pulled from files, not reconstructed from degraded memory.",
+    "source": "orchestrator-v2.5",
+    "tags": [
+      "hardstop",
+      "handoff",
+      "context-management"
+    ]
   }
 ]

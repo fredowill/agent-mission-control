@@ -1417,7 +1417,10 @@ const MODE_TOGGLE_SNIPPET = `<script>
     +'.toggle-track{width:30px;height:16px;border-radius:8px;background:#d4d4d8;position:relative;cursor:pointer;transition:background .3s cubic-bezier(.4,0,.2,1);flex-shrink:0}'
     +'.toggle-track.work{background:#3b82f6}'
     +'.toggle-thumb{width:12px;height:12px;border-radius:50%;background:#fff;position:absolute;top:2px;left:2px;transition:transform .3s cubic-bezier(.4,0,.2,1);box-shadow:0 1px 2px rgba(0,0,0,.18)}'
-    +'.toggle-track.work .toggle-thumb{transform:translateX(14px)}';
+    +'.toggle-track.work .toggle-thumb{transform:translateX(14px)}'
+    +'@media(max-width:1100px){.mode-label{display:none!important}.mode-toggle{padding:4px 8px!important;margin-left:8px!important;gap:0!important}}'
+    +'@media(max-width:1100px){.nav-link{padding:5px 8px!important;font-size:12px!important}.logo{max-width:120px;overflow:hidden}}'
+    +'@media(max-width:700px){.mode-toggle{display:none!important}}';
   document.head.appendChild(s);
   var header=document.querySelector('header');
   if(header){
@@ -1477,7 +1480,9 @@ const DETAIL_PAGE = `<!DOCTYPE html>
   header { display:flex; align-items:center; padding:0 clamp(24px,4vw,48px); height:64px; background:var(--bg); border-bottom:1px solid var(--sep); position:sticky; top:0; z-index:10; gap:16px }
   .back-link { display:flex; align-items:center; gap:8px; text-decoration:none; color:var(--text2); font-size:14px; font-weight:500; transition:color .15s }
   .back-link:hover { color:var(--text) }
-  .header-nav { display:flex; gap:4px; padding:3px; background:#f2f2f2; border-radius:8px; position:absolute; left:50%; transform:translateX(-50%) }
+  .header-nav { display:flex; gap:4px; padding:3px; background:#f2f2f2; border-radius:8px; margin:0 auto; overflow-x:auto; flex-shrink:1; min-width:0; scrollbar-width:none }
+  .header-nav::-webkit-scrollbar { display:none }
+  /* Responsive toggle: handled in JS-injected styles (mode-toggle media queries) */
   .nav-link { padding:5px 14px; border-radius:6px; font-family:'DM Sans',sans-serif; font-size:13px; font-weight:500; color:#999; text-decoration:none; transition:all .15s }
   .nav-link:hover { color:#555 }
   .nav-link.active { background:#fff; color:#1a1a1a; box-shadow:0 1px 3px rgba(0,0,0,.06) }
@@ -2932,6 +2937,7 @@ Be direct and opinionated. Use <strong> tags for key phrases.`
                 status: 'active',
                 brief: promptFile,
                 sprint: sprint || null,
+                mode: mode || 'auto',
                 grade: null,
                 gradeReason: null,
                 lifecycle: { define: 'pending', discover: 'pending', execute: 'pending', reason: 'pending', verify: 'pending', debrief: 'pending' },
@@ -2943,6 +2949,7 @@ Be direct and opinionated. Use <strong> tags for key phrases.`
             } else {
               agent.sessionId = sessionId;
               agent.status = 'active';
+              agent.mode = mode || 'auto';
             }
             writeJSON(CAMPAIGNS_F, campaigns);
           }

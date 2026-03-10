@@ -12,6 +12,17 @@
 # The prompt file is loaded via --append-system-prompt-file so the full
 # mission brief lives in the system prompt. The user message is a short
 # "begin your mission" trigger. --dangerously-skip-permissions for full autonomy.
+#
+# SELF-BUFFER: Bash reads scripts incrementally from disk. If an agent modifies
+# this file mid-execution, bash reads corrupted bytes and crashes (auto-grade
+# never runs, notifications never fire). Fix: copy to temp and re-exec once.
+# See: interactive-dispatch-builder incident, 2026-03-10.
+if [ -z "$_DISPATCH_BUFFERED" ]; then
+  export _DISPATCH_BUFFERED=1
+  _TMPSCRIPT=$(mktemp /tmp/dispatch-XXXXXX.sh)
+  cp "$0" "$_TMPSCRIPT"
+  exec bash "$_TMPSCRIPT" "$@"
+fi
 
 AGENT_NAME="$1"
 PROMPT_FILE="$2"
@@ -54,11 +65,11 @@ echo ""
 
 if [ "$MODE" = "interactive" ]; then
   # Interactive mode: full Claude Code TUI. User can watch and interact.
-  # The session starts with the trigger message, user can type follow-ups.
+  # NO --dangerously-skip-permissions: user must approve tool calls.
+  # Agent will use ask-user-questions MCP tool for checkpoints.
   claude "$TRIGGER_MSG" \
     --append-system-prompt-file "$PROMPT_FILE" \
-    --session-id "$SESSION_ID" \
-    --dangerously-skip-permissions
+    --session-id "$SESSION_ID"
 else
   # Auto mode (default): headless -p. Agent runs to completion.
   # User sees output but can't interact. --resume after for follow-ups.
