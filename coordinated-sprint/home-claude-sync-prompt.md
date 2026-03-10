@@ -35,6 +35,9 @@ Home has the better hooks, better formatting, better emoji standards. When mergi
 - `session-context.js` — v2.7 original SessionStart hook that injects session catalog + skill index
 - Emoji formatting standards — semantic emojis, bold-lead text, emoji-coded tables
 - Any skills that only exist on home (especially `deep-research`)
+- **The overall presentation quality** — right now on home, opening a fresh CLI and asking "what projects do I have going on?" returns beautiful condensed boxes and tables. The skill-activation hook correctly says "no skills relevant, quick factual recall" for simple questions instead of forcing unnecessary skill loading. This behavior comes from the combination of hooks, rules, and session context working together. If ANY of these files get overwritten with work's inferior versions, this quality degrades immediately.
+
+**The test for success:** After migration, open a fresh Claude Code session on home and ask a simple factual question. If the response is still beautifully formatted with condensed tables and the skill hook correctly identifies it as a no-skill-needed query — the migration worked. If it's plain text walls or forces irrelevant skill loading — something got overwritten and needs to be restored from backup.
 
 ---
 
