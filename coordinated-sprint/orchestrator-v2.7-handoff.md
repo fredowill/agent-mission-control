@@ -117,4 +117,11 @@ PM031 closed this session (systemic fix confirmed, no regression).
    - Fix cross-machine .claude/ sync (P0 — nothing from v2.7 travels to work laptop yet)
    - Sound design interactive redo (PM032)
    - Update skill-mandate to use skill-index.md
-6. **Context:** Home machine. MC server at localhost:3033. Campaign-002 active (Sprint 7). 2 open PMs. 0 Sprint 7 agents dispatched (orchestrator built directly). SessionStart hook live at `~/.claude/hooks/session-context.js`. Skill-activation hook rewritten. skill-rules.json is dead code.
+6. **Work laptop setup (one-time):**
+   - `uv tool install claude-code-tools` — installs aichat CLI for session search (requires Python/uv)
+   - Copy `~/.claude/hooks/session-context.js` (65 lines) — or recreate from agent-hub toolbox reference
+   - Add `SessionStart` hook entry to work laptop's `~/.claude/settings.json`
+   - Copy `.claude/rules/00-topic-context.md` and `.claude/rules/00-agent-lifecycle.md` from home machine
+   - Copy `.claude/hooks/skill-activation-hook.sh` (rewritten — forced eval, no more keywords)
+   - Copy `.claude/skills/skill-index.md` (or use `toolbox/skills/skill-index.md` from agent-hub)
+7. **Context:** Home machine. MC server at localhost:3033. Campaign-002 active (Sprint 7). 2 open PMs. 0 Sprint 7 agents dispatched (orchestrator built directly). SessionStart hook live at `~/.claude/hooks/session-context.js`. Skill-activation hook rewritten. skill-rules.json is dead code.
