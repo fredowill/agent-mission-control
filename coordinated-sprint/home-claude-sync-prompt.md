@@ -1,140 +1,68 @@
-# Home Machine: .claude/ Git Sync Setup
+# Home PC Setup: .claude/ junction sync
 
-You are setting up git tracking for `~/.claude/` to sync skills, agents, commands, hooks, and rules between home and work machines. A work machine has already committed 225 files to `fredowill/.claude` (private repo). Your job is to MERGE home's content with work's — home wins on any conflicts.
+The work machine just set up a system where `~/.claude/skills`, `agents`, `commands`, `hooks`, `rules`, `scripts` are all NTFS junctions pointing to `agent-mission-control/toolbox/`. This means `git pull` in the MC repo instantly updates everything Claude Code sees.
 
-## CRITICAL: Do NOT overwrite home files with work versions
+Your job: do the same on this home machine.
 
-Home has the authoritative versions of:
-- `hooks/skill-activation-hook.sh` (v2.7 forced-eval rewrite — BETTER than work's)
-- `hooks/session-context.js` (v2.7 original — work has a recreation)
-- `skills/deep-research/` (has actual SKILL.md — work has empty stub)
-- Any other hooks or skills that exist on home but not on work
-
-## Step-by-step (execute in order, pause between steps):
-
-### Step 1: Understand home's .claude/ location
-
-Home's `.claude/` with skills/agents/hooks is at one of:
-- `~/.claude/` (user-level)
-- `~/phredomade/.claude/` (project-level)
-
-Run `ls ~/.claude/skills/ | head -5` and `ls ~/phredomade/.claude/skills/ | head -5` to find which one has all the skills. That's the PRIMARY location we'll git-track.
-
-If the primary is `~/phredomade/.claude/`, we need to decide: move everything to `~/.claude/` (canonical) or track `~/phredomade/.claude/`. The user-level `~/.claude/` is the right long-term home — it works globally across all projects.
-
-### Step 2: Backup
+## Step 1: Pull the MC repo
 
 ```bash
-CLAUDE_DIR="<primary .claude/ path from step 1>"
-cp -r "$CLAUDE_DIR" "${CLAUDE_DIR}.backup.$(date +%Y%m%d)"
-echo "Backup created"
+cd <wherever agent-mission-control lives>  # probably ~/.claude/agent-hub/
+git pull origin main
 ```
 
-### Step 3: Create the GitHub repo
+## Step 2: Update machine-config.json
 
-The work machine couldn't create it (enterprise PAT restriction). Create it now:
+Read `toolbox/config/machine-config.json`. The `ephra` entry needs to have the correct paths for THIS machine:
+- `claudeDir`: where `~/.claude/` is (or wherever Claude Code reads skills/agents from — check with `ls ~/.claude/skills/ | head -3`)
+- `mcDir`: where THIS repo lives on disk
+
+Update the paths if they're wrong. Then commit + push so work machine gets the update too.
+
+## Step 3: Merge home-only content into toolbox
+
+Before running setup.sh, make sure any skills/hooks/rules that ONLY exist on home get copied INTO `toolbox/`:
+
+1. **deep-research skill** — if `~/.claude/skills/deep-research/SKILL.md` exists, copy it to `toolbox/skills/deep-research/SKILL.md`
+2. **skill-activation-hook.sh** — compare your `~/.claude/hooks/skill-activation-hook.sh` with `toolbox/hooks/skill-activation-hook.sh`. If yours is newer/better, overwrite the toolbox version.
+3. **session-context.js** — compare your `~/.claude/hooks/session-context.js` with `toolbox/hooks/session-context.js`. Keep whichever is better (yours is the v2.7 original).
+4. **Any other home-only files** — check each dir for files that exist in `~/.claude/` but not in `toolbox/`.
+
+Commit the merged content to the repo.
+
+## Step 4: Run setup.sh
 
 ```bash
-gh repo create fredowill/.claude --private --description "Claude Code config: skills, agents, commands, hooks, rules. Git-synced across machines."
+bash toolbox/setup.sh --dry-run  # Preview what will happen
+bash toolbox/setup.sh            # Create junctions + generate settings.json
 ```
 
-If `gh` isn't available, create it manually at https://github.com/new — name: `.claude`, private, no README.
+This will:
+- Back up your current `~/.claude/skills/`, `agents/`, etc. to a timestamped `.setup-backup` dir
+- Replace them with NTFS junctions pointing to `toolbox/`
+- Generate `settings.json` from the template with your machine's paths
 
-### Step 4: Init git and pull work's commit (WITHOUT overwriting)
+## Step 5: Verify
 
 ```bash
-cd "$CLAUDE_DIR"
-git init
-git remote add origin https://github.com/fredowill/.claude.git
+# Check junctions exist
+ls -la ~/.claude/ | grep -i junction  # or check with PowerShell
 
-# Fetch work's commit but DON'T merge yet
-git fetch origin
+# Check Claude Code still sees skills
+ls ~/.claude/skills/ | head -5
 
-# Stage ALL current home files first (home wins on conflicts)
-# Copy the .gitignore from the fetched version first
-git show origin/master:.gitignore > .gitignore
-
-# Now add everything that's not gitignored
-git add .
-git commit -m "feat: home machine initial state — preserving home-authoritative files"
-
-# Now merge work's commit, keeping HOME's version on any conflict
-git merge origin/master --allow-unrelated-histories -X ours -m "merge: incorporate work machine files, home wins on conflicts"
+# Check a skill loads
+# Open a new Claude Code session and try /plan or any slash command
 ```
 
-The `-X ours` flag means: on ANY conflict, keep home's version. Work-only files (like `00-topic-context.md`, `00-agent-lifecycle.md`) get added automatically since there's no conflict.
-
-### Step 5: Verify the merge
+## Step 6: Push
 
 ```bash
-# Check that home's hooks survived
-head -5 hooks/skill-activation-hook.sh
-head -5 hooks/session-context.js
-
-# Check that work-only files were added
-ls rules/00-topic-context.md
-ls rules/00-agent-lifecycle.md
-ls skills/filing-postmortems/SKILL.md
-ls skills/skill-index.md
-
-# Check deep-research has content
-ls skills/deep-research/
-cat skills/deep-research/SKILL.md | head -3
+git add toolbox/ && git commit -m "feat: home machine merge — deep-research, v2.7 hooks, machine-config" && git push
 ```
 
-### Step 6: Update machine-config.json with correct home paths
-
-Read `machine-config.json` and update the `ephra` entry with the actual paths on this machine:
-- `claudeDir` should be the ACTUAL path to this `.claude/` directory
-- `mcDir` should be the path to agent-mission-control (currently `~/.claude/agent-hub/` — rename if needed, see Step 7)
-
-### Step 7: MC repo rename (optional but recommended)
-
-The work machine uses `agent-mission-control` as the folder name (matches GitHub). Home uses `agent-hub`. To unify:
-
+## After this, on EITHER machine:
 ```bash
-# Only if home MC is at ~/.claude/agent-hub/
-mv ~/.claude/agent-hub ~/.claude/agent-mission-control
-# Update any symlinks, junctions, or references
+git pull && bash toolbox/setup.sh
 ```
-
-Then update `machine-config.json` with the new path.
-
-### Step 8: Generate settings.json
-
-```bash
-bash setup.sh --dry-run  # Preview first
-bash setup.sh            # Generate settings.json with correct home paths
-```
-
-Review the generated `settings.json` — make sure all hook paths are correct for this machine.
-
-### Step 9: Push
-
-```bash
-git add .
-git commit -m "feat: merge home content — deep-research, v2.7 hooks, machine-config update"
-git push -u origin master
-```
-
-### Step 10: Verify on work machine
-
-After this push, the work machine can:
-```bash
-cd ~/.claude && git pull
-bash setup.sh  # Regenerate settings.json with work paths
-```
-
-## What this achieves
-
-After both machines complete this:
-- `git pull` on either machine gets ALL skills, agents, commands, hooks, rules
-- `bash setup.sh` generates the correct machine-specific `settings.json`
-- `settings.json` is gitignored — never conflicts between machines
-- Any new skill/hook/rule committed on either machine is available everywhere after `git pull`
-- The MC toolbox becomes REDUNDANT for skill/hook sync (it was a workaround for this exact gap)
-
-## Post-mortems this closes
-
-- **PM029** (13 agents + 18 skills invisible to sessions) — systemic fix: everything is now tracked
-- Partially addresses **PM032** (orchestrator regression on machine transitions) — setup.sh ensures hooks are always wired correctly
+That's it. Full sync. One repo. One command.
