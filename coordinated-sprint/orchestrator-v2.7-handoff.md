@@ -26,12 +26,11 @@ Two system-level improvements that affect every session on every machine. No age
 ### P0: Unify MC repo name and path across machines
 Home: `~/.claude/agent-hub/`. Work: `~/Claude/projects/agent-mission-control/`. Same repo, different names. Breaks hook paths, sync prompts, server.js path resolution.
 
-**Recommendation: Work laptop moves to match home.** Reasons:
-- Home path (`~/.claude/agent-hub/`) is shorter, cleaner, and inside `.claude/` where Claude Code expects project infrastructure
-- Home has a symlink/junction already wired (`~/.claude/agent-hub -> phredomade/.claude/agent-hub`)
-- All hook paths in `settings.json`, all `server.js` path resolution, and all handoff docs assume the `agent-hub` name
-- Work laptop has fewer sessions and fewer hardcoded references to fix
-- Action: `cd ~/Claude/projects && mv agent-mission-control agent-hub` (or reclone to `~/.claude/agent-hub/`), then update work laptop settings.json paths
+**Recommendation: Home moves to match work + GitHub.** The GitHub repo is `fredowill/agent-mission-control` — work laptop already matches. Home's `agent-hub` is the odd one out.
+- Canonical name: `agent-mission-control` (matches GitHub remote)
+- Canonical location: `~/.claude/agent-mission-control/` on both machines
+- Action on home: rename `~/.claude/agent-hub/` to `~/.claude/agent-mission-control/`, update junction in phredomade, update all hook paths in settings.json
+- Work laptop may just need `mv ~/Claude/projects/agent-mission-control ~/.claude/agent-mission-control/`
 
 ### P0: Cross-machine file sync for .claude/
 The `.claude/` directory is gitignored in phredomade. Files created this session (`00-topic-context.md`, `00-agent-lifecycle.md`, `skill-index.md`, `skill-activation-hook.sh`, `session-context.js`) live locally only. They need a transport mechanism to the work laptop. Options:
