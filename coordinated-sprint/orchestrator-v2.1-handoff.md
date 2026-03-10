@@ -88,6 +88,16 @@ The most productive orchestrator session in MC history. Built the dispatch pipel
 - FHL hooks demo deferred to Monday
 - Demo preparation campaign is later this week
 
+### P1: File structure cleanup
+- The project has no folder organization — files everywhere in the root
+- Needs a proper directory structure (e.g., `hooks/`, `scripts/`, `pages/`, `data/`, `config/`)
+- This is a refactoring task, not urgent but quality-of-life
+
+### P1: Add "skills synced to toolbox" gate to orchestrator-handoff
+- Current handoff gates don't check if new skills in `~/.claude/skills/` were copied to `toolbox/skills/`
+- v2.1 created 3 skills (creating-agents, skill-mandate, orchestrator-handoff) that almost didn't get pushed
+- Gate should: diff `~/.claude/skills/` against `toolbox/skills/`, warn if new skills exist locally but not in toolbox
+
 ### P2: Backlog items
 - Agent card emojis + color overhaul (cards look boring)
 - Post-mortem skill
