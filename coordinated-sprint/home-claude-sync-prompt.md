@@ -1,259 +1,246 @@
 # 🏠 Home PC: MC Reorganization + .claude/ Sync
 
-## Context
+## Known Paths (confirmed by user)
 
-The work machine has a junction-based sync system: `~/.claude/skills/`, `agents/`, `commands/`, `hooks/`, `rules/`, `scripts/` are all NTFS junctions pointing to the MC repo's `toolbox/` directory. This means `git pull` in MC instantly updates everything Claude Code sees.
+| What | Current Path |
+|------|-------------|
+| 🏠 **Phredomade root** | `~/phredomade/` (C:/Users/ephra/phredomade/) |
+| 📁 **MC repo** | `~/phredomade/.claude/agent-hub/` |
+| ⚙️ **MC server** | `~/phredomade/.claude/agent-hub/server.js` |
+| 🔗 **Git remote** | `fredowill/agent-mission-control` |
+| 🛠️ **Claude config** | `~/phredomade/.claude/` (project-level — skills, hooks, rules live here) |
 
-Your job: reorganize this home machine's file structure AND set up the same junction system. **Home's hooks, skills, and formatting rules are the authoritative versions — they must be preserved, not overwritten.**
+## What we're doing
 
-## ⚠️ CRITICAL RULES
+1. Extracting MC from inside phredomade → its own project at `~/projects/agent-mission-control/`
+2. Setting up NTFS junctions so `~/.claude/skills/` etc. point to MC's `toolbox/`
+3. Preserving ALL of home's hooks, skills, and formatting — home is authoritative
 
-1. **HOME WINS on conflicts.** Home has better hooks (v2.7 forced-eval), better session-context.js (original), and better formatting. When merging, home's version always wins.
-2. **Back up EVERYTHING before moving anything.** Create timestamped backups.
-3. **Don't break phredomade.** The photography portfolio project must still work after MC is extracted.
-4. **Don't break running sessions.** Check for active Claude sessions before moving directories.
-5. **Test after every major step.** Don't proceed if something breaks.
+## ⚠️ CRITICAL: HOME WINS
 
----
-
-## Phase 1: Audit current state
-
-Before touching anything, understand what's where.
-
-```bash
-# Find where things currently live
-echo "=== User home ==="
-ls ~/
-
-echo "=== Phredomade structure ==="
-ls ~/phredomade/ 2>/dev/null || ls ~/PHREDOMADE/ 2>/dev/null
-
-echo "=== .claude location ==="
-ls ~/.claude/skills/ 2>/dev/null | head -3 && echo "skills in ~/.claude/"
-ls ~/phredomade/.claude/skills/ 2>/dev/null | head -3 && echo "skills in phredomade/.claude/"
-
-echo "=== MC repo location ==="
-ls ~/.claude/agent-hub/server.js 2>/dev/null && echo "MC at ~/.claude/agent-hub/"
-ls ~/phredomade/.claude/agent-hub/server.js 2>/dev/null && echo "MC at phredomade/.claude/agent-hub/"
-
-echo "=== Git remotes ==="
-cd ~/.claude/agent-hub 2>/dev/null && git remote -v
-cd ~/phredomade/.claude/agent-hub 2>/dev/null && git remote -v
-```
-
-**Record the actual paths.** The rest of this prompt uses variables — fill them in based on what you find:
-- `CLAUDE_DIR` = where Claude Code currently reads skills from
-- `MC_DIR` = where the MC repo currently lives
-- `PHREDOMADE_DIR` = where the phredomade project lives
+Home has the better hooks, better formatting, better emoji standards. When merging home content into the toolbox, **always keep home's version** over work's. The work machine explicitly defers to home on conflicts.
 
 ---
 
-## Phase 2: Back up everything
+## Phase 1: Back up (do this FIRST, before anything else)
 
 ```bash
-BACKUP_DIR=~/backup-$(date +%Y%m%d)
-mkdir -p "$BACKUP_DIR"
-
-# Back up the .claude directory (wherever it is)
-cp -r "$CLAUDE_DIR" "$BACKUP_DIR/dot-claude-backup"
-
-# Back up the MC repo (preserves git history)
-cp -r "$MC_DIR" "$BACKUP_DIR/mc-backup"
-
-echo "✅ Backups at $BACKUP_DIR"
-ls "$BACKUP_DIR"
+mkdir -p ~/backup-$(date +%Y%m%d)
+cp -r ~/phredomade/.claude ~/backup-$(date +%Y%m%d)/dot-claude-backup
+echo "✅ Backup done"
+ls ~/backup-$(date +%Y%m%d)/
 ```
 
 ---
 
-## Phase 3: Pull work machine changes into MC repo
+## Phase 2: Pull work's changes into MC repo
 
-This is SAFE — git pull only changes files inside the MC repo folder.
+This is SAFE — only touches files inside `agent-hub/`. Does NOT touch your skills, hooks, or rules.
 
 ```bash
-cd "$MC_DIR"
+cd ~/phredomade/.claude/agent-hub
 git pull origin main
 ```
 
-This brings in:
-- `toolbox/rules/` (new — 10 rule files)
-- `toolbox/hooks/session-context.js` (work's recreation — you'll overwrite with yours)
-- `toolbox/config/machine-config.json` (needs your paths)
-- `toolbox/config/settings.template.json`
-- `toolbox/setup.sh`
+You'll get new files in `toolbox/`: rules/, setup.sh, machine-config.json, settings.template.json. These sit harmlessly inside the repo until you explicitly use them.
 
 ---
 
-## Phase 4: Merge home content INTO toolbox (HOME WINS)
+## Phase 3: Merge home content INTO toolbox (HOME WINS)
 
-This is the critical step. Copy home's authoritative files into the toolbox so they become the git-tracked source of truth.
+Home has authoritative versions. Copy them INTO `toolbox/` so they become the git-tracked source of truth.
 
-For EACH of these directories, diff home vs toolbox and merge:
+### 3a: Skills
 
-### Skills
 ```bash
-# Find skills on home that aren't in toolbox
-diff <(ls "$CLAUDE_DIR/skills/" | sort) <(ls "$MC_DIR/toolbox/skills/" | sort)
-
-# Copy any home-only skills to toolbox (especially deep-research)
-# For each home-only skill:
-cp -r "$CLAUDE_DIR/skills/<skill-name>" "$MC_DIR/toolbox/skills/"
+# Diff home skills vs toolbox skills — find what's only on home
+diff <(ls ~/phredomade/.claude/skills/ | sort) <(ls ~/phredomade/.claude/agent-hub/toolbox/skills/ | sort)
 ```
 
-### Hooks
+For every skill that exists on home but NOT in toolbox (especially `deep-research`):
 ```bash
-# Compare hooks — HOME WINS
-diff "$CLAUDE_DIR/hooks/skill-activation-hook.sh" "$MC_DIR/toolbox/hooks/skill-activation-hook.sh"
-# If different, copy home's version:
-cp "$CLAUDE_DIR/hooks/skill-activation-hook.sh" "$MC_DIR/toolbox/hooks/"
-
-diff "$CLAUDE_DIR/hooks/session-context.js" "$MC_DIR/toolbox/hooks/session-context.js" 2>/dev/null
-# If home's exists and is different:
-cp "$CLAUDE_DIR/hooks/session-context.js" "$MC_DIR/toolbox/hooks/"
+cp -r ~/phredomade/.claude/skills/<name> ~/phredomade/.claude/agent-hub/toolbox/skills/
 ```
 
-### Rules, Scripts, Agents, Commands
+### 3b: Hooks (HOME WINS — these are better)
+
+```bash
+# Copy home's hooks into toolbox, overwriting work's versions
+cp ~/phredomade/.claude/hooks/* ~/phredomade/.claude/agent-hub/toolbox/hooks/
+```
+
+### 3c: Rules
+
+```bash
+# Diff and merge — work added 00-topic-context.md and 00-agent-lifecycle.md which home doesn't have
+# Home may have rules that work doesn't — copy those too
+diff <(ls ~/phredomade/.claude/rules/ 2>/dev/null | sort) <(ls ~/phredomade/.claude/agent-hub/toolbox/rules/ | sort)
+
+# Copy any home-only rules into toolbox
+# Keep work's 00-topic-context.md and 00-agent-lifecycle.md (home doesn't have these)
+```
+
+### 3d: Scripts, Agents, Commands
+
 Same pattern — diff, copy home-only files into toolbox. Home wins on conflicts.
 
-### Commit the merge
+### 3e: Commit the merge
+
 ```bash
-cd "$MC_DIR"
+cd ~/phredomade/.claude/agent-hub
 git add toolbox/
-git commit -m "feat: merge home-authoritative content into toolbox"
+git commit -m "feat: merge home-authoritative content — hooks, deep-research, formatting"
+git push origin main
 ```
 
 ---
 
-## Phase 5: Move MC out of phredomade
+## Phase 4: Move MC out of phredomade
 
-MC should be its own project, not buried inside phredomade's .claude/ directory.
-
-**Target structure:**
-```
-~/projects/
-  agent-mission-control/     ← MC repo (own project, matches GitHub name)
-  phredomade/                ← photography portfolio (own project)
-  vietnam-trip/              ← if this exists as separate project
-```
+MC is currently buried inside phredomade's `.claude/` directory. It should be its own project.
 
 ```bash
 # Create projects directory
 mkdir -p ~/projects
 
-# Move MC repo to its new home
-mv "$MC_DIR" ~/projects/agent-mission-control
+# Move the MC repo
+mv ~/phredomade/.claude/agent-hub ~/projects/agent-mission-control
 
 # Verify git still works
 cd ~/projects/agent-mission-control
 git status
 git remote -v
+# Should show: fredowill/agent-mission-control
 
-# Move phredomade if it should live under projects/ too
-# (only if you want — this is optional)
-# mv ~/phredomade ~/projects/phredomade
-```
-
-**Update MC_DIR variable for the rest of this prompt:**
-```bash
-MC_DIR=~/projects/agent-mission-control
+# Verify server starts
+node server.js &
+sleep 2
+curl -s http://localhost:3033/ | head -c 100
+kill %1
 ```
 
 ---
 
-## Phase 6: Update machine-config.json
+## Phase 5: Update machine-config.json
 
 ```bash
-# Read and update the machine config with correct home paths
-cat "$MC_DIR/toolbox/config/machine-config.json"
+cat ~/projects/agent-mission-control/toolbox/config/machine-config.json
 ```
 
-Update the `ephra` entry:
-- `claudeDir`: should be the USER-LEVEL `~/.claude` (we'll junction it next)
-- `mcDir`: should be `~/projects/agent-mission-control` (or wherever you put it)
-- Fix the `pathStyle` if needed (msys vs windows)
+Update the `ephra` entry with the ACTUAL paths:
+```json
+{
+  "ephra": {
+    "name": "home",
+    "claudeDir": "C:/Users/ephra/.claude",
+    "mcDir": "C:/Users/ephra/projects/agent-mission-control",
+    "pathStyle": "msys"
+  }
+}
+```
+
+Adjust `claudeDir` if `~/.claude/` is not at `C:/Users/ephra/.claude/` — check with `echo $HOME`.
 
 ---
 
-## Phase 7: Create junctions
+## Phase 6: Create junctions
 
-Now create the junctions from `~/.claude/` → MC toolbox, just like the work machine.
-
-```bash
-bash "$MC_DIR/toolbox/setup.sh" --dry-run
-```
-
-Review the dry run. If it looks right:
+The setup script creates NTFS junctions: `~/.claude/skills/` → `toolbox/skills/`, etc.
 
 ```bash
-bash "$MC_DIR/toolbox/setup.sh"
+cd ~/projects/agent-mission-control
+bash toolbox/setup.sh --dry-run
 ```
 
-This will:
-- Back up existing `~/.claude/skills/`, `agents/`, etc. to `.setup-backup.<timestamp>`
-- Replace them with NTFS junctions → `toolbox/`
-- Generate `~/.claude/settings.json` from template with correct home paths
+**Review the dry run carefully.** It should show:
+- Each dir being backed up + junctioned
+- settings.json being generated
+
+If it looks right:
+```bash
+bash toolbox/setup.sh
+```
+
+If setup.sh fails (permissions, path issues), create junctions manually via PowerShell:
+```powershell
+# For each dir: skills, agents, commands, hooks, rules, scripts
+Remove-Item -Path "C:\Users\ephra\.claude\skills" -Recurse -Force
+New-Item -ItemType Junction -Path "C:\Users\ephra\.claude\skills" -Target "C:\Users\ephra\projects\agent-mission-control\toolbox\skills"
+# Repeat for agents, commands, hooks, rules, scripts
+```
 
 ---
 
-## Phase 8: Verify EVERYTHING
+## Phase 7: Verify EVERYTHING
 
 ```bash
-# 1. Skills are visible
+# Skills visible through junction
 ls ~/.claude/skills/ | head -5
 
-# 2. A specific skill has content
+# Specific skill has content
 cat ~/.claude/skills/skill-index.md | head -3
 
-# 3. Hooks are visible
+# Hooks visible
 ls ~/.claude/hooks/
 
-# 4. Rules are visible
+# Rules visible
 ls ~/.claude/rules/
 
-# 5. MC server starts
+# MC server works from new location
 cd ~/projects/agent-mission-control
 node server.js &
 sleep 2
-curl -s http://localhost:3033/api/campaigns | head -c 100
+curl -s http://localhost:3033/api/campaigns | head -c 200
 kill %1
 
-# 6. Open a NEW Claude Code session and verify:
-#    - Skills load (try /plan)
-#    - Emoji formatting works
-#    - Skill-activation hook fires on prompt submit
+# Open a NEW Claude Code session and test:
+# - /plan command works
+# - Skill-activation hook fires on prompt submit
+# - Emoji formatting is correct
 ```
 
 ---
 
-## Phase 9: Clean up phredomade
+## Phase 8: Clean up phredomade
 
-After MC is extracted, phredomade's `.claude/` directory may have a dangling reference to `agent-hub/`. Clean it up:
+MC has been extracted. Clean up the old location.
 
 ```bash
-# If agent-hub was a symlink/junction in phredomade, remove the broken link
-# If it was the actual directory, it's already been moved — just remove the empty parent if needed
+# Check what's left in phredomade/.claude/
+ls ~/phredomade/.claude/
 
-# Check if phredomade still has its own project-level .claude/ stuff
-ls ~/phredomade/.claude/ 2>/dev/null
-# If it's empty or only has the old agent-hub reference, it can be removed
-# If it has phredomade-specific config, leave it
+# agent-hub/ should be GONE (we moved it)
+# If there are phredomade-specific .claude/ files (project settings, etc.), leave them
+# If .claude/ is now empty or only has stale stuff, you can remove it:
+# rmdir ~/phredomade/.claude  (only works if empty)
 ```
 
 ---
 
-## Phase 10: Push
+## Phase 9: Push
 
 ```bash
 cd ~/projects/agent-mission-control
 git add .
-git commit -m "feat: home reorganization — MC extracted from phredomade, junctions created, home-authoritative content merged"
+git commit -m "feat: home reorg complete — MC extracted, junctions live, home-authoritative content merged"
 git push origin main
 ```
 
 ---
 
 ## After this, on EITHER machine:
+
+```bash
+cd <mc-repo> && git pull && bash toolbox/setup.sh
 ```
-git pull && bash toolbox/setup.sh
-```
+
 One repo. One command. Full sync. No more regressions.
+
+## Summary of what changed
+
+| Before | After |
+|--------|-------|
+| MC buried at `phredomade/.claude/agent-hub/` | MC at `~/projects/agent-mission-control/` |
+| Skills/hooks/rules as loose files in `phredomade/.claude/` | Junctions: `~/.claude/*` → `MC/toolbox/*` |
+| No sync mechanism | `git pull + setup.sh` = full sync |
+| Home ↔ work transitions break everything | Same toolbox, same junctions, same setup.sh |
