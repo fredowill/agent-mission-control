@@ -1,67 +1,95 @@
 #!/usr/bin/env node
-// SessionStart hook: injects Session Catalog + Skill Index into every new session
-// v2.7 design: ~2K tokens, <500ms target
-// Requires: aichat CLI (uv tool install claude-code-tools) for session catalog
-// Falls back gracefully if aichat is not installed
+// session-context.js — SessionStart hook
+// Injects two things into every new session:
+// 1. Session Catalog — 20 most recent sessions (so agents know what's been discussed)
+// 2. Skill Index — categorized one-liners for all 60+ skills (for LLM-based skill selection)
+//
+// Fires on startup + compact. Zero deps. Silently exits on failure.
 
-const { execSync } = require('child_process');
+const { execFileSync } = require('child_process');
 const fs = require('fs');
 const path = require('path');
 
-// Skill index path — check multiple locations
-const skillIndexPaths = [
-  path.join(process.env.HOME || process.env.USERPROFILE, '.claude', 'skills', 'skill-index.md'),
-  path.join(process.env.HOME || process.env.USERPROFILE, 'Claude', 'projects', 'agent-mission-control', 'toolbox', 'skills', 'skill-index.md')
-];
-
-let skillIndex = '';
-for (const p of skillIndexPaths) {
+let raw = '';
+process.stdin.on('data', c => raw += c);
+process.stdin.on('end', () => {
   try {
-    if (fs.existsSync(p)) {
-      skillIndex = fs.readFileSync(p, 'utf8');
-      break;
+    const input = JSON.parse(raw);
+
+    // Only inject on new sessions and compactions (not resume — already has context)
+    if (input.source !== 'startup' && input.source !== 'compact') {
+      process.exit(0);
     }
-  } catch (_) {}
-}
 
-// Session catalog via aichat (if available)
-let sessionCatalog = '';
-try {
-  const raw = execSync('aichat search --recent 20 --format json 2>/dev/null', {
-    timeout: 3000,
-    encoding: 'utf8',
-    stdio: ['pipe', 'pipe', 'pipe']
-  });
-  const sessions = JSON.parse(raw);
-  if (Array.isArray(sessions) && sessions.length > 0) {
-    sessionCatalog = '## Recent Sessions (last 20)\n\n';
-    sessionCatalog += '| # | Topic | Date |\n|---|-------|------|\n';
-    sessions.slice(0, 20).forEach((s, i) => {
-      const topic = (s.topic || s.summary || 'unknown').substring(0, 80);
-      const date = s.date || s.timestamp || '?';
-      sessionCatalog += `| ${i + 1} | ${topic} | ${date} |\n`;
-    });
+    const parts = [];
+
+    // --- Part 1: Session Catalog ---
+    try {
+      const output = execFileSync('aichat', ['search', '--json'], {
+        encoding: 'utf8',
+        timeout: 3000,
+        env: { ...process.env, PYTHONUTF8: '1' },
+        stdio: ['pipe', 'pipe', 'pipe']
+      });
+
+      const sessions = output.trim().split('\n')
+        .filter(l => l.trim())
+        .map(l => { try { return JSON.parse(l); } catch { return null; } })
+        .filter(Boolean)
+        .sort((a, b) => (b.modified || '').localeCompare(a.modified || ''))
+        .slice(0, 20);
+
+      if (sessions.length > 0) {
+        const lines = sessions.map(s => {
+          const date = (s.modified || '').slice(0, 10);
+          const proj = s.project || '?';
+          const msg = (s.custom_title || s.first_msg || '')
+            .replace(/\n/g, ' ')
+            .slice(0, 100)
+            .trim();
+          return `  ${date} | ${proj} | ${msg}`;
+        });
+
+        parts.push([
+          '## Session Catalog (20 most recent)',
+          'The user dictates via voice and has discussed most topics in prior sessions.',
+          'If your current task relates to any topic below, run `aichat search --json -g "topic keywords"` to pull detailed context.',
+          '',
+          ...lines
+        ].join('\n'));
+      }
+    } catch {
+      // aichat not installed — skip catalog, still inject skill index
+    }
+
+    // --- Part 2: Skill Index ---
+    // Try multiple possible locations for the skill index
+    const indexPaths = [
+      path.join(input.cwd || '', '.claude', 'skills', 'skill-index.md'),
+      path.join(process.env.HOME || process.env.USERPROFILE || '', 'phredomade', '.claude', 'skills', 'skill-index.md')
+    ];
+
+    for (const p of indexPaths) {
+      try {
+        const index = fs.readFileSync(p, 'utf8');
+        parts.push(index);
+        break;
+      } catch {
+        // Try next path
+      }
+    }
+
+    if (parts.length === 0) process.exit(0);
+
+    // Output as JSON with additionalContext
+    console.log(JSON.stringify({
+      hookSpecificOutput: {
+        hookEventName: 'SessionStart',
+        additionalContext: parts.join('\n\n---\n\n')
+      }
+    }));
+  } catch {
+    // Never crash, never block session startup
+    process.exit(0);
   }
-} catch (_) {
-  sessionCatalog = '## Recent Sessions\n\n*aichat CLI not installed. Run `uv tool install claude-code-tools` to enable session catalog.*\n';
-}
-
-// Output context for injection
-const output = [];
-output.push('# Session Context (auto-injected)\n');
-
-if (sessionCatalog) {
-  output.push(sessionCatalog);
-}
-
-if (skillIndex) {
-  // Inject just the first few lines as a reminder, not the full index
-  output.push('## Skill Index Available\n');
-  output.push('Run `cat ~/.claude/skills/skill-index.md` to see all 80+ skills categorized by type.');
-  output.push('Pick 0-2 skills that genuinely help your current task. State your reasoning.\n');
-}
-
-output.push('## Emoji Standard\n');
-output.push('Emojis are SEMANTIC, not decorative. Use contextual emojis (🔬 research, 🛠️ build, 📋 plan, 🧠 design, 🛡️ security, ⚡ active) alongside status dots (🔴🟡🟢⬜✅). Never just color dots — mix pertinent emojis per context.\n');
-
-console.log(output.join('\n'));
+});
