@@ -47,30 +47,6 @@
             "command": "bash /c/Users/ephra/phredomade/.claude/scripts/verify-deploy.sh"
           }
         ]
-      },
-      {
-        "matcher": ".*",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "node /c/Users/ephra/phredomade/.claude/agent-hub/hooks/hook.js"
-          }
-        ]
-      }
-    ],
-    "UserPromptSubmit": [
-      {
-        "matcher": "",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "node /c/Users/ephra/phredomade/.claude/agent-hub/hooks/prompt-hook.js"
-          },
-          {
-            "type": "command",
-            "command": "bash /c/Users/ephra/phredomade/.claude/hooks/skill-activation-hook.sh"
-          }
-        ]
       }
     ],
     "SessionStart": [
@@ -90,11 +66,11 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node /c/Users/ephra/phredomade/.claude/agent-hub/hooks/hook.js"
+            "command": "echo '' && echo '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━' && echo '  VERIFY BEFORE DONE -- Did you actually confirm this works?' && echo '  - Run tests or Playwright spot-check' && echo '  - Screenshot + visually evaluate if UI change' && echo '  - If you skipped verification, say so honestly' && echo '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━'"
           },
           {
             "type": "command",
-            "command": "echo '' && echo '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━' && echo '  VERIFY BEFORE DONE — Did you actually confirm this works?' && echo '  - Run tests or Playwright spot-check' && echo '  - Screenshot + visually evaluate if UI change' && echo '  - If you skipped verification, say so honestly' && echo '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━'"
+            "command": "powershell -ExecutionPolicy Bypass -File /c/Users/ephra/projects/agent-mission-control/scripts/play-chime.ps1"
           }
         ]
       }

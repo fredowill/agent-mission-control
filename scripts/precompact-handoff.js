@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// .claude/agent-hub/scripts/precompact-handoff.js
+// scripts/precompact-handoff.js
 // PreCompact hook: fires when auto-compaction is imminent.
 // Creates an emergency handoff file so the next session knows what happened.
 // Zero deps. Must not block compaction (exit 0 always).

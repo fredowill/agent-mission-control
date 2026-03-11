@@ -6,7 +6,7 @@ This file travels via git sync. It provides essential context that every session
 
 | Project | Location | What It Is |
 |---------|----------|------------|
-| **Agent Mission Control** | `~/Claude/projects/agent-mission-control/` (work) / `~/.claude/agent-hub/` (home) | Zero-dependency Node.js dashboard for orchestrating Claude Code agents. Server at localhost:3033. |
+| **Agent Mission Control** | `~/projects/agent-mission-control/` (work) / `~/Claude/projects/agent-mission-control/` (home) | Zero-dependency Node.js dashboard for orchestrating Claude Code agents. Server at localhost:3033. |
 | **CARES Guide** | `~/Claude/cares-guide/` | Vite + React app for MAPI evaluation workflow. Dev server at localhost:5173. |
 
 ## Active Campaigns

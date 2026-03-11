@@ -1,5 +1,5 @@
 #!/bin/bash
-# .claude/agent-hub/dispatch.sh — Auto-dispatch agent into current terminal
+# scripts/dispatch.sh — Auto-dispatch agent into current terminal
 # This script runs INSIDE the new terminal tab opened by wt.exe.
 # Called by: /api/launch endpoint or manual wt.exe invocation
 #

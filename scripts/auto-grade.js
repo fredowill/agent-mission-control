@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// .claude/agent-hub/auto-grade.js — Auto-grade an agent after completion
+// scripts/auto-grade.js — Auto-grade an agent after completion
 // Called by dispatch.sh after the claude process exits.
 // Reads the activity log, infers lifecycle stages, calculates preliminary grade,
 // and writes results to campaigns.json.

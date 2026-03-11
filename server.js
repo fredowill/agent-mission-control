@@ -1,8 +1,8 @@
 #!/usr/bin/env node
-// .claude/agent-hub/server.js — Mission Control v6
+// server.js — Mission Control v6
 // Semantic agent dashboard with AI-powered summarization (Cerebras free tier).
 // Zero npm dependencies. Apple-inspired white design.
-// Usage: node .claude/agent-hub/server.js
+// Usage: node server.js  (from MC repo root)
 
 const http  = require('http');
 const https = require('https');
@@ -20,7 +20,7 @@ const SUMMARIES_F  = path.join(__dirname, 'data', 'summaries.json');
 const NORTHSTAR_F  = path.join(__dirname, 'data', 'northstar-cache.json');
 const DEEP_SUMM_F  = path.join(__dirname, 'data', 'deep-summaries.json');
 const ENV_FILE    = path.join(__dirname, 'config', '.env');
-// Check project-level first (../agents relative to agent-hub), then global (~/.claude/agents)
+// Check project-level first (../agents relative to MC root), then global (~/.claude/agents)
 const _projAgents  = path.join(__dirname, '..', 'agents');
 const _globalAgents = path.join(process.env.HOME || process.env.USERPROFILE || '', '.claude', 'agents');
 const AGENTS_DIR   = fs.existsSync(_projAgents) ? _projAgents : _globalAgents;
@@ -38,9 +38,9 @@ const TOOLBOX_SKILLS_DIR  = path.join(__dirname, 'toolbox', 'skills');
 // Transcript dir — Claude Code stores conversation .jsonl files here
 // Auto-detect transcript dir based on CWD slug (same logic Claude Code uses)
 // CRITICAL: TRANSCRIPTS_DIR depends on process.cwd() at launch time.
-// Server MUST be launched from the project root (the repo that contains .claude/agent-hub/).
-// Correct command: node .claude/agent-hub/server.js  (from phredomade root)
-// WRONG:           cd .claude/agent-hub && node server.js  (changes cwd, breaks slug)
+// Server MUST be launched from the MC repo root.
+// Correct command: node server.js  (from ~/projects/agent-mission-control/)
+// WRONG:           node server.js from a different directory  (changes cwd, breaks slug)
 // PM009 documents the incident where the wrong launch directory wiped all cost analytics.
 const _cwdSlug = process.cwd().replace(/\\/g, '/').replace(/^([A-Za-z]):\//, (_, d) => d.toUpperCase() + '--').replace(/\//g, '-');
 const TRANSCRIPTS_DIR = path.join(process.env.HOME || process.env.USERPROFILE || '', '.claude', 'projects', _cwdSlug);
@@ -2902,7 +2902,7 @@ Be direct and opinionated. Use <strong> tags for key phrases.`
         // Generate deterministic session ID so we can pre-link to campaigns
         const sessionId = crypto.randomUUID();
 
-        // Resolve prompt file path (relative to agent-hub dir)
+        // Resolve prompt file path (relative to MC repo root)
         const promptPath = path.join(__dirname, promptFile);
         if (!fs.existsSync(promptPath)) {
           res.writeHead(404, { 'Content-Type': 'application/json' });
@@ -3208,9 +3208,10 @@ Be direct and opinionated. Use <strong> tags for key phrases.`
   if (url.startsWith('/api/hook/') && req.method === 'GET' && !url.startsWith('/api/hook-file/')) {
     const hookName = decodeURIComponent(url.slice('/api/hook/'.length));
     const searchDirs = [
-      path.join(__dirname, '..', 'scripts'),  // .claude/scripts/
-      path.join(__dirname, '..', 'hooks'),     // .claude/hooks/
-      __dirname,                                // .claude/agent-hub/
+      path.join(__dirname, 'scripts'),          // MC scripts/
+      path.join(__dirname, 'hooks'),            // MC hooks/
+      path.join(__dirname, 'toolbox', 'scripts'), // toolbox scripts/
+      __dirname,                                // MC repo root
     ];
     for (const dir of searchDirs) {
       const candidate = path.join(dir, hookName);
@@ -3225,10 +3226,10 @@ Be direct and opinionated. Use <strong> tags for key phrases.`
   }
 
   // Hook file reader API — reads script content for workflow page detail view (legacy, uses full paths)
-  // Only allows reading from .claude/scripts/ and .claude/agent-hub/ for safety
+  // Only allows reading from MC scripts/, hooks/, toolbox/scripts/ for safety
   if (url.startsWith('/api/hook-file/') && req.method === 'GET') {
     const reqPath = decodeURIComponent(url.slice('/api/hook-file/'.length));
-    const allowedDirs = [path.join(__dirname, '..', 'scripts'), __dirname];
+    const allowedDirs = [path.join(__dirname, 'scripts'), path.join(__dirname, 'hooks'), path.join(__dirname, 'toolbox', 'scripts'), __dirname];
     const resolved = path.resolve(reqPath.replace(/^\/c\//i, 'C:/'));
     const allowed = allowedDirs.some(d => resolved.startsWith(path.resolve(d)));
     if (allowed && fs.existsSync(resolved)) {
@@ -3421,11 +3422,11 @@ Be direct and opinionated. Use <strong> tags for key phrases.`
   if (url === '/api/workflow' && req.method === 'GET') {
     const HOME = process.env.HOME || process.env.USERPROFILE || '';
     const globalSettingsPath = path.join(HOME, '.claude', 'settings.json');
-    const projectSettingsPath = path.join(__dirname, '..', 'settings.json');
-    // CLAUDE.md is at the project root (parent of .claude/agent-hub/)
-    const projectRoot = path.resolve(__dirname, '..', '..');
+    // MC is now a standalone repo — project root IS __dirname
+    const projectRoot = __dirname;
+    const projectSettingsPath = path.join(projectRoot, 'toolbox', 'config', 'CLAUDE.md'); // closest equivalent
     const claudeMdPath = path.join(projectRoot, 'CLAUDE.md');
-    // Memory dir uses the project root's CWD slug, not agent-hub's
+    // Memory dir uses the MC repo's CWD slug
     const projectSlug = projectRoot.replace(/\\/g, '/').replace(/^([A-Za-z]):\//, (_, d) => d.toUpperCase() + '--').replace(/\//g, '-');
     const memoryDir = path.join(HOME, '.claude', 'projects', projectSlug, 'memory');
 

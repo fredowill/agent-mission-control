@@ -1,25 +1,29 @@
 #!/bin/bash
-# setup-hooks.sh — Generate machine-specific .claude/settings.json from template
-# Run this after pulling the agent-hub repo on a new machine.
-# It detects the project root and agent-hub location, then writes settings.json
-# with the correct absolute paths for this machine.
+# setup-hooks.sh — Generate machine-specific ~/.claude/settings.json (user-level)
+# Run this after cloning the MC repo on a new machine.
+# It detects the MC repo location and writes user-level settings.json
+# with the correct absolute paths for MC hooks on this machine.
 #
-# Usage: bash .claude/agent-hub/setup-hooks.sh
+# Usage: bash ~/projects/agent-mission-control/scripts/setup-hooks.sh
+#
+# NOTE: This generates USER-LEVEL settings (~/.claude/settings.json).
+# Phredomade project-level settings (~/phredomade/.claude/settings.json) are separate
+# and only contain phredomade-specific hooks. MC hooks live at user level.
+
+set -e
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-PROJECT_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
-CLAUDE_DIR="$PROJECT_ROOT/.claude"
-AGENT_HUB="$SCRIPT_DIR"
+MC_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
 
 # Convert to Unix paths for bash hooks
-UNIX_PROJECT=$(echo "$PROJECT_ROOT" | sed 's|\\|/|g' | sed 's|^C:|/c|i')
-UNIX_CLAUDE="$UNIX_PROJECT/.claude"
-UNIX_HUB="$UNIX_CLAUDE/agent-hub"
+UNIX_MC=$(echo "$MC_ROOT" | sed 's|\\|/|g' | sed 's|^C:|/c|i')
+UNIX_HOME=$(echo "$HOME" | sed 's|\\|/|g' | sed 's|^C:|/c|i')
+UNIX_CLAUDE="$UNIX_HOME/.claude"
 
-echo "Setting up hooks for: $PROJECT_ROOT"
-echo "Agent hub: $AGENT_HUB"
+echo "Setting up MC hooks for: $MC_ROOT"
+echo "MC Unix path: $UNIX_MC"
 
-SETTINGS_FILE="$CLAUDE_DIR/settings.json"
+SETTINGS_FILE="$HOME/.claude/settings.json"
 
 # Back up existing settings
 if [ -f "$SETTINGS_FILE" ]; then
@@ -29,61 +33,30 @@ fi
 
 cat > "$SETTINGS_FILE" << SETTINGS_EOF
 {
-  "enabledPlugins": {
-    "frontend-design@claude-plugins-official": true,
-    "security-guidance@claude-plugins-official": true,
-    "code-review@claude-plugins-official": true,
-    "pr-review-toolkit@claude-plugins-official": true
+  "permissions": {
+    "defaultMode": "bypassPermissions"
   },
+  "model": "opus[1m]",
   "hooks": {
-    "PreToolUse": [
+    "SessionStart": [
       {
-        "matcher": "Bash",
+        "matcher": "startup|compact",
         "hooks": [
           {
             "type": "command",
-            "command": "bash $UNIX_CLAUDE/scripts/guard-destructive.sh"
+            "command": "node $UNIX_CLAUDE/hooks/session-context.js",
+            "timeout": 5
           }
         ]
       }
     ],
     "PostToolUse": [
       {
-        "matcher": "Edit|Write",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "bash $UNIX_CLAUDE/scripts/check-code-change.sh"
-          },
-          {
-            "type": "command",
-            "command": "node $UNIX_CLAUDE/scripts/check-file-conflict.js"
-          },
-          {
-            "type": "command",
-            "command": "node $UNIX_CLAUDE/scripts/validate-html-js.js"
-          }
-        ]
-      },
-      {
-        "matcher": "Bash",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "bash $UNIX_CLAUDE/scripts/check-server.sh"
-          },
-          {
-            "type": "command",
-            "command": "bash $UNIX_CLAUDE/scripts/verify-deploy.sh"
-          }
-        ]
-      },
-      {
         "matcher": ".*",
         "hooks": [
           {
             "type": "command",
-            "command": "node $UNIX_HUB/hook.js"
+            "command": "node $UNIX_MC/hooks/hook.js"
           }
         ]
       }
@@ -94,7 +67,7 @@ cat > "$SETTINGS_FILE" << SETTINGS_EOF
         "hooks": [
           {
             "type": "command",
-            "command": "node $UNIX_HUB/prompt-hook.js"
+            "command": "node $UNIX_MC/hooks/prompt-hook.js"
           },
           {
             "type": "command",
@@ -103,13 +76,13 @@ cat > "$SETTINGS_FILE" << SETTINGS_EOF
         ]
       }
     ],
-    "SessionStart": [
+    "PreCompact": [
       {
-        "matcher": "compact",
+        "matcher": "",
         "hooks": [
           {
             "type": "command",
-            "command": "node $UNIX_CLAUDE/scripts/session-start-compact.js"
+            "command": "node $UNIX_MC/scripts/precompact-handoff.js"
           }
         ]
       }
@@ -120,28 +93,37 @@ cat > "$SETTINGS_FILE" << SETTINGS_EOF
         "hooks": [
           {
             "type": "command",
-            "command": "node $UNIX_HUB/hook.js"
+            "command": "bash $UNIX_CLAUDE/scripts/update-profile.sh"
           },
           {
             "type": "command",
-            "command": "echo '' && echo '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━' && echo '  VERIFY BEFORE DONE — Did you actually confirm this works?' && echo '  - Run tests or Playwright spot-check' && echo '  - Screenshot + visually evaluate if UI change' && echo '  - If you skipped verification, say so honestly' && echo '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━'"
+            "command": "node $UNIX_MC/hooks/hook.js"
           }
         ]
       }
     ]
-  }
+  },
+  "statusLine": {
+    "type": "command",
+    "command": "node $UNIX_MC/scripts/statusline-hardstop.js"
+  },
+  "effortLevel": "high",
+  "autoUpdatesChannel": "latest",
+  "skipDangerousModePermissionPrompt": true
 }
 SETTINGS_EOF
 
-echo "✅ Settings written to $SETTINGS_FILE"
 echo ""
-echo "Hooks configured:"
-echo "  PreToolUse:       guard-destructive.sh"
-echo "  PostToolUse:      check-code-change, check-file-conflict, validate-html-js, hook.js"
-echo "  UserPromptSubmit: prompt-hook.js, skill-activation-hook.sh"
-echo "  SessionStart:     session-start-compact.js"
-echo "  Stop:             hook.js, verify-before-done"
+echo "User-level settings written to $SETTINGS_FILE"
 echo ""
-echo "Next: Copy scripts from toolbox if not already present:"
-echo "  cp -r $AGENT_HUB/toolbox/scripts/* $CLAUDE_DIR/scripts/"
-echo "  cp -r $AGENT_HUB/toolbox/hooks/* $CLAUDE_DIR/hooks/"
+echo "Hooks configured (user-level, all projects):"
+echo "  SessionStart:     session-context.js"
+echo "  PostToolUse .*:   hook.js (MC)"
+echo "  UserPromptSubmit: prompt-hook.js (MC) + skill-activation-hook.sh"
+echo "  PreCompact:       precompact-handoff.js (MC)"
+echo "  Stop:             update-profile.sh + hook.js (MC)"
+echo "  StatusLine:       statusline-hardstop.js (MC)"
+echo ""
+echo "NOTE: Phredomade project-level settings are separate."
+echo "      Copy toolbox/config/settings.json to ~/phredomade/.claude/settings.json"
+echo "      (or project-settings-home.json on home machine)."

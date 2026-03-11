@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// .claude/agent-hub/prompt-hook.js
+// hooks/prompt-hook.js (agent-mission-control)
 // UserPromptSubmit hook. Captures every user prompt to prompts/{sessionId}.ndjson.
 // Zero deps. Fire-and-forget. Never crashes.
 //

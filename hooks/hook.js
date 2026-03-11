@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// .claude/agent-hub/hook.js
+// hooks/hook.js (agent-mission-control)
 // PostToolUse + Stop hook. Writes state file + appends activity log.
 // Zero deps. Never crashes. Never slows down the agent.
 //

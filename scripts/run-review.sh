@@ -30,12 +30,10 @@ AGENT SLOT: $AGENT_SLOT
 PRD FILE: $PROMPT_FILE
 
 Steps:
-1. Read the state file: cat .claude/agent-hub/states/${SESSION_ID}.json — look at statusLine entries to understand what the agent did
+1. Read the state file in the MC repo states/ directory for this session — look at statusLine entries to understand what the agent did
 2. Read the PRD file: cat $PROMPT_FILE — understand what was required
-3. Check what files were ACTUALLY modified by running these commands:
-   a) In the main repo: git status --short && git diff --name-only HEAD
-   b) In the agent-hub repo: cd .claude/agent-hub && git status --short && git diff --name-only HEAD && cd ../..
-   c) If EITHER repo shows modified files, those are deliverables — the agent changed real code
+3. Check what files were ACTUALLY modified by running: git status --short && git diff --name-only HEAD
+   a) If modified files exist, those are deliverables — the agent changed real code
    d) Do NOT report 'nothing delivered' if files were modified. File changes are the strongest evidence of work done.
 4. Check the TRANSCRIPT for skill usage and verification:
    a) Find the transcript: look for a .jsonl file matching the session ID in .claude/projects/*/

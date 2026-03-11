@@ -20,10 +20,10 @@ Think "army general getting the mission report" — what happened, what was deci
 
 3. Create the retrospectives directory and write the file:
    ```bash
-   mkdir -p .claude/agent-hub/retrospectives
+   mkdir -p retrospectives
    ```
 
-   Write to `.claude/agent-hub/retrospectives/{sessionId}.json`:
+   Write to `retrospectives/{sessionId}.json`:
    ```json
    {
      "sessionId": "...",
@@ -38,7 +38,7 @@ Think "army general getting the mission report" — what happened, what was deci
    }
    ```
 
-4. Update the state file at `.claude/agent-hub/states/{sessionId}.json`:
+4. Update the state file at `states/{sessionId}.json`:
    - Read existing state
    - Add `lastRetrospective` (ISO timestamp) and `summary` (1-2 sentences)
    - Write it back

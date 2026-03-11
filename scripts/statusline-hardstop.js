@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// .claude/agent-hub/scripts/statusline-hardstop.js
+// scripts/statusline-hardstop.js
 // StatusLine hook: reads context window metrics, writes threshold state, outputs status indicator.
 // Fires on every StatusLine render cycle -- must complete in <50ms.
 // Zero deps. Synchronous only. No network calls.

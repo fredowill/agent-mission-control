@@ -11,5 +11,7 @@ Every piece of information presented to the user MUST use tables, not paragraphs
 
 **Never use A/B/C letter emojis** -- they render as empty boxes on Windows Terminal. Use **A)** / **B)** / **C)** text instead.
 
+**No mid-session drift.** Table formatting applies for the ENTIRE session, not just the first few responses. Context depth, debugging complexity, and task urgency are not excuses to drop formatting. "Concise" means short tables, not plain text. This is the most common regression across sessions.
+
 ## Rule 9: Keep it simple, stupid.
 Default to the simplest implementation that works. Complexity must be justified by a specific failure of the simple approach, not by theoretical superiority.

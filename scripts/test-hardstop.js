@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// .claude/agent-hub/scripts/test-hardstop.js
+// scripts/test-hardstop.js
 // E2E test for the triple-layer hardstop system.
 // Tests: StatusLine thresholds, prompt-hook injection, PreCompact emergency handoff.
 // Zero external deps. Run via: node scripts/test-hardstop.js

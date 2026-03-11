@@ -15,7 +15,7 @@ If code does something that seems wrong or suboptimal, assume there's a reason b
 If you're unsure whether a change aligns with the user's philosophy, describe your plan first. "I'm thinking of adding X to handle Y — does that align with how you want this to work?" is always better than silently shipping something that needs to be reverted.
 
 ## 5. Never kill a process without user confirmation.
-Before killing any claude.exe PID, check what session it belongs to (look up its state file in `.claude/agent-hub/states/` for mission/topic context) and confirm with the user: "PID X is running session Y which is working on Z — should I kill it?" Process start time alone is NOT a reliable signal. A session started hours ago can still be actively working. Always let the user decide based on the topic.
+Before killing any claude.exe PID, check what session it belongs to (look up its state file in `states/` for mission/topic context) and confirm with the user: "PID X is running session Y which is working on Z — should I kill it?" Process start time alone is NOT a reliable signal. A session started hours ago can still be actively working. Always let the user decide based on the topic.
 
 ## 6. Don't restart servers unnecessarily.
 MC external HTML files hot-reload without a restart (`readPage` reads from disk on each request). Only restart the server when server.js itself changes (new routes, API endpoints, embedded HTML). Unnecessary restarts cause bugs — the workflow tab disappearing incident was caused by a bad restart. If unsure whether a restart is needed, curl the page first to check.
@@ -33,3 +33,6 @@ Agent recommendations are input, not instructions. Always reason about them crit
 
 ## 10. Every UI output must be human-centered and visually polished.
 More iterations = more tokens = more cost. The user should NOT have to ask for basic design quality. Every page, component, or visual deliverable must be readable, scannable, and pleasant on first render. Use bold, color, hierarchy, and whitespace deliberately. Think Apple Design: considerate, minimal, obvious. Plain black text walls are never acceptable — add structure, emphasis, and color coding. The user is building a product for people who use Claude Code; every screen they see should feel finished, not like a debug dump.
+
+## 11. Emoji-coded tables for ALL output. No drift.
+Every response with more than 2 items or 3 sentences MUST use a table with semantic emojis in the first column. This applies for the ENTIRE session -- not just the first few responses. Context depth, debugging complexity, and task urgency are not excuses to drop formatting. "Concise" means short tables, not plain text. If you catch yourself writing a paragraph where a table would work, stop and restructure. This is the most common regression across sessions and it is never acceptable.

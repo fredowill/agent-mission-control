@@ -8,9 +8,15 @@ const fs = require('fs');
 const path = require('path');
 const { execSync } = require('child_process');
 
-const HUB_DIR = path.join(__dirname, '..', 'agent-hub');
-const PROMPTS_DIR = path.join(HUB_DIR, 'prompts');
-const LOGS_DIR = path.join(HUB_DIR, 'logs');
+// Find MC repo root — check known locations (work + home machines)
+const HOME = process.env.HOME || process.env.USERPROFILE || '';
+const MC_CANDIDATES = [
+  path.join(HOME, 'projects', 'agent-mission-control'),
+  path.join(HOME, 'Claude', 'projects', 'agent-mission-control'),
+];
+const MC_ROOT = MC_CANDIDATES.find(d => fs.existsSync(path.join(d, 'server.js'))) || MC_CANDIDATES[0];
+const PROMPTS_DIR = path.join(MC_ROOT, 'prompts');
+const LOGS_DIR = path.join(MC_ROOT, 'logs');
 
 let raw = '';
 process.stdin.on('data', c => raw += c);

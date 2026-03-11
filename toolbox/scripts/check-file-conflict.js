@@ -1,13 +1,20 @@
 #!/usr/bin/env node
 // PostToolUse hook — cross-agent file conflict detection
 // Checks if another session recently edited the same file.
-// Ledger: .claude/agent-hub/file-edits.ndjson
+// Ledger: file-edits.ndjson in the MC repo root
 // Zero deps. Never crashes. Never slows down the agent.
 
 const fs = require('fs');
 const path = require('path');
 
-const LEDGER = path.join(__dirname, '..', 'agent-hub', 'file-edits.ndjson');
+// Find MC repo root — check known locations (work + home machines)
+const HOME = process.env.HOME || process.env.USERPROFILE || '';
+const MC_CANDIDATES = [
+  path.join(HOME, 'projects', 'agent-mission-control'),
+  path.join(HOME, 'Claude', 'projects', 'agent-mission-control'),
+];
+const MC_ROOT = MC_CANDIDATES.find(d => fs.existsSync(path.join(d, 'server.js'))) || MC_CANDIDATES[0];
+const LEDGER = path.join(MC_ROOT, 'file-edits.ndjson');
 const CONFLICT_WINDOW = 1800; // 30 minutes in seconds
 const MAX_LEDGER_LINES = 500;
 
