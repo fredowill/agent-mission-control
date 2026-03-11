@@ -115,6 +115,38 @@ fi
 echo "$SETTINGS" > "$CLAUDE_DIR/settings.json"
 echo "  ✅ settings.json written"
 
+# ── Validate skill & command integrity ────────────────────────
+echo ""
+echo "🔍 Validating toolbox integrity..."
+
+ERRORS=0
+
+# Check for empty skill dirs (no SKILL.md)
+for d in "$TOOLBOX/skills"/*/; do
+  name=$(basename "$d")
+  if [ ! -f "$d/SKILL.md" ]; then
+    echo "  ❌ EMPTY SKILL: $name (no SKILL.md)"
+    ERRORS=$((ERRORS + 1))
+  fi
+done
+
+# Check for phantom gitlinks (skill tracked as submodule commit, not files)
+if command -v git >/dev/null 2>&1 && git -C "$MC_DIR" rev-parse --git-dir >/dev/null 2>&1; then
+  while IFS= read -r line; do
+    path=$(echo "$line" | awk '{print $4}')
+    echo "  ❌ GITLINK: $path (tracked as submodule, files invisible to git)"
+    echo "     Fix: git rm --cached $path && git add $path/"
+    ERRORS=$((ERRORS + 1))
+  done < <(git -C "$MC_DIR" ls-tree -r HEAD | grep "^160000")
+fi
+
+if [ "$ERRORS" -gt 0 ]; then
+  echo ""
+  echo "  ⚠️  $ERRORS integrity issue(s) found — fix before pushing"
+else
+  echo "  ✅ All skills have SKILL.md, no gitlinks"
+fi
+
 echo ""
 echo "✅ Setup complete for $MACHINE_NAME"
 echo "   git pull + bash toolbox/setup.sh = full sync"
