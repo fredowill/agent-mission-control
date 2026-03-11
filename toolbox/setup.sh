@@ -102,11 +102,13 @@ done
 echo ""
 echo "⚙️  Generating settings.json..."
 
-MC_FOR_JSON=$(cygpath -w "$MC_DIR" 2>/dev/null || echo "$MC_DIR")
+# Use Unix paths (/c/Users/...) so bash hooks work in Git Bash
+UNIX_MC=$(echo "$MC_DIR" | sed 's|\\|/|g' | sed 's|^C:|/c|i')
+UNIX_CLAUDE=$(echo "$CLAUDE_DIR" | sed 's|\\|/|g' | sed 's|^C:|/c|i')
 
 SETTINGS=$(cat "$TEMPLATE")
-SETTINGS="${SETTINGS//\{\{CLAUDE_DIR\}\}/$WIN_CLAUDE}"
-SETTINGS="${SETTINGS//\{\{MC_DIR\}\}/$MC_FOR_JSON}"
+SETTINGS="${SETTINGS//\{\{CLAUDE_DIR\}\}/$UNIX_CLAUDE}"
+SETTINGS="${SETTINGS//\{\{MC_DIR\}\}/$UNIX_MC}"
 
 if [ -f "$CLAUDE_DIR/settings.json" ]; then
   cp "$CLAUDE_DIR/settings.json" "$CLAUDE_DIR/settings.json.pre-setup"

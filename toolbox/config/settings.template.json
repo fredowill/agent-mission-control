@@ -116,6 +116,17 @@
         ]
       }
     ],
+    "PreCompact": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node {{MC_DIR}}/scripts/precompact-handoff.js"
+          }
+        ]
+      }
+    ],
     "Stop": [
       {
         "matcher": "",
@@ -136,6 +147,11 @@
       }
     ]
   },
+  "statusLine": {
+    "type": "command",
+    "command": "node {{MC_DIR}}/scripts/statusline-hardstop.js"
+  },
+  "effortLevel": "high",
   "autoUpdatesChannel": "latest",
   "skipDangerousModePermissionPrompt": true
 }
